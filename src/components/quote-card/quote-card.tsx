@@ -1,0 +1,141 @@
+import type { PaperProps } from '@mui/material/Paper';
+
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+
+// ----------------------------------------------------------------------
+
+type QuoteColor = 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
+
+export interface QuoteCardProps extends PaperProps {
+  /** The full text of the quote. Rendered in italics inside the card body. */
+  quote: string;
+  /**
+   * Attribution name displayed below the quote, e.g. `"Dominic Pollaers"`.
+   * Omit to hide the attribution row entirely.
+   */
+  author?: string;
+  /**
+   * Source or context label displayed next to the author, e.g. `"NBN Project"`.
+   * A separator dot is only rendered when both `author` and `source` are present.
+   */
+  source?: string;
+  /**
+   * Accent color key applied to the background tint, border, and decorative quote mark.
+   * Accepts any MUI palette color key.
+   * @default 'primary'
+   */
+  color?: QuoteColor;
+}
+
+/**
+ * A warm, readable block-quote card built on MUI Paper.
+ *
+ * Extends PaperProps — callers can pass `elevation` for shadow depth and
+ * `variant="outlined"` to switch to a border-only surface.
+ * Colors are driven by MUI CSS variables so it adapts to light/dark mode and
+ * any custom theme without additional configuration.
+ *
+ * Theming via sx:
+ *   <QuoteCard sx={{ borderRadius: 4, p: 4 }} ... />
+ *
+ * Theming via elevation:
+ *   <QuoteCard elevation={4} ... />
+ *
+ * Theming via color:
+ *   <QuoteCard color="info" ... />
+ *
+ * @example
+ * <QuoteCard
+ *   quote="Leave every file a little better than you found it."
+ *   author="Alex Rebula"
+ *   source="NBN Project"
+ *   elevation={0}
+ * />
+ */
+export function QuoteCard({
+  quote,
+  author,
+  source,
+  color = 'primary',
+  elevation = 0,
+  sx,
+  ...other
+}: QuoteCardProps) {
+  return (
+    <Paper
+      elevation={elevation}
+      sx={[
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        (theme) => ({
+          p: 3,
+          borderRadius: 2,
+          bgcolor: `rgba(${theme.vars!.palette[color].mainChannel} / 0.06)`,
+          border: `1px solid rgba(${theme.vars!.palette[color].mainChannel} / 0.12)`,
+        }),
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
+      {...other}
+    >
+      {/* Decorative opening quote mark — pure Unicode, no icon dependency */}
+      <Typography
+        aria-hidden
+        sx={{
+          mb: 0.5,
+          mt: -1,
+          lineHeight: 1,
+          fontSize: '4rem',
+          display: 'block',
+          color: `${color}.main`,
+          opacity: 0.4,
+          fontFamily: 'Georgia, serif',
+          userSelect: 'none',
+        }}
+      >
+        {'\u201C'}
+      </Typography>
+
+      {/* Quote text */}
+      <Typography
+        variant="body1"
+        sx={{
+          fontStyle: 'italic',
+          fontWeight: 'fontWeightLight',
+          color: 'text.secondary',
+          lineHeight: 1.85,
+        }}
+      >
+        {quote}
+      </Typography>
+
+      {/* Attribution */}
+      {(author || source) && (
+        <Stack
+          direction="row"
+          spacing={0.75}
+          alignItems="center"
+          sx={{ mt: 2, color: 'text.disabled' }}
+        >
+          {author && (
+            <Typography variant="caption" sx={{ fontWeight: 'fontWeightMedium' }}>
+              {author}
+            </Typography>
+          )}
+
+          {author && source && (
+            <Typography variant="caption" sx={{ opacity: 0.6 }}>
+              ·
+            </Typography>
+          )}
+
+          {source && (
+            <Typography variant="caption" sx={{ opacity: 0.72 }}>
+              {source}
+            </Typography>
+          )}
+        </Stack>
+      )}
+    </Paper>
+  );
+}
