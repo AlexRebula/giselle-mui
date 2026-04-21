@@ -1,8 +1,183 @@
-# giselle-mui
+# @alexrebula/giselle-mui
 
-An open-source React component library built on top of `@mui/material` v7.
+Small, focused MUI wrapper components that encode non-obvious design and
+accessibility decisions — so consumers don't have to rediscover them.
 
-`giselle-mui` provides small, focused MUI wrapper components that encode non-obvious
-design and accessibility decisions so consumers do not have to rediscover them.
+Built on `@mui/material` v7 (CSS variables mode). TypeScript-first. MIT licensed.
 
-Authored by Alex Rebula and licensed under Apache 2.0.
+---
+
+## Status
+
+> **Beta — active development. Not yet published to npm.**
+>
+> The API is stable and all 52 unit tests pass. The package is fully built and tested locally.
+> First public npm release is planned alongside the portfolio site launch (May/June 2026).
+> Feedback and issues are welcome on [GitHub](https://github.com/AlexRebula/giselle-mui/issues).
+
+Until the package is on npm, use it from disk — see [Local development](#local-development).
+
+---
+
+## ⚠️ ThemeProvider requirement
+
+These components are built on **MUI v7 CSS variables mode**. They require a
+`CssVarsProvider` (or equivalent MUI theme provider) somewhere above them in the React tree.
+
+Without a theme provider, `theme.vars.*` CSS custom properties are not injected, and
+**components will render without meaningful colours or styles** — buttons without borders,
+cards without backgrounds, icons without tint.
+
+This is intentional: the library delegates theme ownership to the consuming application,
+so it can integrate into any existing MUI theme without conflict.
+
+**Minimal setup:**
+
+```tsx
+import { CssVarsProvider, extendTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const theme = extendTheme();
+
+export function App() {
+  return (
+    <CssVarsProvider theme={theme}>
+      <CssBaseline />
+      <YourApp />
+    </CssVarsProvider>
+  );
+}
+```
+
+Full integration guides:
+
+- [React — Vite / CRA](./docs/theming-react.md)
+- [Next.js — App Router + Pages Router](./docs/theming-nextjs.md)
+
+---
+
+## Components
+
+| Component | Description |
+|---|---|
+| `GiselleIcon` | `@iconify/react` wrapper with full MUI `sx` support. Fixes the `Box component={ThirdParty}` TypeScript pitfall. |
+| `MetricCard` | Stat card — value + label + icon slot + decoration slot. Zero icon-library dependency. |
+| `MetricCardDecoration` | Companion decoration fill for `MetricCard`. |
+| `SelectableCard` | Accessible clickable card built on `ButtonBase`. Correct `aria-pressed` semantics, keyboard support, and focus ring out of the box. |
+| `QuoteCard` | Testimonial/pull-quote card with CSS-var color tinting and conditional attribution row. |
+
+Every component exists because it solves a recurring problem that is either easy to get wrong
+or non-trivial to implement correctly with MUI alone. Each component folder includes a
+`README.md` with the full design rationale, accessibility decisions, and library-safety notes.
+
+---
+
+## Install
+
+> **Not yet published to npm.** This will work after the package is released.
+
+```bash
+npm install @alexrebula/giselle-mui
+```
+
+Peer dependencies (install separately if not already in your project):
+
+```bash
+npm install @mui/material @emotion/react @emotion/styled react react-dom
+```
+
+Optional — only required if you use `GiselleIcon`:
+
+```bash
+npm install @iconify/react
+```
+
+---
+
+## Usage
+
+```tsx
+import {
+  GiselleIcon,
+  MetricCard,
+  MetricCardDecoration,
+  SelectableCard,
+  QuoteCard,
+} from '@alexrebula/giselle-mui';
+
+// Wrap your app in CssVarsProvider — see docs/theming-react.md for full setup
+<MetricCard
+  value="20+"
+  label="Years"
+  sublabel="front-end, since 2005"
+  color="primary"
+  icon={<GiselleIcon icon="solar:clock-circle-bold-duotone" width={36} />}
+  decoration={<MetricCardDecoration color="primary" />}
+/>
+```
+
+---
+
+## Tech stack
+
+- React 18+ with TypeScript — strict mode, no `any`
+- `@mui/material` v7 (CSS variables mode — `theme.vars.palette.*`, not `theme.palette.*`)
+- `@iconify/react` for icons (Apache 2.0 — only allowed icon peer dependency)
+- Vitest + jsdom for unit tests (52 passing)
+- Storybook for visual development and autodoc (coming)
+
+---
+
+## Local development
+
+```bash
+git clone git@github.com:AlexRebula/giselle-mui.git
+cd giselle-mui
+npm install
+npm run typecheck
+npm test
+npm run build
+```
+
+To use the package from disk in a consuming app before it is published:
+
+```json
+// your-app/package.json
+"@alexrebula/giselle-mui": "file:../path/to/giselle-mui"
+```
+
+Run `npm install` in the consuming app once to create the symlink in `node_modules/`.
+TypeScript changes in `src/` are picked up immediately — no rebuild needed for types.
+Re-run `npm install` only if you change `package.json` (e.g. add a new export entry).
+
+---
+
+## Roadmap
+
+- [x] GiselleIcon, MetricCard, SelectableCard, QuoteCard — all with unit tests + READMEs
+- [ ] Storybook stories for all components
+- [ ] Published to npm (alongside portfolio launch, May/June 2026)
+- [ ] Additional components extracted from portfolio patterns
+- [ ] Storybook deployed as public documentation site
+
+---
+
+## Part of the Giselle UI ecosystem
+
+| Package | Description | Status |
+|---|---|---|
+| `@alexrebula/giselle-mui` | MUI wrapper components (this package) | Beta |
+| `@alexrebula/giselle-ui` | Framework-agnostic component primitives | Beta |
+| `@alexrebula/giselle-sections-sdk` | Typed section data contracts for portfolio/product sites | Beta |
+
+All packages are in active development and will be published together.
+
+---
+
+## License
+
+MIT — see [LICENSE](./LICENSE).
+
+---
+
+Made with ❤️ by [Alex Rebula](https://github.com/AlexRebula)

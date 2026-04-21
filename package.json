@@ -1,0 +1,80 @@
+{
+  "name": "@alexrebula/giselle-mui",
+  "version": "0.1.0",
+  "description": "MUI component library — accessible, theme-adaptive React components built on @mui/material with zero proprietary dependencies.",
+  "license": "MIT",
+  "author": "Alex Rebula",
+  "type": "module",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publishConfig": {
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "clean": "rm -rf dist storybook-static"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexRebula/giselle-mui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AlexRebula/giselle-mui/issues"
+  },
+  "homepage": "https://github.com/AlexRebula/giselle-mui#readme",
+  "keywords": [
+    "react",
+    "typescript",
+    "mui",
+    "material-ui",
+    "component-library",
+    "accessibility",
+    "storybook"
+  ],
+  "peerDependencies": {
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
+    "@iconify/react": "^5.0.0",
+    "@mui/material": "^7.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@iconify/react": "^5.0.0",
+    "@mui/material": "^7.0.0",
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^3.0.0",
+    "jsdom": "^26.0.0"
+  }
+}

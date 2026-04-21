@@ -1,0 +1,229 @@
+# Theming in Next.js (App Router + Pages Router)
+
+`@alexrebula/giselle-mui` components use **MUI v7 CSS variables mode** and require a
+`CssVarsProvider` wrapping your application.
+
+Next.js has two routers with slightly different setup requirements. Both are covered below.
+
+---
+
+## App Router (Next.js 13+)
+
+### 1. Install dependencies
+
+```bash
+npm install @mui/material @emotion/react @emotion/styled @mui/material-nextjs react react-dom
+npm install @alexrebula/giselle-mui
+
+# Optional: only if you use GiselleIcon
+npm install @iconify/react
+```
+
+`@mui/material-nextjs` provides `AppRouterCacheProvider`, which prevents style
+duplication and flash-of-unstyled-content (FOUC) in RSC/streaming environments.
+
+---
+
+### 2. Create your theme
+
+```ts
+// src/theme.ts
+import { extendTheme } from '@mui/material/styles';
+
+export const theme = extendTheme({
+  colorSchemes: {
+    light: {
+      palette: {
+        primary: { main: '#1976d2' },
+      },
+    },
+    dark: {
+      palette: {
+        primary: { main: '#90caf9' },
+      },
+    },
+  },
+});
+```
+
+---
+
+### 3. Root layout
+
+```tsx
+// app/layout.tsx
+import type { ReactNode } from 'react';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { CssVarsProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { theme } from '../theme';
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        {/*
+          AppRouterCacheProvider collects styles during SSR and flushes them
+          into the <head> before the page streams to the client — preventing FOUC.
+        */}
+        <AppRouterCacheProvider>
+          <CssVarsProvider theme={theme} defaultMode="system">
+            <CssBaseline />
+            {children}
+          </CssVarsProvider>
+        </AppRouterCacheProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+> **`suppressHydrationWarning` on `<html>`** is required when using `defaultMode="system"` or
+> `"dark"` — MUI sets a `data-mui-color-scheme` attribute on `<html>` at runtime, and without
+> the suppression React will warn about a hydration mismatch between server and client renders.
+
+---
+
+### 4. Server vs. Client components
+
+`@alexrebula/giselle-mui` components are **client components** — they use MUI's `sx` prop
+which relies on React context. You don't need to add `'use client'` to your page files;
+Next.js will automatically treat any component that imports from a client-component package
+as a client subtree.
+
+If you want to use a component inside a Server Component, wrap it in a thin client boundary:
+
+```tsx
+// components/MetricCardClient.tsx
+'use client';
+
+export { MetricCard, MetricCardDecoration } from '@alexrebula/giselle-mui';
+```
+
+```tsx
+// app/page.tsx  (Server Component)
+import { MetricCardClient as MetricCard, MetricCardDecoration } from '../components/MetricCardClient';
+
+export default function Page() {
+  return (
+    <MetricCard
+      value="20+"
+      label="Years"
+      icon={<MetricCardDecoration color="primary" />}
+    />
+  );
+}
+```
+
+---
+
+### 5. Dark mode in App Router
+
+```tsx
+// components/DarkModeToggle.tsx
+'use client';
+
+import { useColorScheme } from '@mui/material/styles';
+
+export function DarkModeToggle() {
+  const { mode, setMode } = useColorScheme();
+  return (
+    <button onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}>
+      {mode === 'dark' ? '☀️ Light' : '🌙 Dark'}
+    </button>
+  );
+}
+```
+
+---
+
+## Pages Router (Next.js 12 / legacy)
+
+### 1. Install dependencies
+
+```bash
+npm install @mui/material @emotion/react @emotion/styled @mui/material-nextjs react react-dom
+npm install @alexrebula/giselle-mui
+```
+
+---
+
+### 2. `_document.tsx` — critical for SSR
+
+```tsx
+// pages/_document.tsx
+import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
+import { documentGetInitialProps } from '@mui/material-nextjs/v15-pagesRouter';
+
+export default class MyDocument extends Document {
+  static async getInitialProps(ctx: DocumentContext) {
+    return documentGetInitialProps(ctx);
+  }
+
+  render() {
+    return (
+      <Html lang="en">
+        <Head />
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
+  }
+}
+```
+
+---
+
+### 3. `_app.tsx` — theme provider
+
+```tsx
+// pages/_app.tsx
+import type { AppProps } from 'next/app';
+import { CssVarsProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { theme } from '../theme';
+
+export default function App({ Component, pageProps }: AppProps) {
+  return (
+    <CssVarsProvider theme={theme}>
+      <CssBaseline />
+      <Component {...pageProps} />
+    </CssVarsProvider>
+  );
+}
+```
+
+---
+
+## Roadmap note
+
+The `@alexrebula/giselle-mui` package is in beta. A dedicated Next.js integration example
+(or a starter template) is planned after the initial npm release. Until then, the setup
+above is the recommended approach.
+
+---
+
+## Troubleshooting
+
+**FOUC on page load in App Router**
+→ Make sure `AppRouterCacheProvider` wraps `CssVarsProvider` (not the other way around).
+`AppRouterCacheProvider` needs to be the outermost provider so it can collect all styles.
+
+**Hydration mismatch on `<html>` tag**
+→ Add `suppressHydrationWarning` to `<html>`. MUI sets `data-mui-color-scheme` on the
+element at runtime which doesn't exist in SSR output.
+
+**"useColorScheme must be used inside CssVarsProvider"**
+→ The toggle component must be a client component (`'use client'`) and must be inside the
+`CssVarsProvider` tree in the layout.
+
+**Server components throwing on import**
+→ MUI components use React context internally. Wrap them in a `'use client'` boundary as
+shown in step 4 above. You do not need to add `'use client'` to every file — just the
+boundary closest to the MUI usage.
+
+---
+
+See also: [React / Vite](./theming-react.md)
