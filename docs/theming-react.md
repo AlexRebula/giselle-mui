@@ -17,6 +17,7 @@ npm install @alexrebula/giselle-mui
 
 # Optional: only if you use GiselleIcon
 npm install @iconify/react
+# See docs/iconify-registration.md — icons must be pre-registered or GiselleIcon will flicker
 ```
 
 ---

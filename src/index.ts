@@ -2,6 +2,9 @@
  * @alexrebula/giselle-mui — public API
  */
 
+export { createIconRegistrar } from './utils/create-icon-registrar';
+export type { GiselleIconData, GiselleIconMap } from './utils/create-icon-registrar';
+
 export { GiselleIcon } from './components/giselle-icon';
 export type { GiselleIconProps } from './components/giselle-icon';
 

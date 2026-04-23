@@ -9,12 +9,16 @@
  *
  * ## What is tested
  * - Icon identifier is forwarded to the inner Icon element
- * - width defaults to 20 when omitted
- * - height defaults to width when omitted (square by default)
- * - Custom height overrides the width default
+ * - Inner SVG always fills the wrapper (data-width/data-height are "100%")
  * - className and style are forwarded to the inner Icon
  * - flip and rotate are forwarded to the inner Icon
  * - Wrapper element is a `span` (component="span")
+ *
+ * ## Width / height sizing
+ * `width` and `height` props control the wrapper span's CSS dimensions (via `sx`).
+ * The inner SVG fills the wrapper at 100%, enabling responsive breakpoint values
+ * in `sx` to control the rendered size. Wrapper size via `sx` is not testable
+ * without a MUI theme provider — verified at design-system level.
  *
  * ## What is NOT tested here
  * - sx styles (require MUI theme — verified at design-system level)
@@ -90,39 +94,15 @@ describe('GiselleIcon', () => {
     expect(html).toContain('data-icon="solar:rocket-bold-duotone"');
   });
 
-  it('uses width 20 by default', () => {
+  it('inner SVG fills the wrapper — data-width and data-height are always "100%"', () => {
+    // The wrapper Box span holds the CSS dimensions (via sx).
+    // The inner SVG fills the wrapper at 100% regardless of the width/height props.
     const html = renderToStaticMarkup(
-      React.createElement(GiselleIcon, { icon: 'solar:rocket-bold-duotone' })
+      React.createElement(GiselleIcon, { icon: 'logos:react', width: 36, height: 40 })
     );
 
-    expect(html).toContain('data-width="20"');
-  });
-
-  it('uses the provided width when specified', () => {
-    const html = renderToStaticMarkup(
-      React.createElement(GiselleIcon, { icon: 'logos:react', width: 36 })
-    );
-
-    expect(html).toContain('data-width="36"');
-  });
-
-  it('defaults height to width (square) when height is omitted', () => {
-    const html = renderToStaticMarkup(
-      React.createElement(GiselleIcon, { icon: 'logos:react', width: 36 })
-    );
-
-    // Both width and height on the inner svg should be 36
-    expect(html).toContain('data-width="36"');
-    expect(html).toContain('data-height="36"');
-  });
-
-  it('uses an independent height when explicitly provided', () => {
-    const html = renderToStaticMarkup(
-      React.createElement(GiselleIcon, { icon: 'logos:react', width: 24, height: 40 })
-    );
-
-    expect(html).toContain('data-width="24"');
-    expect(html).toContain('data-height="40"');
+    expect(html).toContain('data-width="100%"');
+    expect(html).toContain('data-height="100%"');
   });
 
   it('forwards className to the inner Icon element', () => {

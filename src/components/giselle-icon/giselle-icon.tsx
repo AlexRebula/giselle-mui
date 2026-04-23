@@ -17,10 +17,12 @@ import Box from '@mui/material/Box';
 //   `display: ResponsiveStyleValue<Display | ...>`. TypeScript rejects the
 //   call with a "no overload matches" error across both Box overloads.
 //
-// The fix: a `Box component="span"` owns the MUI `sx` layer, and the inner
-// `Icon` renders the SVG. The span uses `display: inline-flex; line-height: 0`
-// to remove the default inline baseline gap that otherwise shifts icon
-// alignment inside flex/grid containers.
+// The fix: a `Box component="span"` owns the MUI `sx` layer. The inner
+// `Icon` renders the SVG at 100% of the wrapper's dimensions, so the wrapper's
+// CSS `width`/`height` fully control the rendered size — including responsive
+// breakpoint values (e.g. `sx={{ width: { xs: 20, md: 28 } }}`). The span
+// uses `display: inline-flex; line-height: 0` to remove the default inline
+// baseline gap that otherwise shifts icon alignment inside flex/grid containers.
 //
 // SLOT PATTERN
 //
@@ -48,7 +50,9 @@ export interface GiselleIconProps {
   icon: string;
   /**
    * MUI `sx` prop for theming, spacing, color, and responsive styles.
-   * Applied to the outer `Box component="span"` wrapper.
+   * Applied to the outer `Box component="span"` wrapper. The inner SVG fills
+   * the wrapper at 100%, so responsive `width`/`height` values work correctly:
+   * `sx={{ width: { xs: 20, md: 28 }, height: { xs: 20, md: 28 } }}`.
    */
   sx?: SxProps<Theme>;
   /**
@@ -126,8 +130,8 @@ export function GiselleIcon({
     >
       <Icon
         icon={icon}
-        width={width}
-        height={h}
+        width="100%"
+        height="100%"
         flip={flip}
         rotate={rotate}
         className={className}
