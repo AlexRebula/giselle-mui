@@ -24,6 +24,18 @@
  * - sx styles (require MUI theme — verified at design-system level)
  * - Actual SVG path rendering (icon library internals)
  * - Network fallback behaviour (Iconify CDN)
+ *
+ * ## Negative assertion discipline
+ * Negative assertions here use regex (`not.toMatch(/data-width="\d+"/)`) rather than
+ * specific string literals (`not.toContain('data-width="20"')`).
+ * Reason: the constraint is categorical — "no pure numeric value at all must reach the inner
+ * Icon" — not "this one specific number must not appear". A specific literal would only
+ * catch one wrong value and pass silently if the implementation leaked a different number.
+ * The pattern `/data-width="\d+"/` matches only bare integers (no unit suffix) — it does NOT
+ * match `"100%"` (percent), `"1em"` (em), or `"auto"`. It catches `"20"`, `"36"`, `"0"`, etc.
+ * Use `not.toContain(literal)` only when guarding against one known-bad specific value
+ * (e.g. an old formula that was replaced). Use regex when the constraint is about a
+ * category or type of value.
  */
 
 import React from 'react';
@@ -103,6 +115,9 @@ describe('GiselleIcon', () => {
 
     expect(html).toContain('data-width="100%"');
     expect(html).toContain('data-height="100%"');
+    // No numeric value must reach the inner Icon — the wrapper Box owns dimensions via sx.
+    expect(html).not.toMatch(/data-width="\d+"/);
+    expect(html).not.toMatch(/data-height="\d+"/);
   });
 
   it('forwards className to the inner Icon element', () => {
@@ -144,6 +159,21 @@ describe('GiselleIcon', () => {
     );
 
     expect(html).toMatch(/^<span/);
+  });
+
+  it('inner SVG fills the wrapper when no width prop is passed (sx-only sizing)', () => {
+    // Regression: when GiselleIcon is used with only sx for sizing (no width/height prop),
+    // the inner Icon must still fill the wrapper at 100% — not default to 20px.
+    // This is the floating-nav pattern: <GiselleIcon icon="..." sx={{ width: { xs: 24, lg: 30 } }} />
+    const html = renderToStaticMarkup(
+      React.createElement(GiselleIcon, { icon: 'solar:home-bold-duotone' })
+    );
+
+    expect(html).toContain('data-width="100%"');
+    expect(html).toContain('data-height="100%"');
+    // No numeric value — regardless of the default — must reach the inner Icon.
+    expect(html).not.toMatch(/data-width="\d+"/);
+    expect(html).not.toMatch(/data-height="\d+"/);
   });
 
   it('renders without throwing for any icon string', () => {

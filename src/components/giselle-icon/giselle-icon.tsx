@@ -126,8 +126,8 @@ export function GiselleIcon({
     >
       <Icon
         icon={icon}
-        width={width}
-        height={h}
+        width="100%"
+        height="100%"
         flip={flip}
         rotate={rotate}
         className={className}
