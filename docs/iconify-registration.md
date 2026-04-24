@@ -1,22 +1,53 @@
 # Iconify Offline Registration
 
-`GiselleIcon` renders icons from the `@iconify/react` module-level store.
-That store is **empty by default**. If you don't pre-load it, `@iconify/react`
-falls back to a CDN fetch for every missing icon — causing visible flicker,
-adding a network dependency, and shipping nothing in your JS bundle.
+`GiselleIcon` renders icons from the `@iconify/react` in-memory store.
 
-The solution is **offline registration**: inline SVG body strings are bundled
-directly in your JS and loaded synchronously before any component renders.
-`@alexrebula/giselle-mui` exports `createIconRegistrar` to make this easy.
+**What is the store?** It is a plain JavaScript object that `@iconify/react` holds in memory,
+mapping icon names to their SVG body strings. When `GiselleIcon` renders, it looks up the icon
+in this store. If the icon is there, it renders immediately. If it is **not**, `@iconify/react`
+falls back to fetching the icon from the Iconify CDN.
+
+**What is a CDN fetch?** CDN stands for Content Delivery Network — a global network of
+servers that deliver static files quickly. The Iconify CDN (https://api.iconify.design/)
+hosts SVG data for all 200,000+ icons. A "CDN fetch" means the browser makes a network
+request at runtime (after the page has loaded) to download the icon data.
+
+That store is **empty by default**. If you don't pre-load it, `@iconify/react`
+falls back to a CDN fetch for every missing icon, causing three real problems in
+production:
+
+- **Visible flicker** — the icon slot is blank until the network round-trip completes
+  (typically 100–500 ms). In animated sections (scroll-reveal, page transitions), the
+  animation plays while the icon is still blank.
+- **Network dependency** — if the CDN is down, or the user is offline, icons silently
+  disappear. No error message, no fallback image.
+- **Nothing bundled** — icon data is not in your JS output, so the browser re-downloads
+  it on every visit.
+
+The solution is **offline registration**: you copy the SVG body strings you need directly
+into your consuming/client app's source code. `@alexrebula/giselle-mui` exports
+`createIconRegistrar` to make this easy.
 
 ---
 
 ## How it works
 
 `createIconRegistrar` takes a flat `"prefix:name"` → icon data map, groups the
-entries into per-prefix `IconifyJSON` collections, and returns an idempotent
-`registerIcons()` function. Call that function at module level (not inside a
-React component) so icons are available before the first render.
+entries into per-prefix Iconify collections, and returns an **idempotent**
+`registerIcons()` function.
+
+**What does idempotent mean?** It means the function is safe to call multiple times
+but only does work on the first call. Every subsequent call returns immediately
+without re-registering anything. This means you can import and call `registerIcons()`
+from multiple files without worrying about duplicates or performance penalties.
+
+**Why is this possible?** Because `registerIcons` is a **singleton** — or more
+precisely, it behaves like one through a closure. `createIconRegistrar` captures a
+private `let registered = false` flag inside the function it returns. That flag lives
+for the entire lifetime of the returned `registerIcons` function, private to that
+specific instance. When the function is called a second (or hundredth) time, it checks
+the flag and returns immediately. No module-level global, no external store — the
+single source of truth for "has this already run?" is that one closed-over variable.
 
 ```
 Your icon-sets.ts
@@ -27,6 +58,72 @@ Root layout mounts <IconRegistrar /> as a client component
   → registerIcons() runs synchronously when the JS bundle evaluates
   → @iconify/react store is populated before any GiselleIcon renders
   → No CDN fetch, no flicker
+```
+
+---
+
+## Which icon sets can I use?
+
+`GiselleIcon` works with **any** icon set from the Iconify platform
+(https://icon-sets.iconify.design/) — you are not limited to Solar icons. Some commonly
+used sets:
+
+| Prefix | viewBox | Style | Good for |
+|---|---|---|---|
+| `solar:` | 24×24 | Bold, duotone, outline, linear | General UI icons |
+| `simple-icons:` | 24×24 | Brand icons, monochrome | GitHub, Vercel, Figma logos |
+| `logos:` | varies | Full-colour technology logos | React, TypeScript, Next.js |
+| `mdi:` | 24×24 | Material Design Icons | Large general-purpose set |
+| `ph:` | 24×24 | Phosphor icons | Clean, minimal style |
+| `lucide:` | 24×24 | Lucide icons | Consistent, open-source |
+| `tabler:` | 24×24 | Tabler icons | Stroke-based, clean |
+
+The prefix (`solar`, `logos`, `mdi`, etc.) is the **collection name**. All 200,000+
+icons from the Iconify catalog work — just copy the body string from the icon's
+source `icons.json` and register it (see [How to get icon body strings](#how-to-get-icon-body-strings-for-any-icon) below).
+
+---
+
+## How to get icon body strings for any icon
+
+The `body` field in your icon entry must contain exactly the SVG path content that
+goes _inside_ an `<svg>` tag. Here is how to find it reliably:
+
+**Method 1 — Iconify website (easiest)**
+1. Go to https://icon-sets.iconify.design/
+2. Find your icon — search by name or browse by collection
+3. Click the icon → open the JSON tab → copy the `body` value
+
+**Method 2 — Local package (most reliable)**
+1. Install the icon set: `npm install --save-dev @iconify-json/solar`
+2. Open `node_modules/@iconify-json/solar/icons.json`
+3. Find your icon by name (e.g. `"rocket-bold-duotone"`)
+4. Copy the `body` string and, if present, the `width`/`height` values
+
+**Common mistakes that break icons:**
+
+```ts
+// ❌ WRONG: includes the <svg> wrapper
+body: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="..." /></svg>'
+// The <svg> tag is added by @iconify/react. If you include it yourself, you get a
+// nested <svg> which browsers may render blank or incorrectly.
+
+// ❌ WRONG: fill="black" on a monochrome icon
+body: '<path fill="black" d="..." />'
+// This hardcodes the colour. Use fill="currentColor" so the icon inherits the CSS
+// `color` property, which makes sx={{ color: 'primary.main' }} work.
+
+// ❌ WRONG: fill="#000000" — same issue as above
+body: '<path fill="#000000" d="..." />'
+
+// ✅ CORRECT: Solar icon (24×24 viewBox, currentColor fill)
+body: '<path fill="currentColor" d="M12 2c..." />'
+
+// ✅ CORRECT: Multi-path icon with fixed colours (brand logo)
+body: '<path fill="#3178c6" d="..." /><path fill="#fff" d="..." />'
+
+// ✅ CORRECT: Duotone icon (two paths, second at reduced opacity)
+body: '<path fill="currentColor" d="..." opacity=".5"/><path fill="currentColor" d="..." />'
 ```
 
 ---
@@ -59,10 +156,11 @@ you need to install it explicitly in your app.
 
 ---
 
-### 2. Create your icon-sets file
+### 2. Create your icon-sets file in your consuming/client app
 
 Create one file that holds all your icon body strings and exports a ready-to-call
-`registerIcons` function.
+`registerIcons` function. This file lives in your consuming/client app — not in any
+library — because only your app knows which icons it needs.
 
 Where to get icon body strings:
 - Install the relevant `@iconify-json/*` package (e.g. `@iconify-json/solar`)
@@ -110,7 +208,7 @@ export const registerIcons = createIconRegistrar({
 
 ---
 
-### 3. Create the registrar initializer — and place it correctly
+### 3. Create the registrar initializer — and place it correctly in your consuming/client app
 
 `registerIcons()` must be called at **module level** — not inside a hook, not inside
 a render body. Module-level code runs synchronously when the JS bundle evaluates,
@@ -389,29 +487,69 @@ export function AnimatedFeatureCard({ icon, title }: { icon: string; title: stri
 
 ---
 
-## ViewBox rule
+## ViewBox rule — what is "collection-level" and why logos: icons need explicit dimensions
 
-`@iconify/react` uses the **collection-level** `width`/`height` as a fallback for
-any icon that doesn't carry its own dimensions. `createIconRegistrar` sets this
-default to **24×24**, which is correct for Solar and simple-icons.
+### What is a collection?
 
-The `logos:` collection draws paths on much larger coordinate systems. Examples:
+In Iconify, a **collection** is a named group of icons sharing a common prefix — all
+`solar:*` icons are one collection, all `logos:*` icons are another, all `mdi:*` are
+another. Each collection has an optional `width` and `height` field that serves as a
+_fallback_ for any icon in that collection that does not declare its own dimensions.
+This is the "collection-level" width/height.
+
+`createIconRegistrar` sets this collection-level fallback to **24×24** for all
+collections, which is correct for Solar, simple-icons, mdi, ph, lucide, tabler, and
+most other popular sets — their paths are drawn on a 24×24 coordinate space.
+
+### Why logos: is different
+
+The `logos:` collection contains technology and product logos: React, TypeScript,
+Next.js, Figma, Angular, and hundreds more. Unlike UI icon sets, these logos were
+originally created as brand assets, not as icon set contributions. Their SVG paths
+are drawn on much larger coordinate systems — typically 256×256, sometimes 512×134
+or other non-standard sizes.
+
+**Why use `logos:` at all?** If your consuming/client app displays expertise in
+specific technologies — for example, showing a TypeScript expertise card, a React
+feature block, or a tech-stack strip — it is architecturally consistent to render
+_all_ icons through a single component (`GiselleIcon`) rather than mixing approaches.
+Without `logos:`, you would have `<GiselleIcon>` for some icons and `<img>` or
+`<SvgIcon>` for others, with two different systems for sizing, colour, and responsive
+behaviour. Using `logos:` keeps the entire icon layer uniform.
+
+**What happens if you omit `width`/`height` for a logos: icon?** The 24×24
+collection-level fallback is applied to paths drawn for a 256×256 space. The icon
+renders as if you zoomed into a 24×24 crop of the full 256×256 drawing — you see a
+heavily clipped fragment. No console error, no warning; the icon just looks wrong.
+
+`@iconify/react` uses `width`, `height`, and `body` to reconstruct the full SVG:
+
+```
+<svg viewBox="0 0 {width} {height}">{body}</svg>
+```
+
+For a `logos:typescript-icon` with paths drawn on 256×256, the correct entry is:
+
+```ts
+'logos:typescript-icon': {
+  width: 256,   // ← tells @iconify/react the viewBox is 0 0 256 256
+  height: 256,
+  body: '<path fill="#3178c6" d="..." /><path fill="#fff" d="..." />',
+}
+```
+
+Some example viewBox dimensions from the `logos:` collection:
 
 | Icon | viewBox |
-|------|---------|
+|---|---|
 | `logos:typescript-icon` | 256×256 |
 | `logos:angular-icon` | 250×266 |
 | `logos:material-ui` | 256×222 |
 | `logos:adobe` | 512×134 |
 | `logos:framer` | 256×384 |
 
-For any of these, **you must declare `width` and `height` on the icon entry**,
-or the 24×24 collection default will clip the paths — the icon renders but looks
-zoomed in or cut off. No console error is shown; it's a pure visual artifact.
-
-The `body` content itself determines which viewBox size is needed. To find the
-correct values: open the icon's source JSON in `node_modules/@iconify-json/logos/icons.json`,
-look up your icon by name, and copy the `width` and `height` fields if present.
+To find the correct values for any icon: open `node_modules/@iconify-json/logos/icons.json`,
+find your icon by name, and copy the `width` and `height` fields if present.
 
 ---
 
