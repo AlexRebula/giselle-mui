@@ -7,6 +7,10 @@ TypeScript pitfalls that come with combining Iconify and MUI Box.
 
 ## Why this component exists
 
+Adding MUI `sx` support to `@iconify/react`'s `Icon` has several non-obvious pitfalls.
+Each of the six problems below is either a TypeScript failure, a silent visual bug, or
+a design coupling that naive implementations fall into — and that `GiselleIcon` avoids.
+
 ### Problem 1 — `Box component={Icon}` fails TypeScript
 
 The obvious way to add MUI `sx` to an Iconify icon is:
@@ -37,13 +41,68 @@ Inline elements sit on the text baseline by default. Without `line-height: 0`, a
 icon inside a `Stack direction="row"` has a few pixels of invisible space below it, pushing
 sibling elements up or down. The span wrapper eliminates this completely.
 
-### Problem 3 — no Minimals-internal dependencies
+### Problem 3 — zero non-MIT dependencies
 
-The Minimals MUI kit ships an `Iconify` component that adds similar functionality, but it
-imports proprietary internals (`registerIcons`, `allIconNames`, `iconifyClasses`,
-`mergeClasses`) that are not MIT-licensed. `GiselleIcon` is an independent, clean-room
-reimplementation that depends only on `@iconify/react` (Apache 2.0) and `@mui/material`
-(Apache 2.0). Fully open-source. Safe to publish.
+Some Icon+MUI wrapper implementations pull in app-specific or framework-internal helpers
+(`registerIcons`, `allIconNames`, `iconifyClasses`, `mergeClasses`) that are not
+MIT-licensed and not reusable across projects. `GiselleIcon` depends only on
+`@iconify/react` (Apache 2.0) and `@mui/material` (Apache 2.0). Fully open-source.
+Safe to publish.
+
+### Problem 4 — `styled(Icon)` breaks responsive `sx` sizing
+
+The first instinct when adding MUI styling to `Icon` is `styled(Icon)`. But this puts
+`sx` on the SVG element directly — and SVG attributes are not CSS properties. This means:
+
+```tsx
+// ❌ styled(Icon) approach — sx={{ width }} sets an SVG *attribute*, not a CSS property.
+// Responsive objects are silently ignored by the browser:
+<IconWrapper icon="solar:rocket-bold-duotone" sx={{ width: { xs: 20, md: 28 } }} />
+// → renders at the SVG's default width regardless of breakpoint
+```
+
+`GiselleIcon` puts `sx` on a `Box component="span"` — a plain HTML element where CSS
+custom properties and media queries work correctly. The inner `Icon` renders at
+`width="100%" height="100%"`, so the span's CSS dimensions control everything:
+
+```tsx
+// ✅ GiselleIcon — sx is CSS on a span. Responsive breakpoint objects work:
+<GiselleIcon
+  icon="solar:rocket-bold-duotone"
+  sx={{ width: { xs: 20, sm: 24, md: 28 }, height: { xs: 20, sm: 24, md: 28 } }}
+/>
+```
+
+### Problem 5 — registration side-effect inside render
+
+A common pattern is to call `registerIcons()` inside the component body on every render:
+
+```tsx
+export function IconWrapper({ ... }) {
+  registerIcons(); // ← side-effect in render
+  return <IconRoot ... />;
+}
+```
+
+While `registerIcons()` is idempotent (it no-ops after the first call), calling it inside
+React's render cycle is technically a side-effect in a pure render function. React Strict
+Mode double-invokes render functions to surface this kind of issue. The idiomatic pattern
+is to call registration at module level — once, before any component renders.
+
+`GiselleIcon` has **zero knowledge of registration**. It renders whatever icon name it
+receives. Registration is entirely the consuming app's responsibility, invoked at module
+level in a framework-appropriate location. This is a cleaner separation of concerns.
+
+### Problem 6 — `icon` prop type is coupled to the consuming app's icon set
+
+Typing the `icon` prop as `IconifyName = keyof typeof allIcons` ties it directly to the
+specific icon strings registered in one project's `icon-sets.ts`.
+A component library cannot use this type — the library cannot know which icons each
+consuming app will register.
+
+`GiselleIcon` types `icon` as `string`. The library stays decoupled from any specific
+icon set. Individual consuming apps can re-narrow the type to their own `IconifyName` at
+the usage site if they want strict icon-name checking.
 
 ---
 
