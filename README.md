@@ -17,6 +17,16 @@ Built on `@mui/material` v7 (CSS variables mode). TypeScript-first. MIT licensed
 > First public npm release is planned alongside the portfolio site launch (May/June 2026).
 > Feedback and issues are welcome on [GitHub](https://github.com/AlexRebula/giselle-mui/issues).
 
+Test coverage is functional and growing. The current suite covers component structure,
+prop forwarding, ARIA semantics, and interaction behaviour. Coverage of edge cases and
+visual logic (which requires a full MUI theme provider) is tracked in the component
+READMEs and expanded with each release. Contributions and issue reports are welcome.
+
+**The test suite will receive a full review and overhaul before the first npm publish.**
+This includes edge-case coverage, negative assertion quality, and any gaps identified
+during pre-release review. No package ships to npm until the tests meet the same
+standard as the implementation.
+
 Until the package is on npm, use it from disk — see [Local development](#local-development).
 
 ---
