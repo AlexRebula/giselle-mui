@@ -1,3 +1,8 @@
+---
+sidebar_position: 1
+sidebar_label: 'Next.js'
+---
+
 # Theming in Next.js (App Router + Pages Router)
 
 `@alexrebula/giselle-mui` components use **MUI v7 CSS variables mode** and require a

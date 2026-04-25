@@ -1,3 +1,8 @@
+---
+sidebar_position: 2
+sidebar_label: 'React / Vite'
+---
+
 # Theming in a React app (Vite / CRA)
 
 `@alexrebula/giselle-mui` components use **MUI v7 CSS variables mode**. They resolve
