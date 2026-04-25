@@ -1,3 +1,8 @@
+---
+sidebar_position: 3
+sidebar_label: 'Roadmap'
+---
+
 # Theming Roadmap
 
 > This file tracks the current state of the theming layer in `@alexrebula/giselle-mui`

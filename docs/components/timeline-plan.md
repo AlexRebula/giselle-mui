@@ -1,3 +1,8 @@
+---
+sidebar_position: 2
+sidebar_label: 'RoadmapTimeline Plan'
+---
+
 # Timeline / Roadmap Component — Planning Notes
 
 > **Status:** Planning phase. Not yet implemented.

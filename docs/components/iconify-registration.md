@@ -1,3 +1,8 @@
+---
+sidebar_position: 1
+sidebar_label: 'Iconify Registration'
+---
+
 # Iconify Offline Registration
 
 `GiselleIcon` renders icons from the `@iconify/react` in-memory store.
