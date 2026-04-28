@@ -70,18 +70,19 @@ Full integration guides:
 
 ## Components
 
-| Component | Description |
+| Component | What it solves |
 |---|---|
-| `GiselleIcon` | `@iconify/react` wrapper with full MUI `sx` support. Fixes the `Box component={ThirdParty}` TypeScript pitfall. See [icon registration](#giselleicon-and-icon-registration). |
-| `createIconRegistrar` | Utility to pre-register icons offline — no CDN flicker, works in any framework. |
-| `MetricCard` | Stat card — value + label + icon slot + decoration slot. Zero icon-library dependency. |
-| `MetricCardDecoration` | Companion decoration fill for `MetricCard`. |
-| `SelectableCard` | Accessible clickable card built on `ButtonBase`. Correct `aria-pressed` semantics, keyboard support, and focus ring out of the box. |
-| `QuoteCard` | Testimonial/pull-quote card with CSS-var color tinting and conditional attribution row. |
+| `GiselleIcon` | `@iconify/react` wrapper with full MUI `sx` support — fixes the `Box component={ThirdParty}` TypeScript pitfall and the CDN flicker problem. |
+| `createIconRegistrar` | Bundles icon SVG bodies offline — no CDN, no flicker, any framework. |
+| `MetricCard` + `MetricCardDecoration` | Structured stat card (value / label / icon / decoration slots) with CSS-var colour tinting. Zero icon-library dependency. |
+| `SelectableCard` | Clickable card on `ButtonBase` — correct `aria-pressed`, keyboard focus ring, and hover state without rediscovering the `Paper onClick` pitfall. |
+| `QuoteCard` | Testimonial card with CSS-var tinted border and conditional attribution row. |
 
-Every component exists because it solves a recurring problem that is either easy to get wrong
-or non-trivial to implement correctly with MUI alone. Each component folder includes a
-`README.md` with the full design rationale, accessibility decisions, and library-safety notes.
+**Full API documentation, prop tables, and live examples → Storybook** _(coming — see Roadmap)_
+
+**Design decisions and architecture per component → [Docusaurus docs](https://giselle-docs.vercel.app/giselle-mui)**
+
+Every component exists because it solves a problem that is either easy to get wrong or non-trivial to implement correctly with MUI alone. Each `src/components/<name>/README.md` documents the design rationale, accessibility decisions, and library-safety notes.
 
 ---
 

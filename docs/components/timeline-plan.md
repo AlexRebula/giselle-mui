@@ -10,6 +10,23 @@ sidebar_label: 'RoadmapTimeline Plan'
 
 ---
 
+## Variant architecture intent (Apr 2026)
+
+The reference implementation in the private portfolio (`alexrebula`) has been split into focused sub-components — `PhaseCard`, `MilestoneBadge`, `SpineConnector`, `animations.ts` — all sharing a single `TimelinePhase` type as the data contract. This was done deliberately so that multiple layout variants can reuse the same card/badge primitives without forking the type or duplicating rendering logic.
+
+Planned variants (portfolio → giselle-mui extraction candidates):
+
+| Variant | giselle-mui candidate? | Blocker |
+|---|---|---|
+| `TimelineTwoColumn` (base, vertical alternating) | ✅ Yes | `varAlpha` + `Chip variant="soft"` (Minimals) must be replaced first |
+| `TimelineHorizontal` (click/swipe, horizontal track) | ✅ Yes | Same Minimals blockers; no `framer-motion` needed |
+| `TimelineCompact` (single-column, mobile/sidebar) | ✅ Yes | Cleanest — least Minimals surface |
+| `TimelineAnimated` (Framer Motion + parallax) | ❌ No | `framer-motion` is not an allowed giselle-mui peer dep |
+
+**The `TimelinePhase` type is the stable public API.** Extend additively (optional fields only). All variants accept `phases: TimelinePhase[]`.
+
+---
+
 ## Why this component belongs in giselle-mui
 
 A visually rich, alternating-side timeline is non-trivial to build correctly with
