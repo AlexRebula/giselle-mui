@@ -116,10 +116,11 @@ At the start of every new Copilot session in this package, read these files:
 ### Next planned work (priority order)
 
 1. **QuoteCard two-column layout** — structural JSX fix, no new props. `src/components/quote-card/quote-card.tsx`.
-2. **Storybook stories** — `MetricCard.stories.tsx`, `GiselleIcon.stories.tsx`, `SelectableCard.stories.tsx`, `QuoteCard.stories.tsx`. Use `argTypes: { control: false }` for `ReactNode`/`SxProps` slots.
-3. **Phase A theme utilities** — `varAlpha`, `createPaletteChannel`, `pxToRem` / `remToPx` in `src/utils/`. See `docs/theming-roadmap.md` Phase A table.
-4. **RoadmapTimeline component** — requires Phase A first. Full plan in `docs/timeline-component-plan.md`. Uses `@mui/lab` Timeline primitives (acceptable peer dep).
-5. **Phase C ThemeProvider** — `GiselleThemeProvider` wrapping `CssVarsProvider`. See `docs/theming-roadmap.md` Phase C.
+2. **Storybook story polish** — initial stories for all 4 components are shipped. Remaining: MetricCard notes panel, responsive `sx` demo in GiselleIcon, QuoteCard update after two-column layout refactor.
+3. **Vercel Storybook deploy** — wire `npm run build-storybook` as the Vercel build command so every merge to `main` publishes a live Storybook URL. See `alexrebula/docs/todo/global.md`.
+4. **Phase A theme utilities** — `varAlpha`, `createPaletteChannel`, `pxToRem` / `remToPx` in `src/utils/`. See `docs/theming-roadmap.md` Phase A table.
+5. **RoadmapTimeline component** — requires Phase A first. Full plan in `docs/timeline-component-plan.md`. Uses `@mui/lab` Timeline primitives (acceptable peer dep).
+6. **Phase C ThemeProvider** — `GiselleThemeProvider` wrapping `CssVarsProvider`. See `docs/theming-roadmap.md` Phase C.
 
 ### Additional allowed peer dependencies
 
@@ -138,11 +139,18 @@ npm run check:verify  # verify only (same as CI / pre-push hook)
 
 Checks (in order): Prettier → ESLint → `tsc --noEmit` → Vitest → tsup build → Storybook build
 
-- **Storybook build** runs automatically in CI (`CI=true`) and locally when `--storybook` is passed.
-  It is also part of the pre-push hook, so broken stories are caught before merge.
+- **Storybook build** runs in CI (`CI=true`) and is also part of the pre-push hook (`--storybook` flag).
+  Broken stories are caught before any code reaches `main`.
 - **tsup build** verifies the published package compiles and tree-shakes cleanly — not just types.
 - Pre-push hook wired via `.githooks/pre-push` + `scripts/setup-hooks.js` (runs on `postinstall`).
 - GitHub Actions CI defined in `.github/workflows/ci.yml`.
+
+### Storybook infrastructure
+
+- Config: `.storybook/main.ts` (react-vite builder) + `.storybook/preview.tsx` (wraps stories in `CssVarsProvider`)
+- Stories live co-located with their component: `src/components/<name>/<name>.stories.tsx`
+- Every story file must pass `tsc --noEmit`, ESLint, and Prettier — they are in `src/` and covered by all checks
+- Named component helpers (e.g. `function ToggleDemo()`) must be used whenever a story render function uses React hooks — anonymous arrow functions inside `render:` violate the `react-hooks/rules-of-hooks` ESLint rule
 
 ---
 
