@@ -20,3 +20,12 @@ export type { SelectableCardProps } from './components/selectable-card';
 
 export { QuoteCard } from './components/quote-card';
 export type { QuoteCardProps } from './components/quote-card';
+
+export { PhaseCard, TimelineDot, TimelineTwoColumn } from './components/timeline-two-column';
+export type {
+  PhaseCardProps,
+  TimelineDotComponentProps,
+  TimelineTwoColumnProps,
+  TimelinePhase,
+  HighlightedPaletteKey,
+} from './components/timeline-two-column';
