@@ -13,6 +13,9 @@
  *   - Badge dot click toggles details open/closed when hasDetails=true
  *   - Badge dot click is a no-op when hasDetails=false
  *   - All detail items render when expanded
+ *   - Enter key toggles details open/closed when hasDetails=true
+ *   - Space key toggles details open/closed when hasDetails=true
+ *   - Keyboard activation is a no-op when hasDetails=false
  *
  * ## Regressions guarded
  *
@@ -60,6 +63,14 @@ function MilestoneBadgeHarness({ milestone: m }: { milestone: HarnessMilestone }
       'data-testid': 'ms-badge',
       'data-has-details': String(hasDetails),
       onClick: hasDetails ? () => setOpen((o) => !o) : undefined,
+      onKeyDown: hasDetails
+        ? (e: React.KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setOpen((o) => !o);
+            }
+          }
+        : undefined,
     }),
     // Card — always visible
     React.createElement(
@@ -118,6 +129,12 @@ function getBadge(c: HTMLElement): HTMLElement {
 function clickBadge(c: HTMLElement): void {
   act(() => {
     getBadge(c).click();
+  });
+}
+
+function keydownBadge(c: HTMLElement, key: string): void {
+  act(() => {
+    getBadge(c).dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
   });
 }
 
@@ -300,6 +317,64 @@ describe('[regression] hasDetails is independent of display mode', () => {
       display: 'hover',
     });
     clickBadge(c);
+    expect(c.querySelector('[data-testid="ms-details"]')).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Keyboard activation — Enter and Space behave identically to click
+// ---------------------------------------------------------------------------
+
+describe('keyboard activation (Enter / Space)', () => {
+  it('Enter key expands details when hasDetails is true', () => {
+    const c = render({ title: 'T', date: 'D', details: ['Item A'] });
+    keydownBadge(c, 'Enter');
+    expect(c.querySelector('[data-testid="ms-details"]')).not.toBeNull();
+  });
+
+  it('Space key expands details when hasDetails is true', () => {
+    const c = render({ title: 'T', date: 'D', details: ['Item A'] });
+    keydownBadge(c, ' ');
+    expect(c.querySelector('[data-testid="ms-details"]')).not.toBeNull();
+  });
+
+  it('second Enter collapses an already-expanded details section', () => {
+    const c = render({ title: 'T', date: 'D', details: ['Item A'] });
+    keydownBadge(c, 'Enter');
+    keydownBadge(c, 'Enter');
+    expect(c.querySelector('[data-testid="ms-details"]')).toBeNull();
+  });
+
+  it('second Space collapses an already-expanded details section', () => {
+    const c = render({ title: 'T', date: 'D', details: ['Item A'] });
+    keydownBadge(c, ' ');
+    keydownBadge(c, ' ');
+    expect(c.querySelector('[data-testid="ms-details"]')).toBeNull();
+  });
+
+  it('Enter is a no-op when hasDetails is false', () => {
+    const c = render({ title: 'T', date: 'D' });
+    keydownBadge(c, 'Enter');
+    expect(c.querySelector('[data-testid="ms-details"]')).toBeNull();
+  });
+
+  it('Space is a no-op when hasDetails is false', () => {
+    const c = render({ title: 'T', date: 'D' });
+    keydownBadge(c, ' ');
+    expect(c.querySelector('[data-testid="ms-details"]')).toBeNull();
+  });
+
+  it('unrelated key (ArrowDown) is a no-op even when hasDetails is true', () => {
+    const c = render({ title: 'T', date: 'D', details: ['Item A'] });
+    keydownBadge(c, 'ArrowDown');
+    expect(c.querySelector('[data-testid="ms-details"]')).toBeNull();
+  });
+
+  it('click then Enter toggles correctly (click opens, Enter closes)', () => {
+    const c = render({ title: 'T', date: 'D', details: ['Item A'] });
+    clickBadge(c);
+    expect(c.querySelector('[data-testid="ms-details"]')).not.toBeNull();
+    keydownBadge(c, 'Enter');
     expect(c.querySelector('[data-testid="ms-details"]')).toBeNull();
   });
 });
