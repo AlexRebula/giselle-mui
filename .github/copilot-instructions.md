@@ -127,6 +127,25 @@ At the start of every new Copilot session in this package, read these files:
 
 ---
 
+## Quality gate
+
+All six checks must pass before every push:
+
+```sh
+npm run check         # auto-fix Prettier + ESLint, then verify all
+npm run check:verify  # verify only (same as CI / pre-push hook)
+```
+
+Checks (in order): Prettier → ESLint → `tsc --noEmit` → Vitest → tsup build → Storybook build
+
+- **Storybook build** runs automatically in CI (`CI=true`) and locally when `--storybook` is passed.
+  It is also part of the pre-push hook, so broken stories are caught before merge.
+- **tsup build** verifies the published package compiles and tree-shakes cleanly — not just types.
+- Pre-push hook wired via `.githooks/pre-push` + `scripts/setup-hooks.js` (runs on `postinstall`).
+- GitHub Actions CI defined in `.github/workflows/ci.yml`.
+
+---
+
 ## Code quality standards (enforce proactively — do not wait to be asked)
 
 ### Cognitive complexity
