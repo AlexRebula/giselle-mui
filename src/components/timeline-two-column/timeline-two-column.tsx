@@ -233,7 +233,7 @@ function resolveMilestoneState(
   localMilestoneDone: Record<string, boolean>
 ): { msDone: boolean; msColor: HighlightedPaletteKey } {
   const msDoneKey = `${phaseKey}-${mi}`;
-  const msDone = checklist ? (localMilestoneDone[msDoneKey] ?? false) : false;
+  const msDone = checklist ? (localMilestoneDone[msDoneKey] ?? false) : (ms.done ?? false);
   const msIsOverdue = checklist && (ms.overdue ?? false) && !msDone;
   const msColorFromData =
     ms.color && ms.color !== 'inherit' && ms.color !== 'grey'
@@ -294,10 +294,9 @@ function buildMilestoneRow(
   const topPercent = ((mi + 1) / (totalMilestones + 1)) * 100;
   const stopProp = isThisMsExpanded ? (e: React.MouseEvent) => e.stopPropagation() : undefined;
   const suppressElevation = ctx.anyExpanded && !isThisMsExpanded;
-  const msDoneForBadge = ctx.checklist ? msDone : undefined;
+  const msDoneForBadge = msDone;
   const dotChecklistProps = ctx.checklist
     ? {
-        done: msDone,
         role: 'checkbox' as const,
         'aria-checked': msDone,
         'aria-label': msDotAriaLabel,
@@ -387,6 +386,7 @@ function buildMilestoneRow(
             icon={ms.icon}
             color={msColor}
             size="milestone"
+            done={msDone}
             onClick={msDotClickAction}
             onKeyDown={msDotKeyDown}
             {...dotChecklistProps}

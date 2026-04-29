@@ -24,8 +24,9 @@ export type TimelineDotComponentProps = Omit<BoxProps, 'color' | 'onClick'> & {
   /** Shows pulsing ring halo and enlarges to 40px (phase size only). */
   active?: boolean;
   /**
-   * Done state — replaces icon with animated checkmark.
-   * In checklist mode only; in read-only mode leave `undefined`.
+   * Done state — replaces icon with animated checkmark and dims milestone badges.
+   * In checklist mode this is driven by the toggle state; in read-only mode it
+   * reflects `phase.milestones[].done` from the data model.
    */
   done?: boolean;
   /**
