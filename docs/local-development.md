@@ -462,3 +462,82 @@ is the concise, accurate answer:
 - [Theming guide](./theming/README.md) — wiring MUI v7 CSS variables mode in consumers
 - `alexrebula/docs/local-package-linking.md` — full history of the linking approach, all
   failed attempts, Vercel deployment setup, and troubleshooting section
+
+---
+
+## Storybook Vercel deployment
+
+Storybook is deployed to Vercel automatically **only when a PR is merged into `main`**.
+The deploy is gated on the full quality gate passing — if any check fails, the deploy is
+blocked and the previous version stays live.
+
+### How it works
+
+Two GitHub Actions workflows are in `.github/workflows/`:
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `ci.yml` | Every push, every PR | Runs the full quality gate |
+| `deploy-storybook.yml` | Push to `main` only | Quality gate → build → deploy to Vercel |
+
+The deploy workflow runs quality gate again internally (two jobs, `quality-gate` → `deploy`
+via `needs:`). This means:
+- If CI passed on the PR, it passes again here (same code, same checks)
+- If someone pushes directly to `main` bypassing a PR, the quality gate still runs and
+  blocks the deploy if anything fails
+
+### One-time setup (do this once per Vercel project)
+
+**Step 1 — Create the Vercel project**
+
+```bash
+# Install Vercel CLI globally if you don't have it
+npm install -g vercel
+
+# In giselle-mui root — link the project to Vercel (follow prompts)
+vercel link
+```
+
+This creates `.vercel/project.json` containing your `orgId` and `projectId`.
+**Do not commit `.vercel/project.json`** — it is in `.gitignore`.
+
+**Step 2 — Add GitHub repository secrets**
+
+Go to the GitHub repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.
+
+Add these three secrets:
+
+| Secret name | Where to find the value |
+|---|---|
+| `VERCEL_TOKEN` | [vercel.com/account/tokens](https://vercel.com/account/tokens) → Create Token |
+| `VERCEL_ORG_ID` | `.vercel/project.json` → `"orgId"` field |
+| `VERCEL_PROJECT_ID` | `.vercel/project.json` → `"projectId"` field |
+
+**Step 3 — Set up branch protection on `main` (recommended)**
+
+Go to GitHub repo → **Settings** → **Branches** → **Add branch ruleset** → target `main`:
+
+- ✅ Require a pull request before merging
+- ✅ Require status checks to pass → add `quality-gate` (from `ci.yml`)
+- ✅ Require branches to be up to date before merging
+
+This ensures nothing reaches `main` without CI passing — the deploy workflow then provides
+a second verification layer as defence in depth.
+
+**Step 4 — Confirm Vercel auto-deploys are disabled**
+
+`vercel.json` already has `"github": { "enabled": false }` — this prevents Vercel from
+also watching the repo and triggering its own deploys. Only the GitHub Actions workflow
+deploys to Vercel. Check Vercel project settings → Git to confirm no branch is connected.
+
+### Deploying manually (emergency use only)
+
+If you need to deploy a specific commit without merging to `main`:
+
+```bash
+npm run build-storybook
+vercel deploy --prebuilt --prod
+```
+
+This should not be the normal path. Use PRs.
+
