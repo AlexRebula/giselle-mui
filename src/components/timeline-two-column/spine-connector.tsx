@@ -11,7 +11,7 @@ type SpineConnectorProps = BoxProps & {
   dotColor: HighlightedPaletteKey;
   /** When set, renders a year-boundary label chip at the bottom of the connector. */
   yearMilestone?: string | null;
-  /** Bottom offset (px) of the year label chip from the end of the connector line. @default 5 */
+  /** Bottom offset (px) of the year label chip from the end of the connector line. @default 30 */
   yearLabelMarginBottom?: number;
 };
 

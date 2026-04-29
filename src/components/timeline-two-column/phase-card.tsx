@@ -116,8 +116,8 @@ function OverdueBadge() {
           fontWeight: 700,
           letterSpacing: 0.8,
           lineHeight: 1.6,
-          color: 'error.dark',
-          bgcolor: 'error.lighter',
+          color: `rgba(var(--mui-palette-error-darkChannel) / 1)`,
+          bgcolor: `rgba(var(--mui-palette-error-mainChannel) / 0.12)`,
         }}
       >
         Overdue

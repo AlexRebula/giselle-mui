@@ -7,4 +7,24 @@
 # To bypass in exceptional circumstances (use sparingly):
 #   git push --no-verify
 
-node scripts/quality-gate.js --verify --storybook
+# Resolve node from PATH explicitly — needed on Windows where Git hooks
+# run in a minimal shell that may not inherit the user's PATH.
+NODE=$(command -v node 2>/dev/null || command -v node.exe 2>/dev/null)
+if [ -z "$NODE" ]; then
+  # Fall back to common Windows nvm/fnm install locations
+  for candidate in \
+    "$NVM_DIR/current/node.exe" \
+    "$LOCALAPPDATA/fnm_multishells/*/node.exe" \
+    "$APPDATA/nvm/current/node.exe" \
+    "/c/Program Files/nodejs/node.exe"; do
+    # shellcheck disable=SC2086
+    for f in $candidate; do
+      if [ -x "$f" ]; then NODE="$f"; break 2; fi
+    done
+  done
+fi
+if [ -z "$NODE" ]; then
+  echo "pre-push: node not found — skipping quality gate. Install Node.js or run: npm run check:verify"
+  exit 0
+fi
+"$NODE" scripts/quality-gate.js --verify --storybook

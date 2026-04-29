@@ -1,19 +1,19 @@
 import type { Preview } from '@storybook/react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { CssVarsProvider, extendTheme } from '@mui/material/styles';
 
-const theme = createTheme({
-  cssVariables: true,
+const theme = extendTheme({
   colorSchemes: { light: true, dark: true },
 });
 
-// Wraps every story in MUI ThemeProvider so that theme.vars.palette.* CSS
-// variables are defined — required by all giselle-mui components.
+// Wraps every story in MUI CssVarsProvider so that --mui-palette-* CSS custom
+// properties are injected into the DOM — required by giselle-mui components that
+// reference theme.vars.palette.* or var(--mui-palette-...) directly.
 const preview: Preview = {
   decorators: [
     (Story) => (
-      <ThemeProvider theme={theme}>
+      <CssVarsProvider theme={theme}>
         <Story />
-      </ThemeProvider>
+      </CssVarsProvider>
     ),
   ],
   parameters: {
