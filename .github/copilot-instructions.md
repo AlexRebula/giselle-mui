@@ -42,6 +42,11 @@ in this library exists because it solves a recurring problem that is either:
    MUI interfaces. TypeScript inheritance carries MUI's own descriptions into
    Storybook autodoc automatically.
 
+4a. **JSDoc must use Markdown formatting.** Storybook autodoc renders JSDoc descriptions
+    as Markdown. Use `**bold**`, `- ` bullet lists, and fenced code blocks (` ```tsx `).
+    Never use bare indented code lines — they do not render as code blocks in Markdown.
+    `@example` tags are rendered separately as code snippets and remain plain JSX/TSX.
+
 5. **ReactNode slots for icons and decoration.** Components never import an icon
    library internally. Accept `icon?: ReactNode` and let the consumer fill it.
 

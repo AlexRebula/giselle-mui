@@ -32,19 +32,25 @@ export interface QuoteCardProps extends PaperProps {
 /**
  * A warm, readable block-quote card built on MUI Paper.
  *
- * Extends PaperProps — callers can pass `elevation` for shadow depth and
+ * Extends `PaperProps` — callers can pass `elevation` for shadow depth and
  * `variant="outlined"` to switch to a border-only surface.
  * Colors are driven by MUI CSS variables so it adapts to light/dark mode and
  * any custom theme without additional configuration.
  *
- * Theming via sx:
- *   <QuoteCard sx={{ borderRadius: 4, p: 4 }} ... />
+ * **Theming via sx:**
+ * ```tsx
+ * <QuoteCard sx={{ borderRadius: 4, p: 4 }} ... />
+ * ```
  *
- * Theming via elevation:
- *   <QuoteCard elevation={4} ... />
+ * **Theming via elevation:**
+ * ```tsx
+ * <QuoteCard elevation={4} ... />
+ * ```
  *
- * Theming via color:
- *   <QuoteCard color="info" ... />
+ * **Theming via color:**
+ * ```tsx
+ * <QuoteCard color="info" ... />
+ * ```
  *
  * @example
  * <QuoteCard
