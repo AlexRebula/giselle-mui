@@ -129,17 +129,17 @@ describe('QuoteCard — author', () => {
     const html = renderToStaticMarkup(
       React.createElement(QuoteCard, {
         quote: 'Great work.',
-        author: 'Alex Rebula',
+        author: 'Jane Smith',
       })
     );
 
-    expect(html).toContain('Alex Rebula');
+    expect(html).toContain('Jane Smith');
   });
 
   it('does NOT render author text when omitted', () => {
     const html = renderToStaticMarkup(React.createElement(QuoteCard, { quote: 'Great work.' }));
 
-    expect(html).not.toContain('Alex Rebula');
+    expect(html).not.toContain('Jane Smith');
   });
 });
 
@@ -152,17 +152,17 @@ describe('QuoteCard — source', () => {
     const html = renderToStaticMarkup(
       React.createElement(QuoteCard, {
         quote: 'Great work.',
-        source: 'NBN Project',
+        source: 'Platform Team',
       })
     );
 
-    expect(html).toContain('NBN Project');
+    expect(html).toContain('Platform Team');
   });
 
   it('does NOT render source text when omitted', () => {
     const html = renderToStaticMarkup(React.createElement(QuoteCard, { quote: 'Great work.' }));
 
-    expect(html).not.toContain('NBN Project');
+    expect(html).not.toContain('Platform Team');
   });
 });
 
@@ -181,7 +181,7 @@ describe('QuoteCard — attribution row', () => {
 
   it('renders the attribution Stack when source is provided', () => {
     const html = renderToStaticMarkup(
-      React.createElement(QuoteCard, { quote: 'Great work.', source: 'NBN Project' })
+      React.createElement(QuoteCard, { quote: 'Great work.', source: 'Platform Team' })
     );
 
     expect(html).toContain('data-testid="stack"');
@@ -197,8 +197,8 @@ describe('QuoteCard — attribution row', () => {
     const html = renderToStaticMarkup(
       React.createElement(QuoteCard, {
         quote: 'Great work.',
-        author: 'Alex Rebula',
-        source: 'NBN Project',
+        author: 'Jane Smith',
+        source: 'Platform Team',
       })
     );
 
@@ -210,7 +210,7 @@ describe('QuoteCard — attribution row', () => {
     const html = renderToStaticMarkup(
       React.createElement(QuoteCard, {
         quote: 'Great work.',
-        author: 'Alex Rebula',
+        author: 'Jane Smith',
       })
     );
 
@@ -221,7 +221,7 @@ describe('QuoteCard — attribution row', () => {
     const html = renderToStaticMarkup(
       React.createElement(QuoteCard, {
         quote: 'Great work.',
-        source: 'NBN Project',
+        source: 'Platform Team',
       })
     );
 

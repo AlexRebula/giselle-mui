@@ -28,8 +28,8 @@ type Story = StoryObj<typeof QuoteCard>;
 export const Default: Story = {
   args: {
     quote: SAMPLE_QUOTE,
-    author: 'Dominic Pollaers',
-    source: 'NBN Project',
+    author: 'Jane Smith',
+    source: 'Platform Team',
     color: 'primary',
     sx: { maxWidth: 440 },
   },
@@ -46,8 +46,8 @@ export const AllColors: Story = {
         <QuoteCard
           key={color}
           quote={SAMPLE_QUOTE}
-          author="Dominic Pollaers"
-          source="NBN Project"
+          author="Jane Smith"
+          source="Platform Team"
           color={color}
         />
       ))}
@@ -71,7 +71,7 @@ export const NoAttribution: Story = {
 export const AuthorOnly: Story = {
   args: {
     quote: SAMPLE_QUOTE,
-    author: 'Dominic Pollaers',
+    author: 'Jane Smith',
     color: 'success',
     sx: { maxWidth: 440 },
   },

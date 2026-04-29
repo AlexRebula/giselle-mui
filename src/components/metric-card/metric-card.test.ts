@@ -130,11 +130,11 @@ describe('MetricCard — content', () => {
       React.createElement(MetricCard, {
         value: '20+',
         label: 'Years',
-        sublabel: 'front-end, since 2005',
+        sublabel: 'of experience',
       })
     );
 
-    expect(html).toContain('front-end, since 2005');
+    expect(html).toContain('of experience');
   });
 
   it('does NOT render sublabel when omitted', () => {

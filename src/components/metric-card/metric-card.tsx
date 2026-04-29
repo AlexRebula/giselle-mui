@@ -55,7 +55,7 @@ export interface MetricCardProps extends PaperProps {
  * <MetricCard
  *   value="20+"
  *   label="Years"
- *   sublabel="front-end, since 2005"
+ *   sublabel="of experience"
  *   color="primary"
  *   icon={<GiselleIcon icon="solar:clock-circle-bold-duotone" width={36} />}
  *   decoration={<MetricCardDecoration color="primary" />}

@@ -12,12 +12,12 @@ export interface QuoteCardProps extends PaperProps {
   /** The full text of the quote. Rendered in italics inside the card body. */
   quote: string;
   /**
-   * Attribution name displayed below the quote, e.g. `"Dominic Pollaers"`.
+   * Attribution name displayed below the quote, e.g. `"Jane Smith"`.
    * Omit to hide the attribution row entirely.
    */
   author?: string;
   /**
-   * Source or context label displayed next to the author, e.g. `"NBN Project"`.
+   * Source or context label displayed next to the author, e.g. `"Platform Team"`.
    * A separator dot is only rendered when both `author` and `source` are present.
    */
   source?: string;
@@ -49,8 +49,8 @@ export interface QuoteCardProps extends PaperProps {
  * @example
  * <QuoteCard
  *   quote="Leave every file a little better than you found it."
- *   author="Alex Rebula"
- *   source="NBN Project"
+ *   author="Jane Smith"
+ *   source="Platform Team"
  *   elevation={0}
  * />
  */

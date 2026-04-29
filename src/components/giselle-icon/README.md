@@ -143,11 +143,7 @@ import { MetricCard, MetricCardDecoration, GiselleIcon } from '@alexrebula/gisel
 <MetricCard
   value="20+"
   label="Years"
-  sublabel="front-end, since 2005"
-  color="primary"
-  icon={<GiselleIcon icon="solar:clock-circle-bold-duotone" width={36} />}
-  decoration={<MetricCardDecoration color="primary" />}
-/>
+  sublabel="of experience"
 ```
 
 ---
@@ -508,7 +504,7 @@ export default function StatsSection() {
     <MetricCard
       value="20+"
       label="Years experience"
-      sublabel="front-end, since 2005"
+      sublabel="of experience"
       color="primary"
       icon={<GiselleIcon icon="solar:clock-circle-bold-duotone" width={36} />}
       decoration={<MetricCardDecoration color="primary" />}

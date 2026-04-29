@@ -31,7 +31,7 @@ export const Default: Story = {
   args: {
     value: '20+',
     label: 'Years',
-    sublabel: 'front-end, since 2005',
+    sublabel: 'of experience',
     color: 'primary',
     icon: <GiselleIcon icon="solar:clock-circle-bold-duotone" width={36} />,
     decoration: <MetricCardDecoration color="primary" />,
@@ -53,7 +53,7 @@ export const AllColors: Story = {
           key={color}
           value="20+"
           label="Years"
-          sublabel="front-end, since 2005"
+          sublabel="of experience"
           color={color}
           icon={<GiselleIcon icon="solar:clock-circle-bold-duotone" width={36} />}
           decoration={<MetricCardDecoration color={color} />}

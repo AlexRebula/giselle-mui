@@ -22,6 +22,12 @@ in this library exists because it solves a recurring problem that is either:
 
 ## Component rules (non-negotiable)
 
+0. **Zero personal data.** Stories, tests, JSDoc examples, and README code snippets must
+   never contain real names (people, clients, employers), real project names, or any content
+   derived from the `alexrebula` portfolio. Use generic placeholders:
+   authors → `'Jane Smith'`, sources/projects → `'Platform Team'`, metrics → `'20+'` / `'of experience'`.
+   Violating this rule exposes private career data in a public MIT-licensed repository.
+
 1. **Zero proprietary dependencies.** Only `react`, `react-dom`, `@mui/material`,
    `@emotion/react`, `@emotion/styled`, and `@iconify/react` are allowed as
    peer/direct dependencies.
