@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# .githooks/pre-push
+#
+# Runs the quality gate in verify mode before every push.
+# If any check fails the push is blocked — fix the issues and push again.
+#
+# To bypass in exceptional circumstances (use sparingly):
+#   git push --no-verify
+
+node scripts/quality-gate.js --verify

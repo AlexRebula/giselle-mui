@@ -64,25 +64,19 @@ import { SelectableCard } from './selectable-card';
 
 describe('SelectableCard — structure', () => {
   it('renders a button element', () => {
-    const html = renderToStaticMarkup(
-      React.createElement(SelectableCard, { selected: false })
-    );
+    const html = renderToStaticMarkup(React.createElement(SelectableCard, { selected: false }));
 
     expect(html).toMatch(/^<button/);
   });
 
   it('has aria-pressed="false" when selected is false', () => {
-    const html = renderToStaticMarkup(
-      React.createElement(SelectableCard, { selected: false })
-    );
+    const html = renderToStaticMarkup(React.createElement(SelectableCard, { selected: false }));
 
     expect(html).toContain('aria-pressed="false"');
   });
 
   it('has aria-pressed="true" when selected is true', () => {
-    const html = renderToStaticMarkup(
-      React.createElement(SelectableCard, { selected: true })
-    );
+    const html = renderToStaticMarkup(React.createElement(SelectableCard, { selected: true }));
 
     expect(html).toContain('aria-pressed="true"');
   });
