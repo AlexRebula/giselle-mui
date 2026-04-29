@@ -83,3 +83,60 @@ export const Disabled: Story = {
     </Box>
   ),
 };
+
+// ----------------------------------------------------------------------
+
+const OPTION_LABELS = ['Starter', 'Pro', 'Enterprise', 'Team', 'Custom', 'Business'] as const;
+
+const BREAKPOINTS_GRID = [
+  { label: 'xs — 360px', width: 360, cols: 1 },
+  { label: 'sm — 600px', width: 600, cols: 2 },
+  { label: 'md — 900px', width: 900, cols: 3 },
+  { label: 'lg — 1200px', width: 1200, cols: 4 },
+];
+
+function ResponsiveDemo() {
+  const [active, setActive] = useState<string>('Pro');
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      {BREAKPOINTS_GRID.map(({ label, width, cols }) => (
+        <Box key={width}>
+          <Typography variant="caption" sx={{ display: 'block', mb: 1, color: 'text.secondary' }}>
+            {label}
+          </Typography>
+          <Box
+            sx={{
+              width,
+              display: 'grid',
+              gridTemplateColumns: `repeat(${cols}, 1fr)`,
+              gap: 2,
+              border: '1px dashed',
+              borderColor: 'divider',
+              p: 1,
+            }}
+          >
+            {OPTION_LABELS.map((opt) => (
+              <SelectableCard
+                key={opt}
+                selected={active === opt}
+                onClick={() => setActive(opt)}
+                sx={{ p: 2.5 }}
+              >
+                <Typography fontWeight={600}>{opt}</Typography>
+              </SelectableCard>
+            ))}
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
+/**
+ * Option cards in a responsive grid — column count grows with available width
+ * at each MUI standard breakpoint. Click any card to select it.
+ */
+export const Responsive: Story = {
+  parameters: { layout: 'padded' },
+  render: () => <ResponsiveDemo />,
+};

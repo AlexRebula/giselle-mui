@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import { QuoteCard } from './quote-card';
 
@@ -78,4 +79,32 @@ export const AuthorOnly: Story = {
   argTypes: {
     sx: { control: false },
   },
+};
+
+// ----------------------------------------------------------------------
+
+const BREAKPOINTS = [
+  { label: 'xs — 360px', width: 360 },
+  { label: 'sm — 600px', width: 600 },
+  { label: 'md — 900px', width: 900 },
+  { label: 'lg — 1200px', width: 1200 },
+];
+
+/** Card rendered at each MUI standard breakpoint container width (xs → lg). */
+export const Responsive: Story = {
+  parameters: { layout: 'padded' },
+  render: () => (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      {BREAKPOINTS.map(({ label, width }) => (
+        <Box key={width}>
+          <Typography variant="caption" sx={{ display: 'block', mb: 1, color: 'text.secondary' }}>
+            {label}
+          </Typography>
+          <Box sx={{ width, border: '1px dashed', borderColor: 'divider', p: 1 }}>
+            <QuoteCard quote={SAMPLE_QUOTE} author="Jane Smith" source="Platform Team" />
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  ),
 };

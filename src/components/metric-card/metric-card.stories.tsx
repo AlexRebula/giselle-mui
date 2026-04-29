@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import { GiselleIcon } from '../giselle-icon/giselle-icon';
 import { MetricCard, MetricCardDecoration } from './metric-card';
@@ -76,6 +77,57 @@ export const NoIconNoDecoration: Story = {
     decoration: { control: false },
     sx: { control: false },
   },
+};
+
+// ----------------------------------------------------------------------
+
+const BREAKPOINTS_GRID = [
+  { label: 'xs — 360px', width: 360, cols: 1 },
+  { label: 'sm — 600px', width: 600, cols: 2 },
+  { label: 'md — 900px', width: 900, cols: 3 },
+  { label: 'lg — 1200px', width: 1200, cols: 4 },
+];
+
+/**
+ * Six metric cards in a responsive grid — column count grows with available width
+ * at each MUI standard breakpoint.
+ */
+export const Responsive: Story = {
+  parameters: { layout: 'padded' },
+  render: () => (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      {BREAKPOINTS_GRID.map(({ label, width, cols }) => (
+        <Box key={width}>
+          <Typography variant="caption" sx={{ display: 'block', mb: 1, color: 'text.secondary' }}>
+            {label}
+          </Typography>
+          <Box
+            sx={{
+              width,
+              display: 'grid',
+              gridTemplateColumns: `repeat(${cols}, 1fr)`,
+              gap: 2,
+              border: '1px dashed',
+              borderColor: 'divider',
+              p: 1,
+            }}
+          >
+            {ALL_COLORS.map((color) => (
+              <MetricCard
+                key={color}
+                value="20+"
+                label="Years"
+                sublabel="of experience"
+                color={color}
+                icon={<GiselleIcon icon="solar:clock-circle-bold-duotone" width={36} />}
+                decoration={<MetricCardDecoration color={color} />}
+              />
+            ))}
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  ),
 };
 
 /** MetricCardDecoration rendered standalone — all six color variants. */
