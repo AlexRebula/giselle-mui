@@ -11,6 +11,7 @@ Every component in this library exists because it solves a recurring problem tha
 
 ## What is in this documentation?
 
+- **[Local development](./local-development.md)** — Day-to-day workflow, the junction + transpilePackages setup, HMR behaviour, the ESM static analysis trap, alternative workflows, and interview summary.
 - **[Theming](./theming/)** — How to wire MUI v7 CSS variables mode in Next.js and React/Vite apps, plus the theming roadmap.
 - **[Components](./components/)** — Per-component guides and planning notes.
 
