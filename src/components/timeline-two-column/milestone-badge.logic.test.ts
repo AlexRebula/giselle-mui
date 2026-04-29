@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 /**
  * Pure-logic unit tests for the derivations inside MilestoneBadge.
  *
@@ -12,9 +14,11 @@
  *
  * ## Removed derivations (v2 redesign)
  *
- *   topPct     — removed. Milestones now render as proper TimelineItems in the
- *                document flow rather than being absolutely positioned on the
- *                spine connector. No percentage offset is needed.
+ *   topPct     — removed. Milestones now render as in-flow flex rows inside
+ *                their parent phase <li>, not as overlay elements absolutely
+ *                positioned on the spine connector. No percentage offset is
+ *                needed. (Milestone badge cards within each row are still
+ *                absolutely positioned, but row placement is handled by DOM flow.)
  *   cardOnLeft — removed. Card placement is handled by TimelineColumn in
  *                timeline-two-column.tsx, not by MilestoneBadge itself.
  *   isInline   — removed. The `display` prop has been removed from the milestone

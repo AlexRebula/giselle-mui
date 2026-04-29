@@ -93,6 +93,8 @@ type SortablePhase = { date: string; key: number; active?: boolean };
  */
 export function sortPhasesByDate<T extends SortablePhase>(phases: T[]): T[] {
   return [...phases].sort((a, b) => {
+    // Both active — fall back to key tie-break so the comparator is symmetric.
+    if (a.active && b.active) return b.key - a.key;
     if (a.active) return -1;
     if (b.active) return 1;
     const da = parseSortableDate(a.date);

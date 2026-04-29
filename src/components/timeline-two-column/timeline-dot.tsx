@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Theme, SxProps } from '@mui/material/styles';
+import type { BoxProps } from '@mui/material/Box';
 import type { HighlightedPaletteKey } from './types';
 
 import Box from '@mui/material/Box';
@@ -8,7 +9,7 @@ import { checkPop, pulseRing } from './animations';
 
 // ----------------------------------------------------------------------
 
-export type TimelineDotComponentProps = {
+export type TimelineDotComponentProps = Omit<BoxProps, 'color' | 'onClick'> & {
   /** Icon to render inside the dot. Accepts a `width` prop for sizing. */
   icon?: ReactNode;
   /** MUI palette key — controls background colour and shadow tint. @default 'primary' */
@@ -34,20 +35,6 @@ export type TimelineDotComponentProps = {
   animationKey?: number;
   /** Makes the dot clickable. Omit for decorative (read-only) dots. */
   onClick?: () => void;
-  /** Adds keyboard interaction (Enter/Space) mirroring `onClick`. */
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  /** role for the dot element — e.g. `"checkbox"` in checklist mode. */
-  role?: string;
-  /** aria-checked value for checkbox role. */
-  'aria-checked'?: boolean;
-  /** Accessible label. */
-  'aria-label'?: string;
-  /** tabIndex — set to `0` when interactive. */
-  tabIndex?: number;
-  /** Forwarded to the root Box element. */
-  className?: string;
-  /** Additional styles forwarded to the root Box. Supports the sx-array-spread pattern. */
-  sx?: SxProps<Theme>;
 };
 
 // ----------------------------------------------------------------------
@@ -154,6 +141,7 @@ export function TimelineDot({
   tabIndex,
   className,
   sx,
+  ...other
 }: TimelineDotComponentProps) {
   const isMilestone = size === 'milestone';
   const dotSize = getDotSize(isMilestone, active);
@@ -174,6 +162,7 @@ export function TimelineDot({
       onClick={onClick}
       onKeyDown={onKeyDown}
       data-active={active && !isMilestone ? 'true' : undefined}
+      {...other}
       sx={
         [
           (theme) => ({

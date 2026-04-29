@@ -461,6 +461,7 @@ export function TimelineTwoColumn({
   ...other
 }: TimelineTwoColumnProps) {
   // Internal done-state overlay — initialised from data, toggled by dot clicks.
+  // Re-synced whenever `phases` changes (e.g. async load, external reset).
   const [localPhaseDone, setLocalPhaseDone] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(phases.map((p) => [String(p.key), p.done ?? false]))
   );
@@ -473,6 +474,18 @@ export function TimelineTwoColumn({
     );
     return m;
   });
+
+  // Sync done state when the phases prop identity changes (new dataset, async load, reset).
+  useEffect(() => {
+    setLocalPhaseDone(Object.fromEntries(phases.map((p) => [String(p.key), p.done ?? false])));
+    const m: Record<string, boolean> = {};
+    phases.forEach((p) =>
+      p.milestones?.forEach((ms, i) => {
+        m[`${p.key}-${i}`] = ms.done ?? false;
+      })
+    );
+    setLocalMilestoneDone(m);
+  }, [phases]);
 
   // Toggle-animation counters — incremented on every click so the icon wrapper
   // gets a new `key` and remounts, which restarts the CSS animation cleanly.
@@ -491,13 +504,18 @@ export function TimelineTwoColumn({
     const k = String(phaseKey);
     // Collapse any open phase card when a milestone opens.
     setExpandedPhaseKey(null);
-    setExpandedMilestoneMap((prev) => ({ ...prev, [k]: milestoneIndex }));
+    // Toggle: clicking the same milestone again collapses it.
+    setExpandedMilestoneMap((prev) => ({
+      ...prev,
+      [k]: prev[k] === milestoneIndex ? null : milestoneIndex,
+    }));
   }, []);
 
   const handleExpandPhaseCard = useCallback((phaseKey: number) => {
     // Collapse all milestones when a phase card opens.
     setExpandedMilestoneMap({});
-    setExpandedPhaseKey(phaseKey);
+    // Toggle: clicking the same phase card again collapses it.
+    setExpandedPhaseKey((prev) => (prev === phaseKey ? null : phaseKey));
   }, []);
 
   const handleTogglePhase = useCallback(

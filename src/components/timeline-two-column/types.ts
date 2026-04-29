@@ -93,7 +93,8 @@ export type TimelinePhase = {
    * Label for the pulsing active badge above the card.
    * @default 'Now'
    */
-  activeLabel?: string; /** Suppress the date label inside the card. Useful when the date is obvious from context (e.g. active/"Now" entries). */
+  activeLabel?: string;
+  /** Suppress the date label inside the card. Useful when the date is obvious from context (e.g. active/"Now" entries). */
   hideDate?: boolean;
   /**
    * Suppress the `MetricCardDecoration` and corner icon for this specific step.
