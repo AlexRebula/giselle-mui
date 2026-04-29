@@ -67,7 +67,6 @@ export function QuoteCard({
     <Paper
       elevation={elevation}
       sx={[
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         (theme) => ({
           p: 3,
           borderRadius: 2,

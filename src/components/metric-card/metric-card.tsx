@@ -123,7 +123,6 @@ export function MetricCard({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             color: theme.vars!.palette[color].main,
           })}
         >
@@ -170,7 +169,6 @@ export function MetricCardDecoration({
           borderRadius: 4,
           position: 'absolute',
           transform: 'rotate(40deg)',
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           background: `linear-gradient(to right, ${theme.vars!.palette[color].main}, transparent)`,
         }),
         ...(Array.isArray(sx) ? sx : [sx]),

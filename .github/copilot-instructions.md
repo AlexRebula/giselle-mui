@@ -112,15 +112,98 @@ At the start of every new Copilot session in this package, read these files:
 | `QuoteCard` | `src/components/quote-card/` | ✅ Shipped — two-column layout refactor pending |
 | `SelectableCard` | `src/components/selectable-card/` | ✅ Shipped + tested |
 | `createIconRegistrar` | `src/utils/create-icon-registrar.ts` | ✅ Shipped + tested |
+| `TimelineTwoColumn` | `src/components/timeline-two-column/` | ✅ Shipped + tested |
 
 ### Next planned work (priority order)
 
 1. **QuoteCard two-column layout** — structural JSX fix, no new props. `src/components/quote-card/quote-card.tsx`.
-2. **Storybook stories** — `MetricCard.stories.tsx`, `GiselleIcon.stories.tsx`, `SelectableCard.stories.tsx`, `QuoteCard.stories.tsx`. Use `argTypes: { control: false }` for `ReactNode`/`SxProps` slots.
-3. **Phase A theme utilities** — `varAlpha`, `createPaletteChannel`, `pxToRem` / `remToPx` in `src/utils/`. See `docs/theming-roadmap.md` Phase A table.
-4. **RoadmapTimeline component** — requires Phase A first. Full plan in `docs/timeline-component-plan.md`. Uses `@mui/lab` Timeline primitives (acceptable peer dep).
-5. **Phase C ThemeProvider** — `GiselleThemeProvider` wrapping `CssVarsProvider`. See `docs/theming-roadmap.md` Phase C.
+2. **Storybook story polish** — initial stories for all components are shipped. Remaining: MetricCard notes panel, responsive `sx` demo in GiselleIcon, QuoteCard update after two-column layout refactor.
+3. **Phase A theme utilities** — `varAlpha`, `createPaletteChannel`, `pxToRem` / `remToPx` in `src/utils/`. See `docs/theming/roadmap.md` Phase A table.
+4. **RoadmapTimeline component** — requires Phase A first. Full plan in `docs/components/timeline-plan.md`. Uses `@mui/lab` Timeline primitives (acceptable peer dep).
+5. **Phase C ThemeProvider** — `GiselleThemeProvider` wrapping `CssVarsProvider`. See `docs/theming/roadmap.md` Phase C.
 
 ### Additional allowed peer dependencies
 
 - `@mui/lab` — needed for Timeline primitives (`Timeline`, `TimelineItem`, `TimelineSeparator`, etc.). Acceptable under the zero-proprietary-dependencies rule.
+
+---
+
+## Quality gate
+
+All six checks must pass before every push:
+
+```sh
+npm run check         # auto-fix Prettier + ESLint, then verify all
+npm run check:verify  # verify only (same as CI / pre-push hook)
+```
+
+Checks (in order): Prettier → ESLint → `tsc --noEmit` → Vitest → tsup build → Storybook build
+
+- **Storybook build** runs in CI (`CI=true`) and is also part of the pre-push hook (`--storybook` flag).
+  Broken stories are caught before any code reaches `main`.
+- **tsup build** verifies the published package compiles and tree-shakes cleanly — not just types.
+- Pre-push hook wired via `.githooks/pre-push` + `scripts/setup-hooks.js` (runs on `postinstall`).
+- GitHub Actions CI defined in `.github/workflows/ci.yml`.
+
+### Storybook infrastructure
+
+- Config: `.storybook/main.ts` (react-vite builder) + `.storybook/preview.tsx` (wraps stories in `CssVarsProvider`)
+- Stories live co-located with their component: `src/components/<name>/<name>.stories.tsx`
+- Every story file must pass `tsc --noEmit`, ESLint, and Prettier — they are in `src/` and covered by all checks
+- Named component helpers (e.g. `function ToggleDemo()`) must be used whenever a story render function uses React hooks — anonymous arrow functions inside `render:` violate the `react-hooks/rules-of-hooks` ESLint rule
+
+---
+
+## Code quality standards (enforce proactively — do not wait to be asked)
+
+### Cognitive complexity
+
+SonarQube enforces a limit of **15** per function. Any callback inside `.map()` or `.forEach()` that has conditional logic, nested branches, or derived values is at risk.
+
+**When to run `sonarqube_analyze_file`:**
+
+- When a session opens on a component file that has open tasks — run it immediately, before any other work.
+- After every edit to a component file — run it again to confirm no new violations were introduced.
+- Before marking any task complete — must show zero violations.
+
+**How to fix:** Extract per-item logic into a named helper function. The render callback itself should only compose already-computed values into JSX. Regex patterns with long alternation groups (e.g. 12-way month names) count toward complexity — prefer a broad pattern + JS validation instead.
+
+### Memoization
+
+Any value or function inside a component that is:
+
+- derived from props/state, or
+- passed as a prop to a child, or
+- used as a `useEffect` dependency
+
+...must be wrapped in `useMemo` / `useCallback` unless it is a primitive literal. Inline arrow functions inside `.map()` callbacks that are passed as props to children must be extracted to named `useCallback` handlers defined before the return statement.
+
+### JSDoc
+
+Every exported component function and every exported prop interface must have JSDoc. Storybook autodoc generates prop tables from TypeScript types but will not show a component-level description or usage notes without JSDoc on the function itself.
+
+- JSDoc goes on the exported function, not just the Props type.
+- Only document own props — never redeclare props inherited from MUI interfaces (rule 4). TypeScript inheritance carries MUI's own JSDoc into autodoc automatically.
+
+### Component folder structure rule
+
+A component gets its own subfolder (`src/components/<name>/`) **only when it is exported from `src/index.ts`** (independently usable by consumers).
+
+Internal sub-components — helpers, local wrappers, private building blocks that only make sense inside their parent — stay flat in the parent's folder. Creating a subfolder for an internal component implies it is independently usable; that false signal causes confusion during refactors.
+
+### Storybook story decision rule
+
+A Storybook story file is created **only when seeing the component in isolation answers a question a developer would actually ask when deciding to use it**.
+
+**Evaluation checklist before writing a story:**
+
+1. Is the component exported from `src/index.ts` (independently usable)? If no — `.md` only.
+2. Does isolation reveal something invisible in a full parent context (variant comparison, state matrix, light/dark mode switch)? If no — `.md` only.
+3. Does a developer need to see this to choose how to use it? If no — `.md` only.
+
+Use `argTypes: { control: false }` for `ReactNode` and `SxProps` slots. Every story that demonstrates colour variants must include all six palette keys: `primary`, `secondary`, `info`, `success`, `warning`, `error`.
+
+### Preferred `.dataset` over `getAttribute` in tests
+
+Use `element.dataset['camelKey']` rather than `element.getAttribute('data-kebab-key')` in test files. Sonar flags `getAttribute` as a code smell when `.dataset` is available.
+

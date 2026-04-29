@@ -73,9 +73,7 @@ export function SelectableCard({
           borderRadius: 1.5,
           position: 'relative',
           overflow: 'hidden', // Contains the MUI ripple within the border-radius
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           border: `1px solid ${theme.vars!.palette.divider}`,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           bgcolor: theme.vars!.palette.background.paper,
           // --- Hover: subtle fill, cursor affordance ---
           cursor: 'pointer',
@@ -83,20 +81,17 @@ export function SelectableCard({
             duration: theme.transitions.duration.shorter,
           }),
           '&:hover': {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             bgcolor: theme.vars!.palette.action.hover,
           },
           // --- Keyboard focus ring ---
           // .Mui-focusVisible is applied by ButtonBase on keyboard navigation only,
           // so mouse users never see this ring (good UX + meets WCAG 2.4.11).
           '&.Mui-focusVisible': {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             outline: `3px solid ${theme.vars!.palette.primary.main}`,
             outlineOffset: 2,
           },
           // --- Selected ring (2px outline using box-shadow, doesn't affect layout) ---
           ...(selected && {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             boxShadow: `0 0 0 2px ${theme.vars!.palette.text.primary}`,
           }),
           // --- Disabled: muted + no pointer (ButtonBase also sets aria-disabled) ---
