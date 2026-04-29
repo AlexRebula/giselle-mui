@@ -49,6 +49,18 @@ vi.mock('@mui/material/Paper', () => ({
   }) => React.createElement('div', { 'data-testid': 'paper', ...props }, children ?? null),
 }));
 
+vi.mock('@mui/material/Box', () => ({
+  default: ({
+    children,
+    sx: _sx,
+    ...props
+  }: {
+    children?: React.ReactNode;
+    sx?: unknown;
+    [key: string]: unknown;
+  }) => React.createElement('div', props, children ?? null),
+}));
+
 vi.mock('@mui/material/Stack', () => ({
   default: ({
     children,

@@ -1,5 +1,6 @@
 import type { PaperProps } from '@mui/material/Paper';
 
+import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -83,64 +84,66 @@ export function QuoteCard({
       ]}
       {...other}
     >
-      {/* Decorative opening quote mark — pure Unicode, no icon dependency */}
-      <Typography
-        aria-hidden
-        sx={{
-          mb: 0.5,
-          mt: -1,
-          lineHeight: 1,
-          fontSize: '4rem',
-          display: 'block',
-          color: `${color}.main`,
-          opacity: 0.4,
-          fontFamily: 'Georgia, serif',
-          userSelect: 'none',
-        }}
-      >
-        {'\u201C'}
-      </Typography>
-
-      {/* Quote text */}
-      <Typography
-        variant="body1"
-        sx={{
-          fontStyle: 'italic',
-          fontWeight: 'fontWeightLight',
-          color: 'text.secondary',
-          lineHeight: 1.85,
-        }}
-      >
-        {quote}
-      </Typography>
-
-      {/* Attribution */}
-      {(author || source) && (
-        <Stack
-          direction="row"
-          spacing={0.75}
-          alignItems="center"
-          sx={{ mt: 2, color: 'text.disabled' }}
+      <Box sx={{ display: 'flex', gap: 2 }}>
+        {/* Left column — decorative opening quote mark */}
+        <Typography
+          aria-hidden
+          sx={{
+            lineHeight: 1,
+            fontSize: '4rem',
+            color: `${color}.main`,
+            opacity: 0.4,
+            fontFamily: 'Georgia, serif',
+            userSelect: 'none',
+            flexShrink: 0,
+            mt: -0.5,
+          }}
         >
-          {author && (
-            <Typography variant="caption" sx={{ fontWeight: 'fontWeightMedium' }}>
-              {author}
-            </Typography>
-          )}
+          {'\u201C'}
+        </Typography>
 
-          {author && source && (
-            <Typography variant="caption" sx={{ opacity: 0.6 }}>
-              ·
-            </Typography>
-          )}
+        {/* Right column — quote text + attribution */}
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography
+            variant="body1"
+            sx={{
+              fontStyle: 'italic',
+              fontWeight: 'fontWeightLight',
+              color: 'text.secondary',
+              lineHeight: 1.85,
+            }}
+          >
+            {quote}
+          </Typography>
 
-          {source && (
-            <Typography variant="caption" sx={{ opacity: 0.72 }}>
-              {source}
-            </Typography>
+          {(author || source) && (
+            <Stack
+              direction="row"
+              spacing={0.75}
+              alignItems="center"
+              sx={{ mt: 2, color: 'text.disabled' }}
+            >
+              {author && (
+                <Typography variant="caption" sx={{ fontWeight: 'fontWeightMedium' }}>
+                  {author}
+                </Typography>
+              )}
+
+              {author && source && (
+                <Typography variant="caption" aria-hidden sx={{ opacity: 0.6 }}>
+                  {'·'}
+                </Typography>
+              )}
+
+              {source && (
+                <Typography variant="caption" sx={{ opacity: 0.72 }}>
+                  {source}
+                </Typography>
+              )}
+            </Stack>
           )}
-        </Stack>
-      )}
+        </Box>
+      </Box>
     </Paper>
   );
 }
