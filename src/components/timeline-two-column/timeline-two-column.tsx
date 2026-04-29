@@ -21,8 +21,9 @@ import { getLastYear, parseLastDate, sortPhasesByDate } from './utils';
  * It controls column width (`flex: 1`), text alignment, padding, and
  * responsive visibility. Keep it in the parent, not inside PhaseCard.
  *
- * On mobile (`xs`) only the column whose `contentSide` matches `phase.side`
- * is visible. On desktop (`md+`) both columns always show.
+ * On mobile (`xs`) the column is hidden when it carries no content for this
+ * phase (empty padding would still consume space). On desktop (`md+`) both
+ * columns always render.
  *
  * REGRESSION NOTE: This helper was extracted deliberately to prevent the
  * two near-identical column Boxes from drifting out of sync during refactors.
@@ -33,10 +34,11 @@ type TimelineColumnProps = {
   /** Which physical column this is — determines padding direction and text alignment. */
   columnSide: 'left' | 'right';
   /**
-   * The `phase.side` value that should be VISIBLE in this column.
-   * Left column shows `side === 'right'` phases; right column shows `side === 'left'` phases.
+   * Whether this column contains content for the current phase.
+   * When false the column is hidden on mobile (`xs`) to avoid empty padding.
+   * On desktop (`md+`) both columns always show.
    */
-  contentSide: 'left' | 'right';
+  hasContent: boolean;
   /**
    * Extra bottom padding (px) added below the card content.
    * Drives the consistent vertical gap between consecutive phase cards:
@@ -46,12 +48,7 @@ type TimelineColumnProps = {
   children: ReactNode;
 };
 
-function TimelineColumn({
-  columnSide,
-  contentSide: _contentSide,
-  children,
-  bottomPadding,
-}: TimelineColumnProps) {
+function TimelineColumn({ columnSide, hasContent, children, bottomPadding }: TimelineColumnProps) {
   return (
     <Box
       data-col={columnSide}
@@ -62,9 +59,9 @@ function TimelineColumn({
         pl: columnSide === 'right' ? 2 : 0,
         pt: 0.75,
         paddingBottom: `${bottomPadding}px`,
-        // On mobile: only the column whose contentSide matches phase.side is visible.
+        // On mobile: hide empty columns to avoid phantom padding.
         // On desktop: both columns always show.
-        display: { xs: 'block', md: 'block' },
+        display: { xs: hasContent ? 'block' : 'none', md: 'block' },
       }}
     >
       {children}
@@ -118,7 +115,12 @@ function resolvePhaseState(
 ): PhaseStateProps {
   const isDone = checklist ? (localPhaseDone[String(phase.key)] ?? false) : false;
   const isOverdue = resolvePhaseOverdue(phase, checklist, isDone, today);
-  const baseDotColor: HighlightedPaletteKey = phase.side === 'left' ? 'secondary' : 'primary';
+  const colorFromData =
+    phase.color && phase.color !== 'inherit' && phase.color !== 'grey'
+      ? (phase.color as HighlightedPaletteKey)
+      : null;
+  const baseDotColor: HighlightedPaletteKey =
+    colorFromData ?? (phase.side === 'left' ? 'secondary' : 'primary');
   const dotColor: HighlightedPaletteKey = isOverdue ? 'error' : baseDotColor;
   const nextPhase = sorted[index + 1];
   const thisYear = getLastYear(phase.date);
@@ -144,7 +146,11 @@ function resolvePhaseDotHandlers(
   onPhaseSelect: ((key: number) => void) | undefined
 ): PhaseDotHandlers {
   const dotActionLabel = isDone ? 'Unmark' : 'Mark';
-  const dotAriaLabel = checklist ? `${dotActionLabel} "${phase.title}" as done` : undefined;
+  const dotAriaLabel = checklist
+    ? `${dotActionLabel} "${phase.title}" as done`
+    : onPhaseSelect
+      ? `Select "${phase.title}"`
+      : undefined;
   let dotClickAction: (() => void) | undefined;
   if (checklist) {
     dotClickAction = () => handleTogglePhase(phase.key);
@@ -190,10 +196,10 @@ function buildPhaseDotTsxProps(
     active: (phase.active ?? false) || (!checklist && phase.key === selectedPhaseKey),
     animationKey: phaseToggleCounts[String(phase.key)] ?? 0,
     done: isDone,
-    role: checklist ? ('checkbox' as const) : undefined,
+    role: checklist ? ('checkbox' as const) : dotAriaLabel ? ('button' as const) : undefined,
     'aria-checked': checklist ? isDone : undefined,
     'aria-label': dotAriaLabel,
-    tabIndex: checklist ? 0 : undefined,
+    tabIndex: checklist || dotAriaLabel ? 0 : undefined,
   };
 }
 
@@ -654,7 +660,11 @@ export function TimelineTwoColumn({
               }}
             >
               {/* Left column — shows cards for phases with side === 'right' */}
-              <TimelineColumn columnSide="left" contentSide="right" bottomPadding={phaseCardGap}>
+              <TimelineColumn
+                columnSide="left"
+                hasContent={phase.side === 'right'}
+                bottomPadding={phaseCardGap}
+              >
                 {phase.side === 'right' && phaseCardNode}
               </TimelineColumn>
 
@@ -694,7 +704,11 @@ export function TimelineTwoColumn({
               </Box>
 
               {/* Right column — shows cards for phases with side === 'left' */}
-              <TimelineColumn columnSide="right" contentSide="left" bottomPadding={phaseCardGap}>
+              <TimelineColumn
+                columnSide="right"
+                hasContent={phase.side === 'left'}
+                bottomPadding={phaseCardGap}
+              >
                 {phase.side === 'left' && phaseCardNode}
               </TimelineColumn>
             </Box>

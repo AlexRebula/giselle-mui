@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import type { BoxProps } from '@mui/material/Box';
 import type { TimelineDotProps } from '@mui/lab/TimelineDot';
 
@@ -32,10 +32,11 @@ export type TimelinePhase = {
   /** Optional expandable bullet-point details. */
   details?: string[];
   /**
-   * Tech stack for this entry. Mix iconify names (e.g. 'logos:react') and plain text labels.
-   * Iconify names (containing ':') are rendered as icons; plain text falls back to a Chip label.
+   * Tech stack icons for this entry. Each item provides a `ReactNode` icon and an accessible label.
+   * Renders as a horizontal strip of icon slots with a tooltip per item.
+   * Use `<GiselleIcon icon={...} width={24} />` or any icon element.
    */
-  platforms?: string[];
+  platforms?: Array<{ icon: ReactNode; label: string }>;
   /**
    * Label displayed above the tech stack strip.
    * @default 'Tech Stack'
@@ -168,7 +169,7 @@ export type TimelineTwoColumnProps = Omit<BoxProps, 'children'> & {
   /**
    * Bottom offset (px) of the year-boundary label chip from the end of the spine connector.
    * Controls the breathing room between the year label and the next phase dot below it.
-   * @default 20
+   * @default 30
    */
   yearLabelMarginBottom?: number;
 };

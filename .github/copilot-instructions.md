@@ -112,15 +112,15 @@ At the start of every new Copilot session in this package, read these files:
 | `QuoteCard` | `src/components/quote-card/` | ✅ Shipped — two-column layout refactor pending |
 | `SelectableCard` | `src/components/selectable-card/` | ✅ Shipped + tested |
 | `createIconRegistrar` | `src/utils/create-icon-registrar.ts` | ✅ Shipped + tested |
+| `TimelineTwoColumn` | `src/components/timeline-two-column/` | ✅ Shipped + tested |
 
 ### Next planned work (priority order)
 
 1. **QuoteCard two-column layout** — structural JSX fix, no new props. `src/components/quote-card/quote-card.tsx`.
-2. **Storybook story polish** — initial stories for all 4 components are shipped. Remaining: MetricCard notes panel, responsive `sx` demo in GiselleIcon, QuoteCard update after two-column layout refactor.
-3. **Vercel Storybook deploy** — wire `npm run build-storybook` as the Vercel build command so every merge to `main` publishes a live Storybook URL. See `alexrebula/docs/todo/global.md`.
-4. **Phase A theme utilities** — `varAlpha`, `createPaletteChannel`, `pxToRem` / `remToPx` in `src/utils/`. See `docs/theming-roadmap.md` Phase A table.
-5. **RoadmapTimeline component** — requires Phase A first. Full plan in `docs/timeline-component-plan.md`. Uses `@mui/lab` Timeline primitives (acceptable peer dep).
-6. **Phase C ThemeProvider** — `GiselleThemeProvider` wrapping `CssVarsProvider`. See `docs/theming-roadmap.md` Phase C.
+2. **Storybook story polish** — initial stories for all components are shipped. Remaining: MetricCard notes panel, responsive `sx` demo in GiselleIcon, QuoteCard update after two-column layout refactor.
+3. **Phase A theme utilities** — `varAlpha`, `createPaletteChannel`, `pxToRem` / `remToPx` in `src/utils/`. See `docs/theming/roadmap.md` Phase A table.
+4. **RoadmapTimeline component** — requires Phase A first. Full plan in `docs/components/timeline-plan.md`. Uses `@mui/lab` Timeline primitives (acceptable peer dep).
+5. **Phase C ThemeProvider** — `GiselleThemeProvider` wrapping `CssVarsProvider`. See `docs/theming/roadmap.md` Phase C.
 
 ### Additional allowed peer dependencies
 

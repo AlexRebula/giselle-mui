@@ -231,7 +231,7 @@ export function TimelineDot({
             : (theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main),
           color: isDonePhase
             ? (theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main)
-            : '#fff',
+            : theme.vars!.palette.common.white,
           // Phase done: outlined border (mirrors MUI TimelineDot variant="outlined").
           ...(isDonePhase && {
             border: '2px solid',

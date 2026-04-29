@@ -39,7 +39,11 @@ const READ_ONLY_PHASES: TimelinePhase[] = [
       'Redux + Redux-Saga data layer',
       'Styled-components component library',
     ],
-    platforms: ['logos:react', 'logos:redux', 'logos:sass'],
+    platforms: [
+      { icon: <GiselleIcon icon="logos:react" width={24} />, label: 'React' },
+      { icon: <GiselleIcon icon="logos:redux" width={24} />, label: 'Redux' },
+      { icon: <GiselleIcon icon="logos:sass" width={24} />, label: 'Sass' },
+    ],
     milestones: [
       {
         date: 'Dec 2017',
@@ -61,7 +65,11 @@ const READ_ONLY_PHASES: TimelinePhase[] = [
     done: true,
     icon: <GiselleIcon icon="solar:chart-bold-duotone" width={20} />,
     details: ['Vue 3 + Composition API', 'D3.js for charts', 'Jest + Cypress test suite'],
-    platforms: ['logos:vue', 'logos:d3', 'logos:jest'],
+    platforms: [
+      { icon: <GiselleIcon icon="logos:vue" width={24} />, label: 'Vue' },
+      { icon: <GiselleIcon icon="logos:d3" width={24} />, label: 'D3' },
+      { icon: <GiselleIcon icon="logos:jest" width={24} />, label: 'Jest' },
+    ],
     milestones: [
       {
         date: 'Mar 2020',
@@ -94,7 +102,11 @@ const READ_ONLY_PHASES: TimelinePhase[] = [
       'Micro-frontend architecture (Module Federation)',
       'WCAG AA accessibility audit',
     ],
-    platforms: ['logos:react', 'logos:typescript-icon', 'logos:aws'],
+    platforms: [
+      { icon: <GiselleIcon icon="logos:react" width={24} />, label: 'React' },
+      { icon: <GiselleIcon icon="logos:typescript-icon" width={24} />, label: 'TypeScript' },
+      { icon: <GiselleIcon icon="logos:aws" width={24} />, label: 'AWS' },
+    ],
     milestones: [
       {
         date: 'Jan 2023',

@@ -12,13 +12,10 @@ import {
 } from 'react';
 
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Collapse from '@mui/material/Collapse';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-
-import { Icon } from '@iconify/react';
 
 import { pulseDot } from './animations';
 
@@ -173,7 +170,7 @@ function ScenarioBadge({ color, scenarioLabel }: ScenarioBadgeProps) {
         fontWeight: 700,
         letterSpacing: 0.8,
         color: `${color}.dark`,
-        bgcolor: `${color}.lighter`,
+        bgcolor: `rgba(var(--mui-palette-${color}-mainChannel) / 0.12)`,
       }}
     >
       {scenarioLabel}
@@ -433,28 +430,15 @@ function buildDateTypographySx({
   };
 }
 
-/** Maps a phase's platform strings into icon/chip nodes for inline rendering. */
-function buildPlatformStripItems(platforms: string[]): ReactNode[] {
-  return platforms.map((p, i) =>
-    p.includes(':') ? (
-      <Tooltip key={`${p}-${i}`} title={p.split(':').at(-1) ?? p} arrow placement="top">
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Icon icon={p} width={24} height={24} />
-        </Box>
-      </Tooltip>
-    ) : (
-      <Chip
-        key={`${p}-${i}`}
-        label={p}
-        size="small"
-        variant="outlined"
-        sx={(theme) => ({
-          fontSize: '0.7rem',
-          bgcolor: `rgba(${(theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']} / 0.08)`,
-        })}
-      />
-    )
-  );
+/** Maps a phase's platform items into icon/chip nodes for inline rendering. */
+function buildPlatformStripItems(
+  platforms: Array<{ icon: ReactNode; label: string }>
+): ReactNode[] {
+  return platforms.map((p, i) => (
+    <Tooltip key={`platform-${i}`} title={p.label} arrow placement="top">
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{p.icon}</Box>
+    </Tooltip>
+  ));
 }
 
 // ----------------------------------------------------------------------
