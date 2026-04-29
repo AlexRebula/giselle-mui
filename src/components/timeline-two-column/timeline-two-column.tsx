@@ -113,7 +113,7 @@ function resolvePhaseState(
   localPhaseDone: Record<string, boolean>,
   today: Date
 ): PhaseStateProps {
-  const isDone = checklist ? (localPhaseDone[String(phase.key)] ?? false) : false;
+  const isDone = checklist ? (localPhaseDone[String(phase.key)] ?? false) : (phase.done ?? false);
   const isOverdue = resolvePhaseOverdue(phase, checklist, isDone, today);
   const colorFromData =
     phase.color && phase.color !== 'inherit' && phase.color !== 'grey'
@@ -177,7 +177,7 @@ function buildPhaseCardTsxProps(
   isThisPhaseExpanded: boolean
 ) {
   return {
-    done: checklist ? isDone : undefined,
+    done: isDone,
     overdue: checklist ? isOverdue : undefined,
     suppressElevation: anyExpanded && !isThisPhaseExpanded,
   };
@@ -360,6 +360,7 @@ function buildMilestoneRow(
               done={msDoneForBadge}
               isExpanded={isThisMsExpanded}
               suppressElevation={suppressElevation}
+              stableId={`${ctx.phaseKey}-${mi}`}
               onRequestExpand={() => ctx.handleExpandMilestone(ctx.phaseKey, mi)}
             />
           </Box>
@@ -420,6 +421,7 @@ function buildMilestoneRow(
               done={msDoneForBadge}
               isExpanded={isThisMsExpanded}
               suppressElevation={suppressElevation}
+              stableId={`${ctx.phaseKey}-${mi}`}
               onRequestExpand={() => ctx.handleExpandMilestone(ctx.phaseKey, mi)}
             />
           </Box>

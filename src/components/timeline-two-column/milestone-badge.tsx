@@ -21,6 +21,13 @@ export type MilestoneBadgeProps = Omit<PaperProps, 'children'> & {
   onRequestExpand: () => void;
   /** When true, suppresses box-shadow so the card appears flat (used when another card is expanded). */
   suppressElevation?: boolean;
+  /**
+   * Stable unique id prefix used to construct the `aria-controls` / `id` pair for the
+   * expandable details region. Should be unique across all milestones on the page
+   * (e.g. `"${phaseKey}-${milestoneIndex}"`). Falls back to a sanitised title slug
+   * when omitted, which can collide if two milestones share the same title.
+   */
+  stableId?: string;
 };
 
 /**
@@ -34,14 +41,16 @@ export function MilestoneBadge({
   isExpanded,
   onRequestExpand,
   suppressElevation = false,
+  stableId,
   sx,
   ...other
 }: MilestoneBadgeProps) {
   const hasDetails = !!m.details?.length;
   const colorKey = (m.color ?? 'primary') as HighlightedPaletteKey;
-  const detailsId = `ms-details-${String(m.title)
+  const titleSlug = String(m.title)
     .replace(/[^a-z0-9]/gi, '-')
-    .toLowerCase()}`;
+    .toLowerCase();
+  const detailsId = stableId ? `ms-details-${stableId}` : `ms-details-${titleSlug}`;
 
   const handleClick = useCallback(() => {
     if (hasDetails) onRequestExpand();
@@ -147,6 +156,7 @@ export function MilestoneBadge({
                 sx={{ display: 'flex', gap: 1, alignItems: 'flex-start', textAlign: 'left' }}
               >
                 <Typography
+                  aria-hidden="true"
                   component="span"
                   variant="body2"
                   sx={{ color: 'text.disabled', flexShrink: 0, lineHeight: 1.6 }}

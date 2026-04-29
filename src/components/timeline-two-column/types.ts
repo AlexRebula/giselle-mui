@@ -1,4 +1,4 @@
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import type { BoxProps } from '@mui/material/Box';
 import type { TimelineDotProps } from '@mui/lab/TimelineDot';
 
@@ -21,8 +21,8 @@ export type TimelinePhase = {
   description: string;
   /** Human-readable date range (e.g. `'Jan 2020 – Mar 2022'`). Also used for automatic overdue detection in checklist mode. */
   date: string;
-  /** Icon rendered inside the TimelineDot. Accepts a width prop for resizing (e.g. via cloneElement). */
-  icon: ReactElement<{ width?: number }>;
+  /** Icon rendered inside the TimelineDot. Size is controlled via CSS (wrapping Box sets `& svg: { width, height }`) — pass any ReactNode icon slot. */
+  icon: ReactNode;
   /** MUI TimelineDot color. */
   color?: TimelineDotProps['color'];
   /** Which column this item appears in. */
@@ -61,7 +61,7 @@ export type TimelinePhase = {
   milestones?: Array<{
     date: string;
     title: string;
-    icon: ReactElement<{ width?: number }>;
+    icon: ReactNode;
     color?: TimelineDotProps['color'];
     /** Short bullet-point facts shown when the card is expanded. */
     details?: string[];

@@ -24,7 +24,7 @@
 import React from 'react';
 import { it, vi, expect, describe } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import ReactDOM from 'react-dom/client';
 
 // ---------------------------------------------------------------------------

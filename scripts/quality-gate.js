@@ -37,7 +37,6 @@ const __dirname = path.dirname(__filename);
 
 // ── Config ─────────────────────────────────────────────────────────────────
 const FIX_MODE = process.argv.includes('--fix');
-const VERIFY_MODE = process.argv.includes('--verify') || !FIX_MODE;
 const INCLUDE_STORYBOOK = process.argv.includes('--storybook') || process.env['CI'] === 'true';
 
 const appDir = path.resolve(__dirname, '..');

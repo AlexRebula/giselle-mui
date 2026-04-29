@@ -5,7 +5,6 @@ import type { TimelinePhase, HighlightedPaletteKey } from './types';
 import {
   useState,
   type ReactNode,
-  type ReactElement,
   type KeyboardEventHandler,
   type Dispatch,
   type SetStateAction,
@@ -81,6 +80,7 @@ function CardDetailBullets({ id, details, in: expanded }: CardDetailBulletsProps
             sx={{ display: 'flex', gap: 1, alignItems: 'flex-start', textAlign: 'left' }}
           >
             <Typography
+              aria-hidden="true"
               component="span"
               variant="body2"
               sx={{ color: 'text.disabled', flexShrink: 0, lineHeight: 1.6 }}
@@ -237,8 +237,8 @@ type CardDecorationProps = {
    * Switches the decoration and corner icon to the error (red) palette.
    */
   isOverduePending: boolean;
-  /** Phase icon cloned into the corner at width 32. */
-  icon: ReactElement<{ width?: number }>;
+  /** Phase icon rendered in the corner. Accepts any ReactNode icon slot. */
+  icon: ReactNode;
 };
 
 function CardDecoration({ color, isOverduePending, icon }: CardDecorationProps) {
@@ -314,9 +314,12 @@ function buildPaperSx(p: PaperSxParams) {
     overflow: 'hidden',
     textAlign: p.textAlign ?? 'left',
     bgcolor: `rgba(${(theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']} / 0.08)`,
+    // Single composed transition — covers opacity/filter (always) + box-shadow (when interactive).
+    transition: p.hasDetails
+      ? 'box-shadow 0.2s, opacity 0.3s, filter 0.3s'
+      : 'opacity 0.3s, filter 0.3s',
     ...(p.hasDetails && {
       cursor: 'pointer',
-      transition: 'box-shadow 0.2s',
       '&:hover': {
         boxShadow: `0 16px 40px rgba(${
           theme.vars!.palette[(p.color ?? 'primary') as HighlightedPaletteKey]?.mainChannel ??
@@ -334,9 +337,7 @@ function buildPaperSx(p: PaperSxParams) {
     ...(p.isDone && {
       opacity: 0.45,
       filter: 'grayscale(1)',
-      transition: 'opacity 0.3s, filter 0.3s',
     }),
-    ...(!p.isDone && { transition: 'opacity 0.3s, filter 0.3s' }),
     ...(p.phaseSide === 'right' &&
       !p.isHighlighted && {
         bgcolor: 'background.paper',
