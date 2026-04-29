@@ -132,6 +132,12 @@ function DotInner({
  *
  * Active dots show a pulsing ring halo via `::after`.
  * In checklist mode pass `onClick`, `role`, `aria-checked`, `aria-label`, `tabIndex`.
+ *
+ * ## Overflow strategy
+ *
+ * The outer Box has `overflow: visible` so the `::after` ring (which extends 5 px
+ * outside via `inset: -5`) is not clipped. An inner clip Box with `overflow: hidden`
+ * and `border-radius: 50%` keeps the icon inside the circle shape.
  */
 export function TimelineDot({
   icon,
@@ -156,6 +162,9 @@ export function TimelineDot({
   const isDonePhase = done && !isMilestone;
 
   return (
+    // Outer Box: controls size, position context, pulsing ::after ring, interaction.
+    // overflow: visible is mandatory — the ring extends 5 px outside via inset: -5
+    // and would be clipped by overflow: hidden.
     <Box
       className={className}
       role={role}
@@ -164,53 +173,20 @@ export function TimelineDot({
       tabIndex={tabIndex}
       onClick={onClick}
       onKeyDown={onKeyDown}
+      data-active={active && !isMilestone ? 'true' : undefined}
       sx={
         [
           (theme) => ({
+            position: 'relative',
             width: dotSize,
             height: dotSize,
-            borderRadius: '50%',
-            overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             flexShrink: 0,
-            // Always fill with palette color; phase dots go transparent+bordered when done.
-            bgcolor: isDonePhase
-              ? 'transparent'
-              : (theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main),
-            color: isDonePhase
-              ? (theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main)
-              : '#fff',
-            // Phase done: outlined border (mirrors MUI TimelineDot variant="outlined").
-            ...(isDonePhase && {
-              border: '2px solid',
-              borderColor: theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main,
-            }),
-            // Milestone: white separator border + colored drop shadow.
-            ...(isMilestone && {
-              border: '2px solid',
-              borderColor: 'background.paper',
-              boxShadow: `0 2px 8px rgba(${
-                theme.vars!.palette[color]?.mainChannel ??
-                (theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']
-              } / 0.5)`,
-            }),
+            overflow: 'visible',
             ...(onClick && {
               cursor: 'pointer',
               transition: 'opacity 0.2s',
               '&:hover': { opacity: 0.75 },
             }),
-            ...(onClick &&
-              isMilestone && {
-                '&:hover': {
-                  opacity: 0.75,
-                  boxShadow: `0 6px 20px rgba(${
-                    theme.vars!.palette[color]?.mainChannel ??
-                    (theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']
-                  } / 0.6)`,
-                },
-              }),
             ...(tabIndex !== undefined && {
               '&:focus-visible': {
                 outline: '2px solid',
@@ -223,7 +199,6 @@ export function TimelineDot({
           ...(active && !isMilestone
             ? [
                 {
-                  position: 'relative' as const,
                   '&::after': {
                     content: '""',
                     position: 'absolute',
@@ -240,7 +215,50 @@ export function TimelineDot({
         ] as SxProps<Theme>
       }
     >
-      <DotInner done={done} icon={icon} animationKey={animationKey} iconSize={iconSize} />
+      {/* Inner clip Box: clips icon to circle shape; separate from outer so ::after ring is visible. */}
+      <Box
+        sx={(theme) => ({
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          // Always fill with palette color; phase dots go transparent+bordered when done.
+          bgcolor: isDonePhase
+            ? 'transparent'
+            : (theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main),
+          color: isDonePhase
+            ? (theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main)
+            : '#fff',
+          // Phase done: outlined border (mirrors MUI TimelineDot variant="outlined").
+          ...(isDonePhase && {
+            border: '2px solid',
+            borderColor: theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main,
+          }),
+          // Milestone: white separator border + colored drop shadow.
+          ...(isMilestone && {
+            border: '2px solid',
+            borderColor: 'background.paper',
+            boxShadow: `0 2px 8px rgba(${
+              theme.vars!.palette[color]?.mainChannel ??
+              (theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']
+            } / 0.5)`,
+          }),
+          ...(onClick &&
+            isMilestone && {
+              '&:hover': {
+                boxShadow: `0 6px 20px rgba(${
+                  theme.vars!.palette[color]?.mainChannel ??
+                  (theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']
+                } / 0.6)`,
+              },
+            }),
+        })}
+      >
+        <DotInner done={done} icon={icon} animationKey={animationKey} iconSize={iconSize} />
+      </Box>
     </Box>
   );
 }
