@@ -15,9 +15,16 @@
  *   buildCardKeyDownHandler — fires toggle on Enter/Space when hasDetails is true
  *   resolveCardExpansion    — selects controlled vs. uncontrolled expand mode
  *   CardStatusBadge logic   — priority: overdue (not done) > active > scenario
+ *   derivePlatformEntry     — pure derivation; null icon for string platforms
+ *   buildPlatformStripItems — HTML integration: icon renders, text fallback suppressed
  */
 
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+
 import { it, vi, expect, describe } from 'vitest';
+
+import { buildPlatformStripItems, derivePlatformEntry } from './phase-card';
 
 // ---------------------------------------------------------------------------
 // Mirror functions — exact copies of the inline helpers in phase-card.tsx
@@ -214,65 +221,6 @@ describe('resolveCardExpansion — controlled mode', () => {
 });
 
 // ---------------------------------------------------------------------------
-// buildPlatformStripItems — per-entry derivations
-// ---------------------------------------------------------------------------
-
-/**
- * Mirrors the per-entry derivations inside buildPlatformStripItems.
- *
- * The function maps each platform entry to a `{ label, hasTextFallback }` pair:
- *   - `label`           — becomes both the Tooltip `title` prop and, for string entries, the visible text.
- *   - `hasTextFallback` — true when the entry is a plain string (no icon provided),
- *                         meaning a `<Box component="span">` text node is rendered instead of an icon.
- */
-function derivePlatformEntry(p: { icon: unknown; label: string } | string): {
-  label: string;
-  hasTextFallback: boolean;
-} {
-  const label = typeof p === 'string' ? p : p.label;
-  const hasTextFallback = typeof p === 'string';
-  return { label, hasTextFallback };
-}
-
-describe('buildPlatformStripItems — string entry (text-label fallback)', () => {
-  it('string entry → label equals the string', () => {
-    expect(derivePlatformEntry('TypeScript').label).toBe('TypeScript');
-  });
-
-  it('string entry → hasTextFallback is true (no icon → text span rendered)', () => {
-    expect(derivePlatformEntry('React').hasTextFallback).toBe(true);
-  });
-
-  it('string entry → label is also the tooltip title (same value)', () => {
-    // Tooltip title === label for string entries — asserting label correctness
-    // is sufficient to assert tooltip title correctness.
-    expect(derivePlatformEntry('Node.js').label).toBe('Node.js');
-  });
-
-  it('[regression] plain string[] (legacy consumer data) → all entries produce label nodes', () => {
-    const items: Array<{ icon: unknown; label: string } | string> = ['AWS', 'GCP', 'Azure'];
-    const derived = items.map(derivePlatformEntry);
-    expect(derived.map((d) => d.label)).toEqual(['AWS', 'GCP', 'Azure']);
-    expect(derived.every((d) => d.hasTextFallback)).toBe(true);
-  });
-});
-
-describe('buildPlatformStripItems — object entry (icon slot)', () => {
-  it('object entry → label equals p.label', () => {
-    expect(derivePlatformEntry({ icon: '<svg />', label: 'React' }).label).toBe('React');
-  });
-
-  it('object entry → hasTextFallback is false (icon provided → icon renders, not text span)', () => {
-    expect(derivePlatformEntry({ icon: '<svg />', label: 'Vue' }).hasTextFallback).toBe(false);
-  });
-
-  it('object entry with null icon → hasTextFallback false (icon slot still provided)', () => {
-    // null is a valid ReactNode — the consumer explicitly passed the icon slot.
-    expect(derivePlatformEntry({ icon: null, label: 'Figma' }).hasTextFallback).toBe(false);
-  });
-});
-
-// ---------------------------------------------------------------------------
 // CardStatusBadge priority rules
 // ---------------------------------------------------------------------------
 
@@ -357,5 +305,87 @@ describe('CardStatusBadge priority rules', () => {
         isScenario: false,
       })
     ).toBe('overdue');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Platform entry derivation — REGRESSION tests
+//
+// REGRESSION: Before the { icon, label } migration, platforms were passed as
+// bare strings like 'logos:php'. The component treated those as text labels,
+// not as icon IDs to auto-resolve.
+//
+// These tests intentionally assert only the per-entry derivation contract:
+//   - string platform → label from the string value, no icon
+//   - { icon, label } platform → preserve both icon node and label
+//   - string that looks like an Iconify ID ('logos:php') → still just text
+// ---------------------------------------------------------------------------
+
+describe('derivePlatformEntry', () => {
+  it('plain tech name resolves to a text label with no icon', () => {
+    expect(derivePlatformEntry('jQuery')).toEqual({
+      label: 'jQuery',
+      icon: null,
+      hasTextFallback: true,
+    });
+  });
+
+  it('Iconify-ID string remains a literal text label and is not auto-resolved', () => {
+    expect(derivePlatformEntry('logos:php')).toEqual({
+      label: 'logos:php',
+      icon: null,
+      hasTextFallback: true,
+    });
+  });
+
+  it('object platform preserves the provided label and icon node', () => {
+    const icon = React.createElement('span', { 'aria-hidden': 'true' }, 'php');
+    const entry = derivePlatformEntry({ icon, label: 'PHP' });
+
+    expect(entry.label).toBe('PHP');
+    expect(entry.icon).toBe(icon);
+  });
+
+  it('multiple string platforms each resolve to labels with no icons', () => {
+    const entries = ['jQuery', 'Kendo UI', 'C#'].map(derivePlatformEntry);
+
+    expect(entries).toEqual([
+      { label: 'jQuery', icon: null, hasTextFallback: true },
+      { label: 'Kendo UI', icon: null, hasTextFallback: true },
+      { label: 'C#', icon: null, hasTextFallback: true },
+    ]);
+  });
+});
+
+describe('buildPlatformStripItems — { icon, label } platform (icon slot)', () => {
+  it('icon node renders and suppresses the fallback text label', () => {
+    const iconEl = React.createElement('img', { 'data-testid': 'php-icon', alt: 'PHP' });
+    const nodes = buildPlatformStripItems([{ icon: iconEl, label: 'PHP' }]);
+    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
+    // The icon element is rendered
+    expect(html).toContain('data-testid="php-icon"');
+    // The label is NOT rendered as a text span when an icon is provided
+    expect(html).not.toMatch(/<span[^>]*>PHP<\/span>/);
+  });
+
+  it('{ icon, label } never renders label as inner text when icon is provided', () => {
+    const iconEl = React.createElement('svg', { 'data-testid': 'ts-icon' });
+    const nodes = buildPlatformStripItems([{ icon: iconEl, label: 'TypeScript' }]);
+    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
+    expect(html).toContain('data-testid="ts-icon"');
+    expect(html).not.toMatch(/<span[^>]*>TypeScript<\/span>/);
+  });
+});
+
+describe('buildPlatformStripItems — mixed string and object platforms', () => {
+  it('icon items and string items can coexist in one array', () => {
+    const iconEl = React.createElement('img', { 'data-testid': 'php-icon' });
+    const nodes = buildPlatformStripItems([{ icon: iconEl, label: 'PHP' }, 'Smarty', 'jQuery']);
+    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
+    expect(html).toContain('data-testid="php-icon"');
+    expect(html).toContain('>Smarty<');
+    expect(html).toContain('>jQuery<');
+    // PHP label must NOT appear as inner text (it has an icon)
+    expect(html).not.toMatch(/<span[^>]*>PHP<\/span>/);
   });
 });

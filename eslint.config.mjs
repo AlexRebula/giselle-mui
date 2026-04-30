@@ -55,6 +55,18 @@ export default eslintTs.config(
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'object-shorthand': 'warn',
       'no-useless-rename': 'warn',
+      // SonarQube S3358 — no nested ternaries
+      'no-nested-ternary': 'error',
+      // MUI Store quality bar — ban React.FC / React.FunctionComponent
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'TSTypeReference[typeName.name="FC"], TSTypeReference > TSQualifiedName[left.name="React"][right.name="FC"], TSTypeReference[typeName.name="FunctionComponent"], TSTypeReference > TSQualifiedName[left.name="React"][right.name="FunctionComponent"]',
+          message:
+            'Avoid React.FC / React.FunctionComponent; type props directly on the function or parameters (MUI Store quality bar).',
+        },
+      ],
     },
     settings: {
       react: { version: 'detect' },

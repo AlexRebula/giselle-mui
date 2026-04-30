@@ -96,7 +96,7 @@ vi.mock('@mui/material/Typography', () => ({
     [key: string]: unknown;
   }) =>
     React.createElement(
-      component as string,
+      component,
       { ...(ariaHidden !== undefined && { 'aria-hidden': ariaHidden }), ...props },
       children ?? null
     ),

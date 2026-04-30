@@ -2,8 +2,11 @@ name: CI
 
 on:
   push:
-    branches: ['**']
+    branches:
+      - main
+      - 'release/*'
   pull_request:
+  workflow_dispatch:
 
 jobs:
   quality-gate:
