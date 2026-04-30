@@ -15,7 +15,7 @@
  *   buildCardKeyDownHandler — fires toggle on Enter/Space when hasDetails is true
  *   resolveCardExpansion    — selects controlled vs. uncontrolled expand mode
  *   CardStatusBadge logic   — priority: overdue (not done) > active > scenario
- *   buildPlatformStripItems — REGRESSION: Iconify icon IDs passed as strings must NOT be auto-resolved to icons
+ *   buildPlatformStripItems — REGRESSION: string platform entries render as literal text
  */
 
 import React from 'react';
