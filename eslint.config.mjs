@@ -64,7 +64,7 @@ export default eslintTs.config(
           selector:
             'TSTypeReference[typeName.name="FC"], TSTypeReference > TSQualifiedName[left.name="React"][right.name="FC"], TSTypeReference[typeName.name="FunctionComponent"], TSTypeReference > TSQualifiedName[left.name="React"][right.name="FunctionComponent"]',
           message:
-            'Use plain function declarations instead of React.FC / React.FunctionComponent (MUI Store quality bar).',
+            'Avoid React.FC / React.FunctionComponent; type props directly on the function or parameters (MUI Store quality bar).',
         },
       ],
     },

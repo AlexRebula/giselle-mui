@@ -439,6 +439,8 @@ function buildDateTypographySx({
  * `buildPlatformStripItems`. Exported so tests can exercise the real production
  * derivation logic without re-implementing it as a mirror.
  *
+ * @internal — not part of the public component API; exported for testing only.
+ *
  * - `label`           — the Tooltip title and text fallback content.
  * - `icon`            — `null` for string platforms; the ReactNode for object platforms.
  * - `hasTextFallback` — `true` when `icon` is `null` (a `<Box component="span">` is rendered).
@@ -454,7 +456,11 @@ export function derivePlatformEntry(p: TimelinePlatformItem): {
   return { label, icon, hasTextFallback: isString };
 }
 
-/** Maps a phase's platform items into icon/chip nodes for inline rendering. */
+/**
+ * Maps a phase's platform items into icon/chip nodes for inline rendering.
+ *
+ * @internal — not part of the public component API; exported for testing only.
+ */
 export function buildPlatformStripItems(platforms: TimelinePlatformItem[]): ReactNode[] {
   return platforms.map((p, i) => {
     const { label, icon } = derivePlatformEntry(p);

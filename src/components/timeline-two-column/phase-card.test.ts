@@ -24,7 +24,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 import { it, vi, expect, describe } from 'vitest';
 
-import { buildPlatformStripItems } from './phase-card';
+import { buildPlatformStripItems, derivePlatformEntry } from './phase-card';
 
 // ---------------------------------------------------------------------------
 // Mirror functions — exact copies of the inline helpers in phase-card.tsx
@@ -321,28 +321,20 @@ describe('CardStatusBadge priority rules', () => {
 //   - string that looks like an Iconify ID ('logos:php') → still just text
 // ---------------------------------------------------------------------------
 
-type PlatformItem = { icon: React.ReactNode; label: string } | string;
-
-function derivePlatformEntry(platform: PlatformItem): {
-  label: string;
-  icon: React.ReactNode | null;
-} {
-  if (typeof platform === 'string') {
-    return { label: platform, icon: null };
-  }
-
-  return { label: platform.label, icon: platform.icon };
-}
-
 describe('derivePlatformEntry', () => {
   it('plain tech name resolves to a text label with no icon', () => {
-    expect(derivePlatformEntry('jQuery')).toEqual({ label: 'jQuery', icon: null });
+    expect(derivePlatformEntry('jQuery')).toEqual({
+      label: 'jQuery',
+      icon: null,
+      hasTextFallback: true,
+    });
   });
 
   it('Iconify-ID string remains a literal text label and is not auto-resolved', () => {
     expect(derivePlatformEntry('logos:php')).toEqual({
       label: 'logos:php',
       icon: null,
+      hasTextFallback: true,
     });
   });
 
@@ -358,9 +350,9 @@ describe('derivePlatformEntry', () => {
     const entries = ['jQuery', 'Kendo UI', 'C#'].map(derivePlatformEntry);
 
     expect(entries).toEqual([
-      { label: 'jQuery', icon: null },
-      { label: 'Kendo UI', icon: null },
-      { label: 'C#', icon: null },
+      { label: 'jQuery', icon: null, hasTextFallback: true },
+      { label: 'Kendo UI', icon: null, hasTextFallback: true },
+      { label: 'C#', icon: null, hasTextFallback: true },
     ]);
   });
 });
