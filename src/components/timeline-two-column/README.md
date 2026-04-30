@@ -58,7 +58,7 @@ platforms: [
 ]
 ```
 
-**The string form** (`'logos:php'`) is a **backward-compatibility shim only**. It renders the string as a plain text label chip with no icon. It exists because the `alexrebula` portfolio's career timeline data was written against a local copy of this component that accepted `string[]`. When that local copy was deleted and all imports were swapped to `@alexrebula/giselle-mui`, the type mismatch was discovered. Rather than rewriting all nine `platforms` arrays in `alexrebula` immediately, the type was widened to accept both shapes.
+**The string form** (for example, `'PHP'`) is a **backward-compatibility shim only**. It renders the string literally as a plain text label chip with no icon; strings are **not** interpreted as icon IDs. It exists because the `alexrebula` portfolio's career timeline data was written against a local copy of this component that accepted `string[]`. When that local copy was deleted and all imports were swapped to `@alexrebula/giselle-mui`, the type mismatch was discovered. Rather than rewriting all nine `platforms` arrays in `alexrebula` immediately, the type was widened to accept both shapes.
 
 **Do not write new string-form platforms arrays.** Always use `{ icon, label }`. The string form will be removed once `alexrebula` migrates its nine legacy entries.
 
