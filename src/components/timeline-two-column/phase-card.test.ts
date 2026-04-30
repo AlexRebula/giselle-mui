@@ -369,7 +369,7 @@ describe('CardStatusBadge priority rules', () => {
 //
 // REGRESSION: Before the { icon, label } migration, platforms were passed as
 // bare strings like 'logos:php'. The component rendered those strings as text
-// labels — so the portfolio showed "logos:php" instead of the PHP logo icon.
+// labels — so the UI showed "logos:php" instead of the PHP logo icon.
 //
 // These tests guard that contract:
 //   - string platform → rendered as the string value (text chip, no icon slot)
