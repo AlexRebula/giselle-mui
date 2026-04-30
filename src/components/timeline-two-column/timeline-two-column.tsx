@@ -146,11 +146,12 @@ function resolvePhaseDotHandlers(
   onPhaseSelect: ((key: number) => void) | undefined
 ): PhaseDotHandlers {
   const dotActionLabel = isDone ? 'Unmark' : 'Mark';
-  const dotAriaLabel = checklist
-    ? `${dotActionLabel} "${phase.title}" as done`
-    : onPhaseSelect
-      ? `Select "${phase.title}"`
-      : undefined;
+  let dotAriaLabel: string | undefined;
+  if (checklist) {
+    dotAriaLabel = `${dotActionLabel} "${phase.title}" as done`;
+  } else if (onPhaseSelect) {
+    dotAriaLabel = `Select "${phase.title}"`;
+  }
   let dotClickAction: (() => void) | undefined;
   if (checklist) {
     dotClickAction = () => handleTogglePhase(phase.key);
@@ -192,11 +193,17 @@ function buildPhaseDotTsxProps(
   phaseToggleCounts: Record<string, number>,
   selectedPhaseKey: number | undefined
 ) {
+  let role: 'checkbox' | 'button' | undefined;
+  if (checklist) {
+    role = 'checkbox';
+  } else if (dotAriaLabel) {
+    role = 'button';
+  }
   return {
     active: (phase.active ?? false) || (!checklist && phase.key === selectedPhaseKey),
     animationKey: phaseToggleCounts[String(phase.key)] ?? 0,
     done: isDone,
-    role: checklist ? ('checkbox' as const) : dotAriaLabel ? ('button' as const) : undefined,
+    role,
     'aria-checked': checklist ? isDone : undefined,
     'aria-label': dotAriaLabel,
     tabIndex: checklist || dotAriaLabel ? 0 : undefined,

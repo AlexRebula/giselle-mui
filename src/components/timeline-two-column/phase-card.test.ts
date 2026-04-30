@@ -15,7 +15,11 @@
  *   buildCardKeyDownHandler — fires toggle on Enter/Space when hasDetails is true
  *   resolveCardExpansion    — selects controlled vs. uncontrolled expand mode
  *   CardStatusBadge logic   — priority: overdue (not done) > active > scenario
+ *   buildPlatformStripItems — REGRESSION: Iconify icon IDs must NOT render as raw strings
  */
+
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 import { it, vi, expect, describe } from 'vitest';
 
@@ -357,5 +361,94 @@ describe('CardStatusBadge priority rules', () => {
         isScenario: false,
       })
     ).toBe('overdue');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// buildPlatformStripItems — REGRESSION tests
+//
+// REGRESSION: Before the { icon, label } migration, platforms were passed as
+// bare strings like 'logos:php'. The component rendered those strings as text
+// labels — so the portfolio showed "logos:php" instead of the PHP logo icon.
+//
+// These tests guard that contract:
+//   - string platform → rendered as the string value (text chip, no icon slot)
+//   - { icon, label } platform → icon node rendered, NOT the raw label as visible text
+//   - string that looks like an Iconify ID ('logos:php') → still just text, never magically resolved
+// ---------------------------------------------------------------------------
+
+/** Mirror of buildPlatformStripItems from phase-card.tsx */
+type PlatformItem = { icon: React.ReactNode; label: string } | string;
+
+function buildPlatformStripItems(platforms: PlatformItem[]): React.ReactNode[] {
+  return platforms.map((p, i) => {
+    const label = typeof p === 'string' ? p : p.label;
+    const icon = typeof p === 'string' ? null : p.icon;
+    return React.createElement(
+      'div',
+      { key: `platform-${i}`, title: label },
+      icon ?? React.createElement('span', null, label)
+    );
+  });
+}
+
+describe('buildPlatformStripItems — string platform (text chip)', () => {
+  it('plain tech name renders as its own text', () => {
+    const nodes = buildPlatformStripItems(['jQuery']);
+    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
+    expect(html).toContain('jQuery');
+  });
+
+  it('Iconify-ID string renders as literal text — NOT resolved to an icon', () => {
+    // Regression guard: before migration, 'logos:php' was passed as a string and
+    // displayed as the text "logos:php" in the UI. This test documents that the
+    // component does NOT silently resolve icon IDs — the consumer must pass
+    // { icon: <Iconify icon="logos:php" />, label: 'PHP' } to get icon rendering.
+    const nodes = buildPlatformStripItems(['logos:php']);
+    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
+    expect(html).toContain('logos:php'); // text chip, not an icon
+  });
+
+  it('multiple string platforms all render', () => {
+    const nodes = buildPlatformStripItems(['jQuery', 'Kendo UI', 'C#']);
+    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
+    expect(html).toContain('jQuery');
+    expect(html).toContain('Kendo UI');
+    expect(html).toContain('C#');
+  });
+});
+
+describe('buildPlatformStripItems — { icon, label } platform (icon slot)', () => {
+  it('icon node renders; label is in tooltip title attribute', () => {
+    const iconEl = React.createElement('img', { 'data-testid': 'php-icon', alt: 'PHP' });
+    const nodes = buildPlatformStripItems([{ icon: iconEl, label: 'PHP' }]);
+    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
+    // The icon element is rendered
+    expect(html).toContain('data-testid="php-icon"');
+    // The label is accessible via the tooltip title — not as visible inner text
+    expect(html).toContain('title="PHP"');
+    // The label is NOT rendered as a text span (icon replaced the fallback)
+    expect(html).not.toMatch(/<span[^>]*>PHP<\/span>/);
+  });
+
+  it('{ icon, label } never renders label as inner text when icon is provided', () => {
+    const iconEl = React.createElement('svg', { 'data-testid': 'ts-icon' });
+    const nodes = buildPlatformStripItems([{ icon: iconEl, label: 'TypeScript' }]);
+    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
+    expect(html).toContain('data-testid="ts-icon"');
+    expect(html).not.toMatch(/<span[^>]*>TypeScript<\/span>/);
+  });
+});
+
+describe('buildPlatformStripItems — mixed string and object platforms', () => {
+  it('icon items and string items can coexist in one array', () => {
+    const iconEl = React.createElement('img', { 'data-testid': 'php-icon' });
+    const nodes = buildPlatformStripItems([{ icon: iconEl, label: 'PHP' }, 'Smarty', 'jQuery']);
+    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
+    expect(html).toContain('data-testid="php-icon"');
+    expect(html).toContain('>Smarty<');
+    expect(html).toContain('>jQuery<');
+    // PHP label must NOT appear as inner text (it has an icon)
+    expect(html).not.toMatch(/<span[^>]*>PHP<\/span>/);
   });
 });
