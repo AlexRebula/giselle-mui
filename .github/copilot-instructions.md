@@ -227,7 +227,8 @@ Use `element.dataset['camelKey']` rather than `element.getAttribute('data-kebab-
 These rules come directly from the MUI Store submission requirements
 (`https://support.mui.com/hc/en-us/articles/11440613164444`). They are development
 standards, not pre-submission checklists. Every component must comply from the moment
-it is written. Full research and codebase risk analysis: `alexrebula/docs/giselle-premium/02-quality-bar.md`.
+it is written. The relevant requirements are summarized in this section so the
+instructions remain self-contained for contributors.
 
 ### Do not use `React.FC`
 
