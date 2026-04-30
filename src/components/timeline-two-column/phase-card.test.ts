@@ -365,56 +365,58 @@ describe('CardStatusBadge priority rules', () => {
 });
 
 // ---------------------------------------------------------------------------
-// buildPlatformStripItems — REGRESSION tests
+// Platform entry derivation — REGRESSION tests
 //
 // REGRESSION: Before the { icon, label } migration, platforms were passed as
-// bare strings like 'logos:php'. The component rendered those strings as text
-// labels — so the UI showed "logos:php" instead of the PHP logo icon.
+// bare strings like 'logos:php'. The component treated those as text labels,
+// not as icon IDs to auto-resolve.
 //
-// These tests guard that contract:
-//   - string platform → rendered as the string value (text chip, no icon slot)
-//   - { icon, label } platform → icon node rendered, NOT the raw label as visible text
-//   - string that looks like an Iconify ID ('logos:php') → still just text, never magically resolved
+// These tests intentionally assert only the per-entry derivation contract:
+//   - string platform → label from the string value, no icon
+//   - { icon, label } platform → preserve both icon node and label
+//   - string that looks like an Iconify ID ('logos:php') → still just text
 // ---------------------------------------------------------------------------
 
-/** Mirror of buildPlatformStripItems from phase-card.tsx */
 type PlatformItem = { icon: React.ReactNode; label: string } | string;
 
-function buildPlatformStripItems(platforms: PlatformItem[]): React.ReactNode[] {
-  return platforms.map((p, i) => {
-    const label = typeof p === 'string' ? p : p.label;
-    const icon = typeof p === 'string' ? null : p.icon;
-    return React.createElement(
-      'div',
-      { key: `platform-${i}`, title: label },
-      icon ?? React.createElement('span', null, label)
-    );
-  });
+function derivePlatformEntry(
+  platform: PlatformItem
+): { label: string; icon: React.ReactNode | null } {
+  if (typeof platform === 'string') {
+    return { label: platform, icon: null };
+  }
+
+  return { label: platform.label, icon: platform.icon };
 }
 
-describe('buildPlatformStripItems — string platform (text chip)', () => {
-  it('plain tech name renders as its own text', () => {
-    const nodes = buildPlatformStripItems(['jQuery']);
-    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
-    expect(html).toContain('jQuery');
+describe('derivePlatformEntry', () => {
+  it('plain tech name resolves to a text label with no icon', () => {
+    expect(derivePlatformEntry('jQuery')).toEqual({ label: 'jQuery', icon: null });
   });
 
-  it('Iconify-ID string renders as literal text — NOT resolved to an icon', () => {
-    // Regression guard: before migration, 'logos:php' was passed as a string and
-    // displayed as the text "logos:php" in the UI. This test documents that the
-    // component does NOT silently resolve icon IDs — the consumer must pass
-    // { icon: <Iconify icon="logos:php" />, label: 'PHP' } to get icon rendering.
-    const nodes = buildPlatformStripItems(['logos:php']);
-    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
-    expect(html).toContain('logos:php'); // text chip, not an icon
+  it('Iconify-ID string remains a literal text label and is not auto-resolved', () => {
+    expect(derivePlatformEntry('logos:php')).toEqual({
+      label: 'logos:php',
+      icon: null,
+    });
   });
 
-  it('multiple string platforms all render', () => {
-    const nodes = buildPlatformStripItems(['jQuery', 'Kendo UI', 'C#']);
-    const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
-    expect(html).toContain('jQuery');
-    expect(html).toContain('Kendo UI');
-    expect(html).toContain('C#');
+  it('object platform preserves the provided label and icon node', () => {
+    const icon = React.createElement('span', { 'aria-hidden': 'true' }, 'php');
+    const entry = derivePlatformEntry({ icon, label: 'PHP' });
+
+    expect(entry.label).toBe('PHP');
+    expect(entry.icon).toBe(icon);
+  });
+
+  it('multiple string platforms each resolve to labels with no icons', () => {
+    const entries = ['jQuery', 'Kendo UI', 'C#'].map(derivePlatformEntry);
+
+    expect(entries).toEqual([
+      { label: 'jQuery', icon: null },
+      { label: 'Kendo UI', icon: null },
+      { label: 'C#', icon: null },
+    ]);
   });
 });
 
