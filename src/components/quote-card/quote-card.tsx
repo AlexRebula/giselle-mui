@@ -1,5 +1,6 @@
 import type { PaperProps } from '@mui/material/Paper';
 
+import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -12,12 +13,12 @@ export interface QuoteCardProps extends PaperProps {
   /** The full text of the quote. Rendered in italics inside the card body. */
   quote: string;
   /**
-   * Attribution name displayed below the quote, e.g. `"Dominic Pollaers"`.
+   * Attribution name displayed below the quote, e.g. `"Jane Smith"`.
    * Omit to hide the attribution row entirely.
    */
   author?: string;
   /**
-   * Source or context label displayed next to the author, e.g. `"NBN Project"`.
+   * Source or context label displayed next to the author, e.g. `"Platform Team"`.
    * A separator dot is only rendered when both `author` and `source` are present.
    */
   source?: string;
@@ -32,25 +33,31 @@ export interface QuoteCardProps extends PaperProps {
 /**
  * A warm, readable block-quote card built on MUI Paper.
  *
- * Extends PaperProps — callers can pass `elevation` for shadow depth and
+ * Extends `PaperProps` — callers can pass `elevation` for shadow depth and
  * `variant="outlined"` to switch to a border-only surface.
  * Colors are driven by MUI CSS variables so it adapts to light/dark mode and
  * any custom theme without additional configuration.
  *
- * Theming via sx:
- *   <QuoteCard sx={{ borderRadius: 4, p: 4 }} ... />
+ * **Theming via sx:**
+ * ```tsx
+ * <QuoteCard sx={{ borderRadius: 4, p: 4 }} ... />
+ * ```
  *
- * Theming via elevation:
- *   <QuoteCard elevation={4} ... />
+ * **Theming via elevation:**
+ * ```tsx
+ * <QuoteCard elevation={4} ... />
+ * ```
  *
- * Theming via color:
- *   <QuoteCard color="info" ... />
+ * **Theming via color:**
+ * ```tsx
+ * <QuoteCard color="info" ... />
+ * ```
  *
  * @example
  * <QuoteCard
  *   quote="Leave every file a little better than you found it."
- *   author="Alex Rebula"
- *   source="NBN Project"
+ *   author="Jane Smith"
+ *   source="Platform Team"
  *   elevation={0}
  * />
  */
@@ -77,64 +84,66 @@ export function QuoteCard({
       ]}
       {...other}
     >
-      {/* Decorative opening quote mark — pure Unicode, no icon dependency */}
-      <Typography
-        aria-hidden
-        sx={{
-          mb: 0.5,
-          mt: -1,
-          lineHeight: 1,
-          fontSize: '4rem',
-          display: 'block',
-          color: `${color}.main`,
-          opacity: 0.4,
-          fontFamily: 'Georgia, serif',
-          userSelect: 'none',
-        }}
-      >
-        {'\u201C'}
-      </Typography>
-
-      {/* Quote text */}
-      <Typography
-        variant="body1"
-        sx={{
-          fontStyle: 'italic',
-          fontWeight: 'fontWeightLight',
-          color: 'text.secondary',
-          lineHeight: 1.85,
-        }}
-      >
-        {quote}
-      </Typography>
-
-      {/* Attribution */}
-      {(author || source) && (
-        <Stack
-          direction="row"
-          spacing={0.75}
-          alignItems="center"
-          sx={{ mt: 2, color: 'text.disabled' }}
+      <Box sx={{ display: 'flex', gap: 2 }}>
+        {/* Left column — decorative opening quote mark */}
+        <Typography
+          aria-hidden
+          sx={{
+            lineHeight: 1,
+            fontSize: '4rem',
+            color: `${color}.main`,
+            opacity: 0.4,
+            fontFamily: 'Georgia, serif',
+            userSelect: 'none',
+            flexShrink: 0,
+            mt: -0.5,
+          }}
         >
-          {author && (
-            <Typography variant="caption" sx={{ fontWeight: 'fontWeightMedium' }}>
-              {author}
-            </Typography>
-          )}
+          {'\u201C'}
+        </Typography>
 
-          {author && source && (
-            <Typography variant="caption" sx={{ opacity: 0.6 }}>
-              ·
-            </Typography>
-          )}
+        {/* Right column — quote text + attribution */}
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography
+            variant="body1"
+            sx={{
+              fontStyle: 'italic',
+              fontWeight: 'fontWeightLight',
+              color: 'text.secondary',
+              lineHeight: 1.85,
+            }}
+          >
+            {quote}
+          </Typography>
 
-          {source && (
-            <Typography variant="caption" sx={{ opacity: 0.72 }}>
-              {source}
-            </Typography>
+          {(author || source) && (
+            <Stack
+              direction="row"
+              spacing={0.75}
+              alignItems="center"
+              sx={{ mt: 2, color: 'text.disabled' }}
+            >
+              {author && (
+                <Typography variant="caption" sx={{ fontWeight: 'fontWeightMedium' }}>
+                  {author}
+                </Typography>
+              )}
+
+              {author && source && (
+                <Typography variant="caption" aria-hidden sx={{ opacity: 0.6 }}>
+                  {'·'}
+                </Typography>
+              )}
+
+              {source && (
+                <Typography variant="caption" sx={{ opacity: 0.72 }}>
+                  {source}
+                </Typography>
+              )}
+            </Stack>
           )}
-        </Stack>
-      )}
+        </Box>
+      </Box>
     </Paper>
   );
 }

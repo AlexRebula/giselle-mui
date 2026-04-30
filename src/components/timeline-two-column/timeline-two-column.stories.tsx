@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import { GiselleIcon } from '../giselle-icon/giselle-icon';
 import { TimelineTwoColumn } from './timeline-two-column';
@@ -212,6 +213,41 @@ export const ChecklistMode: Story = {
   render: () => (
     <Box sx={{ maxWidth: 960, mx: 'auto', p: 3 }}>
       <TimelineTwoColumn phases={CHECKLIST_PHASES} checklist />
+    </Box>
+  ),
+  argTypes: {
+    phases: { control: false },
+    sx: { control: false },
+  },
+};
+
+// ----------------------------------------------------------------------
+
+const BREAKPOINTS = [
+  { label: 'xs — 360px', width: 360 },
+  { label: 'sm — 600px', width: 600 },
+  { label: 'md — 900px', width: 900 },
+  { label: 'lg — 1200px', width: 1200 },
+];
+
+/**
+ * Timeline constrained to each MUI standard breakpoint width (xs → lg).
+ * Shows how the layout adapts — or overflows — as available space shrinks.
+ */
+export const Responsive: Story = {
+  parameters: { layout: 'padded' },
+  render: () => (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {BREAKPOINTS.map(({ label, width }) => (
+        <Box key={width}>
+          <Typography variant="caption" sx={{ display: 'block', mb: 1, color: 'text.secondary' }}>
+            {label}
+          </Typography>
+          <Box sx={{ width, overflow: 'auto', border: '1px dashed', borderColor: 'divider' }}>
+            <TimelineTwoColumn phases={READ_ONLY_PHASES} />
+          </Box>
+        </Box>
+      ))}
     </Box>
   ),
   argTypes: {

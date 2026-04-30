@@ -42,6 +42,27 @@ The left/right content columns are extracted into a `TimelineColumn` local helpe
 
 Local done-state is initialised from `phases` and re-synced whenever the `phases` array identity changes. This allows async data loads and external resets to propagate without remounting the component.
 
+### `platforms` field — dual shape for backward compatibility
+
+The `platforms` prop accepts two shapes, exported as `TimelinePlatformItem`:
+
+```ts
+platforms?: TimelinePlatformItem[]
+// where TimelinePlatformItem = { icon: ReactNode; label: string } | string
+```
+
+**The preferred form** is `{ icon, label }` — it renders a tooltip-wrapped icon slot:
+
+```ts
+platforms: [
+  { icon: <GiselleIcon icon="logos:php" width={24} />, label: 'PHP' },
+]
+```
+
+**The string form** (for example, `'PHP'`) is a **backward-compatibility shim only**. It renders the string literally as a plain text label chip with no icon; strings are **not** interpreted as icon IDs. It exists to accommodate legacy downstream consumer data that was originally written against an earlier `string[]` contract, avoiding a breaking migration for existing consumers.
+
+**Do not write new string-form platform arrays.** Always use `{ icon, label }`. The string form may be removed in a future major version once all known legacy consumers have migrated.
+
 ### Sort stability
 
 `sortPhasesByDate` sorts newest-first with active phases pinned first. When two phases are both `active`, the comparator falls back to descending key order (rather than returning -1 for both, which would make the comparator non-symmetric and produce engine-dependent ordering).

@@ -1,6 +1,6 @@
 import type { Theme } from '@mui/material/styles';
 import type { BoxProps } from '@mui/material/Box';
-import type { TimelinePhase, HighlightedPaletteKey } from './types';
+import type { TimelinePhase, HighlightedPaletteKey, TimelinePlatformItem } from './types';
 
 import {
   useState,
@@ -432,14 +432,22 @@ function buildDateTypographySx({
 }
 
 /** Maps a phase's platform items into icon/chip nodes for inline rendering. */
-function buildPlatformStripItems(
-  platforms: Array<{ icon: ReactNode; label: string }>
-): ReactNode[] {
-  return platforms.map((p, i) => (
-    <Tooltip key={`platform-${i}`} title={p.label} arrow placement="top">
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{p.icon}</Box>
-    </Tooltip>
-  ));
+function buildPlatformStripItems(platforms: TimelinePlatformItem[]): ReactNode[] {
+  return platforms.map((p, i) => {
+    const label = typeof p === 'string' ? p : p.label;
+    const icon = typeof p === 'string' ? null : p.icon;
+    return (
+      <Tooltip key={`platform-${i}`} title={label} arrow placement="top">
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {icon ?? (
+            <Box component="span" sx={{ fontSize: 11, px: 0.5 }}>
+              {label}
+            </Box>
+          )}
+        </Box>
+      </Tooltip>
+    );
+  });
 }
 
 // ----------------------------------------------------------------------

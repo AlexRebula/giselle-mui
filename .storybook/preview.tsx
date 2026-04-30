@@ -9,6 +9,7 @@ const theme = extendTheme({
 // properties are injected into the DOM — required by giselle-mui components that
 // reference theme.vars.palette.* or var(--mui-palette-...) directly.
 const preview: Preview = {
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <CssVarsProvider theme={theme}>

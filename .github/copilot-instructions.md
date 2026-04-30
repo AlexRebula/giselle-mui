@@ -22,6 +22,12 @@ in this library exists because it solves a recurring problem that is either:
 
 ## Component rules (non-negotiable)
 
+0. **Zero personal data.** Stories, tests, JSDoc examples, and README code snippets must
+   never contain real names (people, clients, employers), real project names, or any content
+   derived from the `alexrebula` portfolio. Use generic placeholders:
+   authors → `'Jane Smith'`, sources/projects → `'Platform Team'`, metrics → `'20+'` / `'of experience'`.
+   Violating this rule exposes private career data in a public MIT-licensed repository.
+
 1. **Zero proprietary dependencies.** Only `react`, `react-dom`, `@mui/material`,
    `@emotion/react`, `@emotion/styled`, and `@iconify/react` are allowed as
    peer/direct dependencies.
@@ -35,6 +41,11 @@ in this library exists because it solves a recurring problem that is either:
 4. **Only own props get JSDoc.** Never redeclare or document props inherited from
    MUI interfaces. TypeScript inheritance carries MUI's own descriptions into
    Storybook autodoc automatically.
+
+4a. **JSDoc must use Markdown formatting.** Storybook autodoc renders JSDoc descriptions
+    as Markdown. Use `**bold**`, `- ` bullet lists, and fenced code blocks (` ```tsx `).
+    Never use bare indented code lines — they do not render as code blocks in Markdown.
+    `@example` tags are rendered separately as code snippets and remain plain JSX/TSX.
 
 5. **ReactNode slots for icons and decoration.** Components never import an icon
    library internally. Accept `icon?: ReactNode` and let the consumer fill it.
@@ -99,9 +110,9 @@ At the start of every new Copilot session in this package, read these files:
 
 | File | Purpose |
 |------|---------|
-| [`docs/theming-roadmap.md`](../docs/theming-roadmap.md) | Phase A (theme utilities), Phase B (base theme), Phase C (ThemeProvider) — next planned work |
-| [`docs/timeline-component-plan.md`](../docs/timeline-component-plan.md) | Full plan for `RoadmapTimeline` — next component to build |
-| [`docs/theming-nextjs.md`](../docs/theming-nextjs.md) | How to wire this library into a Next.js app |
+| [`docs/theming/roadmap.md`](../docs/theming/roadmap.md) | Phase A (theme utilities), Phase B (Giselle brand palette), Phase C (GiselleThemeProvider) — next planned work |
+| [`docs/components/timeline-plan.md`](../docs/components/timeline-plan.md) | Full plan for `RoadmapTimeline` — next component to build |
+| [`docs/theming/nextjs.md`](../docs/theming/nextjs.md) | How to wire this library into a Next.js app |
 
 ### Current components (shipped)
 
@@ -109,18 +120,18 @@ At the start of every new Copilot session in this package, read these files:
 |-----------|------|--------|
 | `GiselleIcon` | `src/components/giselle-icon/` | ✅ Shipped + tested |
 | `MetricCard` + `MetricCardDecoration` | `src/components/metric-card/` | ✅ Shipped + tested |
-| `QuoteCard` | `src/components/quote-card/` | ✅ Shipped — two-column layout refactor pending |
+| `QuoteCard` | `src/components/quote-card/` | ✅ Shipped + tested |
 | `SelectableCard` | `src/components/selectable-card/` | ✅ Shipped + tested |
 | `createIconRegistrar` | `src/utils/create-icon-registrar.ts` | ✅ Shipped + tested |
 | `TimelineTwoColumn` | `src/components/timeline-two-column/` | ✅ Shipped + tested |
 
 ### Next planned work (priority order)
 
-1. **QuoteCard two-column layout** — structural JSX fix, no new props. `src/components/quote-card/quote-card.tsx`.
-2. **Storybook story polish** — initial stories for all components are shipped. Remaining: MetricCard notes panel, responsive `sx` demo in GiselleIcon, QuoteCard update after two-column layout refactor.
-3. **Phase A theme utilities** — `varAlpha`, `createPaletteChannel`, `pxToRem` / `remToPx` in `src/utils/`. See `docs/theming/roadmap.md` Phase A table.
-4. **RoadmapTimeline component** — requires Phase A first. Full plan in `docs/components/timeline-plan.md`. Uses `@mui/lab` Timeline primitives (acceptable peer dep).
-5. **Phase C ThemeProvider** — `GiselleThemeProvider` wrapping `CssVarsProvider`. See `docs/theming/roadmap.md` Phase C.
+1. **Phase A theme utilities** — `varAlpha`, `createPaletteChannel`, `pxToRem` / `remToPx` in `src/utils/`. Prerequisite for Phase B and C. See `docs/theming/roadmap.md` Phase A table.
+2. **Phase B — Giselle brand theme preset** — define the Giselle green + amber palette as `giselleTheme` using `extendTheme()`. Export from `src/index.ts`. See `docs/theming/roadmap.md` Phase B.
+3. **Phase C — `GiselleThemeProvider`** — wraps `CssVarsProvider` with the Giselle default palette. Zero-config usage. Accepts `themeOverrides` for partial overrides and `theme` for full bypass. See `docs/theming/roadmap.md` Phase C.
+4. **Storybook story polish** — Remaining: MetricCard notes panel, responsive `sx` demo in GiselleIcon.
+5. **RoadmapTimeline component** — requires Phase A first. Full plan in `docs/components/timeline-plan.md`. Uses `@mui/lab` Timeline primitives (acceptable peer dep).
 
 ### Additional allowed peer dependencies
 
@@ -203,7 +214,128 @@ A Storybook story file is created **only when seeing the component in isolation 
 
 Use `argTypes: { control: false }` for `ReactNode` and `SxProps` slots. Every story that demonstrates colour variants must include all six palette keys: `primary`, `secondary`, `info`, `success`, `warning`, `error`.
 
+Every exported component must have a `Responsive` story that renders the component inside labeled containers at each MUI standard breakpoint width: xs (360px), sm (600px), md (900px), lg (1200px). Use `parameters: { layout: 'padded' }` on these stories. For grid-based components (cards in a collection), the column count should increase with width. Named component helpers are required when the story uses React hooks.
+
 ### Preferred `.dataset` over `getAttribute` in tests
 
 Use `element.dataset['camelKey']` rather than `element.getAttribute('data-kebab-key')` in test files. Sonar flags `getAttribute` as a code smell when `.dataset` is available.
+
+---
+
+## MUI Store quality bar (enforce always — not just before submission)
+
+These rules come directly from the MUI Store submission requirements
+(`https://support.mui.com/hc/en-us/articles/11440613164444`). They are development
+standards, not pre-submission checklists. Every component must comply from the moment
+it is written. The relevant requirements are summarized in this section so the
+instructions remain self-contained for contributors.
+
+### Do not use `React.FC`
+
+Use plain function declarations. `React.FC` is redundant, adds implicit `children` typing
+baggage, and is explicitly banned by the MUI Store quality bar.
+
+```tsx
+// ❌ wrong
+const MyComponent: React.FC<MyProps> = ({ foo }) => { ... }
+
+// ✅ correct
+function MyComponent({ foo }: MyProps) { ... }
+```
+
+**Enforcement:** Any new component using `React.FC` must be refactored before merge.
+
+### Do not use `<Box>` without using its props
+
+If a JSX element has no props — not even `sx` — use a raw `<div>` (or `<span>`, `<section>`,
+etc.) instead. `<Box>` is only justified when you are actively using at least one of its
+MUI-specific props (`sx`, `component`, `ref`, or shorthand layout props like `display`).
+
+```tsx
+// ❌ wrong — Box adds runtime cost but provides nothing
+<Box>
+  <Typography>Hello</Typography>
+</Box>
+
+// ✅ correct — plain div when no Box props are needed
+<div>
+  <Typography>Hello</Typography>
+</div>
+
+// ✅ correct — Box justified because sx is used
+<Box sx={{ display: 'flex', gap: 2 }}>
+  <Typography>Hello</Typography>
+</Box>
+```
+
+**Before every PR:** run the following to catch bare Box usage:
+```sh
+grep -rn "<Box[^/]*>" src/ | grep -v "sx=\|component=\|className=\|ref=\|aria-\|data-\|display="
+```
+
+### Use `shouldForwardProp` on every reusable `styled()` component
+
+If a component uses `styled()`, it **must** declare `shouldForwardProp` to prevent custom
+props from leaking into the DOM.
+
+```tsx
+// ❌ wrong — custom prop leaks to DOM → React warning + Sonar violation
+const StyledDiv = styled('div')<{ active: boolean }>`
+  color: ${({ active }) => active ? 'red' : 'black'};
+`;
+
+// ✅ correct
+const StyledDiv = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'active',
+})<{ active: boolean }>`
+  color: ${({ active }) => active ? 'red' : 'black'};
+`;
+```
+
+Currently: zero `styled()` components in this library. This rule fires the moment the
+first one is introduced.
+
+### Icon imports: one level deep (not from package root)
+
+Import from `@iconify/react`, not from any `@iconify-json/*` path or the icon package root
+without the module specifier. This is already the correct pattern in this library — do not
+deviate.
+
+```tsx
+// ✅ correct
+import { Icon } from '@iconify/react';
+
+// ❌ wrong — root import of full icon set
+import allIcons from '@iconify/json';
+```
+
+### No source maps in the distributed build
+
+`sourcemap: true` is acceptable in `tsup.config.ts` for the open-source library (developers
+debugging against source). But any **premium or production distribution** build must set
+`sourcemap: false`. MUI Store ToS §9 explicitly prohibits distributing source maps.
+
+This does **not** require changing the current `tsup.config.ts` today. It is a hard
+constraint on the future premium template's separate build config.
+
+### Browser support targets
+
+All components must work in — and must not use APIs or CSS features unavailable in — the
+following minimum versions:
+
+| Browser | Minimum |
+|---------|---------|
+| Chrome | ≥ 121 |
+| Firefox | ≥ 121 |
+| Edge | ≥ 117 |
+| Safari (macOS + iOS) | ≥ 17.0 |
+
+This matches the MUI Core supported browser matrix. Do not use CSS features, JS APIs, or
+DOM behaviour that falls outside these targets.
+
+### Images and SVGs
+
+- No low-resolution raster images. Any raster asset must look sharp at >200 PPI.
+- SVG files must be optimised — no verbose metadata, no inline raster data.
+- If SVGs are added to Storybook or a demo app, run them through `svgo` before committing.
 

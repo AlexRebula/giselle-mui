@@ -49,6 +49,18 @@ vi.mock('@mui/material/Paper', () => ({
   }) => React.createElement('div', { 'data-testid': 'paper', ...props }, children ?? null),
 }));
 
+vi.mock('@mui/material/Box', () => ({
+  default: ({
+    children,
+    sx: _sx,
+    ...props
+  }: {
+    children?: React.ReactNode;
+    sx?: unknown;
+    [key: string]: unknown;
+  }) => React.createElement('div', props, children ?? null),
+}));
+
 vi.mock('@mui/material/Stack', () => ({
   default: ({
     children,
@@ -129,17 +141,17 @@ describe('QuoteCard — author', () => {
     const html = renderToStaticMarkup(
       React.createElement(QuoteCard, {
         quote: 'Great work.',
-        author: 'Alex Rebula',
+        author: 'Jane Smith',
       })
     );
 
-    expect(html).toContain('Alex Rebula');
+    expect(html).toContain('Jane Smith');
   });
 
   it('does NOT render author text when omitted', () => {
     const html = renderToStaticMarkup(React.createElement(QuoteCard, { quote: 'Great work.' }));
 
-    expect(html).not.toContain('Alex Rebula');
+    expect(html).not.toContain('Jane Smith');
   });
 });
 
@@ -152,17 +164,17 @@ describe('QuoteCard — source', () => {
     const html = renderToStaticMarkup(
       React.createElement(QuoteCard, {
         quote: 'Great work.',
-        source: 'NBN Project',
+        source: 'Platform Team',
       })
     );
 
-    expect(html).toContain('NBN Project');
+    expect(html).toContain('Platform Team');
   });
 
   it('does NOT render source text when omitted', () => {
     const html = renderToStaticMarkup(React.createElement(QuoteCard, { quote: 'Great work.' }));
 
-    expect(html).not.toContain('NBN Project');
+    expect(html).not.toContain('Platform Team');
   });
 });
 
@@ -181,7 +193,7 @@ describe('QuoteCard — attribution row', () => {
 
   it('renders the attribution Stack when source is provided', () => {
     const html = renderToStaticMarkup(
-      React.createElement(QuoteCard, { quote: 'Great work.', source: 'NBN Project' })
+      React.createElement(QuoteCard, { quote: 'Great work.', source: 'Platform Team' })
     );
 
     expect(html).toContain('data-testid="stack"');
@@ -197,8 +209,8 @@ describe('QuoteCard — attribution row', () => {
     const html = renderToStaticMarkup(
       React.createElement(QuoteCard, {
         quote: 'Great work.',
-        author: 'Alex Rebula',
-        source: 'NBN Project',
+        author: 'Jane Smith',
+        source: 'Platform Team',
       })
     );
 
@@ -210,7 +222,7 @@ describe('QuoteCard — attribution row', () => {
     const html = renderToStaticMarkup(
       React.createElement(QuoteCard, {
         quote: 'Great work.',
-        author: 'Alex Rebula',
+        author: 'Jane Smith',
       })
     );
 
@@ -221,7 +233,7 @@ describe('QuoteCard — attribution row', () => {
     const html = renderToStaticMarkup(
       React.createElement(QuoteCard, {
         quote: 'Great work.',
-        source: 'NBN Project',
+        source: 'Platform Team',
       })
     );
 
@@ -243,5 +255,41 @@ describe('QuoteCard — props forwarding', () => {
     );
 
     expect(html).toContain('data-testid="my-quote-card"');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Two-column layout structure
+// ---------------------------------------------------------------------------
+
+describe('QuoteCard — two-column layout', () => {
+  it('renders the quote mark and quote text as siblings inside a shared flex container', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(QuoteCard, { quote: 'Leave every file better than you found it.' })
+    );
+
+    // Paper mock renders as <div data-testid="paper">. The outer Box (flex container)
+    // is its direct first child. Box mock renders as plain <div> with sx stripped.
+    const parser = new globalThis.DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    const paper = doc.querySelector('[data-testid="paper"]');
+    expect(paper).not.toBeNull();
+
+    // The flex container is the direct child of Paper
+    const flexContainer = paper!.firstElementChild;
+    expect(flexContainer).not.toBeNull();
+
+    // Must have at least 2 direct children: left column (quote mark) + right column (text)
+    const children = Array.from(flexContainer!.children);
+    expect(children.length).toBeGreaterThanOrEqual(2);
+
+    const hasQuoteMark = children.some((c) => c.textContent?.includes('\u201C'));
+    const hasQuoteText = children.some((c) =>
+      c.textContent?.includes('Leave every file better than you found it.')
+    );
+
+    expect(hasQuoteMark).toBe(true);
+    expect(hasQuoteText).toBe(true);
   });
 });
