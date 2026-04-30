@@ -35,8 +35,11 @@ export type TimelinePhase = {
    * Tech stack icons for this entry. Each item provides a `ReactNode` icon and an accessible label.
    * Renders as a horizontal strip of icon slots with a tooltip per item.
    * Use `<GiselleIcon icon={...} width={24} />` or any icon element.
+   *
+   * Also accepts a plain `string[]` for backward compatibility — strings are rendered as labels
+   * with no icon slot. Prefer the `{ icon, label }` form for full icon rendering.
    */
-  platforms?: Array<{ icon: ReactNode; label: string }>;
+  platforms?: Array<{ icon: ReactNode; label: string } | string>;
   /**
    * Label displayed above the tech stack strip.
    * @default 'Tech Stack'
