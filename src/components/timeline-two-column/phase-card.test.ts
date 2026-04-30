@@ -15,13 +15,16 @@
  *   buildCardKeyDownHandler — fires toggle on Enter/Space when hasDetails is true
  *   resolveCardExpansion    — selects controlled vs. uncontrolled expand mode
  *   CardStatusBadge logic   — priority: overdue (not done) > active > scenario
- *   buildPlatformStripItems — REGRESSION: string platform entries render as literal text
+ *   derivePlatformEntry     — pure derivation; null icon for string platforms
+ *   buildPlatformStripItems — HTML integration: icon renders, text fallback suppressed
  */
 
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 import { it, vi, expect, describe } from 'vitest';
+
+import { buildPlatformStripItems } from './phase-card';
 
 // ---------------------------------------------------------------------------
 // Mirror functions — exact copies of the inline helpers in phase-card.tsx
@@ -218,65 +221,6 @@ describe('resolveCardExpansion — controlled mode', () => {
 });
 
 // ---------------------------------------------------------------------------
-// buildPlatformStripItems — per-entry derivations
-// ---------------------------------------------------------------------------
-
-/**
- * Mirrors the per-entry derivations inside buildPlatformStripItems.
- *
- * The function maps each platform entry to a `{ label, hasTextFallback }` pair:
- *   - `label`           — becomes both the Tooltip `title` prop and, for string entries, the visible text.
- *   - `hasTextFallback` — true when the entry is a plain string (no icon provided),
- *                         meaning a `<Box component="span">` text node is rendered instead of an icon.
- */
-function derivePlatformEntry(p: { icon: unknown; label: string } | string): {
-  label: string;
-  hasTextFallback: boolean;
-} {
-  const label = typeof p === 'string' ? p : p.label;
-  const hasTextFallback = typeof p === 'string';
-  return { label, hasTextFallback };
-}
-
-describe('buildPlatformStripItems — string entry (text-label fallback)', () => {
-  it('string entry → label equals the string', () => {
-    expect(derivePlatformEntry('TypeScript').label).toBe('TypeScript');
-  });
-
-  it('string entry → hasTextFallback is true (no icon → text span rendered)', () => {
-    expect(derivePlatformEntry('React').hasTextFallback).toBe(true);
-  });
-
-  it('string entry → label is also the tooltip title (same value)', () => {
-    // Tooltip title === label for string entries — asserting label correctness
-    // is sufficient to assert tooltip title correctness.
-    expect(derivePlatformEntry('Node.js').label).toBe('Node.js');
-  });
-
-  it('[regression] plain string[] (legacy consumer data) → all entries produce label nodes', () => {
-    const items: Array<{ icon: unknown; label: string } | string> = ['AWS', 'GCP', 'Azure'];
-    const derived = items.map(derivePlatformEntry);
-    expect(derived.map((d) => d.label)).toEqual(['AWS', 'GCP', 'Azure']);
-    expect(derived.every((d) => d.hasTextFallback)).toBe(true);
-  });
-});
-
-describe('buildPlatformStripItems — object entry (icon slot)', () => {
-  it('object entry → label equals p.label', () => {
-    expect(derivePlatformEntry({ icon: '<svg />', label: 'React' }).label).toBe('React');
-  });
-
-  it('object entry → hasTextFallback is false (icon provided → icon renders, not text span)', () => {
-    expect(derivePlatformEntry({ icon: '<svg />', label: 'Vue' }).hasTextFallback).toBe(false);
-  });
-
-  it('object entry with null icon → hasTextFallback false (icon slot still provided)', () => {
-    // null is a valid ReactNode — the consumer explicitly passed the icon slot.
-    expect(derivePlatformEntry({ icon: null, label: 'Figma' }).hasTextFallback).toBe(false);
-  });
-});
-
-// ---------------------------------------------------------------------------
 // CardStatusBadge priority rules
 // ---------------------------------------------------------------------------
 
@@ -379,9 +323,10 @@ describe('CardStatusBadge priority rules', () => {
 
 type PlatformItem = { icon: React.ReactNode; label: string } | string;
 
-function derivePlatformEntry(
-  platform: PlatformItem
-): { label: string; icon: React.ReactNode | null } {
+function derivePlatformEntry(platform: PlatformItem): {
+  label: string;
+  icon: React.ReactNode | null;
+} {
   if (typeof platform === 'string') {
     return { label: platform, icon: null };
   }

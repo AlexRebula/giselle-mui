@@ -431,11 +431,33 @@ function buildDateTypographySx({
   };
 }
 
+/**
+ * Derives the display `label`, `icon`, and `hasTextFallback` from a single
+ * {@link TimelinePlatformItem}.
+ *
+ * A pure helper — rendering concerns (Tooltip wrapping, Box fallback) live in
+ * `buildPlatformStripItems`. Exported so tests can exercise the real production
+ * derivation logic without re-implementing it as a mirror.
+ *
+ * - `label`           — the Tooltip title and text fallback content.
+ * - `icon`            — `null` for string platforms; the ReactNode for object platforms.
+ * - `hasTextFallback` — `true` when `icon` is `null` (a `<Box component="span">` is rendered).
+ */
+export function derivePlatformEntry(p: TimelinePlatformItem): {
+  label: string;
+  icon: ReactNode;
+  hasTextFallback: boolean;
+} {
+  const isString = typeof p === 'string';
+  const label = isString ? p : p.label;
+  const icon = isString ? null : p.icon;
+  return { label, icon, hasTextFallback: isString };
+}
+
 /** Maps a phase's platform items into icon/chip nodes for inline rendering. */
-function buildPlatformStripItems(platforms: TimelinePlatformItem[]): ReactNode[] {
+export function buildPlatformStripItems(platforms: TimelinePlatformItem[]): ReactNode[] {
   return platforms.map((p, i) => {
-    const label = typeof p === 'string' ? p : p.label;
-    const icon = typeof p === 'string' ? null : p.icon;
+    const { label, icon } = derivePlatformEntry(p);
     return (
       <Tooltip key={`platform-${i}`} title={label} arrow placement="top">
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
