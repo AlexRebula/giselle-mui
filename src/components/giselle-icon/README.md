@@ -144,6 +144,9 @@ import { MetricCard, MetricCardDecoration, GiselleIcon } from '@alexrebula/gisel
   value="20+"
   label="Years"
   sublabel="of experience"
+  icon={<GiselleIcon icon="solar:clock-circle-bold-duotone" />}
+  decoration={<MetricCardDecoration />}
+/>
 ```
 
 ---
