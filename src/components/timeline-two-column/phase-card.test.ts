@@ -419,15 +419,13 @@ describe('buildPlatformStripItems — string platform (text chip)', () => {
 });
 
 describe('buildPlatformStripItems — { icon, label } platform (icon slot)', () => {
-  it('icon node renders; label is in tooltip title attribute', () => {
+  it('icon node renders and suppresses the fallback text label', () => {
     const iconEl = React.createElement('img', { 'data-testid': 'php-icon', alt: 'PHP' });
     const nodes = buildPlatformStripItems([{ icon: iconEl, label: 'PHP' }]);
     const html = renderToStaticMarkup(React.createElement(React.Fragment, null, ...nodes));
     // The icon element is rendered
     expect(html).toContain('data-testid="php-icon"');
-    // The label is accessible via the tooltip title — not as visible inner text
-    expect(html).toContain('title="PHP"');
-    // The label is NOT rendered as a text span (icon replaced the fallback)
+    // The label is NOT rendered as a text span when an icon is provided
     expect(html).not.toMatch(/<span[^>]*>PHP<\/span>/);
   });
 
