@@ -12,6 +12,19 @@ export type HighlightedPaletteKey = Exclude<
 
 // ----------------------------------------------------------------------
 
+/**
+ * A single platform / tech-stack entry for `TimelinePhase.platforms`.
+ *
+ * - **Preferred form:** `{ icon: ReactNode; label: string }` — renders a tooltip-wrapped icon slot.
+ *   Use `<GiselleIcon icon={...} width={24} />` or any icon element.
+ * - **String form:** backward-compatibility shim only. The string is rendered as a plain text
+ *   label chip with no icon slot. Strings are **not** interpreted as icon IDs.
+ *   Prefer the object form for all new entries.
+ */
+export type TimelinePlatformItem = { icon: ReactNode; label: string } | string;
+
+// ----------------------------------------------------------------------
+
 export type TimelinePhase = {
   /** Numeric sort key. Fractional keys (e.g. 4.5) interleave life events between roles. */
   key: number;
@@ -38,8 +51,10 @@ export type TimelinePhase = {
    *
    * Also accepts a plain `string[]` for backward compatibility — strings are rendered as labels
    * with no icon slot. Prefer the `{ icon, label }` form for full icon rendering.
+   *
+   * See {@link TimelinePlatformItem} for the full union type.
    */
-  platforms?: Array<{ icon: ReactNode; label: string } | string>;
+  platforms?: TimelinePlatformItem[];
   /**
    * Label displayed above the tech stack strip.
    * @default 'Tech Stack'

@@ -42,12 +42,13 @@ The left/right content columns are extracted into a `TimelineColumn` local helpe
 
 Local done-state is initialised from `phases` and re-synced whenever the `phases` array identity changes. This allows async data loads and external resets to propagate without remounting the component.
 
-### `platforms` field — dual shape and type-drift history
+### `platforms` field — dual shape for backward compatibility
 
-The `platforms` prop accepts two shapes:
+The `platforms` prop accepts two shapes, exported as `TimelinePlatformItem`:
 
 ```ts
-platforms?: Array<{ icon: ReactNode; label: string } | string>
+platforms?: TimelinePlatformItem[]
+// where TimelinePlatformItem = { icon: ReactNode; label: string } | string
 ```
 
 **The preferred form** is `{ icon, label }` — it renders a tooltip-wrapped icon slot:
@@ -58,11 +59,9 @@ platforms: [
 ]
 ```
 
-**The string form** (for example, `'PHP'`) is a **backward-compatibility shim only**. It renders the string literally as a plain text label chip with no icon; strings are **not** interpreted as icon IDs. It exists because the `alexrebula` portfolio's career timeline data was written against a local copy of this component that accepted `string[]`. When that local copy was deleted and all imports were swapped to `@alexrebula/giselle-mui`, the type mismatch was discovered. Rather than rewriting all nine `platforms` arrays in `alexrebula` immediately, the type was widened to accept both shapes.
+**The string form** (for example, `'PHP'`) is a **backward-compatibility shim only**. It renders the string literally as a plain text label chip with no icon; strings are **not** interpreted as icon IDs. It exists to accommodate legacy downstream consumer data that was originally written against an earlier `string[]` contract, avoiding a breaking migration for existing consumers.
 
-**Do not write new string-form platforms arrays.** Always use `{ icon, label }`. The string form will be removed once `alexrebula` migrates its nine legacy entries.
-
-**Deployment note:** Because Vercel clones `giselle-mui` from `main` (no branch specified), any type change here that is not merged to `main` will break the `alexrebula` Vercel build even if `tsc` passes locally. This is exactly what happened — the union type fix was on `feature/docs-update` for several hours before being merged, causing a CI failure on Vercel. **Always merge type changes to `main` in `giselle-mui` before or at the same time as pushing dependent changes in `alexrebula`.**
+**Do not write new string-form platform arrays.** Always use `{ icon, label }`. The string form may be removed in a future major version once all known legacy consumers have migrated.
 
 ### Sort stability
 

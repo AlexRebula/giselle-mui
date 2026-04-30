@@ -27,5 +27,6 @@ export type {
   TimelineDotComponentProps,
   TimelineTwoColumnProps,
   TimelinePhase,
+  TimelinePlatformItem,
   HighlightedPaletteKey,
 } from './components/timeline-two-column';

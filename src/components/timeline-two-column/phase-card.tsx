@@ -1,6 +1,6 @@
 import type { Theme } from '@mui/material/styles';
 import type { BoxProps } from '@mui/material/Box';
-import type { TimelinePhase, HighlightedPaletteKey } from './types';
+import type { TimelinePhase, HighlightedPaletteKey, TimelinePlatformItem } from './types';
 
 import {
   useState,
@@ -432,9 +432,7 @@ function buildDateTypographySx({
 }
 
 /** Maps a phase's platform items into icon/chip nodes for inline rendering. */
-function buildPlatformStripItems(
-  platforms: Array<{ icon: ReactNode; label: string } | string>
-): ReactNode[] {
+function buildPlatformStripItems(platforms: TimelinePlatformItem[]): ReactNode[] {
   return platforms.map((p, i) => {
     const label = typeof p === 'string' ? p : p.label;
     const icon = typeof p === 'string' ? null : p.icon;
