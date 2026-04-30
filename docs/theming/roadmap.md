@@ -55,55 +55,96 @@ as named exports from `giselle-mui`, so consuming projects have them out of the 
 | Add tests for all theme utilities | ⬜ |
 | Update `theming-nextjs.md` to show usage from giselle-mui | ⬜ |
 
-### Phase B — Base theme preset (Low priority)
+### Phase B — Giselle brand theme preset (Medium priority)
 
-**Goal:** Provide an optional starter theme for projects that do not want to define
-all their own tokens from scratch.
+**Goal:** Define the Giselle default palette and typography scale as a named export
+(`giselleTheme`) — a ready-to-use `extendTheme()` result that consuming projects can
+import directly, extend, or ignore in favour of their own palette.
+
+The default palette is the Giselle brand identity:
+
+- **Primary:** Giselle green — a saturated, accessible green (exact hex TBD at build time)
+- **Secondary:** Giselle amber — a warm yellow/amber accent
+
+This is intentionally opinionated. A consumer who wants a different palette passes overrides
+(see Phase C). A consumer who wants the Giselle look gets it out of the box with zero config.
 
 | Task | Status |
 | --- | --- |
-| Define a `baseTheme` preset in `giselle-mui` (neutral, no branding) | ⬜ |
-| Document how to extend the base theme with project-specific tokens | ⬜ |
+| Decide final hex values for `primary` and `secondary` Giselle palette colours | ⬜ |
+| Define `giselleTheme` using `extendTheme()` with the Giselle palette | ⬜ |
+| Ensure all six palette keys are covered: `primary`, `secondary`, `info`, `success`, `warning`, `error` | ⬜ |
+| Export `giselleTheme` from `giselle-mui/src/index.ts` | ⬜ |
+| Document the palette decisions in `theming-nextjs.md` | ⬜ |
 
-### Phase C — ThemeProvider component (Medium priority)
+### Phase C — GiselleThemeProvider component (HIGH priority)
 
-**Goal:** Expose a `<ThemeProvider>` wrapper from `giselle-mui` that consuming Next.js
-apps can use directly, without having to wire up `CssVarsProvider` + `extendTheme` themselves.
+**Goal:** Expose a `<GiselleThemeProvider>` wrapper from `giselle-mui` that:
 
-**Critical principle — theme variables come from the consumer, not giselle-mui:**
+1. Ships with the Giselle brand theme (Phase B) as the default — zero-config usage
+2. Accepts a `themeOverrides` prop for consumers who want a different palette, typography, or spacing
+3. Accepts a `theme` prop for consumers who want to bypass the defaults entirely and pass their own `extendTheme()` result
 
-`giselle-mui` provides the logic and the TypeScript types.
-The consumer (Next.js app / client) is responsible for providing the token data:
-colour palette, typography scale, spacing, shadows.
+This is the DX goal:
 
-This mirrors the sections-api principle exactly:
-- components receive typed props; they never hardcode data
-- `ThemeProvider` receives typed token objects; it never hardcodes colour values
-
-```ts
-// Consumer provides tokens:
-<GiselleThemeProvider palette={clientPalette} typography={clientTypography}>
+```tsx
+// Zero config — uses Giselle green + amber palette
+<GiselleThemeProvider>
   <App />
 </GiselleThemeProvider>
 
-// giselle-mui provides the types:
-export interface GiselleThemePalette { primary: string; ... }
+// Consumer overrides specific tokens — still wraps in CssVarsProvider correctly
+<GiselleThemeProvider themeOverrides={{ palette: { primary: { main: '#1976d2' } } }}>
+  <App />
+</GiselleThemeProvider>
+
+// Fully custom — consumer owns the full theme
+<GiselleThemeProvider theme={extendTheme(myThemeInput)}>
+  <App />
+</GiselleThemeProvider>
+```
+
+**Design principle — sensible defaults, easy to override:**
+
+The previous plan required consumers to provide all tokens. This created too much friction for
+the zero-config case. The revised design ships a real default so consumers can try the library
+immediately without any theme configuration.
+
+**What it wraps:**
+
+```tsx
+// Internal implementation shape (simplified)
+import { CssVarsProvider, extendTheme } from '@mui/material/styles';
+import { giselleTheme } from '../utils/theme-preset';
+
+function GiselleThemeProvider({ children, themeOverrides, theme }: Props) {
+  const resolvedTheme = theme ?? extendTheme(merge(giselleTheme, themeOverrides ?? {}));
+  return <CssVarsProvider theme={resolvedTheme}>{children}</CssVarsProvider>;
+}
 ```
 
 | Task | Status |
 | --- | --- |
-| Define `GiselleThemePalette` and `GiselleThemeTypography` interfaces | ⬜ |
-| Implement `GiselleThemeProvider` using `CssVarsProvider` + `extendTheme` | ⬜ |
-| Add Storybook story that tests `GiselleThemeProvider` with a real token set | ⬜ |
-| Document the "token data from consumer" principle in `theming-nextjs.md` | ⬜ |
+| Complete Phase B (Giselle theme preset) — this is a direct prerequisite | ⬜ |
+| Define `GiselleThemeProviderProps` interface (`children`, `themeOverrides?`, `theme?`) | ⬜ |
+| Implement `GiselleThemeProvider` wrapping `CssVarsProvider` with merge logic | ⬜ |
+| Export `GiselleThemeProvider` from `giselle-mui/src/index.ts` | ⬜ |
+| Add Storybook story: default palette, with overrides, fully custom | ⬜ |
+| Add Vitest test: renders correctly, passes `data-mui-color-scheme` to DOM | ⬜ |
+| Update `theming-nextjs.md` with the new zero-config usage pattern | ⬜ |
 
 **Storybook note:** Storybook in `giselle-mui` must be able to test two things:
 1. MUI wrapper components (existing) — isolated, styled via a test theme
-2. `GiselleThemeProvider` — with a real MUI `CssVarsProvider` setup and sample token data
+2. `GiselleThemeProvider` — with the default Giselle palette, with overrides, and with a
+   fully custom theme. All three modes must have a story.
 
-The sample token data used in Storybook must be generic test data defined in `giselle-mui` itself
-(no imports from `alexrebula` or any client project). This is analogous to the
-`giselle-sections-sdk/src/samples/` pattern.
+Sample token data used in Storybook stories must be defined in `giselle-mui` itself —
+no imports from `alexrebula` or any client project.
+
+**This is the foundational prerequisite for:**
+- Writing authoritative dev.to articles about MUI v7 CSS variables (`GiselleThemeProvider` is the worked example)
+- The premium template (the template's look is the default Giselle palette, consumers override it)
+- Replacing `minimal-shared/utils` in the portfolio's theme setup
 
 ---
 

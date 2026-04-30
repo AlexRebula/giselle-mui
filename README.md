@@ -1,6 +1,6 @@
-# @alexrebula/giselle-mui
+# Giselle MUI
 
-Small, focused MUI wrapper components that encode non-obvious design and
+`@alexrebula/giselle-mui` — small, focused MUI wrapper components that encode non-obvious design and
 accessibility decisions — so consumers don't have to rediscover them.
 
 Built on `@mui/material` v7 (CSS variables mode). TypeScript-first. MIT licensed.
@@ -13,8 +13,10 @@ Built on `@mui/material` v7 (CSS variables mode). TypeScript-first. MIT licensed
 
 > **Beta — active development. Not yet published to npm.**
 >
-> The API is stable and all 52 unit tests pass. The package is fully built and tested locally.
-> First public npm release is planned alongside the portfolio site launch (May/June 2026).
+> The API is stable and the test suite covers component structure, prop forwarding, ARIA
+> semantics, and interaction behaviour across all shipped components. The package is fully
+> built and tested locally. First public npm release is planned alongside the portfolio
+> site launch (May/June 2026).
 > Feedback and issues are welcome on [GitHub](https://github.com/AlexRebula/giselle-mui/issues).
 
 Test coverage is functional and growing. The current suite covers component structure,
@@ -63,8 +65,8 @@ export function App() {
 
 Full integration guides:
 
-- [React — Vite / CRA](./docs/theming-react.md)
-- [Next.js — App Router + Pages Router](./docs/theming-nextjs.md)
+- [React — Vite / CRA](./docs/theming/react.md)
+- [Next.js — App Router + Pages Router](./docs/theming/nextjs.md)
 
 ---
 
@@ -79,7 +81,7 @@ Full integration guides:
 | `QuoteCard` | Testimonial card with CSS-var tinted border and conditional attribution row. |
 | `TimelineTwoColumn` + `PhaseCard` + `TimelineDot` | Two-column alternating timeline for career or roadmap layouts — phase cards, milestone badges, animated active dot, checklist mode. |
 
-**Full API documentation, prop tables, and live examples → Storybook** _(coming — see Roadmap)_
+**Full API documentation, prop tables, and live examples → [Storybook](./storybook-static/index.html)** (build locally: `npm run storybook`)
 
 **Design decisions and architecture per component → [Docusaurus docs](https://giselle-docs.vercel.app/giselle-mui)**
 
@@ -191,8 +193,8 @@ Full setup guide (framework examples, viewBox rules, monorepo caveats):
 - React 18+ with TypeScript — strict mode, no `any`
 - `@mui/material` v7 (CSS variables mode — `theme.vars.palette.*`, not `theme.palette.*`)
 - `@iconify/react` for icons (Apache 2.0 — only allowed icon peer dependency)
-- Vitest + jsdom for unit tests (52 passing)
-- Storybook for visual development and autodoc (coming)
+- Vitest + jsdom for unit tests
+- Storybook for visual development and autodoc
 
 ---
 
@@ -222,11 +224,16 @@ Re-run `npm install` only if you change `package.json` (e.g. add a new export en
 
 ## Roadmap
 
-- [x] GiselleIcon, MetricCard, SelectableCard, QuoteCard — all with unit tests + READMEs
-- [ ] Storybook stories for all components
-- [ ] Published to npm (alongside portfolio launch, May/June 2026)
-- [ ] Additional components extracted from portfolio patterns
-- [ ] Storybook deployed as public documentation site
+| Phase | Status | Description |
+|---|---|---|
+| Core components | ✅ Done | `GiselleIcon`, `MetricCard`, `SelectableCard`, `QuoteCard`, `TimelineTwoColumn` — all with unit tests + READMEs |
+| Storybook stories | ✅ Done | Stories shipped for all components. Deployed locally; public hosting planned. |
+| Phase A theme utilities | ⬜ Planned | `varAlpha`, `createPaletteChannel`, `pxToRem`/`remToPx` — see [`docs/theming/roadmap.md`](./docs/theming/roadmap.md) |
+| npm publish | ⬜ Planned | Alongside portfolio launch, May/June 2026 |
+| Additional components | ⬜ Planned | Components extracted from portfolio patterns as they meet the extraction checklist |
+| Storybook public hosting | ⬜ Planned | Chromatic or self-hosted, cross-linked from Docusaurus |
+
+Full detail: [`docs/theming/roadmap.md`](./docs/theming/roadmap.md)
 
 ---
 

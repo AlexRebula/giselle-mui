@@ -257,3 +257,39 @@ describe('QuoteCard — props forwarding', () => {
     expect(html).toContain('data-testid="my-quote-card"');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Two-column layout structure
+// ---------------------------------------------------------------------------
+
+describe('QuoteCard — two-column layout', () => {
+  it('renders the quote mark and quote text as siblings inside a shared flex container', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(QuoteCard, { quote: 'Leave every file better than you found it.' })
+    );
+
+    // Paper mock renders as <div data-testid="paper">. The outer Box (flex container)
+    // is its direct first child. Box mock renders as plain <div> with sx stripped.
+    const parser = new globalThis.DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    const paper = doc.querySelector('[data-testid="paper"]');
+    expect(paper).not.toBeNull();
+
+    // The flex container is the direct child of Paper
+    const flexContainer = paper!.firstElementChild;
+    expect(flexContainer).not.toBeNull();
+
+    // Must have at least 2 direct children: left column (quote mark) + right column (text)
+    const children = Array.from(flexContainer!.children);
+    expect(children.length).toBeGreaterThanOrEqual(2);
+
+    const hasQuoteMark = children.some((c) => c.textContent?.includes('\u201C'));
+    const hasQuoteText = children.some((c) =>
+      c.textContent?.includes('Leave every file better than you found it.')
+    );
+
+    expect(hasQuoteMark).toBe(true);
+    expect(hasQuoteText).toBe(true);
+  });
+});
