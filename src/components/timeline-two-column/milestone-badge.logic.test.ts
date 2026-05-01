@@ -27,6 +27,12 @@
 
 import { it, expect, describe } from 'vitest';
 
+import {
+  MILESTONE_DATE_FONT_SIZE,
+  MILESTONE_PILL_ICON_SIZE,
+  MILESTONE_PILL_TEXT_FONT_SIZE,
+} from './milestone-badge';
+
 // ---------------------------------------------------------------------------
 // Mirror functions — exact copies of the inline derivations in MilestoneBadge.
 // ---------------------------------------------------------------------------
@@ -69,5 +75,39 @@ describe('hasDetails — interactivity gate', () => {
 
   it('[regression] milestone with no details is not expandable', () => {
     expect(computeHasDetails(undefined)).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Readability — minimum size constants (regression)
+//
+// These tests enforce that no size value falls below the minimum readable
+// threshold. If a constant is ever reduced below the minimum, the test fails
+// immediately — before the change reaches production or Storybook.
+//
+// Minimums:
+//   - Icon size  >= 16 px
+//   - Font size  >= 0.75 rem  (12 px at a 16 px base)
+//   - Date text  >= 0.75 rem  (milestone date must be as readable as body text)
+// ---------------------------------------------------------------------------
+
+const MIN_ICON_SIZE_PX = 16;
+const MIN_FONT_SIZE_REM = 0.75;
+
+function parseRem(rem: string): number {
+  return parseFloat(rem);
+}
+
+describe('readability — minimum size constants', () => {
+  it('[regression] MILESTONE_DATE_FONT_SIZE >= 0.75rem (milestone date must be readable)', () => {
+    expect(parseRem(MILESTONE_DATE_FONT_SIZE)).toBeGreaterThanOrEqual(MIN_FONT_SIZE_REM);
+  });
+
+  it('[regression] MILESTONE_PILL_ICON_SIZE >= 16px (subtask icon in expandable details pill)', () => {
+    expect(MILESTONE_PILL_ICON_SIZE).toBeGreaterThanOrEqual(MIN_ICON_SIZE_PX);
+  });
+
+  it('[regression] MILESTONE_PILL_TEXT_FONT_SIZE >= 0.75rem (count label in expandable details pill)', () => {
+    expect(parseRem(MILESTONE_PILL_TEXT_FONT_SIZE)).toBeGreaterThanOrEqual(MIN_FONT_SIZE_REM);
   });
 });

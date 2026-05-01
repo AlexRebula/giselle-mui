@@ -18,6 +18,24 @@ import Typography from '@mui/material/Typography';
 
 import { pulseDot } from './animations';
 import { GiselleIcon } from '../giselle-icon/giselle-icon';
+import { DEFAULT_EXPANDABLE_ICON } from './icons';
+
+// ----------------------------------------------------------------------
+
+/** Font size for all status badge labels (Overdue, Now, Date overlap, Scenario). */
+export const STATUS_BADGE_FONT_SIZE = '0.75rem';
+
+/** Width (px) of the date-conflict triangle icon. */
+export const DATE_CONFLICT_ICON_SIZE = 20;
+
+/** Width and height (px) of the "Now" active pulsing dot. */
+export const ACTIVE_DOT_SIZE = 12;
+
+/** Width (px) of the subtask icon in the phase card's expandable details pill. */
+export const PHASE_PILL_ICON_SIZE = 16;
+
+/** Font size for the count label in the phase card's expandable details pill. */
+export const PHASE_PILL_TEXT_FONT_SIZE = '0.75rem';
 
 // ----------------------------------------------------------------------
 
@@ -110,7 +128,7 @@ function OverdueBadge() {
           px: 1,
           py: 0.25,
           borderRadius: 0.75,
-          fontSize: '0.65rem',
+          fontSize: STATUS_BADGE_FONT_SIZE,
           fontWeight: 700,
           letterSpacing: 0.8,
           lineHeight: 1.6,
@@ -137,12 +155,12 @@ function DateConflictBadge() {
           color: `rgba(var(--mui-palette-warning-mainChannel) / 1)`,
         }}
       >
-        <GiselleIcon icon="solar:danger-triangle-bold" width={16} />
+        <GiselleIcon icon="solar:danger-triangle-bold" width={DATE_CONFLICT_ICON_SIZE} />
       </Box>
       <Typography
         variant="overline"
         sx={{
-          fontSize: '0.65rem',
+          fontSize: STATUS_BADGE_FONT_SIZE,
           fontWeight: 700,
           letterSpacing: 0.8,
           lineHeight: 1.6,
@@ -162,8 +180,8 @@ function ActiveBadge({ color, activeLabel }: ActiveBadgeProps) {
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
       <Box
         sx={{
-          width: 10,
-          height: 10,
+          width: ACTIVE_DOT_SIZE,
+          height: ACTIVE_DOT_SIZE,
           borderRadius: '50%',
           flexShrink: 0,
           bgcolor: `${color}.main`,
@@ -173,7 +191,7 @@ function ActiveBadge({ color, activeLabel }: ActiveBadgeProps) {
       <Typography
         variant="overline"
         sx={{
-          fontSize: '0.65rem',
+          fontSize: STATUS_BADGE_FONT_SIZE,
           fontWeight: 700,
           letterSpacing: 0.8,
           lineHeight: 1.6,
@@ -198,7 +216,7 @@ function ScenarioBadge({ color, scenarioLabel }: ScenarioBadgeProps) {
         px: 1,
         py: 0.25,
         borderRadius: 0.75,
-        fontSize: '0.65rem',
+        fontSize: STATUS_BADGE_FONT_SIZE,
         fontWeight: 700,
         letterSpacing: 0.8,
         color: `${color}.dark`,
@@ -546,6 +564,11 @@ export type PhaseCardProps = Omit<BoxProps, 'children'> & {
   onRequestExpand?: () => void;
   /** When true, suppresses box-shadow so the card appears flat (used when another card is expanded). */
   suppressElevation?: boolean;
+  /**
+   * Icon rendered in the expandable-details count badge. Defaults to the bundled inline SVG subtask icon.
+   * Pass `null` to suppress the icon and show only the count number.
+   */
+  expandableIcon?: ReactNode;
 };
 
 /**
@@ -566,6 +589,7 @@ export function PhaseCard({
   isExpanded,
   onRequestExpand,
   suppressElevation = false,
+  expandableIcon,
   sx,
   ...other
 }: PhaseCardProps) {
@@ -650,10 +674,45 @@ export function PhaseCard({
 
             <Typography
               variant={isScenario ? 'h6' : 'subtitle1'}
-              sx={{ mb: 1, pr: !isHighlighted && !phase.hideDecoration ? 6 : 0 }}
+              sx={{ mb: hasDetails ? 0.5 : 1, pr: !isHighlighted && !phase.hideDecoration ? 6 : 0 }}
             >
               {phase.title}
             </Typography>
+
+            {hasDetails && (
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                  mb: 1,
+                  px: 0.75,
+                  py: 0.25,
+                  borderRadius: 1,
+                  bgcolor: 'action.hover',
+                  color: 'text.secondary',
+                }}
+                aria-label={`${phase.details?.length ?? 0} expandable detail${(phase.details?.length ?? 0) === 1 ? '' : 's'}`}
+              >
+                <Box
+                  component="span"
+                  sx={{
+                    display: 'inline-flex',
+                    flexShrink: 0,
+                    '& svg': { width: PHASE_PILL_ICON_SIZE, height: PHASE_PILL_ICON_SIZE },
+                  }}
+                >
+                  {expandableIcon ?? DEFAULT_EXPANDABLE_ICON}
+                </Box>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  sx={{ fontWeight: 600, lineHeight: 1, fontSize: PHASE_PILL_TEXT_FONT_SIZE }}
+                >
+                  {phase.details?.length ?? 0}
+                </Typography>
+              </Box>
+            )}
 
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
               {phase.description}

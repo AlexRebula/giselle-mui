@@ -173,6 +173,37 @@ Checks (in order): Prettier → ESLint → `tsc --noEmit` → Vitest → tsup bu
 
 ## Code quality standards (enforce proactively — do not wait to be asked)
 
+### Mandatory post-edit quality checks
+
+After **every** file edit — no exceptions — run all three checks on the modified file before proceeding:
+
+```sh
+# 1. Prettier — auto-formats in place (fast, sub-second)
+npx prettier --write <path/to/file>
+
+# 2. ESLint with auto-fix — corrects lint violations in place (fast, sub-second)
+npx eslint --fix <path/to/file>
+
+# 3. SonarQube — catches cognitive complexity, DOM prop leaks, .dataset vs getAttribute, etc.
+#    Use the sonarqube_analyze_file tool (not a terminal command)
+```
+
+**What each check catches:**
+
+| Violation | Prettier | ESLint | SonarQube |
+|---|---|---|---|
+| Formatting (quotes, trailing commas, indent) | ✅ auto-fix | ⚠️ some rules | — |
+| Duplicate imports | — | ✅ auto-fix | ✅ |
+| Global builtins (`parseFloat` → `Number.parseFloat`) | — | ✅ auto-fix | ✅ |
+| Unused variables / imports | — | ✅ | ✅ |
+| Cognitive complexity > 15 | — | ❌ not configured | ✅ |
+| DOM prop leaks (`shouldForwardProp`) | — | ❌ | ✅ |
+| `getAttribute` vs `.dataset` | — | ❌ | ✅ |
+
+Do not run tests, mark a task complete, or move to the next file until all three pass on the file just edited. If any check reports errors, fix them immediately before continuing.
+
+---
+
 ### Cognitive complexity
 
 SonarQube enforces a limit of **15** per function. Any callback inside `.map()` or `.forEach()` that has conditional logic, nested branches, or derived values is at risk.
@@ -225,6 +256,32 @@ Every exported component must have a `Responsive` story that renders the compone
 ### Preferred `.dataset` over `getAttribute` in tests
 
 Use `element.dataset['camelKey']` rather than `element.getAttribute('data-kebab-key')` in test files. Sonar flags `getAttribute` as a code smell when `.dataset` is available.
+
+### Minimum readable sizes (enforce always — not just before submission)
+
+Icons and text in this library are read by real users. The following minimums are **non-negotiable** and enforced by regression tests:
+
+| Element | Minimum | Notes |
+|---|---|---|
+| Inline icon (status badge, spine, pill) | `width={16}` | Never `width={12}` or `width={14}` |
+| Standalone decorative icon (card corner) | CSS `width: 32, height: 32` | Applied via `'& svg': { width: 32, height: 32 }` |
+| Pulsing dot / status indicator | `12px` | Never `width: 10, height: 10` |
+| Badge / pill label text | `0.75rem` | Never `0.65rem` or `0.7rem` |
+| Item date / supplementary label | `0.875rem` | Match `body2`; never override below default |
+
+**Enforcement pattern — mandatory for every component that has size values:**
+
+1. Export every size value as a named constant from the component file:
+   ```ts
+   export const PILL_ICON_SIZE = 16;
+   export const STATUS_BADGE_FONT_SIZE = '0.75rem';
+   ```
+2. Use the constant in the component JSX/sx — never inline the literal:
+   ```tsx
+   <GiselleIcon icon="..." width={PILL_ICON_SIZE} />
+   <Typography sx={{ fontSize: STATUS_BADGE_FONT_SIZE }} />
+   ```
+3. Write a `describe('readability — minimum size constants', ...)` block in the component's `*.test.ts` that imports the constants and asserts each is `>= MIN_ICON_SIZE_PX` or `>= MIN_FONT_SIZE_REM`. If a constant is changed below the minimum, the test fails before production.
 
 ### Test coverage — 80% minimum
 

@@ -1,12 +1,25 @@
 import type { PaperProps } from '@mui/material/Paper';
 import type { TimelinePhase, HighlightedPaletteKey } from './types';
 
-import { useCallback, type KeyboardEvent } from 'react';
+import { useCallback, type ReactNode, type KeyboardEvent } from 'react';
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Collapse from '@mui/material/Collapse';
 import Typography from '@mui/material/Typography';
+
+import { DEFAULT_EXPANDABLE_ICON } from './icons';
+
+// ----------------------------------------------------------------------
+
+/** Minimum readable font size for the milestone date label. Matches `body2`. */
+export const MILESTONE_DATE_FONT_SIZE = '0.875rem';
+
+/** Width/height (px) of the subtask icon in the expandable details pill. */
+export const MILESTONE_PILL_ICON_SIZE = 16;
+
+/** Font size for the count label in the expandable details pill. */
+export const MILESTONE_PILL_TEXT_FONT_SIZE = '0.75rem';
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +34,11 @@ export type MilestoneBadgeProps = Omit<PaperProps, 'children'> & {
   onRequestExpand: () => void;
   /** When true, suppresses box-shadow so the card appears flat (used when another card is expanded). */
   suppressElevation?: boolean;
+  /**
+   * Icon rendered in the expandable-details count badge. Defaults to the bundled inline SVG subtask icon.
+   * Pass `null` to suppress the icon and show only the count number.
+   */
+  expandableIcon?: ReactNode;
   /**
    * Stable unique id prefix used to construct the `aria-controls` / `id` pair for the
    * expandable details region. Should be unique across all milestones on the page
@@ -41,6 +59,7 @@ export function MilestoneBadge({
   isExpanded,
   onRequestExpand,
   suppressElevation = false,
+  expandableIcon,
   stableId,
   sx,
   ...other
@@ -126,16 +145,55 @@ export function MilestoneBadge({
     >
       <Typography
         variant="caption"
-        sx={{ color: 'text.secondary', fontSize: '0.72rem', display: 'block', mb: 0.5 }}
+        sx={{
+          color: 'text.secondary',
+          fontSize: MILESTONE_DATE_FONT_SIZE,
+          display: 'block',
+          mb: 0.5,
+        }}
       >
         {m.date}
       </Typography>
-      <Typography
-        variant="subtitle2"
-        sx={{ fontSize: '0.85rem', fontWeight: 700, lineHeight: 1.3 }}
-      >
+      <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
         {m.title}
       </Typography>
+
+      {hasDetails && (
+        <Box
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.5,
+            mt: 0.5,
+            mb: 0.25,
+            px: 0.625,
+            py: 0.2,
+            borderRadius: 0.75,
+            bgcolor: 'action.hover',
+            color: 'text.secondary',
+          }}
+          aria-label={`${m.details?.length ?? 0} expandable detail${(m.details?.length ?? 0) === 1 ? '' : 's'}`}
+        >
+          <Box
+            component="span"
+            sx={{
+              display: 'inline-flex',
+              flexShrink: 0,
+              '& svg': { width: MILESTONE_PILL_ICON_SIZE, height: MILESTONE_PILL_ICON_SIZE },
+            }}
+          >
+            {expandableIcon ?? DEFAULT_EXPANDABLE_ICON}
+          </Box>
+          <Typography
+            component="span"
+            variant="caption"
+            sx={{ fontWeight: 600, lineHeight: 1, fontSize: MILESTONE_PILL_TEXT_FONT_SIZE }}
+          >
+            {m.details?.length ?? 0}
+          </Typography>
+        </Box>
+      )}
+
       {hasDetails && (
         <Collapse in={isExpanded} timeout={50}>
           <Box

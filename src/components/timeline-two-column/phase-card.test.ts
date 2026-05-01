@@ -24,7 +24,15 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 import { it, vi, expect, describe } from 'vitest';
 
-import { buildPlatformStripItems, derivePlatformEntry } from './phase-card';
+import {
+  STATUS_BADGE_FONT_SIZE,
+  DATE_CONFLICT_ICON_SIZE,
+  ACTIVE_DOT_SIZE,
+  PHASE_PILL_ICON_SIZE,
+  PHASE_PILL_TEXT_FONT_SIZE,
+  buildPlatformStripItems,
+  derivePlatformEntry,
+} from './phase-card';
 
 // ---------------------------------------------------------------------------
 // Mirror functions — exact copies of the inline helpers in phase-card.tsx
@@ -431,5 +439,48 @@ describe('buildPlatformStripItems — mixed string and object platforms', () => 
     expect(html).toContain('>jQuery<');
     // PHP label must NOT appear as inner text (it has an icon)
     expect(html).not.toMatch(/<span[^>]*>PHP<\/span>/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Readability — minimum size constants (regression)
+//
+// These tests enforce that no size value falls below the minimum readable
+// threshold. If a constant is ever reduced below the minimum, the test fails
+// immediately — before the change reaches production or Storybook.
+//
+// Minimums:
+//   - Icon size  >= 16 px
+//   - Dot size   >= 12 px  (active pulse dot — smaller than icons but still visible)
+//   - Font size  >= 0.75 rem  (12 px at a 16 px base)
+// ---------------------------------------------------------------------------
+
+const MIN_ICON_SIZE_PX = 16;
+const MIN_DOT_SIZE_PX = 12;
+const MIN_FONT_SIZE_REM = 0.75;
+
+function parseRem(rem: string): number {
+  return Number.parseFloat(rem);
+}
+
+describe('readability — minimum size constants', () => {
+  it('[regression] STATUS_BADGE_FONT_SIZE >= 0.75rem (Overdue / Now / Date overlap / Scenario labels)', () => {
+    expect(parseRem(STATUS_BADGE_FONT_SIZE)).toBeGreaterThanOrEqual(MIN_FONT_SIZE_REM);
+  });
+
+  it('[regression] DATE_CONFLICT_ICON_SIZE >= 16px (date overlap warning triangle icon)', () => {
+    expect(DATE_CONFLICT_ICON_SIZE).toBeGreaterThanOrEqual(MIN_ICON_SIZE_PX);
+  });
+
+  it('[regression] ACTIVE_DOT_SIZE >= 12px ("Now" pulsing dot must be visible)', () => {
+    expect(ACTIVE_DOT_SIZE).toBeGreaterThanOrEqual(MIN_DOT_SIZE_PX);
+  });
+
+  it('[regression] PHASE_PILL_ICON_SIZE >= 16px (subtask icon in expandable details pill)', () => {
+    expect(PHASE_PILL_ICON_SIZE).toBeGreaterThanOrEqual(MIN_ICON_SIZE_PX);
+  });
+
+  it('[regression] PHASE_PILL_TEXT_FONT_SIZE >= 0.75rem (count label in expandable details pill)', () => {
+    expect(parseRem(PHASE_PILL_TEXT_FONT_SIZE)).toBeGreaterThanOrEqual(MIN_FONT_SIZE_REM);
   });
 });

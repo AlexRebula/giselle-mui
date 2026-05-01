@@ -183,13 +183,15 @@ function buildPhaseCardTsxProps(
   isOverdue: boolean,
   dateConflict: boolean,
   anyExpanded: boolean,
-  isThisPhaseExpanded: boolean
+  isThisPhaseExpanded: boolean,
+  expandableIcon: ReactNode
 ) {
   return {
     done: isDone,
     overdue: checklist ? isOverdue : undefined,
     dateConflict: dateConflict || undefined,
     suppressElevation: anyExpanded && !isThisPhaseExpanded,
+    expandableIcon,
   };
 }
 
@@ -235,6 +237,7 @@ type MilestoneRowCtx = {
   expandedMiIdx: number | null;
   anyExpanded: boolean;
   dotColor: HighlightedPaletteKey;
+  expandableIcon: ReactNode;
   handleToggleMilestone: (phaseKey: number, mi: number) => void;
   handleExpandMilestone: (phaseKey: number, milestoneIndex: number) => void;
 };
@@ -377,6 +380,7 @@ function buildMilestoneRow(
               isExpanded={isThisMsExpanded}
               suppressElevation={suppressElevation}
               stableId={`${ctx.phaseKey}-${mi}`}
+              expandableIcon={ctx.expandableIcon}
               onRequestExpand={() => ctx.handleExpandMilestone(ctx.phaseKey, mi)}
             />
           </Box>
@@ -438,6 +442,7 @@ function buildMilestoneRow(
               isExpanded={isThisMsExpanded}
               suppressElevation={suppressElevation}
               stableId={`${ctx.phaseKey}-${mi}`}
+              expandableIcon={ctx.expandableIcon}
               onRequestExpand={() => ctx.handleExpandMilestone(ctx.phaseKey, mi)}
             />
           </Box>
@@ -472,6 +477,7 @@ export function TimelineTwoColumn({
   onToggleMilestoneDone,
   selectedPhaseKey,
   onPhaseSelect,
+  expandableIcon,
   sortOrder = 'desc',
   milestoneSlotHeight = 60,
   phaseCardGap = 90,
@@ -662,7 +668,8 @@ export function TimelineTwoColumn({
                   isOverdue,
                   overlappingKeys.has(phase.key),
                   anyExpanded,
-                  isThisPhaseExpanded
+                  isThisPhaseExpanded,
+                  expandableIcon
                 )}
                 isExpanded={isThisPhaseExpanded}
                 onRequestExpand={() => handleExpandPhaseCard(phase.key)}
@@ -678,6 +685,7 @@ export function TimelineTwoColumn({
             expandedMiIdx,
             anyExpanded,
             dotColor,
+            expandableIcon,
             handleToggleMilestone,
             handleExpandMilestone,
           };

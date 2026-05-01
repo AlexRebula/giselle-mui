@@ -199,4 +199,20 @@ export type TimelineTwoColumnProps = Omit<BoxProps, 'children'> & {
    * @default 30
    */
   yearLabelMarginBottom?: number;
+  /**
+   * Icon rendered inside the expandable-details count badge on phase cards and milestone badges.
+   * Accepts any `ReactNode` — typically a small icon at 14–16px.
+   *
+   * Defaults to an inline SVG subtask icon (parent rect → L-line → child rect) that is
+   * bundled with the component, so it renders immediately with zero flicker.
+   *
+   * Pass `null` to suppress the icon and show only the count number.
+   *
+   * @example
+   * ```tsx
+   * import { Icon } from '@iconify/react';
+   * <TimelineTwoColumn expandableIcon={<Icon icon="tabler:subtask" width={14} />} phases={phases} />
+   * ```
+   */
+  expandableIcon?: ReactNode;
 };
