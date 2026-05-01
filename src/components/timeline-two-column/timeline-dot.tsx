@@ -16,12 +16,12 @@ export type TimelineDotComponentProps = Omit<BoxProps, 'color' | 'onClick'> & {
   color?: HighlightedPaletteKey;
   /**
    * Size variant.
-   * - `'phase'`: 32px default, 40px when active.
-   * - `'milestone'`: fixed 30px regardless of active state.
+   * - `'phase'`: 42px (all states). Active state adds a pulsing ring halo — no size change.
+   * - `'milestone'`: 32px fixed.
    * @default 'phase'
    */
   size?: 'phase' | 'milestone';
-  /** Shows pulsing ring halo and enlarges to 40px (phase size only). */
+  /** Shows pulsing ring halo around the dot (phase size only). Does not change dot size. */
   active?: boolean;
   /**
    * Done state — replaces icon with animated checkmark and dims milestone badges.
@@ -40,16 +40,12 @@ export type TimelineDotComponentProps = Omit<BoxProps, 'color' | 'onClick'> & {
 
 // ----------------------------------------------------------------------
 
-function getDotSize(isMilestone: boolean, active: boolean): number {
-  if (isMilestone) return 30;
-  if (active) return 40;
-  return 32;
+function getDotSize(isMilestone: boolean): number {
+  return isMilestone ? 32 : 42;
 }
 
-function getIconSize(isMilestone: boolean, active: boolean): number {
-  if (isMilestone) return 16;
-  if (active) return 22;
-  return 18;
+function getIconSize(isMilestone: boolean): number {
+  return isMilestone ? 17 : 23;
 }
 
 function normaliseSx(sx: SxProps<Theme> | undefined): SxProps<Theme>[] {
@@ -164,12 +160,10 @@ export function TimelineDot({
   ...other
 }: TimelineDotComponentProps) {
   const isMilestone = size === 'milestone';
-  const dotSize = getDotSize(isMilestone, active);
-  const iconSize = getIconSize(isMilestone, active);
+  const dotSize = getDotSize(isMilestone);
+  const iconSize = getIconSize(isMilestone);
   // Done dots always use 'success' — the green checkmark is the universal "done" signal.
   const effectiveColor = resolveEffectiveColor(color, done);
-  // Phase dot done = outlined (transparent + border). Milestone dots stay filled.
-  const isDonePhase = done && !isMilestone;
 
   return (
     // Outer Box: controls size, position context, pulsing ::after ring, interaction.
@@ -237,19 +231,9 @@ export function TimelineDot({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          // Always fill with palette color; phase dots go transparent+bordered when done.
-          bgcolor: isDonePhase
-            ? 'transparent'
-            : (theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main),
-          color: isDonePhase
-            ? (theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main)
-            : theme.vars!.palette.common.white,
-          // Phase done: outlined border (mirrors MUI TimelineDot variant="outlined").
-          ...(isDonePhase && {
-            border: '2px solid',
-            borderColor:
-              theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main,
-          }),
+          // All done dots: solid success-green fill with white icon (effectiveColor is already 'success').
+          bgcolor: theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main,
+          color: theme.vars!.palette.common.white,
           // Milestone: white separator border + colored drop shadow.
           ...(isMilestone && {
             border: '2px solid',

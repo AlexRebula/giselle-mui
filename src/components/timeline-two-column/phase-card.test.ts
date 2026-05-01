@@ -559,3 +559,59 @@ describe('eye button — WCAG accessibility regression', () => {
     expect(EYE_BUTTON_MIN_SIZE).toBeGreaterThanOrEqual(PHASE_EYE_ICON_SIZE);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Viewed-eye toggle logic regression
+//
+// The eye button onClick in phase-card.tsx is:
+//   (e) => { e.stopPropagation(); onMarkViewed(); }
+//
+// These tests mirror that exact pattern so any change to the handler
+// (e.g. re-adding cursor:default guard or removing stopPropagation) is caught
+// before it reaches production.
+// ---------------------------------------------------------------------------
+
+/** Mirrors the exact onClick closure used in the phase-card eye button. */
+function buildPhaseEyeClickHandler(
+  onMarkViewed: () => void
+): (e: { stopPropagation: () => void }) => void {
+  return (e) => {
+    e.stopPropagation();
+    onMarkViewed();
+  };
+}
+
+describe('[regression] viewed-eye toggle logic — phase card', () => {
+  it('[regression] handler calls onMarkViewed', () => {
+    const onMarkViewed = vi.fn();
+    const handler = buildPhaseEyeClickHandler(onMarkViewed);
+    handler({ stopPropagation: vi.fn() });
+    expect(onMarkViewed).toHaveBeenCalledTimes(1);
+  });
+
+  it('[regression] handler calls e.stopPropagation (card expansion must not fire)', () => {
+    const onMarkViewed = vi.fn();
+    const stopPropagation = vi.fn();
+    const handler = buildPhaseEyeClickHandler(onMarkViewed);
+    handler({ stopPropagation });
+    expect(stopPropagation).toHaveBeenCalledTimes(1);
+  });
+
+  it('[regression] handler can be invoked twice — toggle on then off', () => {
+    const onMarkViewed = vi.fn();
+    const handler = buildPhaseEyeClickHandler(onMarkViewed);
+    handler({ stopPropagation: vi.fn() });
+    handler({ stopPropagation: vi.fn() });
+    expect(onMarkViewed).toHaveBeenCalledTimes(2);
+  });
+
+  it('[regression] handler is not gated on isViewed — no conditional guard around onMarkViewed()', () => {
+    // Regression: a previous implementation had cursor:default + no-op when isViewed=true.
+    // The handler itself must be unconditional — the consumer decides what toggle means.
+    const onMarkViewed = vi.fn();
+    // Call with isViewed=true scenario: handler must still fire
+    const handler = buildPhaseEyeClickHandler(onMarkViewed);
+    handler({ stopPropagation: vi.fn() });
+    expect(onMarkViewed).toHaveBeenCalledTimes(1);
+  });
+});

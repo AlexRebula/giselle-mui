@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -218,6 +219,57 @@ export const ChecklistMode: Story = {
   argTypes: {
     phases: { control: false },
     sx: { control: false },
+  },
+};
+
+// ----------------------------------------------------------------------
+
+/**
+ * Viewed-state demo.
+ *
+ * Click the eye icon next to any phase card or milestone title to toggle its viewed state.
+ * The icon fills green when viewed; clicking again marks it as not viewed.
+ * State is managed locally — no external persistence.
+ *
+ * Uses a named component helper because the render function uses React hooks.
+ */
+function ViewedStateDemo() {
+  const [viewedKeys, setViewedKeys] = useState<Set<string>>(new Set());
+
+  function handleMarkViewed(key: string) {
+    setViewedKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  }
+
+  return (
+    <Box sx={{ maxWidth: 960, mx: 'auto', p: 3 }}>
+      <TimelineTwoColumn
+        phases={READ_ONLY_PHASES}
+        viewedKeys={viewedKeys}
+        onMarkViewed={handleMarkViewed}
+      />
+    </Box>
+  );
+}
+
+/**
+ * Viewed state — click the eye icon on any phase card or milestone to toggle viewed.
+ * The icon turns green when viewed; clicking again un-marks it.
+ */
+export const ViewedState: Story = {
+  render: () => <ViewedStateDemo />,
+  argTypes: {
+    phases: { control: false },
+    sx: { control: false },
+    viewedKeys: { control: false },
+    onMarkViewed: { control: false },
   },
 };
 
