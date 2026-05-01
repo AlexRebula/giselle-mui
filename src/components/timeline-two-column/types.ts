@@ -67,11 +67,12 @@ export type TimelinePhase = {
   variant?: 'scenario' | 'life-event';
   /** Label shown as a badge above the card when variant='scenario'. */
   scenarioLabel?: string;
-  /**
-   * Marks this phase as past-due without being done.
+  /** Marks this phase as past-due without being done.
    * Renders the dot and connector in error (red) colour as a visual warning.
    */
   overdue?: boolean;
+  /** Marks this phase as currently in progress — renders a pulsing badge above the card. */
+  active?: boolean;
   /**
    * Nested milestone keypoints on the connector spine between this phase and the next.
    * Each milestone renders as a coloured badge dot on the spine.
@@ -87,6 +88,8 @@ export type TimelinePhase = {
     done?: boolean;
     /** Renders the milestone badge in error (red) colour when not done. */
     overdue?: boolean;
+    /** Marks this milestone as newly added — renders a "NEW" dot near the title. Clear once seen. */
+    new?: boolean;
   }>;
   /**
    * Client logos shown as a horizontal strip directly in the card (always visible).
@@ -102,11 +105,8 @@ export type TimelinePhase = {
   projects?: Array<{ name: string; logo: string }>;
   /** Label displayed above the projects logo strip. E.g. 'Building in public' or 'Current projects'. */
   projectsLabel?: string;
-  /**
-   * Marks this entry as currently active (ongoing).
-   * Renders a pulsing badge above the card and a pulsing ring on the timeline dot.
-   */
-  active?: boolean;
+  /** Marks this phase as newly added — renders a pulsing "NEW" badge on the card. Clear this flag once the audience has seen the update. */
+  new?: boolean;
   /**
    * Label for the pulsing active badge above the card.
    * @default 'Now'
@@ -199,6 +199,19 @@ export type TimelineTwoColumnProps = Omit<BoxProps, 'children'> & {
    * @default 30
    */
   yearLabelMarginBottom?: number;
+  /**
+   * Set of item keys that the current viewer has already marked as seen.
+   * Key format: `"phase-${phase.key}"` for phases, `"ms-${phaseKey}-${milestoneIndex}"` for milestones.
+   * Controlled externally — pair with `onMarkViewed` and a persistence hook (e.g. localStorage).
+   * When a key is present in this set, the corresponding card shows a filled "viewed" eye indicator.
+   */
+  viewedKeys?: Set<string>;
+  /**
+   * Called when the user clicks the "mark as viewed" eye button on a phase card or milestone badge.
+   * Receives the item key in `"phase-${key}"` or `"ms-${phaseKey}-${mi}"` format.
+   * The parent is responsible for persisting this (localStorage, server, etc.).
+   */
+  onMarkViewed?: (key: string) => void;
   /**
    * Icon rendered inside the expandable-details count badge on phase cards and milestone badges.
    * Accepts any `ReactNode` — typically a small icon at 14–16px.

@@ -2,13 +2,16 @@ import type { PaperProps } from '@mui/material/Paper';
 import type { TimelinePhase, HighlightedPaletteKey } from './types';
 
 import { useCallback, type ReactNode, type KeyboardEvent } from 'react';
+import type React from 'react';
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Collapse from '@mui/material/Collapse';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { DEFAULT_EXPANDABLE_ICON } from './icons';
+import { GiselleIcon } from '../giselle-icon/giselle-icon';
 
 // ----------------------------------------------------------------------
 
@@ -46,6 +49,13 @@ export type MilestoneBadgeProps = Omit<PaperProps, 'children'> & {
    * when omitted, which can collide if two milestones share the same title.
    */
   stableId?: string;
+  /**
+   * When true, the viewed eye indicator shows as filled (success colour).
+   * Only renders when `onMarkViewed` is also provided.
+   */
+  isViewed?: boolean;
+  /** Called when the user clicks the viewed eye button. Parent handles persistence. */
+  onMarkViewed?: () => void;
 };
 
 /**
@@ -61,6 +71,8 @@ export function MilestoneBadge({
   suppressElevation = false,
   expandableIcon,
   stableId,
+  isViewed = false,
+  onMarkViewed,
   sx,
   ...other
 }: MilestoneBadgeProps) {
@@ -154,6 +166,27 @@ export function MilestoneBadge({
       >
         {m.date}
       </Typography>
+
+      {m.new && (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+          <Box
+            sx={{
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              bgcolor: 'success.main',
+              flexShrink: 0,
+            }}
+          />
+          <Typography
+            variant="caption"
+            sx={{ fontSize: '0.65rem', fontWeight: 700, color: 'success.main', lineHeight: 1 }}
+          >
+            New
+          </Typography>
+        </Box>
+      )}
+
       <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
         {m.title}
       </Typography>
@@ -228,6 +261,41 @@ export function MilestoneBadge({
             ))}
           </Box>
         </Collapse>
+      )}
+
+      {onMarkViewed && (
+        <Tooltip title={isViewed ? 'Viewed' : 'Mark as viewed'} placement="left" arrow>
+          <Box
+            component="button"
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              onMarkViewed();
+            }}
+            aria-label={isViewed ? 'Viewed' : 'Mark as viewed'}
+            aria-pressed={isViewed}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.4,
+              background: 'none',
+              border: 'none',
+              cursor: isViewed ? 'default' : 'pointer',
+              p: 0.25,
+              mt: 0.75,
+              borderRadius: 0.75,
+              color: isViewed ? 'success.main' : 'text.disabled',
+              opacity: isViewed ? 1 : 0.55,
+              transition: 'opacity 0.15s, color 0.15s',
+              '&:hover': { opacity: 1 },
+            }}
+          >
+            <GiselleIcon
+              icon={isViewed ? 'solar:eye-bold' : 'solar:eye-outline'}
+              width={14}
+              aria-hidden
+            />
+          </Box>
+        </Tooltip>
       )}
     </Paper>
   );

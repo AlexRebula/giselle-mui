@@ -175,6 +175,35 @@ function DateConflictBadge() {
 
 type ActiveBadgeProps = { color: string; activeLabel?: string };
 
+function NewBadge() {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
+      <Box
+        sx={{
+          width: ACTIVE_DOT_SIZE,
+          height: ACTIVE_DOT_SIZE,
+          borderRadius: '50%',
+          flexShrink: 0,
+          bgcolor: 'success.main',
+          animation: `${pulseDot} 1.4s ease-in-out infinite`,
+        }}
+      />
+      <Typography
+        variant="overline"
+        sx={{
+          fontSize: STATUS_BADGE_FONT_SIZE,
+          fontWeight: 700,
+          letterSpacing: 0.8,
+          lineHeight: 1.6,
+          color: 'success.main',
+        }}
+      >
+        New
+      </Typography>
+    </Box>
+  );
+}
+
 function ActiveBadge({ color, activeLabel }: ActiveBadgeProps) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
@@ -253,6 +282,8 @@ type CardStatusBadgeProps = {
   isScenario: boolean;
   /** Scenario label text to render. Only shown when `isScenario` is true. */
   scenarioLabel?: string;
+  /** When true, renders a pulsing green "New" badge — sourced from `phase.new`. */
+  isNew?: boolean;
 };
 
 function CardStatusBadge({
@@ -264,17 +295,20 @@ function CardStatusBadge({
   color,
   isScenario,
   scenarioLabel,
+  isNew,
 }: CardStatusBadgeProps) {
   const showActive = isActive && !isDone;
   const showOverdue = isOverdue && !isDone;
   const showDateConflict = dateConflict;
   const showScenario =
     !showActive && !showOverdue && !showDateConflict && isScenario && Boolean(scenarioLabel);
+  const showNew = Boolean(isNew);
 
-  if (!showActive && !showOverdue && !showDateConflict && !showScenario) return null;
+  if (!showActive && !showOverdue && !showDateConflict && !showScenario && !showNew) return null;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+      {showNew && <NewBadge />}
       {showActive && <ActiveBadge color={color} activeLabel={activeLabel} />}
       {showOverdue && <OverdueBadge />}
       {showDateConflict && <DateConflictBadge />}
@@ -565,6 +599,16 @@ export type PhaseCardProps = Omit<BoxProps, 'children'> & {
   /** When true, suppresses box-shadow so the card appears flat (used when another card is expanded). */
   suppressElevation?: boolean;
   /**
+   * When true, the viewed eye indicator shows as filled (success colour).
+   * Only renders the indicator when `onMarkViewed` is also provided.
+   */
+  isViewed?: boolean;
+  /**
+   * Called when the user clicks the viewed eye button. Provide this to enable the indicator.
+   * The parent is responsible for persisting the viewed state.
+   */
+  onMarkViewed?: () => void;
+  /**
    * Icon rendered in the expandable-details count badge. Defaults to the bundled inline SVG subtask icon.
    * Pass `null` to suppress the icon and show only the count number.
    */
@@ -590,6 +634,8 @@ export function PhaseCard({
   onRequestExpand,
   suppressElevation = false,
   expandableIcon,
+  isViewed = false,
+  onMarkViewed,
   sx,
   ...other
 }: PhaseCardProps) {
@@ -654,6 +700,7 @@ export function PhaseCard({
           color={phase.color ?? 'primary'}
           isScenario={isScenario}
           scenarioLabel={phase.scenarioLabel}
+          isNew={Boolean(phase.new)}
         />
 
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
@@ -802,6 +849,45 @@ export function PhaseCard({
 
         {hasDetails && (
           <CardDetailBullets id={detailsId} details={phase.details ?? []} in={expanded} />
+        )}
+
+        {onMarkViewed && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, px: 0.5 }}>
+            <Tooltip title={isViewed ? 'Viewed' : 'Mark as viewed'} placement="left" arrow>
+              <Box
+                component="button"
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  onMarkViewed();
+                }}
+                aria-label={isViewed ? 'Viewed' : 'Mark as viewed'}
+                aria-pressed={isViewed}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                  background: 'none',
+                  border: 'none',
+                  cursor: isViewed ? 'default' : 'pointer',
+                  p: 0.5,
+                  borderRadius: 1,
+                  color: isViewed ? 'success.main' : 'text.disabled',
+                  opacity: isViewed ? 1 : 0.6,
+                  transition: 'opacity 0.15s, color 0.15s',
+                  '&:hover': { opacity: 1 },
+                }}
+              >
+                <GiselleIcon
+                  icon={isViewed ? 'solar:eye-bold' : 'solar:eye-outline'}
+                  width={16}
+                  aria-hidden
+                />
+                <Typography component="span" variant="caption" sx={{ fontSize: '0.68rem', lineHeight: 1 }}>
+                  {isViewed ? 'Viewed' : 'Mark viewed'}
+                </Typography>
+              </Box>
+            </Tooltip>
+          </Box>
         )}
       </Paper>
     </Box>

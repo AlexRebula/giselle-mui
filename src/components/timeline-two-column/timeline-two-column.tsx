@@ -238,6 +238,8 @@ type MilestoneRowCtx = {
   anyExpanded: boolean;
   dotColor: HighlightedPaletteKey;
   expandableIcon: ReactNode;
+  viewedKeys: Set<string>;
+  onMarkViewed: ((key: string) => void) | undefined;
   handleToggleMilestone: (phaseKey: number, mi: number) => void;
   handleExpandMilestone: (phaseKey: number, milestoneIndex: number) => void;
 };
@@ -381,6 +383,12 @@ function buildMilestoneRow(
               suppressElevation={suppressElevation}
               stableId={`${ctx.phaseKey}-${mi}`}
               expandableIcon={ctx.expandableIcon}
+              isViewed={ctx.viewedKeys.has(`ms-${ctx.phaseKey}-${mi}`)}
+              onMarkViewed={
+                ctx.onMarkViewed
+                  ? () => ctx.onMarkViewed!(`ms-${ctx.phaseKey}-${mi}`)
+                  : undefined
+              }
               onRequestExpand={() => ctx.handleExpandMilestone(ctx.phaseKey, mi)}
             />
           </Box>
@@ -443,6 +451,12 @@ function buildMilestoneRow(
               suppressElevation={suppressElevation}
               stableId={`${ctx.phaseKey}-${mi}`}
               expandableIcon={ctx.expandableIcon}
+              isViewed={ctx.viewedKeys.has(`ms-${ctx.phaseKey}-${mi}`)}
+              onMarkViewed={
+                ctx.onMarkViewed
+                  ? () => ctx.onMarkViewed!(`ms-${ctx.phaseKey}-${mi}`)
+                  : undefined
+              }
               onRequestExpand={() => ctx.handleExpandMilestone(ctx.phaseKey, mi)}
             />
           </Box>
@@ -478,6 +492,8 @@ export function TimelineTwoColumn({
   selectedPhaseKey,
   onPhaseSelect,
   expandableIcon,
+  viewedKeys,
+  onMarkViewed,
   sortOrder = 'desc',
   milestoneSlotHeight = 60,
   phaseCardGap = 90,
@@ -657,6 +673,8 @@ export function TimelineTwoColumn({
             ? (e: React.MouseEvent) => e.stopPropagation()
             : undefined;
 
+          const phaseViewKey = `phase-${phase.key}`;
+
           // Single PhaseCard node — rendered in whichever column matches phase.side.
           const phaseCardNode = (
             <Box onClick={phaseCardStopProp}>
@@ -671,6 +689,10 @@ export function TimelineTwoColumn({
                   isThisPhaseExpanded,
                   expandableIcon
                 )}
+                isViewed={(viewedKeys ?? new Set()).has(phaseViewKey)}
+                onMarkViewed={
+                  onMarkViewed ? () => onMarkViewed(phaseViewKey) : undefined
+                }
                 isExpanded={isThisPhaseExpanded}
                 onRequestExpand={() => handleExpandPhaseCard(phase.key)}
               />
@@ -686,6 +708,8 @@ export function TimelineTwoColumn({
             anyExpanded,
             dotColor,
             expandableIcon,
+            viewedKeys: viewedKeys ?? new Set(),
+            onMarkViewed,
             handleToggleMilestone,
             handleExpandMilestone,
           };
