@@ -236,7 +236,7 @@ This package targets ≥80% line/branch/function/statement coverage, enforced in
 npm run test:coverage   # generates text summary + lcov report
 ```
 
-**Gate status:** The 80% threshold is defined in `vitest.config.ts` under `coverage.thresholds`. Once wired into `scripts/quality-gate.js` (Phase 1.6 T1), `npm run check:verify` will fail if any threshold is not met.
+**Gate status:** The 80% threshold is defined in `vitest.config.ts` under `coverage.thresholds`. Once wired into `scripts/quality-gate.js` (Phase 1.7 T1), `npm run check:verify` will fail if any threshold is not met.
 
 **Rules — non-negotiable:**
 
