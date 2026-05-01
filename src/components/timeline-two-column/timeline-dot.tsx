@@ -201,8 +201,8 @@ export function TimelineDot({
               },
             }),
           }),
-          // Pulsing halo — phase dots only, active state.
-          ...(active && !isMilestone
+          // Pulsing halo — phase dots only, active state, not done.
+          ...(active && !isMilestone && !done
             ? [
                 {
                   '&::after': {
