@@ -30,3 +30,6 @@ export type {
   TimelinePlatformItem,
   HighlightedPaletteKey,
 } from './components/timeline-two-column';
+
+export { IconActionBar, DEFAULT_ICON_ACTIONS } from './components/icon-action-bar';
+export type { IconActionBarProps, IconActionItem } from './components/icon-action-bar';

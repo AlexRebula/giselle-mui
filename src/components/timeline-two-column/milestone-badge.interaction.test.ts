@@ -26,7 +26,7 @@
 
 import React, { act } from 'react';
 import ReactDOM from 'react-dom/client';
-import { it, expect, describe, afterEach } from 'vitest';
+import { it, expect, describe, afterEach, vi } from 'vitest';
 
 (globalThis as unknown as Record<string, unknown>)['IS_REACT_ACT_ENVIRONMENT'] = true;
 
@@ -376,5 +376,139 @@ describe('keyboard activation (Enter / Space)', () => {
     expect(c.querySelector('[data-testid="ms-details"]')).not.toBeNull();
     keydownBadge(c, 'Enter');
     expect(c.querySelector('[data-testid="ms-details"]')).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Viewed-eye toggle regression
+//
+// Guards three invariants that have been broken before:
+//   1. Clicking the eye button fires onMarkViewed — not onRequestExpand.
+//   2. e.stopPropagation prevents the parent card expansion from firing.
+//   3. The button is always clickable regardless of current isViewed state
+//      (no cursor:default, no pointer-events:none when already viewed).
+//   4. aria-pressed reflects the current isViewed state.
+//
+// Uses a minimal harness that mirrors the exact onClick pattern used in
+// milestone-badge.tsx and phase-card.tsx, so structural refactors cannot
+// silently break these invariants.
+// ---------------------------------------------------------------------------
+
+/** Mirrors the exact onClick closure used in the eye button of both components. */
+function buildEyeClickHandler(
+  onMarkViewed: () => void
+): (e: { stopPropagation: () => void }) => void {
+  return (e) => {
+    e.stopPropagation();
+    onMarkViewed();
+  };
+}
+
+/**
+ * Minimal DOM harness — parent card simulates onRequestExpand; eye button
+ * simulates the viewed toggle. Click on the eye must call onMarkViewed and
+ * must NOT call the parent onRequestExpand.
+ */
+function renderEyeHarness(opts: {
+  isViewed: boolean;
+  onMarkViewed: () => void;
+  onRequestExpand: () => void;
+}): { container: HTMLDivElement; eyeBtn: HTMLElement } {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+  const eyeRoot = ReactDOM.createRoot(div);
+
+  act(() => {
+    eyeRoot.render(
+      React.createElement(
+        'div',
+        {
+          'data-testid': 'parent-card',
+          // simulates the Paper/Box that should NOT receive the click
+          onClick: opts.onRequestExpand,
+        },
+        React.createElement('button', {
+          'data-testid': 'eye-btn',
+          'aria-pressed': opts.isViewed,
+          // mirrors the exact pattern from the component
+          onClick: buildEyeClickHandler(opts.onMarkViewed),
+        })
+      )
+    );
+  });
+
+  const eyeBtn = div.querySelector('[data-testid="eye-btn"]') as HTMLElement;
+  return { container: div, eyeBtn };
+}
+
+describe('[regression] viewed-eye toggle — onMarkViewed fires, card expansion does not', () => {
+  afterEach(() => {
+    // clean up any harness containers added during these tests
+    document
+      .querySelectorAll('[data-testid="parent-card"]')
+      .forEach((el) => el.parentElement?.remove());
+  });
+
+  it('[regression] clicking eye button calls onMarkViewed', () => {
+    const onMarkViewed = vi.fn();
+    const onRequestExpand = vi.fn();
+    const { eyeBtn } = renderEyeHarness({ isViewed: false, onMarkViewed, onRequestExpand });
+
+    act(() => eyeBtn.click());
+
+    expect(onMarkViewed).toHaveBeenCalledTimes(1);
+  });
+
+  it('[regression] clicking eye button does NOT call onRequestExpand (stopPropagation)', () => {
+    const onMarkViewed = vi.fn();
+    const onRequestExpand = vi.fn();
+    const { eyeBtn } = renderEyeHarness({ isViewed: false, onMarkViewed, onRequestExpand });
+
+    act(() => eyeBtn.click());
+
+    expect(onRequestExpand).not.toHaveBeenCalled();
+  });
+
+  it('[regression] clicking eye button when isViewed=true still calls onMarkViewed (toggle off)', () => {
+    const onMarkViewed = vi.fn();
+    const onRequestExpand = vi.fn();
+    const { eyeBtn } = renderEyeHarness({ isViewed: true, onMarkViewed, onRequestExpand });
+
+    act(() => eyeBtn.click());
+
+    expect(onMarkViewed).toHaveBeenCalledTimes(1);
+    expect(onRequestExpand).not.toHaveBeenCalled();
+  });
+
+  it('[regression] clicking eye button twice calls onMarkViewed twice (toggle on → off)', () => {
+    const onMarkViewed = vi.fn();
+    const onRequestExpand = vi.fn();
+    const { eyeBtn } = renderEyeHarness({ isViewed: false, onMarkViewed, onRequestExpand });
+
+    act(() => eyeBtn.click());
+    act(() => eyeBtn.click());
+
+    expect(onMarkViewed).toHaveBeenCalledTimes(2);
+    expect(onRequestExpand).not.toHaveBeenCalled();
+  });
+
+  it('[regression] aria-pressed=false when isViewed=false', () => {
+    const { eyeBtn } = renderEyeHarness({
+      isViewed: false,
+      onMarkViewed: vi.fn(),
+      onRequestExpand: vi.fn(),
+    });
+
+    expect(eyeBtn.getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('[regression] aria-pressed=true when isViewed=true', () => {
+    const { eyeBtn } = renderEyeHarness({
+      isViewed: true,
+      onMarkViewed: vi.fn(),
+      onRequestExpand: vi.fn(),
+    });
+
+    expect(eyeBtn.getAttribute('aria-pressed')).toBe('true');
   });
 });

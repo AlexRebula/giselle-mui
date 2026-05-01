@@ -20,9 +20,9 @@ Built on `@mui/material` v7 (CSS variables mode). TypeScript-first. MIT licensed
 > Feedback and issues are welcome on [GitHub](https://github.com/AlexRebula/giselle-mui/issues).
 
 Test coverage is functional and growing. The current suite covers component structure,
-prop forwarding, ARIA semantics, and interaction behaviour. Coverage of edge cases and
-visual logic (which requires a full MUI theme provider) is tracked in the component
-READMEs and expanded with each release. Contributions and issue reports are welcome.
+prop forwarding, ARIA semantics, and interaction behaviour. Coverage of edge cases
+and visual logic (which requires a full MUI theme provider) is tracked in the component
+READMEs and expanded with each release.
 
 **The test suite will receive a full review and overhaul before the first npm publish.**
 This includes edge-case coverage, negative assertion quality, and any gaps identified
@@ -72,14 +72,15 @@ Full integration guides:
 
 ## Components
 
-| Component | What it solves |
-|---|---|
-| `GiselleIcon` | `@iconify/react` wrapper with full MUI `sx` support — fixes the `Box component={ThirdParty}` TypeScript pitfall and the CDN flicker problem. |
-| `createIconRegistrar` | Bundles icon SVG bodies offline — no CDN, no flicker, any framework. |
-| `MetricCard` + `MetricCardDecoration` | Structured stat card (value / label / icon / decoration slots) with CSS-var colour tinting. Zero icon-library dependency. |
-| `SelectableCard` | Clickable card on `ButtonBase` — correct `aria-pressed`, keyboard focus ring, and hover state without rediscovering the `Paper onClick` pitfall. |
-| `QuoteCard` | Testimonial card with CSS-var tinted border and conditional attribution row. |
-| `TimelineTwoColumn` + `PhaseCard` + `TimelineDot` | Two-column alternating timeline for career or roadmap layouts — phase cards, milestone badges, animated active dot, checklist mode. |
+| Component                                         | What it solves                                                                                                                                   |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `GiselleIcon`                                     | `@iconify/react` wrapper with full MUI `sx` support — fixes the `Box component={ThirdParty}` TypeScript pitfall and the CDN flicker problem.     |
+| `createIconRegistrar`                             | Bundles icon SVG bodies offline — no CDN, no flicker, any framework.                                                                             |
+| `MetricCard` + `MetricCardDecoration`             | Structured stat card (value / label / icon / decoration slots) with CSS-var colour tinting. Zero icon-library dependency.                        |
+| `SelectableCard`                                  | Clickable card on `ButtonBase` — correct `aria-pressed`, keyboard focus ring, and hover state without rediscovering the `Paper onClick` pitfall. |
+| `QuoteCard`                                       | Testimonial card with CSS-var tinted border and conditional attribution row.                                                                     |
+| `TimelineTwoColumn` + `PhaseCard` + `TimelineDot` | Two-column alternating timeline for career or roadmap layouts — phase cards, milestone badges, animated active dot, checklist mode.              |
+| `IconActionBar`                                   | Horizontal row of `Tooltip` + `IconButton` pairs — encodes the disabled-child `<span>` wrapper pattern so tooltips work on disabled buttons.    |
 
 **Full API documentation, prop tables, and live examples → [Storybook](./storybook-static/index.html)** (build locally with `npm run build-storybook`, then open the generated file)
 
@@ -134,7 +135,7 @@ import {
   color="primary"
   icon={<GiselleIcon icon="solar:clock-circle-bold-duotone" width={36} />}
   decoration={<MetricCardDecoration color="primary" />}
-/>
+/>;
 ```
 
 ---
@@ -170,7 +171,8 @@ export const registerIcons = createIconRegistrar({
     body: '<path fill="currentColor" d="..." />',
   },
   'logos:typescript-icon': {
-    width: 256, height: 256,  // logos: icons need explicit dims — see README
+    width: 256,
+    height: 256, // logos: icons need explicit dims — see README
     body: '<path fill="#3178c6" d="..." />',
   },
 });
@@ -209,29 +211,36 @@ npm test
 npm run build
 ```
 
-To use the package from disk in a consuming app before it is published:
+**Developing alongside a consumer app (e.g. the alexrebula portfolio)?**
+Use [yalc](https://github.com/wclr/yalc) — a local package registry that installs your
+built dist as a real package (no symlinks, no junctions, Turbopack compatible):
 
-```json
-// your-app/package.json
-"@alexrebula/giselle-mui": "file:../path/to/giselle-mui"
+```bash
+# one-time setup
+npm install -g yalc
+
+# in giselle-mui — after any change
+npm run build && yalc push
+
+# in the consumer app — one-time
+yalc add @alexrebula/giselle-mui
 ```
 
-Run `npm install` in the consuming app once to create the symlink in `node_modules/`.
-TypeScript changes in `src/` are picked up immediately — no rebuild needed for types.
-Re-run `npm install` only if you change `package.json` (e.g. add a new export entry).
+Full workflow, publishing steps, and the reasoning behind yalc:
+→ [docs/local-development.md](./docs/local-development.md)
 
 ---
 
 ## Roadmap
 
-| Phase | Status | Description |
-|---|---|---|
-| Core components | ✅ Done | `GiselleIcon`, `MetricCard`, `SelectableCard`, `QuoteCard`, `TimelineTwoColumn` — all with unit tests + READMEs |
-| Storybook stories | ✅ Done | Stories shipped for all components. Deployed locally; public hosting planned. |
-| Phase A theme utilities | ⬜ Planned | `varAlpha`, `createPaletteChannel`, `pxToRem`/`remToPx` — see [`docs/theming/roadmap.md`](./docs/theming/roadmap.md) |
-| npm publish | ⬜ Planned | Alongside portfolio launch, May/June 2026 |
-| Additional components | ⬜ Planned | Components extracted from portfolio patterns as they meet the extraction checklist |
-| Storybook public hosting | ⬜ Planned | Chromatic or self-hosted, cross-linked from Docusaurus |
+| Phase                    | Status     | Description                                                                                                          |
+| ------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------- |
+| Core components          | ✅ Done    | `GiselleIcon`, `MetricCard`, `SelectableCard`, `QuoteCard`, `TimelineTwoColumn` — all with unit tests + READMEs      |
+| Storybook stories        | ✅ Done    | Stories shipped for all components. Deployed locally; public hosting planned.                                        |
+| Phase A theme utilities  | ⬜ Planned | `varAlpha`, `createPaletteChannel`, `pxToRem`/`remToPx` — see [`docs/theming/roadmap.md`](./docs/theming/roadmap.md) |
+| npm publish              | ⬜ Planned | Alongside portfolio launch, May/June 2026                                                                            |
+| Additional components    | ⬜ Planned | Components extracted from portfolio patterns as they meet the extraction checklist                                   |
+| Storybook public hosting | ⬜ Planned | Chromatic or self-hosted, cross-linked from Docusaurus                                                               |
 
 Full detail: [`docs/theming/roadmap.md`](./docs/theming/roadmap.md)
 
@@ -239,11 +248,11 @@ Full detail: [`docs/theming/roadmap.md`](./docs/theming/roadmap.md)
 
 ## Part of the Giselle UI ecosystem
 
-| Package | Description | Status |
-|---|---|---|
-| `@alexrebula/giselle-mui` | MUI wrapper components (this package) | Beta |
-| `@alexrebula/giselle-ui` | Framework-agnostic component primitives | Beta |
-| `@alexrebula/giselle-sections-sdk` | Typed section data contracts for portfolio/product sites | Beta |
+| Package                            | Description                                              | Status |
+| ---------------------------------- | -------------------------------------------------------- | ------ |
+| `@alexrebula/giselle-mui`          | MUI wrapper components (this package)                    | Beta   |
+| `@alexrebula/giselle-ui`           | Framework-agnostic component primitives                  | Beta   |
+| `@alexrebula/giselle-sections-sdk` | Typed section data contracts for portfolio/product sites | Beta   |
 
 All packages are in active development and will be published together.
 

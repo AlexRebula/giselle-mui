@@ -30,6 +30,16 @@ export type TimelinePhase = {
   key: number;
   /** Display title of the phase — shown as the card heading. */
   title: string;
+  /**
+   * Glanceable 2–4 word label shown in the collapsed card at rest.
+   * Falls back to `title` when omitted.
+   *
+   * **Three-level disclosure model:**
+   * - REST (collapsed): `shortTitle` (or `title` if omitted)
+   * - HOVER (before click): full `title` + `description`
+   * - EXPANDED (after click): full `title` + `description` + `details[]`
+   */
+  shortTitle?: string;
   /** Short summary paragraph shown below the title on the default card view. */
   description: string;
   /** Human-readable date range (e.g. `'Jan 2020 – Mar 2022'`). Also used for automatic overdue detection in checklist mode. */
@@ -67,11 +77,12 @@ export type TimelinePhase = {
   variant?: 'scenario' | 'life-event';
   /** Label shown as a badge above the card when variant='scenario'. */
   scenarioLabel?: string;
-  /**
-   * Marks this phase as past-due without being done.
+  /** Marks this phase as past-due without being done.
    * Renders the dot and connector in error (red) colour as a visual warning.
    */
   overdue?: boolean;
+  /** Marks this phase as currently in progress — renders a pulsing badge above the card. */
+  active?: boolean;
   /**
    * Nested milestone keypoints on the connector spine between this phase and the next.
    * Each milestone renders as a coloured badge dot on the spine.
@@ -79,6 +90,16 @@ export type TimelinePhase = {
   milestones?: Array<{
     date: string;
     title: string;
+    /**
+     * Glanceable 2–4 word label shown in the collapsed milestone card at rest.
+     * Falls back to `title` when omitted.
+     */
+    shortTitle?: string;
+    /**
+     * Short description shown when the milestone card is hovered or expanded.
+     * Provides context about what this milestone is and why it matters.
+     */
+    description?: string;
     icon: ReactNode;
     color?: TimelineDotProps['color'];
     /** Short bullet-point facts shown when the card is expanded. */
@@ -87,6 +108,8 @@ export type TimelinePhase = {
     done?: boolean;
     /** Renders the milestone badge in error (red) colour when not done. */
     overdue?: boolean;
+    /** Marks this milestone as newly added — renders a "NEW" dot near the title. Clear once seen. */
+    new?: boolean;
   }>;
   /**
    * Client logos shown as a horizontal strip directly in the card (always visible).
@@ -102,11 +125,8 @@ export type TimelinePhase = {
   projects?: Array<{ name: string; logo: string }>;
   /** Label displayed above the projects logo strip. E.g. 'Building in public' or 'Current projects'. */
   projectsLabel?: string;
-  /**
-   * Marks this entry as currently active (ongoing).
-   * Renders a pulsing badge above the card and a pulsing ring on the timeline dot.
-   */
-  active?: boolean;
+  /** Marks this phase as newly added — renders a pulsing "NEW" badge on the card. Clear this flag once the audience has seen the update. */
+  new?: boolean;
   /**
    * Label for the pulsing active badge above the card.
    * @default 'Now'
@@ -171,6 +191,17 @@ export type TimelineTwoColumnProps = Omit<BoxProps, 'children'> & {
    */
   onPhaseSelect?: (key: number) => void;
   /**
+   * Sort direction for non-active, non-done phases.
+   * - `'desc'` (default) — newest end-date first. Use for career/past timelines.
+   * - `'asc'` — oldest end-date first. Use for roadmap/future timelines so the
+   *   soonest upcoming phase appears directly below the active phases.
+   * - `'key'` — sort by `phase.key` ascending. Use when the key encodes the
+   *   intended sequence (e.g. a roadmap where phase number is the ordering
+   *   criterion, not the end date). Deterministic regardless of array insertion order.
+   * @default 'desc'
+   */
+  sortOrder?: 'asc' | 'desc' | 'key';
+  /**
    * Minimum vertical space (px) allocated per milestone slot on the spine.
    * Controls the breathing room between collapsed milestone cards.
    * Increase when cards are too close; decrease when the timeline feels too tall.
@@ -191,4 +222,33 @@ export type TimelineTwoColumnProps = Omit<BoxProps, 'children'> & {
    * @default 30
    */
   yearLabelMarginBottom?: number;
+  /**
+   * Set of item keys that the current viewer has already marked as seen.
+   * Key format: `"phase-${phase.key}"` for phases, `"ms-${phaseKey}-${milestoneIndex}"` for milestones.
+   * Controlled externally — pair with `onMarkViewed` and a persistence hook (e.g. localStorage).
+   * When a key is present in this set, the corresponding card shows a filled "viewed" eye indicator.
+   */
+  viewedKeys?: Set<string>;
+  /**
+   * Called when the user clicks the "mark as viewed" eye button on a phase card or milestone badge.
+   * Receives the item key in `"phase-${key}"` or `"ms-${phaseKey}-${mi}"` format.
+   * The parent is responsible for persisting this (localStorage, server, etc.).
+   */
+  onMarkViewed?: (key: string) => void;
+  /**
+   * Icon rendered inside the expandable-details count badge on phase cards and milestone badges.
+   * Accepts any `ReactNode` — typically a small icon at 14–16px.
+   *
+   * Defaults to an inline SVG subtask icon (parent rect → L-line → child rect) that is
+   * bundled with the component, so it renders immediately with zero flicker.
+   *
+   * Pass `null` to suppress the icon and show only the count number.
+   *
+   * @example
+   * ```tsx
+   * import { Icon } from '@iconify/react';
+   * <TimelineTwoColumn expandableIcon={<Icon icon="tabler:subtask" width={14} />} phases={phases} />
+   * ```
+   */
+  expandableIcon?: ReactNode;
 };

@@ -11,7 +11,7 @@ Every component in this library exists because it solves a recurring problem tha
 
 ## What is in this documentation?
 
-- **[Local development](./local-development.md)** — Day-to-day workflow, the junction + transpilePackages setup, HMR behaviour, the ESM static analysis trap, alternative workflows, and interview summary.
+- **[Local development](./local-development.md)** — Day-to-day workflow: Storybook for isolated development, yalc for testing in the consumer app, and how to publish a release to npm.
 - **[Storybook deployment](./storybook-deploy.md)** — How the Vercel deploy pipeline works, what was set up, and how to re-create it.
 - **[Theming](./theming/)** — How to wire MUI v7 CSS variables mode in Next.js and React/Vite apps, plus the theming roadmap.
 - **[Components](./components/)** — Per-component guides and planning notes.

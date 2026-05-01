@@ -1,10 +1,10 @@
 # Local development guide
 
-> _Last updated: Apr 2026_
+> _Last updated: May 2026_
 
-This guide is for developers who work on `@alexrebula/giselle-mui` locally and want to
-see their changes reflected immediately — either in Storybook or in a live Next.js (or
-Vite/React) consumer project — without any manual build step in between.
+This guide is for developers who work on `@alexrebula/giselle-mui` alongside a
+Next.js consumer app (e.g. the `alexrebula` portfolio) and want to see changes in
+both places without a manual publish step every time.
 
 ---
 
@@ -12,37 +12,26 @@ Vite/React) consumer project — without any manual build step in between.
 
 There are two development modes:
 
-| Mode | Setup | HMR | Build needed? |
-|---|---|---|---|
-| **Storybook-only** | `npm run storybook` inside this repo | ✅ Yes | No |
-| **Live consumer** | Consumer app runs against this repo's source via a junction/symlink | ✅ Yes | No |
+| Mode                     | Setup                                                       | HMR                         | Build needed?                      |
+| ------------------------ | ----------------------------------------------------------- | --------------------------- | ---------------------------------- |
+| **Storybook-only**       | `npm run storybook` inside this repo                        | ✅ Yes                      | No                                 |
+| **Live consumer (yalc)** | Consumer installs the built dist from your local yalc store | ❌ No — push on each change | Yes — `npm run build && yalc push` |
 
-Both modes work without a build step because Next.js `transpilePackages` (or Vite's config
-equivalent) compiles this package's TypeScript source files directly with webpack/Vite —
-the same pipeline used to compile the consumer's own source. No intermediate `.js` output
-is ever read from `dist/`.
+**Storybook is the primary development environment.** Build a component there first,
+fully, with tests passing. Then push to the consumer when it is ready.
 
 ---
 
 ## Prerequisites
 
-```
-ar/
-  giselle-mui/        ← this library (cloned here)
-  rm/
-    presentation/
-      alexrebula/     ← consumer portfolio (or any Next.js app you use for testing)
-```
-
-The relative layout matters. `alexrebula/scripts/link-local-packages.js` resolves the
-library at `../../../../giselle-mui` relative to the portfolio root. If you use a different
-consumer project, adjust its link script accordingly.
+- `yalc` installed globally: `npm install -g yalc`
+- `giselle-mui` and `alexrebula` cloned to your machine (any layout — no relative path requirement)
 
 ---
 
-## Mode 1 — Storybook-only (isolated component development)
+## Mode 1 — Storybook-only (preferred)
 
-This is the fastest workflow for building or changing a component in isolation.
+The fastest loop for building or changing a component in isolation.
 
 ```bash
 cd giselle-mui
@@ -50,494 +39,131 @@ npm install
 npm run storybook      # opens http://localhost:6006
 ```
 
-Edit any file in `src/`. Storybook's HMR picks it up immediately.
-Add a story to see the component without touching any consumer app.
+Edit any file in `src/`. Storybook's HMR picks it up immediately.  
+No build. No consumer. No yalc. Just write the component and its story.
 
-**When to use this mode:**
+**Use this for:**
+
 - Building a new component from scratch
-- Tweaking styles or props
-- Running visual regression checks across variants
-- Writing/running unit tests (`npm test`)
+- Tweaking styles, props, or ARIA behaviour
+- Running visual regression checks across all variant combinations
+- Writing and running unit tests (`npm test`)
 
 ---
 
-## Mode 2 — Live Next.js consumer (test in a real app)
+## Mode 2 — Live consumer via yalc
 
-This mode lets you edit files in `giselle-mui/src/` and immediately see changes in a
-running Next.js dev server — exactly as if the library were part of the app's own source.
+When a component is ready and you want to test it inside the real app:
 
 ### One-time consumer setup
 
-The consumer app must be configured with three things (all already done in `alexrebula`):
-
-**1. `transpilePackages` in `next.config.ts`**
-
-```ts
-transpilePackages: ['@alexrebula/giselle-mui'],
+```bash
+# in alexrebula (already done — no action needed if you cloned the repo)
+# @alexrebula/giselle-mui is already installed via yalc
 ```
 
-This tells Next.js/webpack to compile the library's TypeScript source directly instead of
-expecting pre-compiled JavaScript.
-
-**2. A junction (or symlink) in `node_modules`**
-
-```
-consumer/node_modules/@alexrebula/giselle-mui  →  ar/giselle-mui/
-```
-
-Created automatically by `scripts/link-local-packages.js` (runs on `postinstall`).
-The script also runs via `predev` and `prebuild` hooks — so it self-heals on every install
-and before every dev/build start.
-
-**3. The `fullySpecified: false` webpack rule**
-
-```ts
-// In consumer's next.config.ts webpack() function:
-config.module.rules.push({
-  test: /node_modules\/@alexrebula\/giselle-mui\/.*\.[jt]sx?$/,
-  resolve: { fullySpecified: false },
-});
-```
-
-This rule is **mandatory**. See [The ESM static analysis trap](#the-esm-static-analysis-trap)
-below for why. Without it, any new component added via a barrel re-export will silently
-fail at runtime with `Element type is invalid: ... got: undefined`.
-
-### Day-to-day usage
+### Day-to-day update loop
 
 ```bash
-# Terminal A — library (optional — only needed if you also want Storybook live)
+# in giselle-mui — after any change you want to test in the consumer
+npm run build && yalc push
+```
+
+`yalc push` copies the updated dist into the consumer's `node_modules` and notifies the
+Turbopack dev server. You may need to do a hard refresh (Ctrl+Shift+R) or a single
+restart if Turbopack does not pick up the module change automatically.
+
+### Full consumer startup (first time or after a clean checkout)
+
+```bash
+# Terminal A — library (Storybook — optional)
 cd giselle-mui
 npm run storybook
 
-# Terminal B — consumer app
+# Terminal B — portfolio
 cd alexrebula
-npm run dev
+npm run dev            # Turbopack on http://localhost:8082
 ```
 
-Edit any file in `giselle-mui/src/`. The Next.js dev server's HMR detects the change and
-hot-reloads the affected modules. No terminal B restart needed.
+---
+
+## What triggers a yalc push vs. nothing
+
+| Change                                                  | Action needed                                                  |
+| ------------------------------------------------------- | -------------------------------------------------------------- |
+| Edit existing component `.tsx`                          | `npm run build && yalc push`                                   |
+| Edit existing utility in `src/utils/`                   | `npm run build && yalc push`                                   |
+| Add a new component + export to `src/index.ts`          | `npm run build && yalc push`, then hard refresh                |
+| Change `tsconfig.json` or `package.json` in giselle-mui | `npm run build && yalc push`, then restart consumer dev server |
+
+**Rule of thumb:** any change to `src/` requires a build + push. The consumer does not watch giselle-mui source files — it installed the dist.
 
 ---
 
-## What triggers HMR vs. a dev server restart
+## When to build dist vs. when not to
 
-| Change | What happens |
-|---|---|
-| Edit an existing component's `.tsx` file | HMR — instant, no restart |
-| Edit an existing utility in `src/utils/` | HMR — instant, no restart |
-| Add a new export to `src/index.ts` | Save the consumer file that imports it (usually triggers recompile), or restart once |
-| Add a new `.tsx` file that's already exported via barrel | HMR usually works; restart if webpack didn't pick it up |
-| Change `package.json` in giselle-mui | Restart the consumer dev server |
-| Change `tsconfig.json` in giselle-mui | Restart the consumer dev server |
-
-**Rule of thumb:** editing source files = hot reload. Changing module graph metadata (package.json, tsconfig, new barrel exports) = restart once.
-
----
-
-## What you do NOT need to build
-
-The `dist/` folder in this repo is for **published npm consumers** — it is not read by
-a locally linked consumer app. When `transpilePackages` is configured, webpack bypasses
-`dist/` entirely and compiles `src/index.ts` directly.
-
-This means:
-- `npm run build` in giselle-mui does **not** need to be run during local development
-- `dist/` can be stale or absent — it has no effect on local dev
-- The only time you need `npm run build` is before publishing a new version to npm
+| Scenario                             | Build needed?                        |
+| ------------------------------------ | ------------------------------------ |
+| Developing in Storybook only         | No                                   |
+| Testing in the consumer app via yalc | Yes — `npm run build && yalc push`   |
+| Publishing a release to npm          | Yes — `npm run build && npm publish` |
+| Running unit tests locally           | No                                   |
 
 ---
 
 ## Adding a new component — checklist
 
-When you add a new component to giselle-mui and want it available in the consumer app,
-follow this order:
-
-1. Create the component files in `src/components/<name>/`
-2. Add the export to `src/components/<name>/index.ts`
-3. **Add the re-export to `src/index.ts`**
-4. Save any file in the consumer app that imports from `@alexrebula/giselle-mui` — this
-   signals webpack to re-evaluate the barrel
-5. If the component still shows as `undefined` in the consumer: restart the dev server once
-
-**That's all.** No build. No `npm link`. No reinstall.
+1. Create files in `src/components/<name>/`
+2. Add export to `src/components/<name>/index.ts`
+3. Add re-export to `src/index.ts`
+4. Write the story in `src/components/<name>/<name>.stories.tsx`
+5. Run `npm test` — all tests must pass
+6. Run `npm run check:verify` — quality gate must be green
+7. Run `npm run build && yalc push` to push to the consumer
+8. Navigate to the relevant page in the consumer and verify
 
 ---
 
-## The ESM static analysis trap
-
-This is the error that blocked development for several hours. It is documented here in
-full so it never happens again.
-
-### What happened
-
-After adding `TimelineTwoColumn` to `giselle-mui`, the alexrebula dev server showed:
-
-```
-Element type is invalid: expected a string (for built-in components) or a class/function
-(for composite components) but got: undefined.
-```
-
-The webpack compilation log revealed the real error:
-
-```
-Attempted import error: 'TimelineTwoColumn' is not exported from '@alexrebula/giselle-mui'
-```
-
-At runtime, React received `undefined` where a component function was expected and crashed.
-
-### Why it happened
-
-Three factors combined:
-
-**Factor 1 — `"type": "module"` in giselle-mui's `package.json`**
-
-This field marks every `.js` file in the package as an ES Module. When webpack 5 loads
-an ESM package, it enables **strict ESM mode** for that package, which includes two
-behaviours:
-
-- `fullySpecified: true` — all import paths must have explicit file extensions (ESM spec)
-- **Static export validation** — webpack validates that named exports exist by tracing the
-  module graph statically BEFORE transpilation begins
-
-**Factor 2 — Extension-less imports in barrel files**
-
-`timeline-two-column/index.ts` re-exports:
-
-```ts
-export { TimelineTwoColumn } from './timeline-two-column';  // ← no extension
-```
-
-In strict ESM mode, webpack tries to resolve `./timeline-two-column` literally. ESM spec
-says extensions are required, so webpack cannot know this means `./timeline-two-column.tsx`.
-The static export validation fails → webpack marks `TimelineTwoColumn` as "not exported"
-from the package.
-
-**Factor 3 — The error is silent at compile time**
-
-TypeScript compiles fine. The dev server starts. The error only appears at runtime when
-React tries to render the component — by which point the bundle is already built and the
-component has already been replaced with `undefined`.
-
-### Why the rule `"type":"module"` exists in this package
-
-`tsup.config.ts` uses top-level `import` statements and ES module syntax — this requires
-the file itself to be treated as an ESM file. Removing `"type":"module"` would break the
-build tooling.
-
-### Prevention rule 1 — The `fullySpecified: false` webpack rule in consumers
-
-Every Next.js (or webpack-based) consumer of this library **must** add this rule to its
-webpack config:
-
-```ts
-config.module.rules.push({
-  test: /node_modules\/@alexrebula\/giselle-mui\/.*\.[jt]sx?$/,
-  resolve: { fullySpecified: false },
-});
-```
-
-This opts all giselle-mui source files out of strict ESM mode, allowing webpack to resolve
-extension-less imports the same way it does for CommonJS packages. It is a targeted,
-minimal rule — it affects nothing outside giselle-mui.
-
-This rule is already present in `alexrebula/next.config.ts`. If you create a new consumer
-project, add it before writing a single import.
-
-### Prevention rule 2 — Use `.js` extensions in barrel files (alternative)
-
-An alternative to the consumer-side webpack rule: always use explicit `.js` extensions in
-barrel re-exports inside this library:
-
-```ts
-// timeline-two-column/index.ts
-export { TimelineTwoColumn } from './timeline-two-column.js';
-```
-
-Webpack with `transpilePackages` resolves `.js` → `.tsx` via `resolve.extensions`, so this
-works. However it makes the source files less ergonomic and every barrel export must be
-maintained with extensions. The `fullySpecified: false` consumer rule is the cleaner
-long-term approach.
-
-### Prevention rule 3 — Do not add `"type":"module"` to new public packages
-
-If you are starting a new MIT-licensed library from scratch, avoid `"type":"module"` unless
-you have a strong reason. Most webpack consumers expect CJS-compatible packages. Use
-`"type":"module"` only if your build tooling requires it (as tsup does here), and document
-the consumer webpack rule requirement prominently.
-
----
-
-## Alternative library development workflows
-
-Understanding the alternatives clarifies why the junction + transpilePackages approach was
-chosen here, and what its trade-offs are. Each approach is summarised below.
-
----
-
-### Approach A — transpilePackages + junction (current, recommended for this project)
-
-**How it works:**
-Consumer's Next.js/webpack compiles the library's TypeScript source directly. A filesystem
-junction makes the library appear inside `node_modules`. `transpilePackages` ensures webpack
-includes the source in its compilation.
-
-**Pros:**
-- No build step — edit a file in giselle-mui, see it live in the consumer instantly
-- No separate watcher process
-- Full HMR — changes propagate in seconds
-- TypeScript errors in the library surface in the consumer's terminal immediately
-
-**Cons:**
-- Consumer must be configured correctly (fullySpecified rule, resolve.symlinks, dedup aliases)
-- Only works with webpack (Turbopack requires files to be inside the project root)
-- Configuration is non-trivial — this entire document exists because of it
-
-**Best for:** A single consumer app + library pair where deep integration and rapid
-iteration are more important than strict independence.
-
----
-
-### Approach B — `npm link` + `tsup --watch`
-
-**How it works:**
-```bash
-# Terminal A
-cd giselle-mui
-npm run build -- --watch   # tsup in watch mode, rebuilds dist/ on change
-
-# Terminal B
-cd consumer-app
-npm link ../path/to/giselle-mui   # or: npm install file:../giselle-mui
-npm run dev
-```
-
-The consumer imports from `dist/`, not `src/`. tsup rebuilds on every save.
-Consumer HMR detects the new `dist/` file and hot-reloads.
-
-**Pros:**
-- Consumer needs zero special webpack configuration
-- Works with Turbopack, Vite, Parcel — any bundler
-- Clean separation: consumer always runs against compiled output
-- Exactly replicates what published npm consumers will experience
-
-**Cons:**
-- Requires two running processes (watch + dev server)
-- The watch → rebuild → HMR chain adds ~1–3 seconds of latency per change
-- `npm install` in the consumer destroys `npm link` entries — must re-link after every install
-- TypeScript errors in the library are only visible in terminal A, not in the consumer
-
-**Best for:** When you want zero consumer configuration complexity, or when the consumer
-uses a bundler other than webpack.
-
----
-
-### Approach C — npm workspaces / pnpm workspaces monorepo
-
-**How it works:**
-Both library and consumer live in the same git repository, declared as workspaces:
-
-```json
-// root package.json
-{
-  "workspaces": ["packages/giselle-mui", "apps/my-next-app"]
-}
-```
-
-`npm install` (or `pnpm install`) automatically creates the symlink in `node_modules`.
-The `transpilePackages` configuration is still needed in Next.js.
-
-**Pros:**
-- No manual link scripts — workspaces handle linking automatically
-- Works consistently on macOS, Linux, Windows (pnpm > npm for Windows reliability)
-- One `git` repo, unified CI
-- Industry standard for multi-package projects (Turborepo, Nx)
-
-**Cons:**
-- Requires restructuring both repos into a single monorepo — a significant migration
-- Turbopack's sandbox restriction applies here too (files outside Next.js app root)
-- pnpm workspaces are simpler and more reliable than npm workspaces on Windows
-
-**Best for:** When the library and consumer are developed by the same team in the same git
-repo (the production-standard setup for companies). This is the long-term direction for
-this project if giselle-mui and alexrebula are ever merged into one repo.
-
----
-
-### Approach D — Publish to npm + normal `npm install`
-
-**How it works:**
-Publish a new version of giselle-mui to npm registry. Consumer installs it:
+## Publishing a release to npm
 
 ```bash
-# in consumer
-npm install @alexrebula/giselle-mui@latest
+# in giselle-mui
+npm run build                   # produce dist/
+npm run check:verify            # quality gate must be green
+npm version patch               # or minor / major — updates package.json version
+npm publish                     # pushes to npmjs.com (public — publishConfig.access:public)
 ```
 
-**Pros:**
-- Zero local setup complexity — no junctions, no link scripts, no special webpack config
-- Works with any bundler
-- Exact same experience as any other npm consumer
-- Turbopack can be used in the consumer
-
-**Cons:**
-- Every library change requires a version bump + `npm publish` before the consumer can test it
-- Slow iteration loop for rapid development
-- Breaking changes in library source are not immediately visible in consumer TypeScript
-
-**Best for:** After a component is stable and ready for release. This is the exit strategy
-for the junction approach — once giselle-mui reaches a stable v1, publishing to npm removes
-all the local linking complexity permanently.
-
----
-
-### Approach E — Storybook-only, no consumer integration during development
-
-**How it works:**
-All component development happens in Storybook. No consumer project is involved.
-The component is integrated into the consumer only when it is finished and merged to `main`.
-
-**Pros:**
-- Simplest possible workflow — no cross-repo configuration at all
-- Storybook provides a better development environment for isolated components
-- Forces good design: components must be usable without a specific app context
-- No ESM/webpack/junction issues
-
-**Cons:**
-- Cannot test how the component looks in the actual application context during development
-- Integration bugs are only discovered after the component is "done"
-
-**Best for:** Most new component development in this project. Build in Storybook first,
-integrate into the consumer as a final step.
-
----
-
-## Day-to-day command reference
-
-### giselle-mui (library)
+After publishing, switch the consumer from yalc to the real package:
 
 ```bash
-npm run storybook        # Start Storybook dev server at http://localhost:6006
-npm test                 # Run Vitest unit tests
-npm run check            # Auto-fix Prettier + ESLint, then run all verifications
-npm run check:verify     # Verify only (Prettier + ESLint + tsc + Vitest + tsup + Storybook build)
-npm run build            # Build dist/ for npm publishing (not needed for local dev)
+# in alexrebula
+yalc remove @alexrebula/giselle-mui
+npm install @alexrebula/giselle-mui
 ```
 
-### Consumer (alexrebula)
+To go back to yalc for development after a release:
 
 ```bash
-npm run dev              # Start Next.js dev server at http://localhost:8082
-                         # predev hook auto-heals the giselle-mui junction first
-npm run build            # Production build (webpack, not Turbopack)
-npm run check:verify     # Run all quality checks (no dev server — static analysis only)
+# in alexrebula
+npm uninstall @alexrebula/giselle-mui
+yalc add @alexrebula/giselle-mui
 ```
 
 ---
 
-## Interview summary: how local library development works
+## Why yalc instead of npm link or a junction?
 
-When asked "how did you develop giselle-mui locally while using it in your portfolio?", here
-is the concise, accurate answer:
+`npm link` and Windows junctions both work by creating a symlink/junction in
+`node_modules` pointing back to the source directory. This causes two problems:
 
-> I set up a junction-based local linking approach. A Windows junction (equivalent to a Unix
-> symlink for directories) makes the library appear inside the portfolio's `node_modules` —
-> so it looks like an installed npm package but actually points to the live source folder.
-> Next.js `transpilePackages` tells webpack to compile the library's TypeScript source
-> directly as part of the app's own build, which gives full HMR without any intermediate
-> build step. The only non-obvious configuration required was disabling webpack 5's strict
-> ESM static export analysis (`fullySpecified: false`) for the library's files — a consequence
-> of the library having `"type":"module"` in its `package.json`.
->
-> The alternatives I considered were: `npm link + tsup --watch` (simpler consumer config but
-> adds build latency and link entries are destroyed by `npm install`), pnpm workspaces
-> monorepo (the production standard but requires merging two repos), and Storybook-only
-> development (which I use as the primary workflow for new components). The junction approach
-> is the pragmatic middle ground for two separate git repos under active co-development.
+1. **Duplicate module instances** — the linked package has its own `node_modules`, so
+   webpack sees two copies of `@mui/material`, `@emotion/react`, etc. Two copies means
+   two independent React contexts → `theme.vars` undefined → runtime crash.
 
----
+2. **Turbopack refuses junctions** — Turbopack sandboxes compilation to the project root.
+   Files outside the root (followed via junction) are rejected.
 
-## See also
-
-- [Theming guide](./theming/README.md) — wiring MUI v7 CSS variables mode in consumers
-- `alexrebula/docs/local-package-linking.md` — full history of the linking approach, all
-  failed attempts, Vercel deployment setup, and troubleshooting section
-
----
-
-## Storybook Vercel deployment
-
-Storybook is deployed to Vercel automatically **only when a PR is merged into `main`**.
-The deploy is gated on the full quality gate passing — if any check fails, the deploy is
-blocked and the previous version stays live.
-
-### How it works
-
-Two GitHub Actions workflows are in `.github/workflows/`:
-
-| Workflow | Trigger | What it does |
-|---|---|---|
-| `ci.yml` | Every push, every PR | Runs the full quality gate |
-| `deploy-storybook.yml` | Push to `main` only | Quality gate → build → deploy to Vercel |
-
-The deploy workflow runs quality gate again internally (two jobs, `quality-gate` → `deploy`
-via `needs:`). This means:
-- If CI passed on the PR, it passes again here (same code, same checks)
-- If someone pushes directly to `main` bypassing a PR, the quality gate still runs and
-  blocks the deploy if anything fails
-
-### One-time setup (do this once per Vercel project)
-
-**Step 1 — Create the Vercel project**
-
-```bash
-# Install Vercel CLI globally if you don't have it
-npm install -g vercel
-
-# In giselle-mui root — link the project to Vercel (follow prompts)
-vercel link
-```
-
-This creates `.vercel/project.json` containing your `orgId` and `projectId`.
-**Do not commit `.vercel/project.json`** — it is in `.gitignore`.
-
-**Step 2 — Add GitHub repository secrets**
-
-Go to the GitHub repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.
-
-Add these three secrets:
-
-| Secret name | Where to find the value |
-|---|---|
-| `VERCEL_TOKEN` | [vercel.com/account/tokens](https://vercel.com/account/tokens) → Create Token |
-| `VERCEL_ORG_ID` | `.vercel/project.json` → `"orgId"` field |
-| `VERCEL_PROJECT_ID` | `.vercel/project.json` → `"projectId"` field |
-
-**Step 3 — Set up branch protection on `main` (recommended)**
-
-Go to GitHub repo → **Settings** → **Branches** → **Add branch ruleset** → target `main`:
-
-- ✅ Require a pull request before merging
-- ✅ Require status checks to pass → add `quality-gate` (from `ci.yml`)
-- ✅ Require branches to be up to date before merging
-
-This ensures nothing reaches `main` without CI passing — the deploy workflow then provides
-a second verification layer as defence in depth.
-
-**Step 4 — Confirm Vercel auto-deploys are disabled**
-
-`vercel.json` already has `"github": { "enabled": false }` — this prevents Vercel from
-also watching the repo and triggering its own deploys. Only the GitHub Actions workflow
-deploys to Vercel. Check Vercel project settings → Git to confirm no branch is connected.
-
-### Deploying manually (emergency use only)
-
-If you need to deploy a specific commit without merging to `main`:
-
-```bash
-npm run build-storybook
-vercel deploy --prebuilt --prod
-```
-
-This should not be the normal path. Use PRs.
-
+`yalc` copies the built dist into the consumer's `node_modules` as real files — no
+symlink, no junction, one `node_modules` tree. Turbopack works, MUI contexts are shared,
+no webpack config hacks needed.

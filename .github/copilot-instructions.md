@@ -43,9 +43,9 @@ in this library exists because it solves a recurring problem that is either:
    Storybook autodoc automatically.
 
 4a. **JSDoc must use Markdown formatting.** Storybook autodoc renders JSDoc descriptions
-    as Markdown. Use `**bold**`, `- ` bullet lists, and fenced code blocks (` ```tsx `).
-    Never use bare indented code lines — they do not render as code blocks in Markdown.
-    `@example` tags are rendered separately as code snippets and remain plain JSX/TSX.
+as Markdown. Use `**bold**`, `- ` bullet lists, and fenced code blocks (` ```tsx `).
+Never use bare indented code lines — they do not render as code blocks in Markdown.
+`@example` tags are rendered separately as code snippets and remain plain JSX/TSX.
 
 5. **ReactNode slots for icons and decoration.** Components never import an icon
    library internally. Accept `icon?: ReactNode` and let the consumer fill it.
@@ -91,6 +91,18 @@ src/components/<name>/
 When asked to add a component, always verify: does this encode a non-obvious decision
 that saves every consumer from rediscovering it? If not, it should not be in this library.
 
+- `TimelineTwoColumn` visual pages for roadmap docs — see the **Roadmap visual sync rule**
+  in the `alexrebula` copilot instructions. `TimelineTwoColumn` is the designated component
+  for rendering any `docs/**/roadmap.md` file visually. When a roadmap doc is updated, the
+  companion timeline page in `alexrebula` must be updated in the same commit to keep phases,
+  milestones, and all expandable sub-information in full parity with the markdown source.
+
+- **Roadmap hierarchy bubble-up rule** — also defined in the `alexrebula` copilot instructions.
+  When a phase or milestone in `giselle-mui/docs/theming/roadmap.md` is completed or its date
+  changes, the corresponding summary entry in `alexrebula/docs/roadmap.md` (Phase 1.5) and its
+  `data.tsx` mirror must be updated in the same commit. The child roadmap is the source of
+  truth for its own content; the ancestor holds a summary + link only, never a duplicate task list.
+
 ## Tone rule for docs and comments
 
 Do not over-mention Minimals in this package's docs. `giselle-mui` has already credited
@@ -108,22 +120,23 @@ library as its own thing. When updating or writing docs:
 
 At the start of every new Copilot session in this package, read these files:
 
-| File | Purpose |
-|------|---------|
-| [`docs/theming/roadmap.md`](../docs/theming/roadmap.md) | Phase A (theme utilities), Phase B (Giselle brand palette), Phase C (GiselleThemeProvider) — next planned work |
-| [`docs/components/timeline-plan.md`](../docs/components/timeline-plan.md) | Full plan for `RoadmapTimeline` — next component to build |
-| [`docs/theming/nextjs.md`](../docs/theming/nextjs.md) | How to wire this library into a Next.js app |
+| File                                                                      | Purpose                                                                                                        |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| [`docs/theming/roadmap.md`](../docs/theming/roadmap.md)                   | Phase A (theme utilities), Phase B (Giselle brand palette), Phase C (GiselleThemeProvider) — next planned work |
+| [`docs/components/timeline-plan.md`](../docs/components/timeline-plan.md) | Full plan for `RoadmapTimeline` — next component to build                                                      |
+| [`docs/theming/nextjs.md`](../docs/theming/nextjs.md)                     | How to wire this library into a Next.js app                                                                    |
 
 ### Current components (shipped)
 
-| Component | File | Status |
-|-----------|------|--------|
-| `GiselleIcon` | `src/components/giselle-icon/` | ✅ Shipped + tested |
-| `MetricCard` + `MetricCardDecoration` | `src/components/metric-card/` | ✅ Shipped + tested |
-| `QuoteCard` | `src/components/quote-card/` | ✅ Shipped + tested |
-| `SelectableCard` | `src/components/selectable-card/` | ✅ Shipped + tested |
-| `createIconRegistrar` | `src/utils/create-icon-registrar.ts` | ✅ Shipped + tested |
-| `TimelineTwoColumn` | `src/components/timeline-two-column/` | ✅ Shipped + tested |
+| Component                             | File                                  | Status              |
+| ------------------------------------- | ------------------------------------- | ------------------- |
+| `GiselleIcon`                         | `src/components/giselle-icon/`        | ✅ Shipped + tested |
+| `MetricCard` + `MetricCardDecoration` | `src/components/metric-card/`         | ✅ Shipped + tested |
+| `QuoteCard`                           | `src/components/quote-card/`          | ✅ Shipped + tested |
+| `SelectableCard`                      | `src/components/selectable-card/`     | ✅ Shipped + tested |
+| `createIconRegistrar`                 | `src/utils/create-icon-registrar.ts`  | ✅ Shipped + tested |
+| `TimelineTwoColumn`                   | `src/components/timeline-two-column/` | ✅ Shipped + tested |
+| `IconActionBar`                       | `src/components/icon-action-bar/`     | ✅ Shipped + tested |
 
 ### Next planned work (priority order)
 
@@ -136,6 +149,54 @@ At the start of every new Copilot session in this package, read these files:
 ### Additional allowed peer dependencies
 
 - `@mui/lab` — needed for Timeline primitives (`Timeline`, `TimelineItem`, `TimelineSeparator`, etc.). Acceptable under the zero-proprietary-dependencies rule.
+
+### tsup `external` rule — non-negotiable
+
+Every package listed under `peerDependencies` in `package.json` **must also appear in
+the `external` array in `tsup.config.ts`**. If a peer dep is missing from `external`,
+tsup bundles that package's source into `dist/index.js`. Webpack in the portfolio then
+sees two module instances for context-holding singletons (e.g. `@mui/material`
+`useMediaQuery`), causing runtime crashes:
+
+```
+_mui_material_useMediaQuery__WEBPACK_IMPORTED_MODULE_N__ is not a function
+```
+
+The webpack `resolve.alias` fix in `alexrebula/next.config.ts` only works on imports
+that go through webpack's resolver — it cannot fix code that was pre-bundled by tsup.
+
+**Enforcement checklist — run whenever `package.json` peerDependencies changes:**
+
+1. Open `tsup.config.ts`.
+2. Compare its `external` array against every key in `peerDependencies`.
+3. Any missing key → add it to `external` immediately.
+4. Run `npm run build` and verify the dist contains `import ... from "pkg"` lines
+   (external reference), not inlined source code.
+
+Current required entries (keep in sync with `package.json`):
+- `react`, `react-dom`, `react/jsx-runtime`, `react/jsx-dev-runtime`
+- `@mui/material`
+- `@mui/lab`
+- `@emotion/react`, `@emotion/styled`
+- `@iconify/react`
+
+---
+
+## Post-component workflow (enforce always — run after every new component is complete)
+
+After every new component is built, tests pass, and `check:verify` is green, run these
+steps **in order** before switching to the portfolio:
+
+```sh
+# 1. Build the distributable (tsup) — produces dist/index.js and dist/index.d.ts
+npm run build
+
+# 2. Push to the portfolio via yalc — no restart or cache clear needed
+yalc push
+```
+
+`yalc push` updates `node_modules/@alexrebula/giselle-mui` in the portfolio automatically.
+Turbopack picks up the new files on the next import.
 
 ---
 
@@ -166,6 +227,37 @@ Checks (in order): Prettier → ESLint → `tsc --noEmit` → Vitest → tsup bu
 ---
 
 ## Code quality standards (enforce proactively — do not wait to be asked)
+
+### Mandatory post-edit quality checks
+
+After **every** file edit — no exceptions — run all three checks on the modified file before proceeding:
+
+```sh
+# 1. Prettier — auto-formats in place (fast, sub-second)
+npx prettier --write <path/to/file>
+
+# 2. ESLint with auto-fix — corrects lint violations in place (fast, sub-second)
+npx eslint --fix <path/to/file>
+
+# 3. SonarQube — catches cognitive complexity, DOM prop leaks, .dataset vs getAttribute, etc.
+#    Use the sonarqube_analyze_file tool (not a terminal command)
+```
+
+**What each check catches:**
+
+| Violation | Prettier | ESLint | SonarQube |
+|---|---|---|---|
+| Formatting (quotes, trailing commas, indent) | ✅ auto-fix | ⚠️ some rules | — |
+| Duplicate imports | — | ✅ auto-fix | ✅ |
+| Global builtins (`parseFloat` → `Number.parseFloat`) | — | ✅ auto-fix | ✅ |
+| Unused variables / imports | — | ✅ | ✅ |
+| Cognitive complexity > 15 | — | ❌ not configured | ✅ |
+| DOM prop leaks (`shouldForwardProp`) | — | ❌ | ✅ |
+| `getAttribute` vs `.dataset` | — | ❌ | ✅ |
+
+Do not run tests, mark a task complete, or move to the next file until all three pass on the file just edited. If any check reports errors, fix them immediately before continuing.
+
+---
 
 ### Cognitive complexity
 
@@ -220,6 +312,149 @@ Every exported component must have a `Responsive` story that renders the compone
 
 Use `element.dataset['camelKey']` rather than `element.getAttribute('data-kebab-key')` in test files. Sonar flags `getAttribute` as a code smell when `.dataset` is available.
 
+### Minimum readable sizes (enforce always — not just before submission)
+
+> **Every time you write a `width={...}` or `fontSize` on an icon or label, check this table first.**
+> Violations of these minimums have happened repeatedly. Do not guess — look up the constant.
+
+Icons and text in this library are read by real users. The following minimums are **non-negotiable** and enforced by regression tests:
+
+| Element | Minimum | Notes |
+|---|---|---|
+| Inline icon (status badge, spine, pill) | `width={16}` | Never `width={12}` or `width={14}` |
+| Interactive icon (button, clickable control) | `width={20}` | Clickable icons must be larger than decorative ones |
+| Corner alert badge circle | `26px` | The circle container; icon inside must be `width={16}` |
+| Standalone decorative icon (card corner) | CSS `width: 32, height: 32` | Applied via `'& svg': { width: 32, height: 32 }` |
+| Pulsing dot / status indicator | `12px` | Never `width: 10, height: 10` |
+| Badge / pill label text | `0.75rem` | Never `0.65rem` or `0.7rem` |
+| Item date / supplementary label | `0.875rem` | Match `body2`; never override below default |
+
+**Enforcement pattern — mandatory for every component that has size values:**
+
+1. Export every size value as a named constant from the component file:
+   ```ts
+   export const PILL_ICON_SIZE = 16;
+   export const STATUS_BADGE_FONT_SIZE = '0.75rem';
+   ```
+2. Use the constant in the component JSX/sx — never inline the literal:
+   ```tsx
+   <GiselleIcon icon="..." width={PILL_ICON_SIZE} />
+   <Typography sx={{ fontSize: STATUS_BADGE_FONT_SIZE }} />
+   ```
+3. Write a `describe('readability — minimum size constants', ...)` block in the component's `*.test.ts` that imports the constants and asserts each is `>= MIN_ICON_SIZE_PX` or `>= MIN_FONT_SIZE_REM`. If a constant is changed below the minimum, the test fails before production.
+
+### Test coverage — 80% minimum
+
+This package targets ≥80% line/branch/function/statement coverage, enforced in the quality gate. Coverage is measured with `@vitest/coverage-v8`.
+
+**Running coverage locally:**
+
+```sh
+npm run test:coverage   # generates text summary + lcov report
+```
+
+**Gate status:** The 80% threshold is defined in `vitest.config.ts` under `coverage.thresholds`. Once wired into `scripts/quality-gate.js` (Phase 1.7 T1), `npm run check:verify` will fail if any threshold is not met.
+
+**Rules — non-negotiable:**
+
+- Every new component or utility must ship with tests. A file that adds exported symbols without tests is a blocker for merge.
+- When a test is written, it must cover the expected behaviour, not just call the function. Refer to the test conventions section above.
+- Do not artificially boost coverage with empty assertions or `it.todo`. Every test must make at least one meaningful assertion.
+- Coverage excludes: `*.test.ts`, `*.stories.tsx`, `*/index.ts` barrel files. Do not add test-only helper files to the coverage `include` pattern.
+
+### TimelineTwoColumn — MilestoneBadge column alignment rule
+
+`MilestoneBadge` accepts a `columnSide: 'left' | 'right'` prop (default `'right'`).
+
+**Rule — non-negotiable:**
+
+- Left-column milestones (`columnSide="left"`) right-align their collapsed title and inline elements so text sits flush against the centre spine. There must be no ragged gap between the card text and the spine.
+- The alignment resets to left the moment the card is **expanded** (full reading flow requires left-to-right text).
+- **On hover, the alignment must not change.** Hover only reveals the card background and border; text stays right-aligned until the card is actually opened.
+- Right-column milestones always use left alignment (default). Do not pass `columnSide` at all, or pass `"right"`.
+
+**Implementation — how the prop works:**
+
+| State | `columnSide="left"` | `columnSide="right"` |
+|---|---|---|
+| Collapsed | `textAlign: 'right'` on Paper root; flex rows use `justifyContent: 'flex-end'` | No override (default left) |
+| Expanded | Left alignment (both columns identical) | Left alignment |
+
+**Where it is set:** in `timeline-two-column.tsx`, both `MilestoneBadge` call sites:
+- Left-column block (`ctx.phaseSide === 'left'`): `<MilestoneBadge columnSide="left" ...>`
+- Right-column block (`ctx.phaseSide === 'right'`): no `columnSide` (default `'right'`)
+
+---
+
+### TimelineTwoColumn — done-dot color enforcement rule
+
+**Rule — non-negotiable:**
+
+Every dot on the timeline — phase dots and milestone dots alike — must be **green with a checkmark** when `done=true`. The green success color is the universal "done" signal and must never be overridden by the data's `color` prop or by a grayscale/opacity filter applied by the parent container.
+
+**Two-part implementation (both are required):**
+
+1. **`resolveEffectiveColor(color, done)`** in `timeline-dot.tsx` forces `color='success'` when `done=true`. This is called inside `TimelineDot` before any sx callbacks reference the color. Exported for regression tests.
+
+2. **No grayscale on the dot container.** The center column Box in `timeline-two-column.tsx` must NOT apply `filter: 'grayscale(1)'` or `opacity` to the dot. Grayscale/opacity belongs on the card Paper only — not on the dot's wrapper Box.
+
+| Element | Done state | Expected |
+|---|---|---|
+| Phase dot | `done=true` | Green circle with checkmark; never grayed |
+| Milestone dot | `done=true` | Green filled circle with checkmark; never grayed |
+| Phase dot | `done=false` | Uses data `color` as-is |
+| Milestone dot | `done=false` | Uses resolved `msColor` (overdue → error, else data color) |
+
+**Regression test location:** `timeline-dot.test.ts` — `resolveEffectiveColor — done-dot color enforcement (regression)`.
+
+---
+
+### TimelineTwoColumn — corner alert badge column-side positioning rule
+
+`PhaseCard` accepts a `columnSide: 'left' | 'right'` prop (default `'right'`). The corner alert badge uses this to anchor itself on the correct edge.
+
+**Rule — non-negotiable:**
+
+- Right-column cards: badge floats on the **right** top corner — the outer edge, away from the spine (`right: 0, transform: translate(50%, -50%)`).
+- Left-column cards: badge floats on the **left** top corner — the outer edge, away from the spine (`left: 0, transform: translate(-50%, -50%)`).
+
+**Why:** the badge must always float on the edge that faces outward (away from the spine). A badge anchored on the spine-facing edge overlaps the spine connector and milestone dots.
+
+**Where it is set:** in `timeline-two-column.tsx`, the `PhaseCard` call site:
+```tsx
+<PhaseCard phase={phase} columnSide={phase.side === 'left' ? 'right' : 'left'} {...buildPhaseCardTsxProps(...)} />
+```
+
+Note: `phase.side` is **inverted** from the actual column (`phase.side='right'` → card in **LEFT** column, outer edge on left). So `columnSide` must use the opposite of `phase.side`.
+
+The logic is encapsulated in `resolveCornerBadgeAlign(columnSide)` in `phase-card.tsx`, which returns `{ left?, right?, transform, tooltipPlacement }`. Exported for regression tests.
+
+**Regression test location:** `phase-card.test.ts` — `resolveCornerBadgeAlign — column-side positioning (regression)`.
+
+---
+
+### TimelineTwoColumn — eye button WCAG accessibility rule
+
+All `isViewed` / `onMarkViewed` eye buttons in this component family must meet WCAG 2.2 AA.
+
+**Rule — non-negotiable:**
+
+| Element | Icon size | Why |
+|---|---|---|
+| Phase card eye badge | `width={20}` (`PHASE_EYE_ICON_SIZE`) | Interactive icons must be >= 20px — larger than decorative |
+| Milestone title-row eye | `width={20}` (`MILESTONE_EYE_ICON_SIZE`) | Same rule |
+
+- **Never use `opacity` alone to communicate state.** Opacity reduces visual contrast below WCAG 1.4.11 (3:1 ratio for UI components). Use icon variant change (`bold` vs `outline`) AND a foreground/background colour change together.
+- **Never set `cursor: 'default'` on a toggleable button.** The user must always be able to click to toggle. A viewed item must be un-markable.
+- **Always include `aria-pressed={isViewed}` and a descriptive `aria-label`** that reflects the current state and the action that will happen on click (e.g. `'Mark as not viewed'` when `isViewed=true`).
+- **Export size constants.** Every eye icon/button size must be a named export (`PHASE_EYE_ICON_SIZE`, `MILESTONE_EYE_ICON_SIZE`, `EYE_BUTTON_MIN_SIZE`, `MILESTONE_EYE_BUTTON_MIN_SIZE`). Write a regression test asserting each icon size is `>= 20` and each button min-size is `>= 24`.
+
+**Where the eye buttons live:**
+- Phase card: floats outside `<Paper>` at the bottom outer edge (`position: absolute, bottom: 0`), column-side aware. Constants: `PHASE_EYE_ICON_SIZE = 20`, `EYE_BUTTON_MIN_SIZE = 28`.
+- Milestone: inline in the title row (`<Box display="flex" alignItems="center">`), before the title when `columnSide='left'` (right-aligned column), after the title when `columnSide='right'` (left-aligned column). Constant: `MILESTONE_EYE_ICON_SIZE = 20`.
+
+**Regression test locations:** `phase-card.test.ts` — `eye button — WCAG accessibility regression`; `milestone-badge.test.ts` — `eye button — WCAG accessibility regression`.
+
 ---
 
 ## MUI Store quality bar (enforce always — not just before submission)
@@ -269,6 +504,7 @@ MUI-specific props (`sx`, `component`, `ref`, or shorthand layout props like `di
 ```
 
 **Before every PR:** run the following to catch bare Box usage:
+
 ```sh
 grep -rn "<Box[^/]*>" src/ | grep -v "sx=\|component=\|className=\|ref=\|aria-\|data-\|display="
 ```
@@ -281,14 +517,14 @@ props from leaking into the DOM.
 ```tsx
 // ❌ wrong — custom prop leaks to DOM → React warning + Sonar violation
 const StyledDiv = styled('div')<{ active: boolean }>`
-  color: ${({ active }) => active ? 'red' : 'black'};
+  color: ${({ active }) => (active ? 'red' : 'black')};
 `;
 
 // ✅ correct
 const StyledDiv = styled('div', {
   shouldForwardProp: (prop) => prop !== 'active',
 })<{ active: boolean }>`
-  color: ${({ active }) => active ? 'red' : 'black'};
+  color: ${({ active }) => (active ? 'red' : 'black')};
 `;
 ```
 
@@ -323,12 +559,12 @@ constraint on the future premium template's separate build config.
 All components must work in — and must not use APIs or CSS features unavailable in — the
 following minimum versions:
 
-| Browser | Minimum |
-|---------|---------|
-| Chrome | ≥ 121 |
-| Firefox | ≥ 121 |
-| Edge | ≥ 117 |
-| Safari (macOS + iOS) | ≥ 17.0 |
+| Browser              | Minimum |
+| -------------------- | ------- |
+| Chrome               | ≥ 121   |
+| Firefox              | ≥ 121   |
+| Edge                 | ≥ 117   |
+| Safari (macOS + iOS) | ≥ 17.0  |
 
 This matches the MUI Core supported browser matrix. Do not use CSS features, JS APIs, or
 DOM behaviour that falls outside these targets.
@@ -338,4 +574,3 @@ DOM behaviour that falls outside these targets.
 - No low-resolution raster images. Any raster asset must look sharp at >200 PPI.
 - SVG files must be optimised — no verbose metadata, no inline raster data.
 - If SVGs are added to Storybook or a demo app, run them through `svgo` before committing.
-

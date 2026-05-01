@@ -17,6 +17,65 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { pulseDot } from './animations';
+import { GiselleIcon } from '../giselle-icon/giselle-icon';
+import { DEFAULT_EXPANDABLE_ICON } from './icons';
+
+// ----------------------------------------------------------------------
+
+/** Font size for all status badge labels (Overdue, Now, Date overlap, Scenario). */
+export const STATUS_BADGE_FONT_SIZE = '0.75rem';
+
+/** Size (px) of the corner alert badge circle. */
+export const CORNER_ALERT_BADGE_SIZE = 26;
+
+/** Icon size (px) inside the corner alert badge circle. */
+export const CORNER_ALERT_ICON_SIZE = 16;
+
+/** Icon size (px) inside the corner alert Tooltip list. */
+export const CORNER_ALERT_LIST_ICON_SIZE = 16;
+
+/** Icon size (px) for the viewed eye button. */
+export const PHASE_EYE_ICON_SIZE = 20;
+
+/**
+ * Minimum touch-target size (px) for the eye viewed button.
+ * Meets WCAG 2.2 AA 2.5.8 — minimum 24 × 24 CSS pixels for pointer targets.
+ */
+export const EYE_BUTTON_MIN_SIZE = 28;
+
+/** Width and height (px) of the "Now" active pulsing dot. */
+export const ACTIVE_DOT_SIZE = 12;
+
+/** Width (px) of the subtask icon in the phase card's expandable details pill. */
+export const PHASE_PILL_ICON_SIZE = 16;
+
+/** Font size for the count label in the phase card's expandable details pill. */
+export const PHASE_PILL_TEXT_FONT_SIZE = '0.75rem';
+
+// ----------------------------------------------------------------------
+
+/**
+ * Resolves the horizontal position of the corner alert badge depending on which
+ * column the card sits in.
+ *
+ * - Right column (default): badge floats on the **right** top corner so it sits
+ *   between the card and the centre spine.
+ * - Left column: badge floats on the **left** top corner so it sits between the
+ *   card and the centre spine (mirrored).
+ *
+ * Exported so tests can assert the positioning rule independently.
+ */
+export function resolveCornerBadgeAlign(columnSide: 'left' | 'right'): {
+  left?: number;
+  right?: number;
+  transform: string;
+  tooltipPlacement: 'top-start' | 'top-end';
+} {
+  if (columnSide === 'left') {
+    return { left: 0, transform: 'translate(-50%, -50%)', tooltipPlacement: 'top-start' };
+  }
+  return { right: 0, transform: 'translate(50%, -50%)', tooltipPlacement: 'top-end' };
+}
 
 // ----------------------------------------------------------------------
 
@@ -99,39 +158,131 @@ function CardDetailBullets({ id, details, in: expanded }: CardDetailBulletsProps
 
 // ----------------------------------------------------------------------
 
-function OverdueBadge() {
+/**
+ * Floating corner badge that groups all warning/error alerts behind a single icon.
+ * Positioned on the outer wrapper (outside the Paper) so it is never clipped.
+ * On hover, a Tooltip lists every active alert.
+ */
+type CardCornerAlert = { message: string; severity: 'error' | 'warning' };
+
+function CardCornerAlertBadge({
+  alerts,
+  columnSide = 'right',
+}: {
+  alerts: CardCornerAlert[];
+  columnSide?: 'left' | 'right';
+}) {
+  if (alerts.length === 0) return null;
+  const hasError = alerts.some((a) => a.severity === 'error');
+  const { left, right, transform, tooltipPlacement } = resolveCornerBadgeAlign(columnSide);
+  const tooltipContent = (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25, py: 0.5, px: 0.25 }}>
+      {alerts.map((a, i) => (
+        <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+          <GiselleIcon
+            icon="solar:danger-triangle-bold"
+            width={CORNER_ALERT_LIST_ICON_SIZE}
+            aria-hidden
+            style={{ flexShrink: 0, marginTop: 2 }}
+          />
+          <Typography
+            variant="body2"
+            sx={{ lineHeight: 1.55, fontSize: '0.8rem', fontWeight: 500 }}
+          >
+            {a.message}
+          </Typography>
+        </Box>
+      ))}
+    </Box>
+  );
   return (
-    <Box sx={{ display: 'inline-flex', mb: 1 }}>
-      <Typography
-        variant="overline"
+    <Tooltip
+      title={tooltipContent}
+      placement={tooltipPlacement}
+      arrow
+      slotProps={{
+        tooltip: {
+          sx: {
+            maxWidth: 320,
+            px: 1.75,
+            py: 1.25,
+            bgcolor: 'grey.900',
+            '& .MuiTooltip-arrow': { color: 'grey.900' },
+          },
+        },
+      }}
+    >
+      <Box
+        aria-label={`${alerts.length} issue${alerts.length !== 1 ? 's' : ''}`}
+        tabIndex={0}
         sx={{
-          display: 'inline-block',
-          px: 1,
-          py: 0.25,
-          borderRadius: 0.75,
-          fontSize: '0.65rem',
-          fontWeight: 700,
-          letterSpacing: 0.8,
-          lineHeight: 1.6,
-          color: `rgba(var(--mui-palette-error-darkChannel) / 1)`,
-          bgcolor: `rgba(var(--mui-palette-error-mainChannel) / 0.12)`,
+          position: 'absolute',
+          top: 0,
+          ...(left !== undefined ? { left } : { right }),
+          zIndex: 10,
+          transform,
+          width: CORNER_ALERT_BADGE_SIZE,
+          height: CORNER_ALERT_BADGE_SIZE,
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: hasError ? 'error.main' : 'warning.dark',
+          color: 'common.white',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+          cursor: 'help',
+          pointerEvents: 'auto',
+          '&:focus-visible': {
+            outline: '2px solid',
+            outlineColor: hasError ? 'error.main' : 'warning.dark',
+            outlineOffset: 2,
+          },
         }}
       >
-        Overdue
-      </Typography>
-    </Box>
+        <GiselleIcon icon="solar:danger-triangle-bold" width={CORNER_ALERT_ICON_SIZE} aria-hidden />
+      </Box>
+    </Tooltip>
   );
 }
 
 type ActiveBadgeProps = { color: string; activeLabel?: string };
+
+function NewBadge() {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
+      <Box
+        sx={{
+          width: ACTIVE_DOT_SIZE,
+          height: ACTIVE_DOT_SIZE,
+          borderRadius: '50%',
+          flexShrink: 0,
+          bgcolor: 'success.main',
+          animation: `${pulseDot} 1.4s ease-in-out infinite`,
+        }}
+      />
+      <Typography
+        variant="overline"
+        sx={{
+          fontSize: STATUS_BADGE_FONT_SIZE,
+          fontWeight: 700,
+          letterSpacing: 0.8,
+          lineHeight: 1.6,
+          color: 'success.main',
+        }}
+      >
+        New
+      </Typography>
+    </Box>
+  );
+}
 
 function ActiveBadge({ color, activeLabel }: ActiveBadgeProps) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
       <Box
         sx={{
-          width: 8,
-          height: 8,
+          width: ACTIVE_DOT_SIZE,
+          height: ACTIVE_DOT_SIZE,
           borderRadius: '50%',
           flexShrink: 0,
           bgcolor: `${color}.main`,
@@ -141,10 +292,10 @@ function ActiveBadge({ color, activeLabel }: ActiveBadgeProps) {
       <Typography
         variant="overline"
         sx={{
-          fontSize: '0.65rem',
+          fontSize: STATUS_BADGE_FONT_SIZE,
           fontWeight: 700,
           letterSpacing: 0.8,
-          lineHeight: 1,
+          lineHeight: 1.6,
           color: `${color}.main`,
         }}
       >
@@ -166,7 +317,7 @@ function ScenarioBadge({ color, scenarioLabel }: ScenarioBadgeProps) {
         px: 1,
         py: 0.25,
         borderRadius: 0.75,
-        fontSize: '0.65rem',
+        fontSize: STATUS_BADGE_FONT_SIZE,
         fontWeight: 700,
         letterSpacing: 0.8,
         color: `${color}.dark`,
@@ -179,18 +330,18 @@ function ScenarioBadge({ color, scenarioLabel }: ScenarioBadgeProps) {
 }
 
 /**
- * The three mutually-exclusive status badges that appear at the top of a PhaseCard.
+ * Status badges rendered at the top of a PhaseCard.
  *
- * Priority: overdue > active ("Now") > scenario label.
- * In practice at most one fires — a phase can't be simultaneously overdue and active.
+ * Badges stack when multiple conditions apply simultaneously:
+ * - A phase that is both active and overdue shows the "Now" dot **and** the "Overdue" chip.
+ * - A date-conflict badge stacks on top of any active/overdue badges.
+ * - The scenario badge is a fallback — only shown when no other badge applies.
  */
 type CardStatusBadgeProps = {
-  /** Whether the phase is overdue (past due, not done). */
-  isOverdue: boolean;
-  /** Whether the phase is already done — suppresses the overdue badge. */
-  isDone: boolean;
   /** Whether this is the current "active" / "Now" phase. */
   isActive: boolean;
+  /** Whether the phase is already done — suppresses the active badge. */
+  isDone: boolean;
   /** Optional override for the "Now" label text. @default 'Now' */
   activeLabel?: string;
   /** MUI palette key for the active badge colour. */
@@ -199,22 +350,32 @@ type CardStatusBadgeProps = {
   isScenario: boolean;
   /** Scenario label text to render. Only shown when `isScenario` is true. */
   scenarioLabel?: string;
+  /** When true, renders a pulsing green "New" badge — sourced from `phase.new`. */
+  isNew?: boolean;
 };
 
 function CardStatusBadge({
-  isOverdue,
-  isDone,
   isActive,
+  isDone,
   activeLabel,
   color,
   isScenario,
   scenarioLabel,
+  isNew,
 }: CardStatusBadgeProps) {
-  if (isOverdue && !isDone) return <OverdueBadge />;
-  if (isActive) return <ActiveBadge color={color} activeLabel={activeLabel} />;
-  if (isScenario && scenarioLabel)
-    return <ScenarioBadge color={color} scenarioLabel={scenarioLabel} />;
-  return null;
+  const showActive = isActive && !isDone;
+  const showScenario = !showActive && isScenario && Boolean(scenarioLabel);
+  const showNew = Boolean(isNew);
+
+  if (!showActive && !showScenario && !showNew) return null;
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+      {showNew && <NewBadge />}
+      {showActive && <ActiveBadge color={color} activeLabel={activeLabel} />}
+      {showScenario && <ScenarioBadge color={color} scenarioLabel={scenarioLabel!} />}
+    </Box>
+  );
 }
 
 // ----------------------------------------------------------------------
@@ -487,6 +648,10 @@ export type PhaseCardProps = Omit<BoxProps, 'children'> & {
   done?: boolean;
   /** Runtime overdue override from the parent timeline. Adds a red warning border to the card. */
   overdue?: boolean;
+  /** Set by the parent when this phase's date range overlaps another phase. Shows a ⚠ Date overlap badge. */
+  dateConflict?: boolean;
+  /** Human-readable explanation of the overlap rendered in a Tooltip on the badge. */
+  dateConflictLabel?: string;
   /**
    * Controlled expansion state. When provided together with `onRequestExpand`,
    * the card operates in controlled mode and the parent owns the open/close state.
@@ -496,6 +661,27 @@ export type PhaseCardProps = Omit<BoxProps, 'children'> & {
   onRequestExpand?: () => void;
   /** When true, suppresses box-shadow so the card appears flat (used when another card is expanded). */
   suppressElevation?: boolean;
+  /**
+   * When true, the viewed eye indicator shows as filled (success colour).
+   * Only renders the indicator when `onMarkViewed` is also provided.
+   */
+  isViewed?: boolean;
+  /**
+   * Called when the user clicks the viewed eye button. Provide this to enable the indicator.
+   * The parent is responsible for persisting the viewed state.
+   */
+  onMarkViewed?: () => void;
+  /**
+   * Icon rendered in the expandable-details count badge. Defaults to the bundled inline SVG subtask icon.
+   * Pass `null` to suppress the icon and show only the count number.
+   */
+  expandableIcon?: ReactNode;
+  /**
+   * Which column the card sits in — controls where the corner alert badge is anchored.
+   * - `'right'` (default): badge floats on the right top corner (between card and spine).
+   * - `'left'`: badge floats on the left top corner (mirrored, between spine and card edge).
+   */
+  columnSide?: 'left' | 'right';
 };
 
 /**
@@ -512,9 +698,15 @@ export function PhaseCard({
   phase,
   done,
   overdue,
+  dateConflict = false,
+  dateConflictLabel,
   isExpanded,
   onRequestExpand,
   suppressElevation = false,
+  expandableIcon,
+  isViewed = false,
+  onMarkViewed,
+  columnSide = 'right',
   sx,
   ...other
 }: PhaseCardProps) {
@@ -534,11 +726,29 @@ export function PhaseCard({
     setInternalExpanded
   );
 
+  // Two-level title disclosure: collapsed shows shortTitle (glanceable), expanded shows full title.
+  const displayTitle = expanded ? phase.title : (phase.shortTitle ?? phase.title);
+
   const handleClick = buildCardClickHandler(hasDetails, toggle);
   const handleKeyDown = buildCardKeyDownHandler(hasDetails, toggle);
 
+  // Build the corner alert list from active warning/error conditions.
+  const cornerAlerts: CardCornerAlert[] = [];
+  if (isOverdue && !isDone) {
+    cornerAlerts.push({ message: 'Overdue — past due date', severity: 'error' });
+  }
+  if (dateConflict) {
+    cornerAlerts.push({
+      message: dateConflictLabel ?? 'Date overlap with another phase',
+      severity: 'warning',
+    });
+  }
+
   return (
     <Box sx={[{ position: 'relative' }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
+      {/* Corner alert badge — groups overdue/date-conflict behind a single icon */}
+      <CardCornerAlertBadge alerts={cornerAlerts} columnSide={columnSide} />
+
       <Paper
         role={hasDetails ? 'button' : undefined}
         tabIndex={hasDetails ? 0 : undefined}
@@ -569,20 +779,20 @@ export function PhaseCard({
           />
         )}
 
-        {/* Overdue / Now / Scenario status badge — at most one renders */}
+        {/* Active / New / Scenario status badges */}
         <CardStatusBadge
-          isOverdue={isOverdue}
-          isDone={isDone}
           isActive={Boolean(phase.active)}
+          isDone={isDone}
           activeLabel={phase.activeLabel}
           color={phase.color ?? 'primary'}
           isScenario={isScenario}
           scenarioLabel={phase.scenarioLabel}
+          isNew={Boolean(phase.new)}
         />
 
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
           <Box sx={{ flex: 1 }}>
-            {!phase.hideDate && !phase.active && (
+            {!phase.hideDate && expanded && (
               <Typography
                 variant="subtitle2"
                 sx={buildDateTypographySx({
@@ -598,14 +808,51 @@ export function PhaseCard({
 
             <Typography
               variant={isScenario ? 'h6' : 'subtitle1'}
-              sx={{ mb: 1, pr: !isHighlighted && !phase.hideDecoration ? 6 : 0 }}
+              sx={{ mb: hasDetails ? 0.5 : 1, pr: !isHighlighted && !phase.hideDecoration ? 6 : 0 }}
             >
-              {phase.title}
+              {displayTitle}
             </Typography>
 
-            <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              {phase.description}
-            </Typography>
+            {hasDetails && (
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                  mb: 1,
+                  px: 0.75,
+                  py: 0.25,
+                  borderRadius: 1,
+                  bgcolor: 'action.hover',
+                  color: 'text.secondary',
+                }}
+                aria-label={`${phase.details?.length ?? 0} expandable detail${(phase.details?.length ?? 0) === 1 ? '' : 's'}`}
+              >
+                <Box
+                  component="span"
+                  sx={{
+                    display: 'inline-flex',
+                    flexShrink: 0,
+                    '& svg': { width: PHASE_PILL_ICON_SIZE, height: PHASE_PILL_ICON_SIZE },
+                  }}
+                >
+                  {expandableIcon ?? DEFAULT_EXPANDABLE_ICON}
+                </Box>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  sx={{ fontWeight: 600, lineHeight: 1, fontSize: PHASE_PILL_TEXT_FONT_SIZE }}
+                >
+                  {phase.details?.length ?? 0}
+                </Typography>
+              </Box>
+            )}
+
+            {expanded && (
+              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+                {phase.description}
+              </Typography>
+            )}
 
             {phase.photo && (
               <Box
@@ -693,6 +940,58 @@ export function PhaseCard({
           <CardDetailBullets id={detailsId} details={phase.details ?? []} in={expanded} />
         )}
       </Paper>
+
+      {/* Viewed eye badge — floats outside the card at the bottom on the outer edge. */}
+      {/* Uses columnSide so it mirrors the corner alert badge: outer edge away from spine. */}
+      {onMarkViewed && (
+        <Tooltip
+          title={isViewed ? 'Mark as not viewed' : 'Mark as viewed'}
+          placement={columnSide === 'left' ? 'right' : 'left'}
+          arrow
+        >
+          <Box
+            component="button"
+            type="button"
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              onMarkViewed();
+            }}
+            aria-label={isViewed ? 'Mark as not viewed' : 'Mark as viewed'}
+            aria-pressed={isViewed}
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              ...(columnSide === 'left' ? { left: 0 } : { right: 0 }),
+              transform: 'translate(0, calc(100% + 8px))',
+              zIndex: 10,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minWidth: EYE_BUTTON_MIN_SIZE,
+              minHeight: EYE_BUTTON_MIN_SIZE,
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              p: 0,
+              color: isViewed ? 'success.main' : 'text.secondary',
+              transition: 'color 0.15s',
+              '&:hover': { color: isViewed ? 'success.dark' : 'text.primary' },
+              '&:focus-visible': {
+                outline: '2px solid',
+                outlineColor: isViewed ? 'success.main' : 'primary.main',
+                outlineOffset: 2,
+                borderRadius: 0.5,
+              },
+            }}
+          >
+            <GiselleIcon
+              icon={isViewed ? 'solar:eye-bold' : 'solar:eye-outline'}
+              width={PHASE_EYE_ICON_SIZE}
+              aria-hidden
+            />
+          </Box>
+        </Tooltip>
+      )}
     </Box>
   );
 }

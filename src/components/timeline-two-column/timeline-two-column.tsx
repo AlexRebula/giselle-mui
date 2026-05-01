@@ -4,12 +4,20 @@ import { useMemo, useState, useEffect, useCallback, type ReactNode } from 'react
 
 import Box from '@mui/material/Box';
 import Timeline from '@mui/lab/Timeline';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 
 import { PhaseCard } from './phase-card';
 import { TimelineDot } from './timeline-dot';
 import { MilestoneBadge } from './milestone-badge';
 import { SpineConnector } from './spine-connector';
-import { getLastYear, parseLastDate, sortPhasesByDate } from './utils';
+import {
+  getLastYear,
+  parseLastDate,
+  detectPhaseOverlaps,
+  sortMilestonesAsc,
+  sortPhasesByDate,
+} from './utils';
 
 // ----------------------------------------------------------------------
 
@@ -69,6 +77,10 @@ function TimelineColumn({ columnSide, hasContent, children, bottomPadding }: Tim
   );
 }
 
+// Stable empty Set — returned when `viewedKeys` prop is undefined so callers
+// always get the same reference and avoid creating a new Set on every render.
+const EMPTY_VIEWED_KEYS = new Set<string>();
+
 // ── Milestone type alias ───────────────────────────────────────────────────
 
 type Milestone = NonNullable<TimelinePhase['milestones']>[number];
@@ -99,7 +111,8 @@ function resolvePhaseOverdue(
 ): boolean {
   if (!checklist || isDone) return false;
   const parsedDate = parseLastDate(phase.date);
-  const isAutoOverdue = !phase.active && parsedDate !== null && parsedDate < today;
+  // Active phases can still be overdue (e.g. roadmap phase still in progress but past its end date).
+  const isAutoOverdue = parsedDate !== null && parsedDate < today;
   return (phase.overdue ?? false) || isAutoOverdue;
 }
 
@@ -174,14 +187,41 @@ function buildPhaseCardTsxProps(
   checklist: boolean,
   isDone: boolean,
   isOverdue: boolean,
+  dateConflict: boolean,
+  dateConflictLabel: string | undefined,
   anyExpanded: boolean,
-  isThisPhaseExpanded: boolean
+  isThisPhaseExpanded: boolean,
+  expandableIcon: ReactNode
 ) {
   return {
     done: isDone,
     overdue: checklist ? isOverdue : undefined,
+    dateConflict: dateConflict || undefined,
+    dateConflictLabel,
     suppressElevation: anyExpanded && !isThisPhaseExpanded,
+    expandableIcon,
   };
+}
+
+/** Returns the tooltip label for a timeline dot based on its status and date. */
+function dotStatusLabel(
+  color: HighlightedPaletteKey,
+  done: boolean,
+  date: string | undefined
+): string {
+  let status: string;
+  if (done) {
+    status = 'Done';
+  } else if (color === 'error') {
+    status = 'Blocking';
+  } else if (color === 'warning') {
+    status = 'In progress';
+  } else if (color === 'success') {
+    status = 'Planned';
+  } else {
+    status = 'Upcoming';
+  }
+  return date ? `${status} · ${date}` : status;
 }
 
 /** Resolves the JSX prop bag for the phase-row TimelineDot. */
@@ -226,6 +266,9 @@ type MilestoneRowCtx = {
   expandedMiIdx: number | null;
   anyExpanded: boolean;
   dotColor: HighlightedPaletteKey;
+  expandableIcon: ReactNode;
+  viewedKeys: Set<string>;
+  onMarkViewed: ((key: string) => void) | undefined;
   handleToggleMilestone: (phaseKey: number, mi: number) => void;
   handleExpandMilestone: (phaseKey: number, milestoneIndex: number) => void;
 };
@@ -246,7 +289,15 @@ function resolveMilestoneState(
     ms.color && ms.color !== 'inherit' && ms.color !== 'grey'
       ? (ms.color as HighlightedPaletteKey)
       : dotColor;
-  const msColor: HighlightedPaletteKey = msIsOverdue ? 'error' : msColorFromData;
+  // Done milestones always use 'success' — same rule as phase dots (see resolveEffectiveColor).
+  let msColor: HighlightedPaletteKey;
+  if (msDone) {
+    msColor = 'success';
+  } else if (msIsOverdue) {
+    msColor = 'error';
+  } else {
+    msColor = msColorFromData;
+  }
   return { msDone, msColor };
 }
 
@@ -368,6 +419,12 @@ function buildMilestoneRow(
               isExpanded={isThisMsExpanded}
               suppressElevation={suppressElevation}
               stableId={`${ctx.phaseKey}-${mi}`}
+              expandableIcon={ctx.expandableIcon}
+              columnSide="left"
+              isViewed={ctx.viewedKeys.has(`ms-${ctx.phaseKey}-${mi}`)}
+              onMarkViewed={
+                ctx.onMarkViewed ? () => ctx.onMarkViewed!(`ms-${ctx.phaseKey}-${mi}`) : undefined
+              }
               onRequestExpand={() => ctx.handleExpandMilestone(ctx.phaseKey, mi)}
             />
           </Box>
@@ -379,8 +436,11 @@ function buildMilestoneRow(
         data-col="center"
         sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
       >
+        {/* Dot + floating date pill: relative wrapper so pill doesn't affect row height/centering */}
         <Box
           sx={{
+            position: 'relative',
+            display: 'inline-flex',
             transition: 'filter 0.2s ease, opacity 0.2s ease, transform 0.2s ease',
             ...(suppressElevation && {
               filter: 'blur(1.5px)',
@@ -390,15 +450,47 @@ function buildMilestoneRow(
             }),
           }}
         >
-          <TimelineDot
-            icon={ms.icon}
-            color={msColor}
-            size="milestone"
-            done={msDone}
-            onClick={msDotClickAction}
-            onKeyDown={msDotKeyDown}
-            {...dotChecklistProps}
-          />
+          {ms.date && (
+            <Typography
+              variant="caption"
+              aria-hidden
+              sx={{
+                position: 'absolute',
+                bottom: 'calc(100% + 4px)',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                fontSize: '0.65rem',
+                fontWeight: 600,
+                color: 'text.secondary',
+                bgcolor: 'action.hover',
+                px: 0.75,
+                py: 0.125,
+                borderRadius: 0.75,
+                whiteSpace: 'nowrap',
+                pointerEvents: 'none',
+                zIndex: 2,
+              }}
+            >
+              {ms.date}
+            </Typography>
+          )}
+          <Tooltip
+            title={dotStatusLabel(msColor, msDone, ms.date)}
+            placement={ctx.phaseSide === 'left' ? 'right' : 'left'}
+            arrow
+          >
+            <span>
+              <TimelineDot
+                icon={ms.icon}
+                color={msColor}
+                size="milestone"
+                done={msDone}
+                onClick={msDotClickAction}
+                onKeyDown={msDotKeyDown}
+                {...dotChecklistProps}
+              />
+            </span>
+          </Tooltip>
         </Box>
         {/* No spine here — the phase row's SpineConnector runs behind all milestone dots */}
       </Box>
@@ -429,6 +521,11 @@ function buildMilestoneRow(
               isExpanded={isThisMsExpanded}
               suppressElevation={suppressElevation}
               stableId={`${ctx.phaseKey}-${mi}`}
+              expandableIcon={ctx.expandableIcon}
+              isViewed={ctx.viewedKeys.has(`ms-${ctx.phaseKey}-${mi}`)}
+              onMarkViewed={
+                ctx.onMarkViewed ? () => ctx.onMarkViewed!(`ms-${ctx.phaseKey}-${mi}`) : undefined
+              }
               onRequestExpand={() => ctx.handleExpandMilestone(ctx.phaseKey, mi)}
             />
           </Box>
@@ -463,9 +560,13 @@ export function TimelineTwoColumn({
   onToggleMilestoneDone,
   selectedPhaseKey,
   onPhaseSelect,
+  expandableIcon,
+  viewedKeys,
+  onMarkViewed,
+  sortOrder = 'desc',
   milestoneSlotHeight = 60,
   phaseCardGap = 90,
-  yearLabelMarginBottom = 30,
+  yearLabelMarginBottom = 50,
   sx,
   ...other
 }: TimelineTwoColumnProps) {
@@ -569,8 +670,18 @@ export function TimelineTwoColumn({
     return d;
   }, []);
 
-  // Sort: active ("Now") item always first, remaining items newest → oldest.
-  const sorted = useMemo(() => sortPhasesByDate(phases), [phases]);
+  // Sort phases by date, then sort milestones within each phase ascending (earliest first).
+  const sorted = useMemo(
+    () =>
+      sortPhasesByDate(phases, sortOrder).map((phase) => ({
+        ...phase,
+        milestones: phase.milestones ? sortMilestonesAsc(phase.milestones) : phase.milestones,
+      })),
+    [phases, sortOrder]
+  );
+
+  // Detect phases whose date ranges overlap — shown as ⚠ Date overlap badge.
+  const overlappingKeys = useMemo(() => detectPhaseOverlaps(phases), [phases]);
 
   const lastKey = sorted.at(-1)?.key;
 
@@ -592,6 +703,10 @@ export function TimelineTwoColumn({
     document.addEventListener('click', handler);
     return () => document.removeEventListener('click', handler);
   }, [anyExpanded]);
+
+  // Stable reference for the viewed-key lookup — avoids creating a new Set on every render
+  // when the `viewedKeys` prop is undefined.
+  const effectiveViewedKeys = viewedKeys ?? EMPTY_VIEWED_KEYS;
 
   return (
     <Box sx={[{ position: 'relative' }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
@@ -631,18 +746,26 @@ export function TimelineTwoColumn({
             ? (e: React.MouseEvent) => e.stopPropagation()
             : undefined;
 
+          const phaseViewKey = `phase-${phase.key}`;
+
           // Single PhaseCard node — rendered in whichever column matches phase.side.
           const phaseCardNode = (
             <Box onClick={phaseCardStopProp}>
               <PhaseCard
                 phase={phase}
+                columnSide={phase.side === 'left' ? 'right' : 'left'}
                 {...buildPhaseCardTsxProps(
                   checklist,
                   isDone,
                   isOverdue,
+                  overlappingKeys.has(phase.key),
+                  overlappingKeys.get(phase.key),
                   anyExpanded,
-                  isThisPhaseExpanded
+                  isThisPhaseExpanded,
+                  expandableIcon
                 )}
+                isViewed={effectiveViewedKeys.has(phaseViewKey)}
+                onMarkViewed={onMarkViewed ? () => onMarkViewed(phaseViewKey) : undefined}
                 isExpanded={isThisPhaseExpanded}
                 onRequestExpand={() => handleExpandPhaseCard(phase.key)}
               />
@@ -657,6 +780,9 @@ export function TimelineTwoColumn({
             expandedMiIdx,
             anyExpanded,
             dotColor,
+            expandableIcon,
+            viewedKeys: effectiveViewedKeys,
+            onMarkViewed,
             handleToggleMilestone,
             handleExpandMilestone,
           };
@@ -702,24 +828,58 @@ export function TimelineTwoColumn({
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  ...(isDone && { opacity: 0.35, filter: 'grayscale(1)' }),
                 }}
               >
-                <TimelineDot
-                  icon={phase.icon}
-                  color={dotColor}
-                  size="phase"
-                  {...buildPhaseDotTsxProps(
-                    phase,
-                    checklist,
-                    isDone,
-                    dotAriaLabel,
-                    phaseToggleCounts,
-                    selectedPhaseKey
+                {/* Dot wrapper: relative so the date pill can float above without affecting layout */}
+                <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+                  {!phase.hideDate && phase.date && (
+                    <Typography
+                      variant="caption"
+                      aria-hidden
+                      sx={{
+                        position: 'absolute',
+                        bottom: 'calc(100% + 4px)',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        fontSize: '0.65rem',
+                        fontWeight: 600,
+                        color: 'text.secondary',
+                        bgcolor: 'action.hover',
+                        px: 0.75,
+                        py: 0.125,
+                        borderRadius: 0.75,
+                        whiteSpace: 'nowrap',
+                        pointerEvents: 'none',
+                        zIndex: 2,
+                      }}
+                    >
+                      {phase.date}
+                    </Typography>
                   )}
-                  onClick={dotClickAction}
-                  onKeyDown={dotKeyDownHandler}
-                />
+                  <Tooltip
+                    title={dotStatusLabel(dotColor, isDone, phase.date)}
+                    placement={phase.side === 'left' ? 'right' : 'left'}
+                    arrow
+                  >
+                    <span>
+                      <TimelineDot
+                        icon={phase.icon}
+                        color={dotColor}
+                        size="phase"
+                        {...buildPhaseDotTsxProps(
+                          phase,
+                          checklist,
+                          isDone,
+                          dotAriaLabel,
+                          phaseToggleCounts,
+                          selectedPhaseKey
+                        )}
+                        onClick={dotClickAction}
+                        onKeyDown={dotKeyDownHandler}
+                      />
+                    </span>
+                  </Tooltip>
+                </Box>
                 {/* SpineConnector spans the full li height — milestone dots overlay it at % positions */}
                 {!isLastPhase && (
                   <SpineConnector
@@ -767,8 +927,27 @@ export function TimelineTwoColumn({
                 // enough height for all milestone dots to be evenly spaced.
                 // Phase card vertical gap is controlled by phaseCardGap (column paddingBottom)
                 // which gives a consistent gap regardless of individual card height.
+                //
+                // When a year-boundary label is present on the spine, the bottom slot
+                // must be tall enough so the chip clears the last milestone dot.
+                //
+                // Derivation (dots at equal intervals; last dot at n/(n+1) of li height):
+                //   chip_top = (n+1)×slot − yearLabelMarginBottom − chipHeight(26)
+                //   dot_bottom = n×slot + dotSize(30)
+                //   Required: chip_top > dot_bottom + clearance(24)
+                //   → slot > yearLabelMarginBottom + chipHeight(26) + dotSize(30) + clearance(24)
+                //   → slot > yearLabelMarginBottom + 80
+                //
+                // yearLabelMarginBottom also governs the visual gap between the year chip
+                // and the date pill that floats above the next phase's dot. With the default
+                // of 50, the chip bottom is 50px above the li boundary, the date pill top is
+                // ~23px above it → ~27px of breathing room between them.
                 ...(phaseMilestones.length > 0 && {
-                  minHeight: (phaseMilestones.length + 1) * milestoneSlotHeight,
+                  minHeight:
+                    (phaseMilestones.length + 1) *
+                    (yearLabelValue !== null
+                      ? Math.max(milestoneSlotHeight, yearLabelMarginBottom + 80)
+                      : milestoneSlotHeight),
                 }),
               }}
             >
