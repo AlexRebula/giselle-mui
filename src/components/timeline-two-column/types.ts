@@ -30,6 +30,16 @@ export type TimelinePhase = {
   key: number;
   /** Display title of the phase — shown as the card heading. */
   title: string;
+  /**
+   * Glanceable 2–4 word label shown in the collapsed card at rest.
+   * Falls back to `title` when omitted.
+   *
+   * **Three-level disclosure model:**
+   * - REST (collapsed): `shortTitle` (or `title` if omitted)
+   * - HOVER (before click): full `title` + `description`
+   * - EXPANDED (after click): full `title` + `description` + `details[]`
+   */
+  shortTitle?: string;
   /** Short summary paragraph shown below the title on the default card view. */
   description: string;
   /** Human-readable date range (e.g. `'Jan 2020 – Mar 2022'`). Also used for automatic overdue detection in checklist mode. */
@@ -80,6 +90,16 @@ export type TimelinePhase = {
   milestones?: Array<{
     date: string;
     title: string;
+    /**
+     * Glanceable 2–4 word label shown in the collapsed milestone card at rest.
+     * Falls back to `title` when omitted.
+     */
+    shortTitle?: string;
+    /**
+     * Short description shown when the milestone card is hovered or expanded.
+     * Provides context about what this milestone is and why it matters.
+     */
+    description?: string;
     icon: ReactNode;
     color?: TimelineDotProps['color'];
     /** Short bullet-point facts shown when the card is expanded. */

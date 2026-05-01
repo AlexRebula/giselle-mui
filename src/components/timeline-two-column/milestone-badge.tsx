@@ -1,7 +1,7 @@
 import type { PaperProps } from '@mui/material/Paper';
 import type { TimelinePhase, HighlightedPaletteKey } from './types';
 
-import { useCallback, type ReactNode, type KeyboardEvent } from 'react';
+import { useCallback, useState, type ReactNode, type KeyboardEvent } from 'react';
 import type React from 'react';
 
 import Box from '@mui/material/Box';
@@ -83,6 +83,14 @@ export function MilestoneBadge({
     .toLowerCase();
   const detailsId = stableId ? `ms-details-${stableId}` : `ms-details-${titleSlug}`;
 
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Three-level title disclosure:
+  //   REST (collapsed, not hovered): shortTitle ?? title
+  //   HOVER or EXPANDED: full title + date + description
+  const showContent = isHovered || isExpanded;
+  const displayTitle = showContent ? m.title : (m.shortTitle ?? m.title);
+
   const handleClick = useCallback(() => {
     if (hasDetails) onRequestExpand();
   }, [hasDetails, onRequestExpand]);
@@ -106,6 +114,8 @@ export function MilestoneBadge({
       aria-controls={hasDetails ? detailsId : undefined}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       sx={[
         (theme) => ({
           p: 2,
@@ -155,17 +165,19 @@ export function MilestoneBadge({
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      <Typography
-        variant="caption"
-        sx={{
-          color: 'text.secondary',
-          fontSize: MILESTONE_DATE_FONT_SIZE,
-          display: 'block',
-          mb: 0.5,
-        }}
-      >
-        {m.date}
-      </Typography>
+      {showContent && (
+        <Typography
+          variant="caption"
+          sx={{
+            color: 'text.secondary',
+            fontSize: MILESTONE_DATE_FONT_SIZE,
+            display: 'block',
+            mb: 0.5,
+          }}
+        >
+          {m.date}
+        </Typography>
+      )}
 
       {m.new && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
@@ -188,8 +200,14 @@ export function MilestoneBadge({
       )}
 
       <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
-        {m.title}
+        {displayTitle}
       </Typography>
+
+      {showContent && m.description && (
+        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+          {m.description}
+        </Typography>
+      )}
 
       {hasDetails && (
         <Box

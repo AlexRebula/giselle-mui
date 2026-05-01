@@ -5,6 +5,7 @@ import { useMemo, useState, useEffect, useCallback, type ReactNode } from 'react
 import Box from '@mui/material/Box';
 import Timeline from '@mui/lab/Timeline';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 
 import { PhaseCard } from './phase-card';
 import { TimelineDot } from './timeline-dot';
@@ -420,8 +421,11 @@ function buildMilestoneRow(
         data-col="center"
         sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
       >
+        {/* Dot + floating date pill: relative wrapper so pill doesn't affect row height/centering */}
         <Box
           sx={{
+            position: 'relative',
+            display: 'inline-flex',
             transition: 'filter 0.2s ease, opacity 0.2s ease, transform 0.2s ease',
             ...(suppressElevation && {
               filter: 'blur(1.5px)',
@@ -431,6 +435,30 @@ function buildMilestoneRow(
             }),
           }}
         >
+          {ms.date && (
+            <Typography
+              variant="caption"
+              aria-hidden
+              sx={{
+                position: 'absolute',
+                bottom: 'calc(100% + 4px)',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                fontSize: '0.65rem',
+                fontWeight: 600,
+                color: 'text.secondary',
+                bgcolor: 'action.hover',
+                px: 0.75,
+                py: 0.125,
+                borderRadius: 0.75,
+                whiteSpace: 'nowrap',
+                pointerEvents: 'none',
+                zIndex: 2,
+              }}
+            >
+              {ms.date}
+            </Typography>
+          )}
           <Tooltip
             title={dotStatusLabel(msColor, msDone, ms.date)}
             placement={ctx.phaseSide === 'left' ? 'right' : 'left'}
@@ -782,29 +810,56 @@ export function TimelineTwoColumn({
                   ...(isDone && { opacity: 0.35, filter: 'grayscale(1)' }),
                 }}
               >
-                <Tooltip
-                  title={dotStatusLabel(dotColor, isDone, phase.date)}
-                  placement={phase.side === 'left' ? 'right' : 'left'}
-                  arrow
-                >
-                  <span>
-                    <TimelineDot
-                      icon={phase.icon}
-                      color={dotColor}
-                      size="phase"
-                      {...buildPhaseDotTsxProps(
-                        phase,
-                        checklist,
-                        isDone,
-                        dotAriaLabel,
-                        phaseToggleCounts,
-                        selectedPhaseKey
-                      )}
-                      onClick={dotClickAction}
-                      onKeyDown={dotKeyDownHandler}
-                    />
-                  </span>
-                </Tooltip>
+                {/* Dot wrapper: relative so the date pill can float above without affecting layout */}
+                <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+                  {!phase.hideDate && phase.date && (
+                    <Typography
+                      variant="caption"
+                      aria-hidden
+                      sx={{
+                        position: 'absolute',
+                        bottom: 'calc(100% + 4px)',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        fontSize: '0.65rem',
+                        fontWeight: 600,
+                        color: 'text.secondary',
+                        bgcolor: 'action.hover',
+                        px: 0.75,
+                        py: 0.125,
+                        borderRadius: 0.75,
+                        whiteSpace: 'nowrap',
+                        pointerEvents: 'none',
+                        zIndex: 2,
+                      }}
+                    >
+                      {phase.date}
+                    </Typography>
+                  )}
+                  <Tooltip
+                    title={dotStatusLabel(dotColor, isDone, phase.date)}
+                    placement={phase.side === 'left' ? 'right' : 'left'}
+                    arrow
+                  >
+                    <span>
+                      <TimelineDot
+                        icon={phase.icon}
+                        color={dotColor}
+                        size="phase"
+                        {...buildPhaseDotTsxProps(
+                          phase,
+                          checklist,
+                          isDone,
+                          dotAriaLabel,
+                          phaseToggleCounts,
+                          selectedPhaseKey
+                        )}
+                        onClick={dotClickAction}
+                        onKeyDown={dotKeyDownHandler}
+                      />
+                    </span>
+                  </Tooltip>
+                </Box>
                 {/* SpineConnector spans the full li height — milestone dots overlay it at % positions */}
                 {!isLastPhase && (
                   <SpineConnector
@@ -852,8 +907,22 @@ export function TimelineTwoColumn({
                 // enough height for all milestone dots to be evenly spaced.
                 // Phase card vertical gap is controlled by phaseCardGap (column paddingBottom)
                 // which gives a consistent gap regardless of individual card height.
+                //
+                // When a year-boundary label is present on the spine, the bottom slot
+                // must be tall enough so the chip clears the last milestone dot.
+                //
+                // Derivation (dots at equal intervals; last dot at n/(n+1) of li height):
+                //   chip_top = (n+1)×slot − yearLabelMarginBottom − chipHeight(26)
+                //   dot_bottom = n×slot + dotSize(30)
+                //   Required: chip_top > dot_bottom + clearance(8)
+                //   → slot > yearLabelMarginBottom + chipHeight(26) + dotSize(30) + clearance(8)
+                //   → slot > yearLabelMarginBottom + 64
                 ...(phaseMilestones.length > 0 && {
-                  minHeight: (phaseMilestones.length + 1) * milestoneSlotHeight,
+                  minHeight:
+                    (phaseMilestones.length + 1) *
+                    (yearLabelValue !== null
+                      ? Math.max(milestoneSlotHeight, yearLabelMarginBottom + 64)
+                      : milestoneSlotHeight),
                 }),
               }}
             >

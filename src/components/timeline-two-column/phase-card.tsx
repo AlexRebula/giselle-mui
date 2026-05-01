@@ -642,6 +642,7 @@ export function PhaseCard({
   const isDone = done ?? phase.done ?? false;
   const isOverdue = overdue ?? phase.overdue ?? false;
   const [internalExpanded, setInternalExpanded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const hasDetails = Boolean(phase.details?.length);
   const isScenario = phase.variant === 'scenario';
@@ -655,6 +656,12 @@ export function PhaseCard({
     setInternalExpanded
   );
 
+  // Three-level title disclosure:
+  //   REST (collapsed, not hovered): shortTitle ?? title
+  //   HOVER or EXPANDED: full title + description + date
+  const showContent = isHovered || expanded;
+  const displayTitle = showContent ? phase.title : (phase.shortTitle ?? phase.title);
+
   const handleClick = buildCardClickHandler(hasDetails, toggle);
   const handleKeyDown = buildCardKeyDownHandler(hasDetails, toggle);
 
@@ -667,6 +674,8 @@ export function PhaseCard({
         aria-controls={hasDetails ? detailsId : undefined}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         sx={[
           buildPaperSx({
             hasDetails,
@@ -705,7 +714,7 @@ export function PhaseCard({
 
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
           <Box sx={{ flex: 1 }}>
-            {!phase.hideDate && (
+            {!phase.hideDate && showContent && (
               <Typography
                 variant="subtitle2"
                 sx={buildDateTypographySx({
@@ -723,7 +732,7 @@ export function PhaseCard({
               variant={isScenario ? 'h6' : 'subtitle1'}
               sx={{ mb: hasDetails ? 0.5 : 1, pr: !isHighlighted && !phase.hideDecoration ? 6 : 0 }}
             >
-              {phase.title}
+              {displayTitle}
             </Typography>
 
             {hasDetails && (
@@ -761,9 +770,11 @@ export function PhaseCard({
               </Box>
             )}
 
-            <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              {phase.description}
-            </Typography>
+            {showContent && (
+              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+                {phase.description}
+              </Typography>
+            )}
 
             {phase.photo && (
               <Box
