@@ -151,6 +151,43 @@ At the start of every new Copilot session in this package, read these files:
 
 ---
 
+## Post-component workflow (enforce always — run after every new component is complete)
+
+After every new component is built, tests pass, and `check:verify` is green, run these
+steps **in order** before switching to the portfolio:
+
+```sh
+# 1. Build the distributable (tsup) — produces dist/index.js and dist/index.d.ts
+npm run build
+
+# 2. In the alexrebula portfolio — clear the Next.js webpack cache
+#    (the cache stores module ID → path mappings; they shift when giselle-mui rebuilds)
+cd ../rm/presentation/alexrebula
+rm -rf .next/cache
+
+# 3. Restart the Next.js dev server
+#    Hot-reload does NOT pick up a rebuilt giselle-mui dist — a full restart is required.
+npm run dev
+```
+
+**Why this is required:**
+The portfolio links `giselle-mui` via a Windows junction with `resolve.symlinks = false`.
+Webpack cannot detect that the dist changed, so it serves the previous module graph from
+`.next/cache`. Any page that imports the updated component crashes at runtime with:
+
+```
+_mui_material_<hookName>__WEBPACK_IMPORTED_MODULE_N__ is not a function
+```
+
+The "stale Webpack" badge in the Next.js error overlay is the visual signal that this
+cache-clear + restart step was skipped.
+
+**This will happen every time until `giselle-mui` is published to npm.** Once installed
+as a normal package (not a junction), `resolve.symlinks = false` is no longer needed and
+webpack's cache invalidation works correctly.
+
+---
+
 ## Quality gate
 
 All six checks must pass before every push:
