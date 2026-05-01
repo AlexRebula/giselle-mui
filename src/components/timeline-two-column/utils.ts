@@ -80,7 +80,7 @@ export function parseSortableDate(dateStr: string): number | null {
 // ----------------------------------------------------------------------
 
 /** Minimal subset of TimelinePhase needed for chronological sorting. */
-type SortablePhase = { date: string; key: number; active?: boolean; done?: boolean };
+type SortablePhase = { date: string; key: number; active?: boolean; done?: boolean; title?: string };
 
 /**
  * Returns a new array sorted by date.
@@ -174,27 +174,40 @@ export function parseFirstDate(dateStr: string): number | null {
 
 /**
  * Detects phases whose date ranges overlap with any other phase in the array.
- * Returns a Set of `key` values for every phase that participates in at least one overlap.
+ * Returns a Map where each key is a phase `key` and the value is a human-readable
+ * explanation naming the phases it overlaps with and their date ranges.
  *
  * Two ranges [s1, e1] and [s2, e2] overlap when: s1 ≤ e2 AND s2 ≤ e1.
  * Phases with unparseable dates are ignored (can't detect overlap without a range).
  */
-export function detectPhaseOverlaps<T extends SortablePhase>(phases: T[]): Set<number> {
-  const overlapping = new Set<number>();
+export function detectPhaseOverlaps<T extends SortablePhase>(phases: T[]): Map<number, string> {
+  const overlapping = new Map<number, string[]>();
   const ranges = phases
-    .map((p) => ({ key: p.key, start: parseFirstDate(p.date), end: parseSortableDate(p.date) }))
+    .map((p) => ({
+      key: p.key,
+      label: `${p.title ?? String(p.key)} (${p.date})`,
+      start: parseFirstDate(p.date),
+      end: parseSortableDate(p.date),
+    }))
     .filter(
-      (r): r is { key: number; start: number; end: number } => r.start !== null && r.end !== null
+      (r): r is { key: number; label: string; start: number; end: number } =>
+        r.start !== null && r.end !== null
     );
   for (let i = 0; i < ranges.length; i++) {
     for (let j = i + 1; j < ranges.length; j++) {
       const a = ranges[i]!;
       const b = ranges[j]!;
       if (a.start <= b.end && b.start <= a.end) {
-        overlapping.add(a.key);
-        overlapping.add(b.key);
+        if (!overlapping.has(a.key)) overlapping.set(a.key, []);
+        if (!overlapping.has(b.key)) overlapping.set(b.key, []);
+        overlapping.get(a.key)!.push(b.label);
+        overlapping.get(b.key)!.push(a.label);
       }
     }
   }
-  return overlapping;
+  const result = new Map<number, string>();
+  overlapping.forEach((others, key) => {
+    result.set(key, `Date overlap with: ${others.join('; ')}`);
+  });
+  return result;
 }

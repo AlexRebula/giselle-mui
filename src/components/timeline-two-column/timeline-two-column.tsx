@@ -184,6 +184,7 @@ function buildPhaseCardTsxProps(
   isDone: boolean,
   isOverdue: boolean,
   dateConflict: boolean,
+  dateConflictLabel: string | undefined,
   anyExpanded: boolean,
   isThisPhaseExpanded: boolean,
   expandableIcon: ReactNode
@@ -192,6 +193,7 @@ function buildPhaseCardTsxProps(
     done: isDone,
     overdue: checklist ? isOverdue : undefined,
     dateConflict: dateConflict || undefined,
+    dateConflictLabel,
     suppressElevation: anyExpanded && !isThisPhaseExpanded,
     expandableIcon,
   };
@@ -739,6 +741,7 @@ export function TimelineTwoColumn({
                   isDone,
                   isOverdue,
                   overlappingKeys.has(phase.key),
+                  overlappingKeys.get(phase.key),
                   anyExpanded,
                   isThisPhaseExpanded,
                   expandableIcon

@@ -26,7 +26,9 @@ import { it, vi, expect, describe } from 'vitest';
 
 import {
   STATUS_BADGE_FONT_SIZE,
-  DATE_CONFLICT_ICON_SIZE,
+  CORNER_ALERT_ICON_SIZE,
+  CORNER_ALERT_LIST_ICON_SIZE,
+  CORNER_ALERT_BADGE_SIZE,
   ACTIVE_DOT_SIZE,
   PHASE_PILL_ICON_SIZE,
   PHASE_PILL_TEXT_FONT_SIZE,
@@ -468,8 +470,16 @@ describe('readability — minimum size constants', () => {
     expect(parseRem(STATUS_BADGE_FONT_SIZE)).toBeGreaterThanOrEqual(MIN_FONT_SIZE_REM);
   });
 
-  it('[regression] DATE_CONFLICT_ICON_SIZE >= 16px (date overlap warning triangle icon)', () => {
-    expect(DATE_CONFLICT_ICON_SIZE).toBeGreaterThanOrEqual(MIN_ICON_SIZE_PX);
+  it('[regression] CORNER_ALERT_ICON_SIZE >= 16px (corner badge icon must be readable)', () => {
+    expect(CORNER_ALERT_ICON_SIZE).toBeGreaterThanOrEqual(MIN_ICON_SIZE_PX);
+  });
+
+  it('[regression] CORNER_ALERT_LIST_ICON_SIZE >= 16px (tooltip list icon must be readable)', () => {
+    expect(CORNER_ALERT_LIST_ICON_SIZE).toBeGreaterThanOrEqual(MIN_ICON_SIZE_PX);
+  });
+
+  it('[regression] CORNER_ALERT_BADGE_SIZE >= 26px (corner badge circle must be large enough)', () => {
+    expect(CORNER_ALERT_BADGE_SIZE).toBeGreaterThanOrEqual(26);
   });
 
   it('[regression] ACTIVE_DOT_SIZE >= 12px ("Now" pulsing dot must be visible)', () => {

@@ -25,8 +25,17 @@ import { DEFAULT_EXPANDABLE_ICON } from './icons';
 /** Font size for all status badge labels (Overdue, Now, Date overlap, Scenario). */
 export const STATUS_BADGE_FONT_SIZE = '0.75rem';
 
-/** Width (px) of the date-conflict triangle icon. */
-export const DATE_CONFLICT_ICON_SIZE = 20;
+/** Size (px) of the corner alert badge circle. */
+export const CORNER_ALERT_BADGE_SIZE = 26;
+
+/** Icon size (px) inside the corner alert badge circle. */
+export const CORNER_ALERT_ICON_SIZE = 16;
+
+/** Icon size (px) inside the corner alert Tooltip list. */
+export const CORNER_ALERT_LIST_ICON_SIZE = 16;
+
+/** Icon size (px) for the viewed eye button. */
+export const PHASE_EYE_ICON_SIZE = 20;
 
 /** Width and height (px) of the "Now" active pulsing dot. */
 export const ACTIVE_DOT_SIZE = 12;
@@ -118,58 +127,77 @@ function CardDetailBullets({ id, details, in: expanded }: CardDetailBulletsProps
 
 // ----------------------------------------------------------------------
 
-function OverdueBadge() {
-  return (
-    <Box sx={{ display: 'inline-flex', mb: 1 }}>
-      <Typography
-        variant="overline"
-        sx={{
-          display: 'inline-block',
-          px: 1,
-          py: 0.25,
-          borderRadius: 0.75,
-          fontSize: STATUS_BADGE_FONT_SIZE,
-          fontWeight: 700,
-          letterSpacing: 0.8,
-          lineHeight: 1.6,
-          color: `rgba(var(--mui-palette-error-darkChannel) / 1)`,
-          bgcolor: `rgba(var(--mui-palette-error-mainChannel) / 0.12)`,
-        }}
-      >
-        Overdue
-      </Typography>
+/**
+ * Floating corner badge that groups all warning/error alerts behind a single icon.
+ * Positioned on the outer wrapper (outside the Paper) so it is never clipped.
+ * On hover, a Tooltip lists every active alert.
+ */
+type CardCornerAlert = { message: string; severity: 'error' | 'warning' };
+
+function CardCornerAlertBadge({ alerts }: { alerts: CardCornerAlert[] }) {
+  if (alerts.length === 0) return null;
+  const hasError = alerts.some((a) => a.severity === 'error');
+  const tooltipContent = (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25, py: 0.5, px: 0.25 }}>
+      {alerts.map((a, i) => (
+        <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+          <GiselleIcon
+            icon="solar:danger-triangle-bold"
+            width={CORNER_ALERT_LIST_ICON_SIZE}
+            aria-hidden
+            style={{ flexShrink: 0, marginTop: 2 }}
+          />
+          <Typography
+            variant="body2"
+            sx={{ lineHeight: 1.55, fontSize: '0.8rem', fontWeight: 500 }}
+          >
+            {a.message}
+          </Typography>
+        </Box>
+      ))}
     </Box>
   );
-}
-
-function DateConflictBadge() {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
+    <Tooltip
+      title={tooltipContent}
+      placement="top-end"
+      arrow
+      slotProps={{
+        tooltip: {
+          sx: {
+            maxWidth: 320,
+            px: 1.75,
+            py: 1.25,
+            bgcolor: 'grey.900',
+            '& .MuiTooltip-arrow': { color: 'grey.900' },
+          },
+        },
+      }}
+    >
       <Box
-        component="span"
-        aria-hidden="true"
+        aria-label={`${alerts.length} issue${alerts.length !== 1 ? 's' : ''}`}
         sx={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          zIndex: 10,
+          transform: 'translate(50%, -50%)',
+          width: CORNER_ALERT_BADGE_SIZE,
+          height: CORNER_ALERT_BADGE_SIZE,
+          borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
-          flexShrink: 0,
-          color: `rgba(var(--mui-palette-warning-mainChannel) / 1)`,
+          justifyContent: 'center',
+          bgcolor: hasError ? 'error.main' : 'warning.dark',
+          color: 'common.white',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+          cursor: 'help',
+          pointerEvents: 'auto',
         }}
       >
-        <GiselleIcon icon="solar:danger-triangle-bold" width={DATE_CONFLICT_ICON_SIZE} />
+        <GiselleIcon icon="solar:danger-triangle-bold" width={CORNER_ALERT_ICON_SIZE} aria-hidden />
       </Box>
-      <Typography
-        variant="overline"
-        sx={{
-          fontSize: STATUS_BADGE_FONT_SIZE,
-          fontWeight: 700,
-          letterSpacing: 0.8,
-          lineHeight: 1.6,
-          color: `rgba(var(--mui-palette-warning-darkChannel) / 1)`,
-        }}
-      >
-        Date overlap
-      </Typography>
-    </Box>
+    </Tooltip>
   );
 }
 
@@ -266,14 +294,10 @@ function ScenarioBadge({ color, scenarioLabel }: ScenarioBadgeProps) {
  * - The scenario badge is a fallback — only shown when no other badge applies.
  */
 type CardStatusBadgeProps = {
-  /** Whether this phase has a date range that overlaps with another phase. */
-  dateConflict: boolean;
-  /** Whether the phase is overdue (past due, not done). */
-  isOverdue: boolean;
-  /** Whether the phase is already done — suppresses the overdue badge. */
-  isDone: boolean;
   /** Whether this is the current "active" / "Now" phase. */
   isActive: boolean;
+  /** Whether the phase is already done — suppresses the active badge. */
+  isDone: boolean;
   /** Optional override for the "Now" label text. @default 'Now' */
   activeLabel?: string;
   /** MUI palette key for the active badge colour. */
@@ -287,10 +311,8 @@ type CardStatusBadgeProps = {
 };
 
 function CardStatusBadge({
-  dateConflict,
-  isOverdue,
-  isDone,
   isActive,
+  isDone,
   activeLabel,
   color,
   isScenario,
@@ -298,20 +320,15 @@ function CardStatusBadge({
   isNew,
 }: CardStatusBadgeProps) {
   const showActive = isActive && !isDone;
-  const showOverdue = isOverdue && !isDone;
-  const showDateConflict = dateConflict;
-  const showScenario =
-    !showActive && !showOverdue && !showDateConflict && isScenario && Boolean(scenarioLabel);
+  const showScenario = !showActive && isScenario && Boolean(scenarioLabel);
   const showNew = Boolean(isNew);
 
-  if (!showActive && !showOverdue && !showDateConflict && !showScenario && !showNew) return null;
+  if (!showActive && !showScenario && !showNew) return null;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
       {showNew && <NewBadge />}
       {showActive && <ActiveBadge color={color} activeLabel={activeLabel} />}
-      {showOverdue && <OverdueBadge />}
-      {showDateConflict && <DateConflictBadge />}
       {showScenario && <ScenarioBadge color={color} scenarioLabel={scenarioLabel!} />}
     </Box>
   );
@@ -589,6 +606,8 @@ export type PhaseCardProps = Omit<BoxProps, 'children'> & {
   overdue?: boolean;
   /** Set by the parent when this phase's date range overlaps another phase. Shows a ⚠ Date overlap badge. */
   dateConflict?: boolean;
+  /** Human-readable explanation of the overlap rendered in a Tooltip on the badge. */
+  dateConflictLabel?: string;
   /**
    * Controlled expansion state. When provided together with `onRequestExpand`,
    * the card operates in controlled mode and the parent owns the open/close state.
@@ -630,6 +649,7 @@ export function PhaseCard({
   done,
   overdue,
   dateConflict = false,
+  dateConflictLabel,
   isExpanded,
   onRequestExpand,
   suppressElevation = false,
@@ -661,8 +681,23 @@ export function PhaseCard({
   const handleClick = buildCardClickHandler(hasDetails, toggle);
   const handleKeyDown = buildCardKeyDownHandler(hasDetails, toggle);
 
+  // Build the corner alert list from active warning/error conditions.
+  const cornerAlerts: CardCornerAlert[] = [];
+  if (isOverdue && !isDone) {
+    cornerAlerts.push({ message: 'Overdue — past due date', severity: 'error' });
+  }
+  if (dateConflict) {
+    cornerAlerts.push({
+      message: dateConflictLabel ?? 'Date overlap with another phase',
+      severity: 'warning',
+    });
+  }
+
   return (
     <Box sx={[{ position: 'relative' }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
+      {/* Corner alert badge — groups overdue/date-conflict behind a single icon */}
+      <CardCornerAlertBadge alerts={cornerAlerts} />
+
       <Paper
         role={hasDetails ? 'button' : undefined}
         tabIndex={hasDetails ? 0 : undefined}
@@ -693,12 +728,10 @@ export function PhaseCard({
           />
         )}
 
-        {/* Active / Overdue / DateConflict / Scenario status badges — can stack when multiple apply */}
+        {/* Active / New / Scenario status badges */}
         <CardStatusBadge
-          dateConflict={dateConflict}
-          isOverdue={isOverdue}
-          isDone={isDone}
           isActive={Boolean(phase.active)}
+          isDone={isDone}
           activeLabel={phase.activeLabel}
           color={phase.color ?? 'primary'}
           isScenario={isScenario}
@@ -884,7 +917,7 @@ export function PhaseCard({
               >
                 <GiselleIcon
                   icon={isViewed ? 'solar:eye-bold' : 'solar:eye-outline'}
-                  width={16}
+                  width={PHASE_EYE_ICON_SIZE}
                   aria-hidden
                 />
                 <Typography

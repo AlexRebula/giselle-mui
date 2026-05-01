@@ -265,11 +265,16 @@ Use `element.dataset['camelKey']` rather than `element.getAttribute('data-kebab-
 
 ### Minimum readable sizes (enforce always — not just before submission)
 
+> **Every time you write a `width={...}` or `fontSize` on an icon or label, check this table first.**
+> Violations of these minimums have happened repeatedly. Do not guess — look up the constant.
+
 Icons and text in this library are read by real users. The following minimums are **non-negotiable** and enforced by regression tests:
 
 | Element | Minimum | Notes |
 |---|---|---|
 | Inline icon (status badge, spine, pill) | `width={16}` | Never `width={12}` or `width={14}` |
+| Interactive icon (button, clickable control) | `width={20}` | Clickable icons must be larger than decorative ones |
+| Corner alert badge circle | `26px` | The circle container; icon inside must be `width={16}` |
 | Standalone decorative icon (card corner) | CSS `width: 32, height: 32` | Applied via `'& svg': { width: 32, height: 32 }` |
 | Pulsing dot / status indicator | `12px` | Never `width: 10, height: 10` |
 | Badge / pill label text | `0.75rem` | Never `0.65rem` or `0.7rem` |

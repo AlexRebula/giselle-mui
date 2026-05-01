@@ -340,12 +340,14 @@ describe('detectPhaseOverlaps', () => {
 
   it('returns both keys when two phases overlap', () => {
     const phases = [
-      { key: 1, date: 'Jan 2025 – Jun 2025' },
-      { key: 2, date: 'Apr 2025 – Sep 2025' }, // overlaps key 1: Apr-Jun is shared
+      { key: 1, date: 'Jan 2025 – Jun 2025', title: 'Phase A' },
+      { key: 2, date: 'Apr 2025 – Sep 2025', title: 'Phase B' }, // overlaps key 1: Apr-Jun is shared
     ];
     const result = detectPhaseOverlaps(phases);
     expect(result.has(1)).toBe(true);
     expect(result.has(2)).toBe(true);
+    expect(result.get(1)).toContain('Phase B');
+    expect(result.get(2)).toContain('Phase A');
   });
 
   it('returns all three keys when three phases share an overlap', () => {
