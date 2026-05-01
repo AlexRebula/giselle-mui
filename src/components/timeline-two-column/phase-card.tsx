@@ -882,7 +882,11 @@ export function PhaseCard({
                   width={16}
                   aria-hidden
                 />
-                <Typography component="span" variant="caption" sx={{ fontSize: '0.68rem', lineHeight: 1 }}>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  sx={{ fontSize: '0.68rem', lineHeight: 1 }}
+                >
                   {isViewed ? 'Viewed' : 'Mark viewed'}
                 </Typography>
               </Box>

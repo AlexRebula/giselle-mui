@@ -153,3 +153,36 @@ no imports from `alexrebula` or any client project.
 See [alexrebula `docs/roadmap.md`](../../rm/presentation/alexrebula/docs/roadmap.md)
 for the milestone tracking the removal of `minimal-shared/utils` imports from
 `alexrebula/src/theme/`.
+
+---
+
+### Phase D — GiselleSettingsProvider (Medium priority)
+
+**Goal:** Export a framework-agnostic, MIT-safe `GiselleSettingsProvider<TState>` that
+persists user UI preferences (color mode, direction, font size, color presets) with zero
+proprietary dependencies. Enables consumers to migrate off the Minimals `SettingsProvider`
+in a one-import swap.
+
+**Prerequisite:** Phase C (GiselleThemeProvider) — the settings system drives the theme.
+
+Full design: [`docs/components/settings-provider-plan.md`](../components/settings-provider-plan.md)
+
+| Task | Status |
+| ---- | ------ |
+| Phase α: Port `useLocalStorage<T>` to `src/utils/use-local-storage.ts` | ⬜ |
+| Phase α: Write `isDeepEqual(a, b)` — covers primitives, arrays, plain objects (no es-toolkit) | ⬜ |
+| Phase α: Write `getCookieValue` / `setCookieValue` — SSR-safe (`typeof document !== 'undefined'`) | ⬜ |
+| Phase α: Tests for all three utilities | ⬜ |
+| Phase 1: Define `BaseSettingsState`, `GiselleSettingsContextValue<T>`, `GiselleSettingsProviderProps<T>` | ⬜ |
+| Phase 1: Implement `GiselleSettingsProvider<T>` — localStorage by default, `initialState?` for SSR | ⬜ |
+| Phase 1: Version check on mount — reset to defaults if stored version mismatches | ⬜ |
+| Phase 1: Export `useGiselleSettings<T>()` hook | ⬜ |
+| Phase 1: Storybook story — default, `setField`, `canReset`/`onReset`, drawer toggle | ⬜ |
+| Phase 1: Vitest tests — render, `setField`, `canReset`, `onReset`, version mismatch reset | ⬜ |
+| Phase 2: `storage: 'cookie'` option (client-side `document.cookie`) | ⬜ |
+| Phase 2: `storage: StorageAdapter<T>` custom adapter | ⬜ |
+| Phase 2: `detectGiselleSettings()` server helper (separate `/server` entrypoint) | ⬜ |
+| Phase 3: `SettingsThemeBridge` — internal bridge wiring settings state into `GiselleThemeProvider` | ⬜ |
+| Phase 3: `GiselleThemeAndSettingsProvider` convenience wrapper | ⬜ |
+| Phase 3: Migration guide in README and `theming-nextjs.md` | ⬜ |
+

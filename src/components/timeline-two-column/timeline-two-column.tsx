@@ -385,9 +385,7 @@ function buildMilestoneRow(
               expandableIcon={ctx.expandableIcon}
               isViewed={ctx.viewedKeys.has(`ms-${ctx.phaseKey}-${mi}`)}
               onMarkViewed={
-                ctx.onMarkViewed
-                  ? () => ctx.onMarkViewed!(`ms-${ctx.phaseKey}-${mi}`)
-                  : undefined
+                ctx.onMarkViewed ? () => ctx.onMarkViewed!(`ms-${ctx.phaseKey}-${mi}`) : undefined
               }
               onRequestExpand={() => ctx.handleExpandMilestone(ctx.phaseKey, mi)}
             />
@@ -453,9 +451,7 @@ function buildMilestoneRow(
               expandableIcon={ctx.expandableIcon}
               isViewed={ctx.viewedKeys.has(`ms-${ctx.phaseKey}-${mi}`)}
               onMarkViewed={
-                ctx.onMarkViewed
-                  ? () => ctx.onMarkViewed!(`ms-${ctx.phaseKey}-${mi}`)
-                  : undefined
+                ctx.onMarkViewed ? () => ctx.onMarkViewed!(`ms-${ctx.phaseKey}-${mi}`) : undefined
               }
               onRequestExpand={() => ctx.handleExpandMilestone(ctx.phaseKey, mi)}
             />
@@ -690,9 +686,7 @@ export function TimelineTwoColumn({
                   expandableIcon
                 )}
                 isViewed={(viewedKeys ?? new Set()).has(phaseViewKey)}
-                onMarkViewed={
-                  onMarkViewed ? () => onMarkViewed(phaseViewKey) : undefined
-                }
+                onMarkViewed={onMarkViewed ? () => onMarkViewed(phaseViewKey) : undefined}
                 isExpanded={isThisPhaseExpanded}
                 onRequestExpand={() => handleExpandPhaseCard(phase.key)}
               />
