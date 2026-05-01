@@ -173,11 +173,14 @@ export type TimelineTwoColumnProps = Omit<BoxProps, 'children'> & {
   /**
    * Sort direction for non-active, non-done phases.
    * - `'desc'` (default) — newest end-date first. Use for career/past timelines.
-   * - `'asc'` — oldest start-date first. Use for roadmap/future timelines so the
+   * - `'asc'` — oldest end-date first. Use for roadmap/future timelines so the
    *   soonest upcoming phase appears directly below the active phases.
+   * - `'key'` — sort by `phase.key` ascending. Use when the key encodes the
+   *   intended sequence (e.g. a roadmap where phase number is the ordering
+   *   criterion, not the end date). Deterministic regardless of array insertion order.
    * @default 'desc'
    */
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: 'asc' | 'desc' | 'key';
   /**
    * Minimum vertical space (px) allocated per milestone slot on the spine.
    * Controls the breathing room between collapsed milestone cards.

@@ -46,14 +46,14 @@ Phase A of this roadmap will export these as named utilities from `giselle-mui/s
 **Goal:** Ship the small theme-building primitives needed by any MUI v7 project
 as named exports from `giselle-mui`, so consuming projects have them out of the box.
 
-| Task | Status |
-| --- | --- |
-| Add `varAlpha(channel, alpha)` to `giselle-mui/src/utils/` | ⬜ |
-| Add `createPaletteChannel(hex)` to `giselle-mui/src/utils/` | ⬜ |
-| Add `pxToRem(px)` and `remToPx(rem)` to `giselle-mui/src/utils/` | ⬜ |
-| Export all theme utilities from `giselle-mui/src/index.ts` | ⬜ |
-| Add tests for all theme utilities | ⬜ |
-| Update `theming-nextjs.md` to show usage from giselle-mui | ⬜ |
+| Task                                                             | Status |
+| ---------------------------------------------------------------- | ------ |
+| Add `varAlpha(channel, alpha)` to `giselle-mui/src/utils/`       | ⬜     |
+| Add `createPaletteChannel(hex)` to `giselle-mui/src/utils/`      | ⬜     |
+| Add `pxToRem(px)` and `remToPx(rem)` to `giselle-mui/src/utils/` | ⬜     |
+| Export all theme utilities from `giselle-mui/src/index.ts`       | ⬜     |
+| Add tests for all theme utilities                                | ⬜     |
+| Update `theming-nextjs.md` to show usage from giselle-mui        | ⬜     |
 
 ### Phase B — Giselle brand theme preset (Medium priority)
 
@@ -69,13 +69,13 @@ The default palette is the Giselle brand identity:
 This is intentionally opinionated. A consumer who wants a different palette passes overrides
 (see Phase C). A consumer who wants the Giselle look gets it out of the box with zero config.
 
-| Task | Status |
-| --- | --- |
-| Decide final hex values for `primary` and `secondary` Giselle palette colours | ⬜ |
-| Define `giselleTheme` using `extendTheme()` with the Giselle palette | ⬜ |
-| Ensure all six palette keys are covered: `primary`, `secondary`, `info`, `success`, `warning`, `error` | ⬜ |
-| Export `giselleTheme` from `giselle-mui/src/index.ts` | ⬜ |
-| Document the palette decisions in `theming-nextjs.md` | ⬜ |
+| Task                                                                                                   | Status |
+| ------------------------------------------------------------------------------------------------------ | ------ |
+| Decide final hex values for `primary` and `secondary` Giselle palette colours                          | ⬜     |
+| Define `giselleTheme` using `extendTheme()` with the Giselle palette                                   | ⬜     |
+| Ensure all six palette keys are covered: `primary`, `secondary`, `info`, `success`, `warning`, `error` | ⬜     |
+| Export `giselleTheme` from `giselle-mui/src/index.ts`                                                  | ⬜     |
+| Document the palette decisions in `theming-nextjs.md`                                                  | ⬜     |
 
 ### Phase C — GiselleThemeProvider component (HIGH priority)
 
@@ -123,17 +123,18 @@ function GiselleThemeProvider({ children, themeOverrides, theme }: Props) {
 }
 ```
 
-| Task | Status |
-| --- | --- |
-| Complete Phase B (Giselle theme preset) — this is a direct prerequisite | ⬜ |
-| Define `GiselleThemeProviderProps` interface (`children`, `themeOverrides?`, `theme?`) | ⬜ |
-| Implement `GiselleThemeProvider` wrapping `CssVarsProvider` with merge logic | ⬜ |
-| Export `GiselleThemeProvider` from `giselle-mui/src/index.ts` | ⬜ |
-| Add Storybook story: default palette, with overrides, fully custom | ⬜ |
-| Add Vitest test: renders correctly, passes `data-mui-color-scheme` to DOM | ⬜ |
-| Update `theming-nextjs.md` with the new zero-config usage pattern | ⬜ |
+| Task                                                                                   | Status |
+| -------------------------------------------------------------------------------------- | ------ |
+| Complete Phase B (Giselle theme preset) — this is a direct prerequisite                | ⬜     |
+| Define `GiselleThemeProviderProps` interface (`children`, `themeOverrides?`, `theme?`) | ⬜     |
+| Implement `GiselleThemeProvider` wrapping `CssVarsProvider` with merge logic           | ⬜     |
+| Export `GiselleThemeProvider` from `giselle-mui/src/index.ts`                          | ⬜     |
+| Add Storybook story: default palette, with overrides, fully custom                     | ⬜     |
+| Add Vitest test: renders correctly, passes `data-mui-color-scheme` to DOM              | ⬜     |
+| Update `theming-nextjs.md` with the new zero-config usage pattern                      | ⬜     |
 
 **Storybook note:** Storybook in `giselle-mui` must be able to test two things:
+
 1. MUI wrapper components (existing) — isolated, styled via a test theme
 2. `GiselleThemeProvider` — with the default Giselle palette, with overrides, and with a
    fully custom theme. All three modes must have a story.
@@ -142,6 +143,7 @@ Sample token data used in Storybook stories must be defined in `giselle-mui` its
 no imports from `alexrebula` or any client project.
 
 **This is the foundational prerequisite for:**
+
 - Writing authoritative dev.to articles about MUI v7 CSS variables (`GiselleThemeProvider` is the worked example)
 - The premium template (the template's look is the default Giselle palette, consumers override it)
 - Replacing `minimal-shared/utils` in the portfolio's theme setup
@@ -167,22 +169,21 @@ in a one-import swap.
 
 Full design: [`docs/components/settings-provider-plan.md`](../components/settings-provider-plan.md)
 
-| Task | Status |
-| ---- | ------ |
-| Phase α: Port `useLocalStorage<T>` to `src/utils/use-local-storage.ts` | ⬜ |
-| Phase α: Write `isDeepEqual(a, b)` — covers primitives, arrays, plain objects (no es-toolkit) | ⬜ |
-| Phase α: Write `getCookieValue` / `setCookieValue` — SSR-safe (`typeof document !== 'undefined'`) | ⬜ |
-| Phase α: Tests for all three utilities | ⬜ |
-| Phase 1: Define `BaseSettingsState`, `GiselleSettingsContextValue<T>`, `GiselleSettingsProviderProps<T>` | ⬜ |
-| Phase 1: Implement `GiselleSettingsProvider<T>` — localStorage by default, `initialState?` for SSR | ⬜ |
-| Phase 1: Version check on mount — reset to defaults if stored version mismatches | ⬜ |
-| Phase 1: Export `useGiselleSettings<T>()` hook | ⬜ |
-| Phase 1: Storybook story — default, `setField`, `canReset`/`onReset`, drawer toggle | ⬜ |
-| Phase 1: Vitest tests — render, `setField`, `canReset`, `onReset`, version mismatch reset | ⬜ |
-| Phase 2: `storage: 'cookie'` option (client-side `document.cookie`) | ⬜ |
-| Phase 2: `storage: StorageAdapter<T>` custom adapter | ⬜ |
-| Phase 2: `detectGiselleSettings()` server helper (separate `/server` entrypoint) | ⬜ |
-| Phase 3: `SettingsThemeBridge` — internal bridge wiring settings state into `GiselleThemeProvider` | ⬜ |
-| Phase 3: `GiselleThemeAndSettingsProvider` convenience wrapper | ⬜ |
-| Phase 3: Migration guide in README and `theming-nextjs.md` | ⬜ |
-
+| Task                                                                                                     | Status |
+| -------------------------------------------------------------------------------------------------------- | ------ |
+| Phase α: Port `useLocalStorage<T>` to `src/utils/use-local-storage.ts`                                   | ⬜     |
+| Phase α: Write `isDeepEqual(a, b)` — covers primitives, arrays, plain objects (no es-toolkit)            | ⬜     |
+| Phase α: Write `getCookieValue` / `setCookieValue` — SSR-safe (`typeof document !== 'undefined'`)        | ⬜     |
+| Phase α: Tests for all three utilities                                                                   | ⬜     |
+| Phase 1: Define `BaseSettingsState`, `GiselleSettingsContextValue<T>`, `GiselleSettingsProviderProps<T>` | ⬜     |
+| Phase 1: Implement `GiselleSettingsProvider<T>` — localStorage by default, `initialState?` for SSR       | ⬜     |
+| Phase 1: Version check on mount — reset to defaults if stored version mismatches                         | ⬜     |
+| Phase 1: Export `useGiselleSettings<T>()` hook                                                           | ⬜     |
+| Phase 1: Storybook story — default, `setField`, `canReset`/`onReset`, drawer toggle                      | ⬜     |
+| Phase 1: Vitest tests — render, `setField`, `canReset`, `onReset`, version mismatch reset                | ⬜     |
+| Phase 2: `storage: 'cookie'` option (client-side `document.cookie`)                                      | ⬜     |
+| Phase 2: `storage: StorageAdapter<T>` custom adapter                                                     | ⬜     |
+| Phase 2: `detectGiselleSettings()` server helper (separate `/server` entrypoint)                         | ⬜     |
+| Phase 3: `SettingsThemeBridge` — internal bridge wiring settings state into `GiselleThemeProvider`       | ⬜     |
+| Phase 3: `GiselleThemeAndSettingsProvider` convenience wrapper                                           | ⬜     |
+| Phase 3: Migration guide in README and `theming-nextjs.md`                                               | ⬜     |

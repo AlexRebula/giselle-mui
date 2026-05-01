@@ -93,12 +93,19 @@ type SortablePhase = { date: string; key: number; active?: boolean; done?: boole
  * - No pinning — `active` and `done` only control visual treatment (badge, pulsing dot, dimming).
  * - All phases sorted strictly by end-date ascending (earliest first).
  *
+ * Rules (key — sort by phase.key ascending):
+ * - Sorts strictly by `key` field, ignoring dates entirely.
+ * - Use when the key encodes the intended sequence (e.g. a roadmap where
+ *   phase numbers overlap in date but the phase number is the ordering criterion).
+ * - Deterministic regardless of array insertion order.
+ *
  * Ties (same millisecond) fall back to ascending key order in asc mode, descending in desc.
  */
 export function sortPhasesByDate<T extends SortablePhase>(
   phases: T[],
-  sortOrder: 'asc' | 'desc' = 'desc'
+  sortOrder: 'asc' | 'desc' | 'key' = 'desc'
 ): T[] {
+  if (sortOrder === 'key') return [...phases].sort((a, b) => a.key - b.key);
   const dir = sortOrder === 'asc' ? 1 : -1;
   return [...phases].sort((a, b) => {
     // desc only: pin active phases first (career timeline — current job at top).

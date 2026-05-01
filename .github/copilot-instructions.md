@@ -97,6 +97,12 @@ that saves every consumer from rediscovering it? If not, it should not be in thi
   companion timeline page in `alexrebula` must be updated in the same commit to keep phases,
   milestones, and all expandable sub-information in full parity with the markdown source.
 
+- **Roadmap hierarchy bubble-up rule** — also defined in the `alexrebula` copilot instructions.
+  When a phase or milestone in `giselle-mui/docs/theming/roadmap.md` is completed or its date
+  changes, the corresponding summary entry in `alexrebula/docs/roadmap.md` (Phase 1.5) and its
+  `data.tsx` mirror must be updated in the same commit. The child roadmap is the source of
+  truth for its own content; the ancestor holds a summary + link only, never a duplicate task list.
+
 ## Tone rule for docs and comments
 
 Do not over-mention Minimals in this package's docs. `giselle-mui` has already credited

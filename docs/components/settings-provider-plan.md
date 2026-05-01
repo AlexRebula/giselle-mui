@@ -13,6 +13,7 @@ These settings are tightly coupled to `GiselleThemeProvider` — changing a sett
 re-applies the theme.
 
 It belongs in `giselle-mui` because:
+
 - It must integrate with `GiselleThemeProvider` (Phase C prerequisite)
 - Consumers get one coherent import: `@alexrebula/giselle-mui`
 - It is the natural clean-room replacement for the Minimals context — consumers
@@ -29,12 +30,14 @@ package that must remain free of MUI.
 ## Copyright boundary (non-negotiable)
 
 Minimals `SettingsProvider` uses:
+
 - `minimal-shared/hooks` — `useCookies`, `useLocalStorage`
 - `minimal-shared/utils` — `getCookie`, `getStorage`
 - `es-toolkit` — `isEqual`
 
 None of these may appear in this package. All three must be replaced by
 clean-room implementations written independently:
+
 - `useLocalStorage` → `src/utils/use-local-storage.ts`
 - `getCookieValue` / `setCookieValue` → `src/utils/cookie.ts`
 - `isDeepEqual` → `src/utils/is-deep-equal.ts`
@@ -125,6 +128,7 @@ at a time — typed end-to-end, no stringly-typed keys. This mirrors Minimals'
 
 `canReset = !isDeepEqual(state, defaultSettings)`. Own implementation — no
 `es-toolkit` or `lodash` runtime dependency. Covers:
+
 - Primitives (string, number, boolean)
 - Arrays (shallow element comparison)
 - Plain objects (recursive key comparison)
@@ -136,11 +140,11 @@ at a time — typed end-to-end, no stringly-typed keys. This mirrors Minimals'
 
 All live in `src/utils/`:
 
-| File | Purpose | Dependencies |
-| ---- | ------- | ------------ |
-| `use-local-storage.ts` | SSR-safe React hook (already exists in alexrebula — port it) | None |
-| `is-deep-equal.ts` | `isDeepEqual(a, b): boolean` — covers primitives, arrays, objects | None |
-| `cookie.ts` | `getCookieValue(name)`, `setCookieValue(name, value, options)` | None |
+| File                   | Purpose                                                           | Dependencies |
+| ---------------------- | ----------------------------------------------------------------- | ------------ |
+| `use-local-storage.ts` | SSR-safe React hook (already exists in alexrebula — port it)      | None         |
+| `is-deep-equal.ts`     | `isDeepEqual(a, b): boolean` — covers primitives, arrays, objects | None         |
+| `cookie.ts`            | `getCookieValue(name)`, `setCookieValue(name, value, options)`    | None         |
 
 All three files must be written independently — do not copy from `minimal-shared`,
 `es-toolkit`, or any other package.
@@ -149,10 +153,10 @@ All three files must be written independently — do not copy from `minimal-shar
 
 ```ts
 // Covers all cases needed by GiselleSettingsProvider:
-isDeepEqual({ mode: 'light', version: '1' }, { mode: 'light', version: '1' }) // true
-isDeepEqual({ mode: 'light' }, { mode: 'dark' })                               // false
-isDeepEqual([1, 2], [1, 2])                                                    // true
-isDeepEqual([1, 2], [1, 3])                                                    // false
+isDeepEqual({ mode: 'light', version: '1' }, { mode: 'light', version: '1' }); // true
+isDeepEqual({ mode: 'light' }, { mode: 'dark' }); // false
+isDeepEqual([1, 2], [1, 2]); // true
+isDeepEqual([1, 2], [1, 3]); // false
 // Out of scope (not needed for settings):
 // - Date objects, Maps, Sets, RegExp, Symbols, class instances
 ```
@@ -244,8 +248,8 @@ src/
 
 ## Integration with GiselleThemeProvider
 
-`GiselleSettingsProvider` is the settings *state* layer.
-`GiselleThemeProvider` is the MUI theme *application* layer.
+`GiselleSettingsProvider` is the settings _state_ layer.
+`GiselleThemeProvider` is the MUI theme _application_ layer.
 
 The two integrate via a `withSettings` adapter — the consumer (or a
 built-in `GiselleThemeAndSettingsProvider` convenience wrapper) reads
@@ -281,25 +285,27 @@ function SettingsThemeBridge({ children }: { children: ReactNode }) {
 
 This is a one-import swap. The context shape is identical.
 
-| Minimals | giselle-mui |
-| -------- | ----------- |
-| `import { SettingsProvider } from 'src/components/settings'` | `import { GiselleSettingsProvider } from '@alexrebula/giselle-mui'` |
-| `import { useSettingsContext } from 'src/components/settings'` | `import { useGiselleSettings } from '@alexrebula/giselle-mui'` |
-| `state.mode`, `state.direction`, `setField`, `onReset`, etc. | Identical — no changes in consumer components |
-| `storageKey = 'app-settings'` | `storageKey` prop (default: `'giselle-settings'`) |
-| `cookieSettings` from RSC | `initialState` prop from RSC |
+| Minimals                                                       | giselle-mui                                                         |
+| -------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `import { SettingsProvider } from 'src/components/settings'`   | `import { GiselleSettingsProvider } from '@alexrebula/giselle-mui'` |
+| `import { useSettingsContext } from 'src/components/settings'` | `import { useGiselleSettings } from '@alexrebula/giselle-mui'`      |
+| `state.mode`, `state.direction`, `setField`, `onReset`, etc.   | Identical — no changes in consumer components                       |
+| `storageKey = 'app-settings'`                                  | `storageKey` prop (default: `'giselle-settings'`)                   |
+| `cookieSettings` from RSC                                      | `initialState` prop from RSC                                        |
 
 ---
 
 ## Implementation phases
 
 ### Phase α — Own utilities (prerequisite)
+
 - `src/utils/use-local-storage.ts`
 - `src/utils/is-deep-equal.ts`
 - `src/utils/cookie.ts`
 - Tests for all three
 
 ### Phase 1 — MVP: localStorage only
+
 - `GiselleSettingsProvider<TState>` with `storage: 'localStorage'` (default only)
 - `useGiselleSettings<TState>()` hook
 - Version check on mount
@@ -307,12 +313,14 @@ This is a one-import swap. The context shape is identical.
 - Storybook story: default, setField, reset, drawer toggle
 
 ### Phase 2 — Cookie support
+
 - `storage: 'cookie'` option
 - `storage: StorageAdapter<T>` custom adapter
 - `detectGiselleSettings()` server helper (separate `/server` entrypoint)
 - Test: hydration safety with `initialState` prop
 
 ### Phase 3 — GiselleThemeProvider integration
+
 - `SettingsThemeBridge` internal bridge component
 - `GiselleThemeAndSettingsProvider` convenience wrapper (Phase D milestone)
 - `withSettings` theme transformer function
