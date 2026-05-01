@@ -14,7 +14,7 @@
  *   buildCardClickHandler   — calls toggle only when hasDetails is true
  *   buildCardKeyDownHandler — fires toggle on Enter/Space when hasDetails is true
  *   resolveCardExpansion    — selects controlled vs. uncontrolled expand mode
- *   CardStatusBadge logic   — priority: overdue (not done) > active > scenario
+ *   CardStatusBadge logic   — stacked: active + overdue can show together; scenario is fallback-only
  *   derivePlatformEntry     — pure derivation; null icon for string platforms
  *   buildPlatformStripItems — HTML integration: icon renders, text fallback suppressed
  */
@@ -64,18 +64,27 @@ function resolveCardExpansion(
   return { expanded: isExpanded ?? false, toggle: onRequestExpand };
 }
 
-/** Mirrors CardStatusBadge priority rules — returns which badge type fires. */
-function resolveStatusBadge(opts: {
+/** Mirrors CardStatusBadge stacked logic — returns the set of badge types that render. */
+function resolveStatusBadges(opts: {
   isOverdue: boolean;
   isDone: boolean;
   isActive: boolean;
   isScenario: boolean;
   scenarioLabel?: string;
-}): 'overdue' | 'active' | 'scenario' | null {
-  if (opts.isOverdue && !opts.isDone) return 'overdue';
-  if (opts.isActive) return 'active';
-  if (opts.isScenario && opts.scenarioLabel) return 'scenario';
-  return null;
+  dateConflict?: boolean;
+}): Array<'active' | 'overdue' | 'dateConflict' | 'scenario'> {
+  const result: Array<'active' | 'overdue' | 'dateConflict' | 'scenario'> = [];
+  if (opts.isActive && !opts.isDone) result.push('active');
+  if (opts.isOverdue && !opts.isDone) result.push('overdue');
+  if (opts.dateConflict) result.push('dateConflict');
+  const showScenario =
+    !opts.isActive &&
+    !opts.isOverdue &&
+    !opts.dateConflict &&
+    opts.isScenario &&
+    Boolean(opts.scenarioLabel);
+  if (showScenario) result.push('scenario');
+  return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -221,90 +230,125 @@ describe('resolveCardExpansion — controlled mode', () => {
 });
 
 // ---------------------------------------------------------------------------
-// CardStatusBadge priority rules
+// CardStatusBadge stacked badge logic
 // ---------------------------------------------------------------------------
 
-describe('CardStatusBadge priority rules', () => {
-  it('overdue + not done → overdue badge (highest priority)', () => {
+describe('CardStatusBadge stacked badge logic', () => {
+  it('overdue + not done → [overdue] badge', () => {
     expect(
-      resolveStatusBadge({
+      resolveStatusBadges({
         isOverdue: true,
         isDone: false,
         isActive: false,
         isScenario: false,
       })
-    ).toBe('overdue');
+    ).toEqual(['overdue']);
   });
 
-  it('[regression] overdue + done → overdue suppressed (done phase is no longer pending)', () => {
-    // A completed phase cannot simultaneously be overdue — the done flag wins.
+  it('[regression] overdue + done → [] (done suppresses overdue)', () => {
+    // A completed phase cannot be pending — the done flag wins.
     expect(
-      resolveStatusBadge({
+      resolveStatusBadges({
         isOverdue: true,
         isDone: true,
         isActive: false,
         isScenario: false,
       })
-    ).toBeNull();
+    ).toEqual([]);
   });
 
-  it('active phase → active badge', () => {
+  it('active phase → [active] badge', () => {
     expect(
-      resolveStatusBadge({
+      resolveStatusBadges({
         isOverdue: false,
         isDone: false,
         isActive: true,
         isScenario: false,
       })
-    ).toBe('active');
+    ).toEqual(['active']);
   });
 
-  it('scenario + scenarioLabel → scenario badge', () => {
+  it('[regression] active + overdue → both badges render (Now dot + Overdue chip)', () => {
+    // An in-progress phase that has passed its end date shows both simultaneously.
     expect(
-      resolveStatusBadge({
+      resolveStatusBadges({
+        isOverdue: true,
+        isDone: false,
+        isActive: true,
+        isScenario: false,
+      })
+    ).toEqual(['active', 'overdue']);
+  });
+
+  it('[regression] done + active → [] (done suppresses Now dot)', () => {
+    // A completed phase must not show the active "Now" dot.
+    expect(
+      resolveStatusBadges({
+        isOverdue: false,
+        isDone: true,
+        isActive: true,
+        isScenario: false,
+      })
+    ).toEqual([]);
+  });
+
+  it('dateConflict stacks on top of active + overdue', () => {
+    expect(
+      resolveStatusBadges({
+        isOverdue: true,
+        isDone: false,
+        isActive: true,
+        isScenario: false,
+        dateConflict: true,
+      })
+    ).toEqual(['active', 'overdue', 'dateConflict']);
+  });
+
+  it('scenario + scenarioLabel → [scenario] badge (fallback when nothing else applies)', () => {
+    expect(
+      resolveStatusBadges({
         isOverdue: false,
         isDone: false,
         isActive: false,
         isScenario: true,
         scenarioLabel: 'Departure scenario',
       })
-    ).toBe('scenario');
+    ).toEqual(['scenario']);
   });
 
-  it('scenario without scenarioLabel → null (no empty badge)', () => {
+  it('scenario suppressed when active is set', () => {
     expect(
-      resolveStatusBadge({
+      resolveStatusBadges({
+        isOverdue: false,
+        isDone: false,
+        isActive: true,
+        isScenario: true,
+        scenarioLabel: 'Departure scenario',
+      })
+    ).toEqual(['active']);
+  });
+
+  it('scenario without scenarioLabel → [] (no empty badge)', () => {
+    expect(
+      resolveStatusBadges({
         isOverdue: false,
         isDone: false,
         isActive: false,
         isScenario: true,
         scenarioLabel: undefined,
       })
-    ).toBeNull();
+    ).toEqual([]);
   });
 
-  it('none of the conditions met → null', () => {
+  it('no conditions met → [] (no badges)', () => {
     expect(
-      resolveStatusBadge({
+      resolveStatusBadges({
         isOverdue: false,
         isDone: false,
         isActive: false,
         isScenario: false,
       })
-    ).toBeNull();
-  });
-
-  it('[regression] overdue wins over active when both are set', () => {
-    // In practice a phase can't be both overdue and active, but if it were,
-    // overdue must win so the warning is never silently hidden.
-    expect(
-      resolveStatusBadge({
-        isOverdue: true,
-        isDone: false,
-        isActive: true,
-        isScenario: false,
-      })
-    ).toBe('overdue');
+    ).toEqual([]);
   });
 });
 

@@ -9,7 +9,13 @@ import { PhaseCard } from './phase-card';
 import { TimelineDot } from './timeline-dot';
 import { MilestoneBadge } from './milestone-badge';
 import { SpineConnector } from './spine-connector';
-import { getLastYear, parseLastDate, sortPhasesByDate } from './utils';
+import {
+  getLastYear,
+  parseLastDate,
+  detectPhaseOverlaps,
+  sortMilestonesAsc,
+  sortPhasesByDate,
+} from './utils';
 
 // ----------------------------------------------------------------------
 
@@ -99,7 +105,8 @@ function resolvePhaseOverdue(
 ): boolean {
   if (!checklist || isDone) return false;
   const parsedDate = parseLastDate(phase.date);
-  const isAutoOverdue = !phase.active && parsedDate !== null && parsedDate < today;
+  // Active phases can still be overdue (e.g. roadmap phase still in progress but past its end date).
+  const isAutoOverdue = parsedDate !== null && parsedDate < today;
   return (phase.overdue ?? false) || isAutoOverdue;
 }
 
@@ -174,12 +181,14 @@ function buildPhaseCardTsxProps(
   checklist: boolean,
   isDone: boolean,
   isOverdue: boolean,
+  dateConflict: boolean,
   anyExpanded: boolean,
   isThisPhaseExpanded: boolean
 ) {
   return {
     done: isDone,
     overdue: checklist ? isOverdue : undefined,
+    dateConflict: dateConflict || undefined,
     suppressElevation: anyExpanded && !isThisPhaseExpanded,
   };
 }
@@ -463,6 +472,7 @@ export function TimelineTwoColumn({
   onToggleMilestoneDone,
   selectedPhaseKey,
   onPhaseSelect,
+  sortOrder = 'desc',
   milestoneSlotHeight = 60,
   phaseCardGap = 90,
   yearLabelMarginBottom = 30,
@@ -569,8 +579,18 @@ export function TimelineTwoColumn({
     return d;
   }, []);
 
-  // Sort: active ("Now") item always first, remaining items newest → oldest.
-  const sorted = useMemo(() => sortPhasesByDate(phases), [phases]);
+  // Sort phases by date, then sort milestones within each phase ascending (earliest first).
+  const sorted = useMemo(
+    () =>
+      sortPhasesByDate(phases, sortOrder).map((phase) => ({
+        ...phase,
+        milestones: phase.milestones ? sortMilestonesAsc(phase.milestones) : phase.milestones,
+      })),
+    [phases, sortOrder]
+  );
+
+  // Detect phases whose date ranges overlap — shown as ⚠ Date overlap badge.
+  const overlappingKeys = useMemo(() => detectPhaseOverlaps(phases), [phases]);
 
   const lastKey = sorted.at(-1)?.key;
 
@@ -640,6 +660,7 @@ export function TimelineTwoColumn({
                   checklist,
                   isDone,
                   isOverdue,
+                  overlappingKeys.has(phase.key),
                   anyExpanded,
                   isThisPhaseExpanded
                 )}

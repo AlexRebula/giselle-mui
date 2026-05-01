@@ -17,6 +17,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { pulseDot } from './animations';
+import { GiselleIcon } from '../giselle-icon/giselle-icon';
 
 // ----------------------------------------------------------------------
 
@@ -123,6 +124,37 @@ function OverdueBadge() {
   );
 }
 
+function DateConflictBadge() {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
+      <Box
+        component="span"
+        aria-hidden="true"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          flexShrink: 0,
+          color: `rgba(var(--mui-palette-warning-mainChannel) / 1)`,
+        }}
+      >
+        <GiselleIcon icon="solar:danger-triangle-bold" width={16} />
+      </Box>
+      <Typography
+        variant="overline"
+        sx={{
+          fontSize: '0.65rem',
+          fontWeight: 700,
+          letterSpacing: 0.8,
+          lineHeight: 1.6,
+          color: `rgba(var(--mui-palette-warning-darkChannel) / 1)`,
+        }}
+      >
+        Date overlap
+      </Typography>
+    </Box>
+  );
+}
+
 type ActiveBadgeProps = { color: string; activeLabel?: string };
 
 function ActiveBadge({ color, activeLabel }: ActiveBadgeProps) {
@@ -130,8 +162,8 @@ function ActiveBadge({ color, activeLabel }: ActiveBadgeProps) {
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
       <Box
         sx={{
-          width: 8,
-          height: 8,
+          width: 10,
+          height: 10,
           borderRadius: '50%',
           flexShrink: 0,
           bgcolor: `${color}.main`,
@@ -144,7 +176,7 @@ function ActiveBadge({ color, activeLabel }: ActiveBadgeProps) {
           fontSize: '0.65rem',
           fontWeight: 700,
           letterSpacing: 0.8,
-          lineHeight: 1,
+          lineHeight: 1.6,
           color: `${color}.main`,
         }}
       >
@@ -179,12 +211,16 @@ function ScenarioBadge({ color, scenarioLabel }: ScenarioBadgeProps) {
 }
 
 /**
- * The three mutually-exclusive status badges that appear at the top of a PhaseCard.
+ * Status badges rendered at the top of a PhaseCard.
  *
- * Priority: overdue > active ("Now") > scenario label.
- * In practice at most one fires — a phase can't be simultaneously overdue and active.
+ * Badges stack when multiple conditions apply simultaneously:
+ * - A phase that is both active and overdue shows the "Now" dot **and** the "Overdue" chip.
+ * - A date-conflict badge stacks on top of any active/overdue badges.
+ * - The scenario badge is a fallback — only shown when no other badge applies.
  */
 type CardStatusBadgeProps = {
+  /** Whether this phase has a date range that overlaps with another phase. */
+  dateConflict: boolean;
   /** Whether the phase is overdue (past due, not done). */
   isOverdue: boolean;
   /** Whether the phase is already done — suppresses the overdue badge. */
@@ -202,6 +238,7 @@ type CardStatusBadgeProps = {
 };
 
 function CardStatusBadge({
+  dateConflict,
   isOverdue,
   isDone,
   isActive,
@@ -210,11 +247,22 @@ function CardStatusBadge({
   isScenario,
   scenarioLabel,
 }: CardStatusBadgeProps) {
-  if (isOverdue && !isDone) return <OverdueBadge />;
-  if (isActive) return <ActiveBadge color={color} activeLabel={activeLabel} />;
-  if (isScenario && scenarioLabel)
-    return <ScenarioBadge color={color} scenarioLabel={scenarioLabel} />;
-  return null;
+  const showActive = isActive && !isDone;
+  const showOverdue = isOverdue && !isDone;
+  const showDateConflict = dateConflict;
+  const showScenario =
+    !showActive && !showOverdue && !showDateConflict && isScenario && Boolean(scenarioLabel);
+
+  if (!showActive && !showOverdue && !showDateConflict && !showScenario) return null;
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+      {showActive && <ActiveBadge color={color} activeLabel={activeLabel} />}
+      {showOverdue && <OverdueBadge />}
+      {showDateConflict && <DateConflictBadge />}
+      {showScenario && <ScenarioBadge color={color} scenarioLabel={scenarioLabel!} />}
+    </Box>
+  );
 }
 
 // ----------------------------------------------------------------------
@@ -487,6 +535,8 @@ export type PhaseCardProps = Omit<BoxProps, 'children'> & {
   done?: boolean;
   /** Runtime overdue override from the parent timeline. Adds a red warning border to the card. */
   overdue?: boolean;
+  /** Set by the parent when this phase's date range overlaps another phase. Shows a ⚠ Date overlap badge. */
+  dateConflict?: boolean;
   /**
    * Controlled expansion state. When provided together with `onRequestExpand`,
    * the card operates in controlled mode and the parent owns the open/close state.
@@ -512,6 +562,7 @@ export function PhaseCard({
   phase,
   done,
   overdue,
+  dateConflict = false,
   isExpanded,
   onRequestExpand,
   suppressElevation = false,
@@ -569,8 +620,9 @@ export function PhaseCard({
           />
         )}
 
-        {/* Overdue / Now / Scenario status badge — at most one renders */}
+        {/* Active / Overdue / DateConflict / Scenario status badges — can stack when multiple apply */}
         <CardStatusBadge
+          dateConflict={dateConflict}
           isOverdue={isOverdue}
           isDone={isDone}
           isActive={Boolean(phase.active)}
@@ -582,7 +634,7 @@ export function PhaseCard({
 
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
           <Box sx={{ flex: 1 }}>
-            {!phase.hideDate && !phase.active && (
+            {!phase.hideDate && (
               <Typography
                 variant="subtitle2"
                 sx={buildDateTypographySx({

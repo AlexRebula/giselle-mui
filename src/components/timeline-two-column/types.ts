@@ -171,6 +171,14 @@ export type TimelineTwoColumnProps = Omit<BoxProps, 'children'> & {
    */
   onPhaseSelect?: (key: number) => void;
   /**
+   * Sort direction for non-active, non-done phases.
+   * - `'desc'` (default) — newest end-date first. Use for career/past timelines.
+   * - `'asc'` — oldest start-date first. Use for roadmap/future timelines so the
+   *   soonest upcoming phase appears directly below the active phases.
+   * @default 'desc'
+   */
+  sortOrder?: 'asc' | 'desc';
+  /**
    * Minimum vertical space (px) allocated per milestone slot on the spine.
    * Controls the breathing room between collapsed milestone cards.
    * Increase when cards are too close; decrease when the timeline feels too tall.

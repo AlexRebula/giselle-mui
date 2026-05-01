@@ -7,6 +7,8 @@ import {
   parseLastDate,
   sortPhasesByDate,
   parseSortableDate,
+  parseFirstDate,
+  detectPhaseOverlaps,
 } from './utils';
 
 // ----------------------------------------------------------------------
@@ -280,5 +282,99 @@ describe('sortPhasesByDate', () => {
     const original = [...phases];
     sortPhasesByDate(phases);
     expect(phases).toEqual(original);
+  });
+
+  it('asc: pure chronological order — active and done both sort by date', () => {
+    // Roadmap use-case: strict date order, no pinning of active or done phases.
+    const phases = [
+      { key: 1, date: 'Jan 2025 – Jun 2025', done: true }, // Jun 2025 → earliest → first
+      { key: 2, date: 'Jul 2026 – Sep 2026', active: true }, // Sep 2026 — no active pinning
+      { key: 3, date: 'May 2026' }, // May 2026 → second
+      { key: 4, date: 'Jul 2026 – Sep 2026' }, // Sep 2026, tie with key 2
+    ];
+    const result = sortPhasesByDate(phases, 'asc');
+    expect(result[0]!.key).toBe(1); // Jun 2025 — earliest (done, but no done-pinning in asc)
+    expect(result[1]!.key).toBe(3); // May 2026
+    expect(result[2]!.key).toBe(2); // Sep 2026 — active, tie with key 4, key 2 < 4 → first
+    expect(result[3]!.key).toBe(4); // Sep 2026
+  });
+});
+
+// ----------------------------------------------------------------------
+
+describe('parseFirstDate', () => {
+  it('returns the first day of the start month for a range', () => {
+    // "Jul 2025 – Mar 2026" → Jul 1 2025
+    const result = parseFirstDate('Jul 2025 – Mar 2026');
+    expect(result).toBe(new Date(2025, 6, 1).getTime()); // month 6 = July
+  });
+
+  it('returns the first day of the month for a single month date', () => {
+    expect(parseFirstDate('May 2026')).toBe(new Date(2026, 4, 1).getTime());
+  });
+
+  it('returns Jan 1 for a year-only string', () => {
+    expect(parseFirstDate('2025')).toBe(new Date(2025, 0, 1).getTime());
+  });
+
+  it('returns null for an empty string', () => {
+    expect(parseFirstDate('')).toBeNull();
+  });
+
+  it('returns null when no date is present', () => {
+    expect(parseFirstDate('present')).toBeNull();
+  });
+});
+
+// ----------------------------------------------------------------------
+
+describe('detectPhaseOverlaps', () => {
+  it('returns an empty set when no phases overlap', () => {
+    const phases = [
+      { key: 1, date: 'Jan 2025 – Jun 2025' },
+      { key: 2, date: 'Jul 2025 – Dec 2025' },
+      { key: 3, date: 'Jan 2026 – Mar 2026' },
+    ];
+    expect(detectPhaseOverlaps(phases).size).toBe(0);
+  });
+
+  it('returns both keys when two phases overlap', () => {
+    const phases = [
+      { key: 1, date: 'Jan 2025 – Jun 2025' },
+      { key: 2, date: 'Apr 2025 – Sep 2025' }, // overlaps key 1: Apr-Jun is shared
+    ];
+    const result = detectPhaseOverlaps(phases);
+    expect(result.has(1)).toBe(true);
+    expect(result.has(2)).toBe(true);
+  });
+
+  it('returns all three keys when three phases share an overlap', () => {
+    const phases = [
+      { key: 1, date: 'Jan 2025 – Jun 2025' },
+      { key: 2, date: 'Apr 2025 – Sep 2025' },
+      { key: 3, date: 'Aug 2025 – Dec 2025' },
+    ];
+    // key1 overlaps key2, key2 overlaps key3 → all three flagged
+    const result = detectPhaseOverlaps(phases);
+    expect(result.has(1)).toBe(true);
+    expect(result.has(2)).toBe(true);
+    expect(result.has(3)).toBe(true);
+  });
+
+  it('ignores phases with unparseable dates', () => {
+    const phases = [
+      { key: 1, date: '' },
+      { key: 2, date: 'present' },
+    ];
+    expect(detectPhaseOverlaps(phases).size).toBe(0);
+  });
+
+  it('does not flag adjacent ranges that share only an endpoint month', () => {
+    // Jun 2025 end-of-month vs Jul 2025 start-of-month — different timestamps, no overlap
+    const phases = [
+      { key: 1, date: 'Jan 2025 – Jun 2025' }, // end = Jun 30 2025
+      { key: 2, date: 'Jul 2025 – Dec 2025' }, // start = Jul 1 2025
+    ];
+    expect(detectPhaseOverlaps(phases).size).toBe(0);
   });
 });
