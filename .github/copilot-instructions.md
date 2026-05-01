@@ -226,6 +226,25 @@ Every exported component must have a `Responsive` story that renders the compone
 
 Use `element.dataset['camelKey']` rather than `element.getAttribute('data-kebab-key')` in test files. Sonar flags `getAttribute` as a code smell when `.dataset` is available.
 
+### Test coverage — 80% minimum
+
+This package targets ≥80% line/branch/function/statement coverage, enforced in the quality gate. Coverage is measured with `@vitest/coverage-v8`.
+
+**Running coverage locally:**
+
+```sh
+npm run test:coverage   # generates text summary + lcov report
+```
+
+**Gate status:** The 80% threshold is defined in `vitest.config.ts` under `coverage.thresholds`. Once wired into `scripts/quality-gate.js` (Phase 1.6 T1), `npm run check:verify` will fail if any threshold is not met.
+
+**Rules — non-negotiable:**
+
+- Every new component or utility must ship with tests. A file that adds exported symbols without tests is a blocker for merge.
+- When a test is written, it must cover the expected behaviour, not just call the function. Refer to the test conventions section above.
+- Do not artificially boost coverage with empty assertions or `it.todo`. Every test must make at least one meaningful assertion.
+- Coverage excludes: `*.test.ts`, `*.stories.tsx`, `*/index.ts` barrel files. Do not add test-only helper files to the coverage `include` pattern.
+
 ---
 
 ## MUI Store quality bar (enforce always — not just before submission)
