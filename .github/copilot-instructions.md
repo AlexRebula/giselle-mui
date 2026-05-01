@@ -149,6 +149,36 @@ At the start of every new Copilot session in this package, read these files:
 
 - `@mui/lab` — needed for Timeline primitives (`Timeline`, `TimelineItem`, `TimelineSeparator`, etc.). Acceptable under the zero-proprietary-dependencies rule.
 
+### tsup `external` rule — non-negotiable
+
+Every package listed under `peerDependencies` in `package.json` **must also appear in
+the `external` array in `tsup.config.ts`**. If a peer dep is missing from `external`,
+tsup bundles that package's source into `dist/index.js`. Webpack in the portfolio then
+sees two module instances for context-holding singletons (e.g. `@mui/material`
+`useMediaQuery`), causing runtime crashes:
+
+```
+_mui_material_useMediaQuery__WEBPACK_IMPORTED_MODULE_N__ is not a function
+```
+
+The webpack `resolve.alias` fix in `alexrebula/next.config.ts` only works on imports
+that go through webpack's resolver — it cannot fix code that was pre-bundled by tsup.
+
+**Enforcement checklist — run whenever `package.json` peerDependencies changes:**
+
+1. Open `tsup.config.ts`.
+2. Compare its `external` array against every key in `peerDependencies`.
+3. Any missing key → add it to `external` immediately.
+4. Run `npm run build` and verify the dist contains `import ... from "pkg"` lines
+   (external reference), not inlined source code.
+
+Current required entries (keep in sync with `package.json`):
+- `react`, `react-dom`, `react/jsx-runtime`, `react/jsx-dev-runtime`
+- `@mui/material`
+- `@mui/lab`
+- `@emotion/react`, `@emotion/styled`
+- `@iconify/react`
+
 ---
 
 ## Post-component workflow (enforce always — run after every new component is complete)

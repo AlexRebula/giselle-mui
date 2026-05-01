@@ -12,6 +12,7 @@ export default defineConfig({
     'react/jsx-runtime',
     'react/jsx-dev-runtime',
     '@mui/material',
+    '@mui/lab',
     '@emotion/react',
     '@emotion/styled',
     '@iconify/react',
