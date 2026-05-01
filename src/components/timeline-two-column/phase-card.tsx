@@ -498,7 +498,16 @@ function buildPaperSx(p: PaperSxParams) {
     ...(p.isDone && {
       opacity: 0.45,
       filter: 'grayscale(1)',
-      '&:hover': { opacity: 1, filter: 'none' },
+      '&:hover': {
+        opacity: 1,
+        filter: 'none',
+        ...(p.hasDetails && {
+          boxShadow: `0 16px 40px rgba(${
+            theme.vars!.palette[(p.color ?? 'primary') as HighlightedPaletteKey]?.mainChannel ??
+            (theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']
+          } / 0.22)`,
+        }),
+      },
     }),
     ...(p.phaseSide === 'right' &&
       !p.isHighlighted && {
