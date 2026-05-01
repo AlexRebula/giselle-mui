@@ -71,7 +71,7 @@ export const DEFAULT_ICON_ACTIONS: IconActionItem[] = [
   { tooltip: 'Edit', icon: <GiselleIcon icon="solar:pen-bold" /> },
   { tooltip: 'View', icon: <GiselleIcon icon="solar:eye-bold" /> },
   { tooltip: 'Print', icon: <GiselleIcon icon="solar:printer-minimalistic-bold" /> },
-  { tooltip: 'Send', icon: <GiselleIcon icon="custom:send-fill" /> },
+  { tooltip: 'Send', icon: <GiselleIcon icon="mdi:email" /> },
   { tooltip: 'Share', icon: <GiselleIcon icon="solar:share-bold" /> },
 ];
 
