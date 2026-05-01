@@ -43,9 +43,9 @@ in this library exists because it solves a recurring problem that is either:
    Storybook autodoc automatically.
 
 4a. **JSDoc must use Markdown formatting.** Storybook autodoc renders JSDoc descriptions
-    as Markdown. Use `**bold**`, `- ` bullet lists, and fenced code blocks (` ```tsx `).
-    Never use bare indented code lines — they do not render as code blocks in Markdown.
-    `@example` tags are rendered separately as code snippets and remain plain JSX/TSX.
+as Markdown. Use `**bold**`, `- ` bullet lists, and fenced code blocks (` ```tsx `).
+Never use bare indented code lines — they do not render as code blocks in Markdown.
+`@example` tags are rendered separately as code snippets and remain plain JSX/TSX.
 
 5. **ReactNode slots for icons and decoration.** Components never import an icon
    library internally. Accept `icon?: ReactNode` and let the consumer fill it.
@@ -91,6 +91,12 @@ src/components/<name>/
 When asked to add a component, always verify: does this encode a non-obvious decision
 that saves every consumer from rediscovering it? If not, it should not be in this library.
 
+- `TimelineTwoColumn` visual pages for roadmap docs — see the **Roadmap visual sync rule**
+  in the `alexrebula` copilot instructions. `TimelineTwoColumn` is the designated component
+  for rendering any `docs/**/roadmap.md` file visually. When a roadmap doc is updated, the
+  companion timeline page in `alexrebula` must be updated in the same commit to keep phases,
+  milestones, and all expandable sub-information in full parity with the markdown source.
+
 ## Tone rule for docs and comments
 
 Do not over-mention Minimals in this package's docs. `giselle-mui` has already credited
@@ -108,22 +114,22 @@ library as its own thing. When updating or writing docs:
 
 At the start of every new Copilot session in this package, read these files:
 
-| File | Purpose |
-|------|---------|
-| [`docs/theming/roadmap.md`](../docs/theming/roadmap.md) | Phase A (theme utilities), Phase B (Giselle brand palette), Phase C (GiselleThemeProvider) — next planned work |
-| [`docs/components/timeline-plan.md`](../docs/components/timeline-plan.md) | Full plan for `RoadmapTimeline` — next component to build |
-| [`docs/theming/nextjs.md`](../docs/theming/nextjs.md) | How to wire this library into a Next.js app |
+| File                                                                      | Purpose                                                                                                        |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| [`docs/theming/roadmap.md`](../docs/theming/roadmap.md)                   | Phase A (theme utilities), Phase B (Giselle brand palette), Phase C (GiselleThemeProvider) — next planned work |
+| [`docs/components/timeline-plan.md`](../docs/components/timeline-plan.md) | Full plan for `RoadmapTimeline` — next component to build                                                      |
+| [`docs/theming/nextjs.md`](../docs/theming/nextjs.md)                     | How to wire this library into a Next.js app                                                                    |
 
 ### Current components (shipped)
 
-| Component | File | Status |
-|-----------|------|--------|
-| `GiselleIcon` | `src/components/giselle-icon/` | ✅ Shipped + tested |
-| `MetricCard` + `MetricCardDecoration` | `src/components/metric-card/` | ✅ Shipped + tested |
-| `QuoteCard` | `src/components/quote-card/` | ✅ Shipped + tested |
-| `SelectableCard` | `src/components/selectable-card/` | ✅ Shipped + tested |
-| `createIconRegistrar` | `src/utils/create-icon-registrar.ts` | ✅ Shipped + tested |
-| `TimelineTwoColumn` | `src/components/timeline-two-column/` | ✅ Shipped + tested |
+| Component                             | File                                  | Status              |
+| ------------------------------------- | ------------------------------------- | ------------------- |
+| `GiselleIcon`                         | `src/components/giselle-icon/`        | ✅ Shipped + tested |
+| `MetricCard` + `MetricCardDecoration` | `src/components/metric-card/`         | ✅ Shipped + tested |
+| `QuoteCard`                           | `src/components/quote-card/`          | ✅ Shipped + tested |
+| `SelectableCard`                      | `src/components/selectable-card/`     | ✅ Shipped + tested |
+| `createIconRegistrar`                 | `src/utils/create-icon-registrar.ts`  | ✅ Shipped + tested |
+| `TimelineTwoColumn`                   | `src/components/timeline-two-column/` | ✅ Shipped + tested |
 
 ### Next planned work (priority order)
 
@@ -269,6 +275,7 @@ MUI-specific props (`sx`, `component`, `ref`, or shorthand layout props like `di
 ```
 
 **Before every PR:** run the following to catch bare Box usage:
+
 ```sh
 grep -rn "<Box[^/]*>" src/ | grep -v "sx=\|component=\|className=\|ref=\|aria-\|data-\|display="
 ```
@@ -281,14 +288,14 @@ props from leaking into the DOM.
 ```tsx
 // ❌ wrong — custom prop leaks to DOM → React warning + Sonar violation
 const StyledDiv = styled('div')<{ active: boolean }>`
-  color: ${({ active }) => active ? 'red' : 'black'};
+  color: ${({ active }) => (active ? 'red' : 'black')};
 `;
 
 // ✅ correct
 const StyledDiv = styled('div', {
   shouldForwardProp: (prop) => prop !== 'active',
 })<{ active: boolean }>`
-  color: ${({ active }) => active ? 'red' : 'black'};
+  color: ${({ active }) => (active ? 'red' : 'black')};
 `;
 ```
 
@@ -323,12 +330,12 @@ constraint on the future premium template's separate build config.
 All components must work in — and must not use APIs or CSS features unavailable in — the
 following minimum versions:
 
-| Browser | Minimum |
-|---------|---------|
-| Chrome | ≥ 121 |
-| Firefox | ≥ 121 |
-| Edge | ≥ 117 |
-| Safari (macOS + iOS) | ≥ 17.0 |
+| Browser              | Minimum |
+| -------------------- | ------- |
+| Chrome               | ≥ 121   |
+| Firefox              | ≥ 121   |
+| Edge                 | ≥ 117   |
+| Safari (macOS + iOS) | ≥ 17.0  |
 
 This matches the MUI Core supported browser matrix. Do not use CSS features, JS APIs, or
 DOM behaviour that falls outside these targets.
@@ -338,4 +345,3 @@ DOM behaviour that falls outside these targets.
 - No low-resolution raster images. Any raster asset must look sharp at >200 PPI.
 - SVG files must be optimised — no verbose metadata, no inline raster data.
 - If SVGs are added to Storybook or a demo app, run them through `svgo` before committing.
-
