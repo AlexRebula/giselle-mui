@@ -99,9 +99,10 @@ export function MilestoneBadge({
 }: MilestoneBadgeProps) {
   // Right-align the collapsed view when in the left column so text sits flush
   // against the centre spine instead of leaving a gap at the right edge of the card.
-  // Alignment resets to left on both expand AND hover (both reveal the full reading context).
+  // Alignment resets to left only when expanded; hover may reveal more text
+  // but must not change column alignment.
   const [isHovered, setIsHovered] = useState(false);
-  const rightAlign = columnSide === 'left' && !isExpanded && !isHovered;
+  const rightAlign = columnSide === 'left' && !isExpanded;
   const hasDetails = !!m.details?.length;
   const colorKey = (m.color ?? 'primary') as HighlightedPaletteKey;
   const titleSlug = String(m.title)
