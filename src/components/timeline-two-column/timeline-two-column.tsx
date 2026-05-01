@@ -745,7 +745,7 @@ export function TimelineTwoColumn({
             <Box onClick={phaseCardStopProp}>
               <PhaseCard
                 phase={phase}
-                columnSide={phase.side}
+                columnSide={phase.side === 'left' ? 'right' : 'left'}
                 {...buildPhaseCardTsxProps(
                   checklist,
                   isDone,

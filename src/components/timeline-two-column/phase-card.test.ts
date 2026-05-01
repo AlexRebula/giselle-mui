@@ -32,6 +32,8 @@ import {
   ACTIVE_DOT_SIZE,
   PHASE_PILL_ICON_SIZE,
   PHASE_PILL_TEXT_FONT_SIZE,
+  PHASE_EYE_ICON_SIZE,
+  EYE_BUTTON_MIN_SIZE,
   buildPlatformStripItems,
   derivePlatformEntry,
   resolveCornerBadgeAlign,
@@ -529,7 +531,7 @@ describe('resolveCornerBadgeAlign — column-side positioning (regression)', () 
     expect(resolveCornerBadgeAlign('left').tooltipPlacement).toBe('top-start');
   });
 
-  it('[regression] right and left placements are mutually exclusive (never both set)', () => {
+  it('[regression] resolveCornerBadgeAlign — right and left placements are mutually exclusive (never both set)', () => {
     const rightResult = resolveCornerBadgeAlign('right');
     expect(rightResult.right).toBeDefined();
     expect(rightResult.left).toBeUndefined();
@@ -537,5 +539,23 @@ describe('resolveCornerBadgeAlign — column-side positioning (regression)', () 
     const leftResult = resolveCornerBadgeAlign('left');
     expect(leftResult.left).toBeDefined();
     expect(leftResult.right).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Eye button accessibility (WCAG 2.2 AA 2.5.8 regression)
+// ---------------------------------------------------------------------------
+
+describe('eye button — WCAG accessibility regression', () => {
+  it('[regression] PHASE_EYE_ICON_SIZE >= 20px (WCAG 1.4.11 — interactive icon minimum)', () => {
+    expect(PHASE_EYE_ICON_SIZE).toBeGreaterThanOrEqual(20);
+  });
+
+  it('[regression] EYE_BUTTON_MIN_SIZE >= 24px (WCAG 2.2 AA 2.5.8 — minimum touch target)', () => {
+    expect(EYE_BUTTON_MIN_SIZE).toBeGreaterThanOrEqual(24);
+  });
+
+  it('[regression] EYE_BUTTON_MIN_SIZE >= PHASE_EYE_ICON_SIZE (button must be larger than its icon)', () => {
+    expect(EYE_BUTTON_MIN_SIZE).toBeGreaterThanOrEqual(PHASE_EYE_ICON_SIZE);
   });
 });

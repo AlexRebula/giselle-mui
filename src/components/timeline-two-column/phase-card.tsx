@@ -37,6 +37,12 @@ export const CORNER_ALERT_LIST_ICON_SIZE = 16;
 /** Icon size (px) for the viewed eye button. */
 export const PHASE_EYE_ICON_SIZE = 20;
 
+/**
+ * Minimum touch-target size (px) for the eye viewed button.
+ * Meets WCAG 2.2 AA 2.5.8 — minimum 24 × 24 CSS pixels for pointer targets.
+ */
+export const EYE_BUTTON_MIN_SIZE = 28;
+
 /** Width and height (px) of the "Now" active pulsing dot. */
 export const ACTIVE_DOT_SIZE = 12;
 
@@ -927,50 +933,64 @@ export function PhaseCard({
         {hasDetails && (
           <CardDetailBullets id={detailsId} details={phase.details ?? []} in={expanded} />
         )}
-
-        {onMarkViewed && (
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, px: 0.5 }}>
-            <Tooltip title={isViewed ? 'Viewed' : 'Mark as viewed'} placement="left" arrow>
-              <Box
-                component="button"
-                onClick={(e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  onMarkViewed();
-                }}
-                aria-label={isViewed ? 'Viewed' : 'Mark as viewed'}
-                aria-pressed={isViewed}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 0.5,
-                  background: 'none',
-                  border: 'none',
-                  cursor: isViewed ? 'default' : 'pointer',
-                  p: 0.5,
-                  borderRadius: 1,
-                  color: isViewed ? 'success.main' : 'text.disabled',
-                  opacity: isViewed ? 1 : 0.6,
-                  transition: 'opacity 0.15s, color 0.15s',
-                  '&:hover': { opacity: 1 },
-                }}
-              >
-                <GiselleIcon
-                  icon={isViewed ? 'solar:eye-bold' : 'solar:eye-outline'}
-                  width={PHASE_EYE_ICON_SIZE}
-                  aria-hidden
-                />
-                <Typography
-                  component="span"
-                  variant="caption"
-                  sx={{ fontSize: '0.68rem', lineHeight: 1 }}
-                >
-                  {isViewed ? 'Viewed' : 'Mark viewed'}
-                </Typography>
-              </Box>
-            </Tooltip>
-          </Box>
-        )}
       </Paper>
+
+      {/* Viewed eye badge — floats outside the card at the bottom on the outer edge. */}
+      {/* Uses columnSide so it mirrors the corner alert badge: outer edge away from spine. */}
+      {onMarkViewed && (
+        <Tooltip
+          title={isViewed ? 'Mark as not viewed' : 'Mark as viewed'}
+          placement={columnSide === 'left' ? 'right' : 'left'}
+          arrow
+        >
+          <Box
+            component="button"
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              onMarkViewed();
+            }}
+            aria-label={isViewed ? 'Mark as not viewed' : 'Mark as viewed'}
+            aria-pressed={isViewed}
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              ...(columnSide === 'left' ? { left: 0 } : { right: 0 }),
+              transform: 'translate(0, calc(100% + 8px))',
+              zIndex: 10,
+              width: EYE_BUTTON_MIN_SIZE,
+              height: EYE_BUTTON_MIN_SIZE,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'none',
+              border: '2px solid',
+              borderColor: isViewed ? 'success.main' : 'text.secondary',
+              bgcolor: isViewed ? 'success.main' : 'background.paper',
+              color: isViewed ? 'common.white' : 'text.secondary',
+              cursor: 'pointer',
+              pointerEvents: 'auto',
+              transition: 'border-color 0.2s, color 0.2s, background-color 0.2s',
+              '&:hover': {
+                borderColor: isViewed ? 'success.dark' : 'text.primary',
+                bgcolor: isViewed ? 'success.dark' : 'action.hover',
+                color: isViewed ? 'common.white' : 'text.primary',
+              },
+              '&:focus-visible': {
+                outline: '2px solid',
+                outlineColor: isViewed ? 'success.main' : 'primary.main',
+                outlineOffset: 2,
+              },
+            }}
+          >
+            <GiselleIcon
+              icon={isViewed ? 'solar:eye-bold' : 'solar:eye-outline'}
+              width={PHASE_EYE_ICON_SIZE}
+              aria-hidden
+            />
+          </Box>
+        </Tooltip>
+      )}
     </Box>
   );
 }

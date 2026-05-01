@@ -366,19 +366,45 @@ Every dot on the timeline — phase dots and milestone dots alike — must be **
 
 **Rule — non-negotiable:**
 
-- Right-column cards: badge floats on the **right** top corner (`right: 0, transform: translate(50%, -50%)`). This places it between the card and the centre spine.
-- Left-column cards: badge floats on the **left** top corner (`left: 0, transform: translate(-50%, -50%)`). This mirrors it symmetrically — placing it on the outer edge, away from the spine.
+- Right-column cards: badge floats on the **right** top corner — the outer edge, away from the spine (`right: 0, transform: translate(50%, -50%)`).
+- Left-column cards: badge floats on the **left** top corner — the outer edge, away from the spine (`left: 0, transform: translate(-50%, -50%)`).
 
-**Why:** a right-column badge on a left-column card floats against the spine, overlapping the spine connector and milestone dots. The badge must always float on the edge that faces outward (away from the spine).
+**Why:** the badge must always float on the edge that faces outward (away from the spine). A badge anchored on the spine-facing edge overlaps the spine connector and milestone dots.
 
 **Where it is set:** in `timeline-two-column.tsx`, the `PhaseCard` call site:
 ```tsx
-<PhaseCard phase={phase} columnSide={phase.side} {...buildPhaseCardTsxProps(...)} />
+<PhaseCard phase={phase} columnSide={phase.side === 'left' ? 'right' : 'left'} {...buildPhaseCardTsxProps(...)} />
 ```
+
+Note: `phase.side` is **inverted** from the actual column (`phase.side='right'` → card in **LEFT** column, outer edge on left). So `columnSide` must use the opposite of `phase.side`.
 
 The logic is encapsulated in `resolveCornerBadgeAlign(columnSide)` in `phase-card.tsx`, which returns `{ left?, right?, transform, tooltipPlacement }`. Exported for regression tests.
 
 **Regression test location:** `phase-card.test.ts` — `resolveCornerBadgeAlign — column-side positioning (regression)`.
+
+---
+
+### TimelineTwoColumn — eye button WCAG accessibility rule
+
+All `isViewed` / `onMarkViewed` eye buttons in this component family must meet WCAG 2.2 AA.
+
+**Rule — non-negotiable:**
+
+| Element | Icon size | Why |
+|---|---|---|
+| Phase card eye badge | `width={20}` (`PHASE_EYE_ICON_SIZE`) | Interactive icons must be >= 20px — larger than decorative |
+| Milestone title-row eye | `width={20}` (`MILESTONE_EYE_ICON_SIZE`) | Same rule |
+
+- **Never use `opacity` alone to communicate state.** Opacity reduces visual contrast below WCAG 1.4.11 (3:1 ratio for UI components). Use icon variant change (`bold` vs `outline`) AND a foreground/background colour change together.
+- **Never set `cursor: 'default'` on a toggleable button.** The user must always be able to click to toggle. A viewed item must be un-markable.
+- **Always include `aria-pressed={isViewed}` and a descriptive `aria-label`** that reflects the current state and the action that will happen on click (e.g. `'Mark as not viewed'` when `isViewed=true`).
+- **Export size constants.** Every eye icon/button size must be a named export (`PHASE_EYE_ICON_SIZE`, `MILESTONE_EYE_ICON_SIZE`). Write a regression test asserting each is `>= 20`.
+
+**Where the eye buttons live:**
+- Phase card: floats outside `<Paper>` at the bottom outer edge (`position: absolute, bottom: 0`), column-side aware. Constants: `PHASE_EYE_ICON_SIZE = 20`, `EYE_BUTTON_MIN_SIZE = 28`.
+- Milestone: inline in the title row (`<Box display="flex" alignItems="center">`), before the title when `columnSide='left'` (right-aligned column), after the title when `columnSide='right'` (left-aligned column). Constant: `MILESTONE_EYE_ICON_SIZE = 20`.
+
+**Regression test locations:** `phase-card.test.ts` — `eye button — WCAG accessibility regression`; `milestone-badge.test.ts` — `eye button — WCAG accessibility regression`.
 
 ---
 

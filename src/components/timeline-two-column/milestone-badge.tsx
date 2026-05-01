@@ -24,6 +24,13 @@ export const MILESTONE_PILL_ICON_SIZE = 16;
 /** Font size for the count label in the expandable details pill. */
 export const MILESTONE_PILL_TEXT_FONT_SIZE = '0.75rem';
 
+/**
+ * Size (px) of the viewed eye icon in the milestone title row.
+ * Must meet WCAG 1.4.11 — interactive controls must have visible contrast >= 3:1.
+ * Never set below 20px.
+ */
+export const MILESTONE_EYE_ICON_SIZE = 20;
+
 // ----------------------------------------------------------------------
 
 export type MilestoneBadgeProps = Omit<PaperProps, 'children'> & {
@@ -213,9 +220,106 @@ export function MilestoneBadge({
         </Box>
       )}
 
-      <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
-        {displayTitle}
-      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 0.75,
+          justifyContent: rightAlign ? 'flex-end' : 'flex-start',
+        }}
+      >
+        {/* Eye button: left side for right-aligned (left-column) cards */}
+        {onMarkViewed && rightAlign && (
+          <Tooltip
+            title={isViewed ? 'Mark as not viewed' : 'Mark as viewed'}
+            placement="right"
+            arrow
+          >
+            <Box
+              component="button"
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                onMarkViewed();
+              }}
+              aria-label={isViewed ? 'Mark as not viewed' : 'Mark as viewed'}
+              aria-pressed={isViewed}
+              sx={{
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                p: 0,
+                color: isViewed ? 'success.main' : 'text.secondary',
+                transition: 'color 0.15s',
+                '&:hover': { color: isViewed ? 'success.dark' : 'text.primary' },
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: isViewed ? 'success.main' : 'primary.main',
+                  outlineOffset: 2,
+                  borderRadius: 0.5,
+                },
+              }}
+            >
+              <GiselleIcon
+                icon={isViewed ? 'solar:eye-bold' : 'solar:eye-outline'}
+                width={MILESTONE_EYE_ICON_SIZE}
+                aria-hidden
+              />
+            </Box>
+          </Tooltip>
+        )}
+
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
+          {displayTitle}
+        </Typography>
+
+        {/* Eye button: right side for left-aligned (right-column) cards */}
+        {onMarkViewed && !rightAlign && (
+          <Tooltip
+            title={isViewed ? 'Mark as not viewed' : 'Mark as viewed'}
+            placement="left"
+            arrow
+          >
+            <Box
+              component="button"
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                onMarkViewed();
+              }}
+              aria-label={isViewed ? 'Mark as not viewed' : 'Mark as viewed'}
+              aria-pressed={isViewed}
+              sx={{
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                p: 0,
+                color: isViewed ? 'success.main' : 'text.secondary',
+                transition: 'color 0.15s',
+                '&:hover': { color: isViewed ? 'success.dark' : 'text.primary' },
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: isViewed ? 'success.main' : 'primary.main',
+                  outlineOffset: 2,
+                  borderRadius: 0.5,
+                },
+              }}
+            >
+              <GiselleIcon
+                icon={isViewed ? 'solar:eye-bold' : 'solar:eye-outline'}
+                width={MILESTONE_EYE_ICON_SIZE}
+                aria-hidden
+              />
+            </Box>
+          </Tooltip>
+        )}
+      </Box>
 
       {isExpanded && m.description && (
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
@@ -293,41 +397,6 @@ export function MilestoneBadge({
             ))}
           </Box>
         </Collapse>
-      )}
-
-      {onMarkViewed && (
-        <Tooltip title={isViewed ? 'Viewed' : 'Mark as viewed'} placement="left" arrow>
-          <Box
-            component="button"
-            onClick={(e: React.MouseEvent) => {
-              e.stopPropagation();
-              onMarkViewed();
-            }}
-            aria-label={isViewed ? 'Viewed' : 'Mark as viewed'}
-            aria-pressed={isViewed}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.4,
-              background: 'none',
-              border: 'none',
-              cursor: isViewed ? 'default' : 'pointer',
-              p: 0.25,
-              mt: 0.75,
-              borderRadius: 0.75,
-              color: isViewed ? 'success.main' : 'text.disabled',
-              opacity: isViewed ? 1 : 0.55,
-              transition: 'opacity 0.15s, color 0.15s',
-              '&:hover': { opacity: 1 },
-            }}
-          >
-            <GiselleIcon
-              icon={isViewed ? 'solar:eye-bold' : 'solar:eye-outline'}
-              width={14}
-              aria-hidden
-            />
-          </Box>
-        </Tooltip>
       )}
     </Paper>
   );
