@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect, useCallback, type ReactNode } from 'react
 
 import Box from '@mui/material/Box';
 import Timeline from '@mui/lab/Timeline';
+import Tooltip from '@mui/material/Tooltip';
 
 import { PhaseCard } from './phase-card';
 import { TimelineDot } from './timeline-dot';
@@ -193,6 +194,27 @@ function buildPhaseCardTsxProps(
     suppressElevation: anyExpanded && !isThisPhaseExpanded,
     expandableIcon,
   };
+}
+
+/** Returns the tooltip label for a timeline dot based on its status and date. */
+function dotStatusLabel(
+  color: HighlightedPaletteKey,
+  done: boolean,
+  date: string | undefined
+): string {
+  let status: string;
+  if (done) {
+    status = 'Done';
+  } else if (color === 'error') {
+    status = 'Blocking';
+  } else if (color === 'warning') {
+    status = 'In progress';
+  } else if (color === 'success') {
+    status = 'Planned';
+  } else {
+    status = 'Upcoming';
+  }
+  return date ? `${status} · ${date}` : status;
 }
 
 /** Resolves the JSX prop bag for the phase-row TimelineDot. */
@@ -409,15 +431,23 @@ function buildMilestoneRow(
             }),
           }}
         >
-          <TimelineDot
-            icon={ms.icon}
-            color={msColor}
-            size="milestone"
-            done={msDone}
-            onClick={msDotClickAction}
-            onKeyDown={msDotKeyDown}
-            {...dotChecklistProps}
-          />
+          <Tooltip
+            title={dotStatusLabel(msColor, msDone, ms.date)}
+            placement={ctx.phaseSide === 'left' ? 'right' : 'left'}
+            arrow
+          >
+            <span>
+              <TimelineDot
+                icon={ms.icon}
+                color={msColor}
+                size="milestone"
+                done={msDone}
+                onClick={msDotClickAction}
+                onKeyDown={msDotKeyDown}
+                {...dotChecklistProps}
+              />
+            </span>
+          </Tooltip>
         </Box>
         {/* No spine here — the phase row's SpineConnector runs behind all milestone dots */}
       </Box>
@@ -752,21 +782,29 @@ export function TimelineTwoColumn({
                   ...(isDone && { opacity: 0.35, filter: 'grayscale(1)' }),
                 }}
               >
-                <TimelineDot
-                  icon={phase.icon}
-                  color={dotColor}
-                  size="phase"
-                  {...buildPhaseDotTsxProps(
-                    phase,
-                    checklist,
-                    isDone,
-                    dotAriaLabel,
-                    phaseToggleCounts,
-                    selectedPhaseKey
-                  )}
-                  onClick={dotClickAction}
-                  onKeyDown={dotKeyDownHandler}
-                />
+                <Tooltip
+                  title={dotStatusLabel(dotColor, isDone, phase.date)}
+                  placement={phase.side === 'left' ? 'right' : 'left'}
+                  arrow
+                >
+                  <span>
+                    <TimelineDot
+                      icon={phase.icon}
+                      color={dotColor}
+                      size="phase"
+                      {...buildPhaseDotTsxProps(
+                        phase,
+                        checklist,
+                        isDone,
+                        dotAriaLabel,
+                        phaseToggleCounts,
+                        selectedPhaseKey
+                      )}
+                      onClick={dotClickAction}
+                      onKeyDown={dotKeyDownHandler}
+                    />
+                  </span>
+                </Tooltip>
                 {/* SpineConnector spans the full li height — milestone dots overlay it at % positions */}
                 {!isLastPhase && (
                   <SpineConnector
