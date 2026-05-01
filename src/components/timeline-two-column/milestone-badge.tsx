@@ -56,6 +56,13 @@ export type MilestoneBadgeProps = Omit<PaperProps, 'children'> & {
   isViewed?: boolean;
   /** Called when the user clicks the viewed eye button. Parent handles persistence. */
   onMarkViewed?: () => void;
+  /**
+   * Which column this milestone sits in. Left-column milestones right-align their
+   * collapsed title and inline elements so text sits flush against the centre spine.
+   * Alignment resets to left when the card is expanded.
+   * @default 'right'
+   */
+  columnSide?: 'left' | 'right';
 };
 
 /**
@@ -73,9 +80,14 @@ export function MilestoneBadge({
   stableId,
   isViewed = false,
   onMarkViewed,
+  columnSide = 'right',
   sx,
   ...other
 }: MilestoneBadgeProps) {
+  // Right-align the collapsed view when in the left column so text sits flush
+  // against the centre spine instead of leaving a gap at the right edge of the card.
+  // Alignment always resets to left once the card is expanded (full reading flow).
+  const rightAlign = columnSide === 'left' && !isExpanded;
   const hasDetails = !!m.details?.length;
   const colorKey = (m.color ?? 'primary') as HighlightedPaletteKey;
   const titleSlug = String(m.title)
@@ -128,6 +140,7 @@ export function MilestoneBadge({
             : 'none',
           transition:
             'box-shadow 0.22s, opacity 0.3s, filter 0.3s, background-color 0.22s, border-color 0.22s',
+          ...(rightAlign && { textAlign: 'right' }),
           ...(done && { opacity: 0.45, filter: 'grayscale(1)' }),
           // Hover reveals the styled card — only when collapsed and interactive
           ...(hasDetails &&
@@ -173,7 +186,15 @@ export function MilestoneBadge({
       )}
 
       {m.new && (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.5,
+            mb: 0.5,
+            justifyContent: rightAlign ? 'flex-end' : undefined,
+          }}
+        >
           <Box
             sx={{
               width: 7,

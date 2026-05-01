@@ -313,6 +313,73 @@ npm run test:coverage   # generates text summary + lcov report
 - Do not artificially boost coverage with empty assertions or `it.todo`. Every test must make at least one meaningful assertion.
 - Coverage excludes: `*.test.ts`, `*.stories.tsx`, `*/index.ts` barrel files. Do not add test-only helper files to the coverage `include` pattern.
 
+### TimelineTwoColumn — MilestoneBadge column alignment rule
+
+`MilestoneBadge` accepts a `columnSide: 'left' | 'right'` prop (default `'right'`).
+
+**Rule — non-negotiable:**
+
+- Left-column milestones (`columnSide="left"`) right-align their collapsed title and inline elements so text sits flush against the centre spine. There must be no ragged gap between the card text and the spine.
+- The alignment resets to left the moment the card is **expanded** (full reading flow requires left-to-right text).
+- **On hover, the alignment must not change.** Hover only reveals the card background and border; text stays right-aligned until the card is actually opened.
+- Right-column milestones always use left alignment (default). Do not pass `columnSide` at all, or pass `"right"`.
+
+**Implementation — how the prop works:**
+
+| State | `columnSide="left"` | `columnSide="right"` |
+|---|---|---|
+| Collapsed | `textAlign: 'right'` on Paper root; flex rows use `justifyContent: 'flex-end'` | No override (default left) |
+| Expanded | Left alignment (both columns identical) | Left alignment |
+
+**Where it is set:** in `timeline-two-column.tsx`, both `MilestoneBadge` call sites:
+- Left-column block (`ctx.phaseSide === 'left'`): `<MilestoneBadge columnSide="left" ...>`
+- Right-column block (`ctx.phaseSide === 'right'`): no `columnSide` (default `'right'`)
+
+---
+
+### TimelineTwoColumn — done-dot color enforcement rule
+
+**Rule — non-negotiable:**
+
+Every dot on the timeline — phase dots and milestone dots alike — must be **green with a checkmark** when `done=true`. The green success color is the universal "done" signal and must never be overridden by the data's `color` prop or by a grayscale/opacity filter applied by the parent container.
+
+**Two-part implementation (both are required):**
+
+1. **`resolveEffectiveColor(color, done)`** in `timeline-dot.tsx` forces `color='success'` when `done=true`. This is called inside `TimelineDot` before any sx callbacks reference the color. Exported for regression tests.
+
+2. **No grayscale on the dot container.** The center column Box in `timeline-two-column.tsx` must NOT apply `filter: 'grayscale(1)'` or `opacity` to the dot. Grayscale/opacity belongs on the card Paper only — not on the dot's wrapper Box.
+
+| Element | Done state | Expected |
+|---|---|---|
+| Phase dot | `done=true` | Green circle with checkmark; never grayed |
+| Milestone dot | `done=true` | Green filled circle with checkmark; never grayed |
+| Phase dot | `done=false` | Uses data `color` as-is |
+| Milestone dot | `done=false` | Uses resolved `msColor` (overdue → error, else data color) |
+
+**Regression test location:** `timeline-dot.test.ts` — `resolveEffectiveColor — done-dot color enforcement (regression)`.
+
+---
+
+### TimelineTwoColumn — corner alert badge column-side positioning rule
+
+`PhaseCard` accepts a `columnSide: 'left' | 'right'` prop (default `'right'`). The corner alert badge uses this to anchor itself on the correct edge.
+
+**Rule — non-negotiable:**
+
+- Right-column cards: badge floats on the **right** top corner (`right: 0, transform: translate(50%, -50%)`). This places it between the card and the centre spine.
+- Left-column cards: badge floats on the **left** top corner (`left: 0, transform: translate(-50%, -50%)`). This mirrors it symmetrically — placing it on the outer edge, away from the spine.
+
+**Why:** a right-column badge on a left-column card floats against the spine, overlapping the spine connector and milestone dots. The badge must always float on the edge that faces outward (away from the spine).
+
+**Where it is set:** in `timeline-two-column.tsx`, the `PhaseCard` call site:
+```tsx
+<PhaseCard phase={phase} columnSide={phase.side} {...buildPhaseCardTsxProps(...)} />
+```
+
+The logic is encapsulated in `resolveCornerBadgeAlign(columnSide)` in `phase-card.tsx`, which returns `{ left?, right?, transform, tooltipPlacement }`. Exported for regression tests.
+
+**Regression test location:** `phase-card.test.ts` — `resolveCornerBadgeAlign — column-side positioning (regression)`.
+
 ---
 
 ## MUI Store quality bar (enforce always — not just before submission)

@@ -285,7 +285,15 @@ function resolveMilestoneState(
     ms.color && ms.color !== 'inherit' && ms.color !== 'grey'
       ? (ms.color as HighlightedPaletteKey)
       : dotColor;
-  const msColor: HighlightedPaletteKey = msIsOverdue ? 'error' : msColorFromData;
+  // Done milestones always use 'success' — same rule as phase dots (see resolveEffectiveColor).
+  let msColor: HighlightedPaletteKey;
+  if (msDone) {
+    msColor = 'success';
+  } else if (msIsOverdue) {
+    msColor = 'error';
+  } else {
+    msColor = msColorFromData;
+  }
   return { msDone, msColor };
 }
 
@@ -408,6 +416,7 @@ function buildMilestoneRow(
               suppressElevation={suppressElevation}
               stableId={`${ctx.phaseKey}-${mi}`}
               expandableIcon={ctx.expandableIcon}
+              columnSide="left"
               isViewed={ctx.viewedKeys.has(`ms-${ctx.phaseKey}-${mi}`)}
               onMarkViewed={
                 ctx.onMarkViewed ? () => ctx.onMarkViewed!(`ms-${ctx.phaseKey}-${mi}`) : undefined
@@ -736,6 +745,7 @@ export function TimelineTwoColumn({
             <Box onClick={phaseCardStopProp}>
               <PhaseCard
                 phase={phase}
+                columnSide={phase.side}
                 {...buildPhaseCardTsxProps(
                   checklist,
                   isDone,
@@ -810,7 +820,6 @@ export function TimelineTwoColumn({
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  ...(isDone && { opacity: 0.35, filter: 'grayscale(1)' }),
                 }}
               >
                 {/* Dot wrapper: relative so the date pill can float above without affecting layout */}

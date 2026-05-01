@@ -80,7 +80,13 @@ export function parseSortableDate(dateStr: string): number | null {
 // ----------------------------------------------------------------------
 
 /** Minimal subset of TimelinePhase needed for chronological sorting. */
-type SortablePhase = { date: string; key: number; active?: boolean; done?: boolean; title?: string };
+type SortablePhase = {
+  date: string;
+  key: number;
+  active?: boolean;
+  done?: boolean;
+  title?: string;
+};
 
 /**
  * Returns a new array sorted by date.

@@ -108,6 +108,25 @@ function DotInner({
 // ----------------------------------------------------------------------
 
 /**
+ * Resolves the effective palette key for a dot.
+ *
+ * Done dots **always** render as `'success'` regardless of the `color` prop — this
+ * is a hard visual contract: the green checkmark is the universal "done" signal on
+ * the timeline. Passing any other color when `done=true` would produce a coloured
+ * checkmark that conflicts with that signal.
+ *
+ * Exported so tests can assert the rule independently of theme rendering.
+ */
+export function resolveEffectiveColor(
+  color: HighlightedPaletteKey,
+  done: boolean
+): HighlightedPaletteKey {
+  return done ? 'success' : color;
+}
+
+// ----------------------------------------------------------------------
+
+/**
  * Unified dot circle for the timeline component.
  *
  * Replaces both the inner content of MUI `<TimelineDot>` in `timeline-two-column.tsx`
@@ -115,7 +134,7 @@ function DotInner({
  * remains in the parent.
  *
  * Two mutually exclusive inner states:
- * 1. `done` → animated checkmark SVG
+ * 1. `done` → animated checkmark SVG (always success/green — see `resolveEffectiveColor`)
  * 2. default → `icon` prop
  *
  * Active dots show a pulsing ring halo via `::after`.
@@ -147,6 +166,8 @@ export function TimelineDot({
   const isMilestone = size === 'milestone';
   const dotSize = getDotSize(isMilestone, active);
   const iconSize = getIconSize(isMilestone, active);
+  // Done dots always use 'success' — the green checkmark is the universal "done" signal.
+  const effectiveColor = resolveEffectiveColor(color, done);
   // Phase dot done = outlined (transparent + border). Milestone dots stay filled.
   const isDonePhase = done && !isMilestone;
 
@@ -180,7 +201,8 @@ export function TimelineDot({
             ...(tabIndex !== undefined && {
               '&:focus-visible': {
                 outline: '2px solid',
-                outlineColor: theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main,
+                outlineColor:
+                  theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main,
                 outlineOffset: 3,
               },
             }),
@@ -195,7 +217,7 @@ export function TimelineDot({
                     inset: -5,
                     borderRadius: '50%',
                     border: '2px solid',
-                    borderColor: `${color}.main`,
+                    borderColor: `${effectiveColor}.main`,
                     animation: `${pulseRing} 1.5s ease-in-out infinite`,
                   },
                 },
@@ -218,21 +240,22 @@ export function TimelineDot({
           // Always fill with palette color; phase dots go transparent+bordered when done.
           bgcolor: isDonePhase
             ? 'transparent'
-            : (theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main),
+            : (theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main),
           color: isDonePhase
-            ? (theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main)
+            ? (theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main)
             : theme.vars!.palette.common.white,
           // Phase done: outlined border (mirrors MUI TimelineDot variant="outlined").
           ...(isDonePhase && {
             border: '2px solid',
-            borderColor: theme.vars!.palette[color]?.main ?? theme.vars!.palette.primary.main,
+            borderColor:
+              theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main,
           }),
           // Milestone: white separator border + colored drop shadow.
           ...(isMilestone && {
             border: '2px solid',
             borderColor: 'background.paper',
             boxShadow: `0 2px 8px rgba(${
-              theme.vars!.palette[color]?.mainChannel ??
+              theme.vars!.palette[effectiveColor]?.mainChannel ??
               (theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']
             } / 0.5)`,
           }),
@@ -240,7 +263,7 @@ export function TimelineDot({
             isMilestone && {
               '&:hover': {
                 boxShadow: `0 6px 20px rgba(${
-                  theme.vars!.palette[color]?.mainChannel ??
+                  theme.vars!.palette[effectiveColor]?.mainChannel ??
                   (theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']
                 } / 0.6)`,
               },

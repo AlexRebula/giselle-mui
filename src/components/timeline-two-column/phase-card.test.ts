@@ -34,6 +34,7 @@ import {
   PHASE_PILL_TEXT_FONT_SIZE,
   buildPlatformStripItems,
   derivePlatformEntry,
+  resolveCornerBadgeAlign,
 } from './phase-card';
 
 // ---------------------------------------------------------------------------
@@ -492,5 +493,49 @@ describe('readability — minimum size constants', () => {
 
   it('[regression] PHASE_PILL_TEXT_FONT_SIZE >= 0.75rem (count label in expandable details pill)', () => {
     expect(parseRem(PHASE_PILL_TEXT_FONT_SIZE)).toBeGreaterThanOrEqual(MIN_FONT_SIZE_REM);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// resolveCornerBadgeAlign — column-side positioning (regression)
+// ---------------------------------------------------------------------------
+
+describe('resolveCornerBadgeAlign — column-side positioning (regression)', () => {
+  // Regression: the corner alert badge was always positioned at the top-right edge
+  // of the card regardless of which column the card sat in. When the card is in the
+  // left column the right edge faces the centre spine — the badge was rendered between
+  // the spine and the card text (obscured/overlapping). The correct position for a
+  // left-column card is the top-left edge (between the card and the outer viewport edge).
+
+  it('[regression] right column positions badge at the right edge', () => {
+    const { right, left, transform } = resolveCornerBadgeAlign('right');
+    expect(right).toBe(0);
+    expect(left).toBeUndefined();
+    expect(transform).toBe('translate(50%, -50%)');
+  });
+
+  it('[regression] left column positions badge at the left edge', () => {
+    const { left, right, transform } = resolveCornerBadgeAlign('left');
+    expect(left).toBe(0);
+    expect(right).toBeUndefined();
+    expect(transform).toBe('translate(-50%, -50%)');
+  });
+
+  it('[regression] right column uses top-end tooltip placement', () => {
+    expect(resolveCornerBadgeAlign('right').tooltipPlacement).toBe('top-end');
+  });
+
+  it('[regression] left column uses top-start tooltip placement (opens away from spine)', () => {
+    expect(resolveCornerBadgeAlign('left').tooltipPlacement).toBe('top-start');
+  });
+
+  it('[regression] right and left placements are mutually exclusive (never both set)', () => {
+    const rightResult = resolveCornerBadgeAlign('right');
+    expect(rightResult.right).toBeDefined();
+    expect(rightResult.left).toBeUndefined();
+
+    const leftResult = resolveCornerBadgeAlign('left');
+    expect(leftResult.left).toBeDefined();
+    expect(leftResult.right).toBeUndefined();
   });
 });

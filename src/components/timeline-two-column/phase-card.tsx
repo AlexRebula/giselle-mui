@@ -49,6 +49,31 @@ export const PHASE_PILL_TEXT_FONT_SIZE = '0.75rem';
 // ----------------------------------------------------------------------
 
 /**
+ * Resolves the horizontal position of the corner alert badge depending on which
+ * column the card sits in.
+ *
+ * - Right column (default): badge floats on the **right** top corner so it sits
+ *   between the card and the centre spine.
+ * - Left column: badge floats on the **left** top corner so it sits between the
+ *   card and the centre spine (mirrored).
+ *
+ * Exported so tests can assert the positioning rule independently.
+ */
+export function resolveCornerBadgeAlign(columnSide: 'left' | 'right'): {
+  left?: number;
+  right?: number;
+  transform: string;
+  tooltipPlacement: 'top-start' | 'top-end';
+} {
+  if (columnSide === 'left') {
+    return { left: 0, transform: 'translate(-50%, -50%)', tooltipPlacement: 'top-start' };
+  }
+  return { right: 0, transform: 'translate(50%, -50%)', tooltipPlacement: 'top-end' };
+}
+
+// ----------------------------------------------------------------------
+
+/**
  * A labelled group: an optional overline label above any icon/logo strip.
  * Handles the repeated pattern across platforms, clients, and projects.
  */
@@ -134,9 +159,16 @@ function CardDetailBullets({ id, details, in: expanded }: CardDetailBulletsProps
  */
 type CardCornerAlert = { message: string; severity: 'error' | 'warning' };
 
-function CardCornerAlertBadge({ alerts }: { alerts: CardCornerAlert[] }) {
+function CardCornerAlertBadge({
+  alerts,
+  columnSide = 'right',
+}: {
+  alerts: CardCornerAlert[];
+  columnSide?: 'left' | 'right';
+}) {
   if (alerts.length === 0) return null;
   const hasError = alerts.some((a) => a.severity === 'error');
+  const { left, right, transform, tooltipPlacement } = resolveCornerBadgeAlign(columnSide);
   const tooltipContent = (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25, py: 0.5, px: 0.25 }}>
       {alerts.map((a, i) => (
@@ -160,7 +192,7 @@ function CardCornerAlertBadge({ alerts }: { alerts: CardCornerAlert[] }) {
   return (
     <Tooltip
       title={tooltipContent}
-      placement="top-end"
+      placement={tooltipPlacement}
       arrow
       slotProps={{
         tooltip: {
@@ -179,9 +211,9 @@ function CardCornerAlertBadge({ alerts }: { alerts: CardCornerAlert[] }) {
         sx={{
           position: 'absolute',
           top: 0,
-          right: 0,
+          ...(left !== undefined ? { left } : { right }),
           zIndex: 10,
-          transform: 'translate(50%, -50%)',
+          transform,
           width: CORNER_ALERT_BADGE_SIZE,
           height: CORNER_ALERT_BADGE_SIZE,
           borderRadius: '50%',
@@ -632,6 +664,12 @@ export type PhaseCardProps = Omit<BoxProps, 'children'> & {
    * Pass `null` to suppress the icon and show only the count number.
    */
   expandableIcon?: ReactNode;
+  /**
+   * Which column the card sits in — controls where the corner alert badge is anchored.
+   * - `'right'` (default): badge floats on the right top corner (between card and spine).
+   * - `'left'`: badge floats on the left top corner (mirrored, between spine and card edge).
+   */
+  columnSide?: 'left' | 'right';
 };
 
 /**
@@ -656,6 +694,7 @@ export function PhaseCard({
   expandableIcon,
   isViewed = false,
   onMarkViewed,
+  columnSide = 'right',
   sx,
   ...other
 }: PhaseCardProps) {
@@ -696,7 +735,7 @@ export function PhaseCard({
   return (
     <Box sx={[{ position: 'relative' }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
       {/* Corner alert badge — groups overdue/date-conflict behind a single icon */}
-      <CardCornerAlertBadge alerts={cornerAlerts} />
+      <CardCornerAlertBadge alerts={cornerAlerts} columnSide={columnSide} />
 
       <Paper
         role={hasDetails ? 'button' : undefined}

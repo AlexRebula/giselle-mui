@@ -58,7 +58,7 @@ vi.mock('@mui/material/Box', () => ({
 }));
 
 // Import AFTER mocks are registered.
-import { TimelineDot } from './timeline-dot';
+import { TimelineDot, resolveEffectiveColor } from './timeline-dot';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -190,5 +190,43 @@ describe('TimelineDot — interaction', () => {
       root.unmount();
     });
     document.body.removeChild(container);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// resolveEffectiveColor — done-dot color enforcement (regression)
+// ---------------------------------------------------------------------------
+
+describe('resolveEffectiveColor — done-dot color enforcement (regression)', () => {
+  // Regression: done phase and milestone dots were grayed out instead of green
+  // because the parent applied grayscale AND the color prop was not forced to
+  // 'success' when done=true. This describe block ensures the contract is never
+  // silently broken again.
+
+  it('[regression] done=true always returns success regardless of the color prop', () => {
+    const colors = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
+    for (const color of colors) {
+      expect(resolveEffectiveColor(color, true)).toBe('success');
+    }
+  });
+
+  it('[regression] done=false returns the passed color unchanged', () => {
+    const colors = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
+    for (const color of colors) {
+      expect(resolveEffectiveColor(color, false)).toBe(color);
+    }
+  });
+
+  it('[regression] done=true with color=error still returns success (overdue done dots must be green)', () => {
+    // An overdue item that was also marked done should show a green checkmark,
+    // not a red dot — the done state always wins.
+    expect(resolveEffectiveColor('error', true)).toBe('success');
+  });
+
+  it('[regression] done=true renders a checkmark regardless of the color prop (behavior)', () => {
+    // Regardless of what color the data specifies, done=true must always
+    // render the checkmark SVG — not the icon supplied by the data.
+    const html = render({ done: true, color: 'error' });
+    expect(html).toContain('points="20 6 9 17 4 12"');
   });
 });
