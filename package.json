@@ -39,7 +39,7 @@
     "check": "node scripts/quality-gate.js --fix",
     "check:verify": "node scripts/quality-gate.js --verify",
     "clean": "rm -rf dist storybook-static",
-    "postinstall": "node scripts/setup-hooks.js"
+    "postinstall": "node --input-type=module -e \"import('./scripts/setup-hooks.js').catch(()=>{})\""
   },
   "repository": {
     "type": "git",
