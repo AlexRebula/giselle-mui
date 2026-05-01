@@ -1,7 +1,7 @@
 import type { PaperProps } from '@mui/material/Paper';
 import type { TimelinePhase, HighlightedPaletteKey } from './types';
 
-import { useCallback, useState, type ReactNode, type KeyboardEvent } from 'react';
+import { useCallback, type ReactNode, type KeyboardEvent } from 'react';
 import type React from 'react';
 
 import Box from '@mui/material/Box';
@@ -83,13 +83,8 @@ export function MilestoneBadge({
     .toLowerCase();
   const detailsId = stableId ? `ms-details-${stableId}` : `ms-details-${titleSlug}`;
 
-  const [isHovered, setIsHovered] = useState(false);
-
-  // Three-level title disclosure:
-  //   REST (collapsed, not hovered): shortTitle ?? title
-  //   HOVER or EXPANDED: full title + date + description
-  const showContent = isHovered || isExpanded;
-  const displayTitle = showContent ? m.title : (m.shortTitle ?? m.title);
+  // Two-level title disclosure: collapsed shows shortTitle (glanceable), expanded shows full title.
+  const displayTitle = isExpanded ? m.title : (m.shortTitle ?? m.title);
 
   const handleClick = useCallback(() => {
     if (hasDetails) onRequestExpand();
@@ -114,8 +109,6 @@ export function MilestoneBadge({
       aria-controls={hasDetails ? detailsId : undefined}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       sx={[
         (theme) => ({
           p: 2,
@@ -165,7 +158,7 @@ export function MilestoneBadge({
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      {showContent && (
+      {isExpanded && (
         <Typography
           variant="caption"
           sx={{
@@ -203,7 +196,7 @@ export function MilestoneBadge({
         {displayTitle}
       </Typography>
 
-      {showContent && m.description && (
+      {isExpanded && m.description && (
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
           {m.description}
         </Typography>
