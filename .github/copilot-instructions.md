@@ -447,7 +447,7 @@ All `isViewed` / `onMarkViewed` eye buttons in this component family must meet W
 - **Never use `opacity` alone to communicate state.** Opacity reduces visual contrast below WCAG 1.4.11 (3:1 ratio for UI components). Use icon variant change (`bold` vs `outline`) AND a foreground/background colour change together.
 - **Never set `cursor: 'default'` on a toggleable button.** The user must always be able to click to toggle. A viewed item must be un-markable.
 - **Always include `aria-pressed={isViewed}` and a descriptive `aria-label`** that reflects the current state and the action that will happen on click (e.g. `'Mark as not viewed'` when `isViewed=true`).
-- **Export size constants.** Every eye icon/button size must be a named export (`PHASE_EYE_ICON_SIZE`, `MILESTONE_EYE_ICON_SIZE`). Write a regression test asserting each is `>= 20`.
+- **Export size constants.** Every eye icon/button size must be a named export (`PHASE_EYE_ICON_SIZE`, `MILESTONE_EYE_ICON_SIZE`, `EYE_BUTTON_MIN_SIZE`, `MILESTONE_EYE_BUTTON_MIN_SIZE`). Write a regression test asserting each icon size is `>= 20` and each button min-size is `>= 24`.
 
 **Where the eye buttons live:**
 - Phase card: floats outside `<Paper>` at the bottom outer edge (`position: absolute, bottom: 0`), column-side aware. Constants: `PHASE_EYE_ICON_SIZE = 20`, `EYE_BUTTON_MIN_SIZE = 28`.

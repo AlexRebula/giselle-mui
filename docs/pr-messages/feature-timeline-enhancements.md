@@ -75,7 +75,7 @@ Left-column milestones right-align their collapsed title and inline elements so 
 
 ### 1g. `sortPhases` — `key`-based sort option
 
-`utils.ts` exports `sortPhasesByKey(phases)` alongside the existing `sortPhasesByDate`. `TimelineTwoColumnProps` accepts `sortBy: 'date' | 'key'` (default `'date'`). Fractional keys (e.g. `4.5`) interleave life events between roles.
+`utils.ts` extends `sortPhasesByDate(phases, sortOrder)` with a `'key'` option. `TimelineTwoColumnProps` accepts `sortOrder: 'asc' | 'desc' | 'key'` (default `'desc'`). In `'key'` mode phases sort strictly by `phase.key` ascending, ignoring dates — fractional keys (e.g. `4.5`) interleave life events between roles.
 
 ### 1h. `TimelinePlatformItem` object form
 
@@ -90,7 +90,7 @@ Left-column milestones right-align their collapsed title and inline elements so 
 | `milestone-badge.test.ts` | Structure, ARIA, `columnSide` alignment, eye button regression |
 | `phase-card.test.ts` | `resolveCornerBadgeAlign` regression, eye button WCAG regression, structure |
 | `timeline-dot.test.ts` | `resolveEffectiveColor` regression |
-| `utils.test.ts` | `sortPhasesByKey`, `sortPhasesByDate`, `getLastYear` |
+| `utils.test.ts` | `sortPhasesByDate` (asc / desc / key modes), `getLastYear`, `parseFirstDate`, `detectPhaseOverlaps` |
 | `timeline-two-column.column-placement.test.ts` | Column placement invariant |
 
 ---

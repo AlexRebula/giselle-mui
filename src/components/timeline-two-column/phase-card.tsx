@@ -214,6 +214,7 @@ function CardCornerAlertBadge({
     >
       <Box
         aria-label={`${alerts.length} issue${alerts.length !== 1 ? 's' : ''}`}
+        tabIndex={0}
         sx={{
           position: 'absolute',
           top: 0,
@@ -231,6 +232,11 @@ function CardCornerAlertBadge({
           boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
           cursor: 'help',
           pointerEvents: 'auto',
+          '&:focus-visible': {
+            outline: '2px solid',
+            outlineColor: hasError ? 'error.main' : 'warning.dark',
+            outlineOffset: 2,
+          },
         }}
       >
         <GiselleIcon icon="solar:danger-triangle-bold" width={CORNER_ALERT_ICON_SIZE} aria-hidden />
@@ -945,6 +951,7 @@ export function PhaseCard({
         >
           <Box
             component="button"
+            type="button"
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               onMarkViewed();
@@ -960,6 +967,8 @@ export function PhaseCard({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              minWidth: EYE_BUTTON_MIN_SIZE,
+              minHeight: EYE_BUTTON_MIN_SIZE,
               background: 'none',
               border: 'none',
               cursor: 'pointer',

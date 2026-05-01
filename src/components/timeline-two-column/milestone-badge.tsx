@@ -31,6 +31,12 @@ export const MILESTONE_PILL_TEXT_FONT_SIZE = '0.75rem';
  */
 export const MILESTONE_EYE_ICON_SIZE = 20;
 
+/**
+ * Minimum touch-target size (px) for the milestone eye viewed button.
+ * Meets WCAG 2.2 AA 2.5.8 — minimum 24 × 24 CSS pixels for pointer targets.
+ */
+export const MILESTONE_EYE_BUTTON_MIN_SIZE = 28;
+
 // ----------------------------------------------------------------------
 
 export type MilestoneBadgeProps = Omit<PaperProps, 'children'> & {
@@ -237,6 +243,7 @@ export function MilestoneBadge({
           >
             <Box
               component="button"
+              type="button"
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 onMarkViewed();
@@ -248,6 +255,8 @@ export function MilestoneBadge({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                minWidth: MILESTONE_EYE_BUTTON_MIN_SIZE,
+                minHeight: MILESTONE_EYE_BUTTON_MIN_SIZE,
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -285,6 +294,7 @@ export function MilestoneBadge({
           >
             <Box
               component="button"
+              type="button"
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 onMarkViewed();
@@ -296,6 +306,8 @@ export function MilestoneBadge({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                minWidth: MILESTONE_EYE_BUTTON_MIN_SIZE,
+                minHeight: MILESTONE_EYE_BUTTON_MIN_SIZE,
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',

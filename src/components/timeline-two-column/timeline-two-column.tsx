@@ -77,6 +77,10 @@ function TimelineColumn({ columnSide, hasContent, children, bottomPadding }: Tim
   );
 }
 
+// Stable empty Set — returned when `viewedKeys` prop is undefined so callers
+// always get the same reference and avoid creating a new Set on every render.
+const EMPTY_VIEWED_KEYS = new Set<string>();
+
 // ── Milestone type alias ───────────────────────────────────────────────────
 
 type Milestone = NonNullable<TimelinePhase['milestones']>[number];
@@ -700,6 +704,10 @@ export function TimelineTwoColumn({
     return () => document.removeEventListener('click', handler);
   }, [anyExpanded]);
 
+  // Stable reference for the viewed-key lookup — avoids creating a new Set on every render
+  // when the `viewedKeys` prop is undefined.
+  const effectiveViewedKeys = viewedKeys ?? EMPTY_VIEWED_KEYS;
+
   return (
     <Box sx={[{ position: 'relative' }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
       <Timeline
@@ -756,7 +764,7 @@ export function TimelineTwoColumn({
                   isThisPhaseExpanded,
                   expandableIcon
                 )}
-                isViewed={(viewedKeys ?? new Set()).has(phaseViewKey)}
+                isViewed={effectiveViewedKeys.has(phaseViewKey)}
                 onMarkViewed={onMarkViewed ? () => onMarkViewed(phaseViewKey) : undefined}
                 isExpanded={isThisPhaseExpanded}
                 onRequestExpand={() => handleExpandPhaseCard(phase.key)}
@@ -773,7 +781,7 @@ export function TimelineTwoColumn({
             anyExpanded,
             dotColor,
             expandableIcon,
-            viewedKeys: viewedKeys ?? new Set(),
+            viewedKeys: effectiveViewedKeys,
             onMarkViewed,
             handleToggleMilestone,
             handleExpandMilestone,

@@ -31,6 +31,8 @@ import {
   MILESTONE_DATE_FONT_SIZE,
   MILESTONE_PILL_ICON_SIZE,
   MILESTONE_PILL_TEXT_FONT_SIZE,
+  MILESTONE_EYE_ICON_SIZE,
+  MILESTONE_EYE_BUTTON_MIN_SIZE,
 } from './milestone-badge';
 
 // ---------------------------------------------------------------------------
@@ -92,6 +94,8 @@ describe('hasDetails — interactivity gate', () => {
 // ---------------------------------------------------------------------------
 
 const MIN_ICON_SIZE_PX = 16;
+const MIN_INTERACTIVE_ICON_SIZE_PX = 20;
+const MIN_TOUCH_TARGET_PX = 24;
 const MIN_FONT_SIZE_REM = 0.75;
 
 function parseRem(rem: string): number {
@@ -109,5 +113,22 @@ describe('readability — minimum size constants', () => {
 
   it('[regression] MILESTONE_PILL_TEXT_FONT_SIZE >= 0.75rem (count label in expandable details pill)', () => {
     expect(parseRem(MILESTONE_PILL_TEXT_FONT_SIZE)).toBeGreaterThanOrEqual(MIN_FONT_SIZE_REM);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Eye button — WCAG accessibility regression
+//
+// Interactive icon buttons must be >= 20px (WCAG 1.4.11 contrast requirement).
+// Pointer touch targets must be >= 24px (WCAG 2.2 AA 2.5.8).
+// ---------------------------------------------------------------------------
+
+describe('eye button — WCAG accessibility regression', () => {
+  it('[regression] MILESTONE_EYE_ICON_SIZE >= 20px (interactive icon must be larger than decorative)', () => {
+    expect(MILESTONE_EYE_ICON_SIZE).toBeGreaterThanOrEqual(MIN_INTERACTIVE_ICON_SIZE_PX);
+  });
+
+  it('[regression] MILESTONE_EYE_BUTTON_MIN_SIZE >= 24px (meets WCAG 2.2 AA 2.5.8 minimum pointer target)', () => {
+    expect(MILESTONE_EYE_BUTTON_MIN_SIZE).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET_PX);
   });
 });
