@@ -551,7 +551,7 @@ export function TimelineTwoColumn({
   sortOrder = 'desc',
   milestoneSlotHeight = 60,
   phaseCardGap = 90,
-  yearLabelMarginBottom = 30,
+  yearLabelMarginBottom = 50,
   sx,
   ...other
 }: TimelineTwoColumnProps) {
@@ -914,14 +914,19 @@ export function TimelineTwoColumn({
                 // Derivation (dots at equal intervals; last dot at n/(n+1) of li height):
                 //   chip_top = (n+1)×slot − yearLabelMarginBottom − chipHeight(26)
                 //   dot_bottom = n×slot + dotSize(30)
-                //   Required: chip_top > dot_bottom + clearance(8)
-                //   → slot > yearLabelMarginBottom + chipHeight(26) + dotSize(30) + clearance(8)
-                //   → slot > yearLabelMarginBottom + 64
+                //   Required: chip_top > dot_bottom + clearance(24)
+                //   → slot > yearLabelMarginBottom + chipHeight(26) + dotSize(30) + clearance(24)
+                //   → slot > yearLabelMarginBottom + 80
+                //
+                // yearLabelMarginBottom also governs the visual gap between the year chip
+                // and the date pill that floats above the next phase's dot. With the default
+                // of 50, the chip bottom is 50px above the li boundary, the date pill top is
+                // ~23px above it → ~27px of breathing room between them.
                 ...(phaseMilestones.length > 0 && {
                   minHeight:
                     (phaseMilestones.length + 1) *
                     (yearLabelValue !== null
-                      ? Math.max(milestoneSlotHeight, yearLabelMarginBottom + 64)
+                      ? Math.max(milestoneSlotHeight, yearLabelMarginBottom + 80)
                       : milestoneSlotHeight),
                 }),
               }}

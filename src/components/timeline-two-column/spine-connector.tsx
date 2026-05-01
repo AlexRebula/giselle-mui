@@ -25,7 +25,7 @@ type SpineConnectorProps = BoxProps & {
 export function SpineConnector({
   dotColor,
   yearMilestone,
-  yearLabelMarginBottom = 30,
+  yearLabelMarginBottom = 50,
   sx,
   ...other
 }: SpineConnectorProps) {
