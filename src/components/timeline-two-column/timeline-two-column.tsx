@@ -460,15 +460,16 @@ function buildMilestoneRow(
                 left: '50%',
                 transform: 'translateX(-50%)',
                 fontSize: '0.65rem',
-                fontWeight: 600,
-                color: 'text.secondary',
-                bgcolor: 'action.hover',
+                fontWeight: 800,
+                color: 'common.white',
+                bgcolor: 'grey.700',
                 px: 0.75,
                 py: 0.125,
                 borderRadius: 0.75,
                 whiteSpace: 'nowrap',
                 pointerEvents: 'none',
                 zIndex: 2,
+                display: 'none',
               }}
             >
               {ms.date}
@@ -842,15 +843,16 @@ export function TimelineTwoColumn({
                         left: '50%',
                         transform: 'translateX(-50%)',
                         fontSize: '0.65rem',
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        bgcolor: 'action.hover',
+                        fontWeight: 800,
+                        color: 'common.white',
+                        bgcolor: 'grey.700',
                         px: 0.75,
                         py: 0.125,
                         borderRadius: 0.75,
                         whiteSpace: 'nowrap',
                         pointerEvents: 'none',
                         zIndex: 2,
+                        display: 'none',
                       }}
                     >
                       {phase.date}

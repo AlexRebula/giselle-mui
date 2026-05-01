@@ -498,6 +498,7 @@ function buildPaperSx(p: PaperSxParams) {
     ...(p.isDone && {
       opacity: 0.45,
       filter: 'grayscale(1)',
+      '&:hover': { opacity: 1, filter: 'none' },
     }),
     ...(p.phaseSide === 'right' &&
       !p.isHighlighted && {
@@ -790,22 +791,22 @@ export function PhaseCard({
           isNew={Boolean(phase.new)}
         />
 
+        {!phase.hideDate && phase.date && (
+          <Typography
+            variant="subtitle2"
+            sx={buildDateTypographySx({
+              isScenario,
+              isHighlighted,
+              hideDecoration: phase.hideDecoration,
+              color: phase.color,
+            })}
+          >
+            {phase.date}
+          </Typography>
+        )}
+
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
           <Box sx={{ flex: 1 }}>
-            {!phase.hideDate && expanded && (
-              <Typography
-                variant="subtitle2"
-                sx={buildDateTypographySx({
-                  isScenario,
-                  isHighlighted,
-                  hideDecoration: phase.hideDecoration,
-                  color: phase.color,
-                })}
-              >
-                {phase.date}
-              </Typography>
-            )}
-
             <Typography
               variant={isScenario ? 'h6' : 'subtitle1'}
               sx={{ mb: hasDetails ? 0.5 : 1, pr: !isHighlighted && !phase.hideDecoration ? 6 : 0 }}
@@ -873,15 +874,6 @@ export function PhaseCard({
               />
             )}
 
-            {/* Tech stack platforms */}
-            {phase.platforms && phase.platforms.length > 0 && (
-              <LabeledIconStrip label={phase.platformsLabel ?? 'Tech Stack'}>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
-                  {buildPlatformStripItems(phase.platforms)}
-                </Box>
-              </LabeledIconStrip>
-            )}
-
             {/* Client logos */}
             {phase.clients && (
               <LabeledIconStrip label={phase.clientsLabel}>
@@ -893,9 +885,9 @@ export function PhaseCard({
                         src={logo}
                         alt={name}
                         sx={{
-                          height: 28,
+                          height: 40,
                           width: 'auto',
-                          maxWidth: 100,
+                          maxWidth: 140,
                           objectFit: 'contain',
                           opacity: 0.7,
                           filter: 'grayscale(1)',
@@ -905,6 +897,15 @@ export function PhaseCard({
                       />
                     </Tooltip>
                   ))}
+                </Box>
+              </LabeledIconStrip>
+            )}
+
+            {/* Tech stack platforms */}
+            {phase.platforms && phase.platforms.length > 0 && (
+              <LabeledIconStrip label={phase.platformsLabel ?? 'Tech Stack'}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                  {buildPlatformStripItems(phase.platforms)}
                 </Box>
               </LabeledIconStrip>
             )}

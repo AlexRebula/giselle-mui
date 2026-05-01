@@ -1,7 +1,7 @@
 import type { PaperProps } from '@mui/material/Paper';
 import type { TimelinePhase, HighlightedPaletteKey } from './types';
 
-import { useCallback, type ReactNode, type KeyboardEvent } from 'react';
+import { useCallback, useState, type ReactNode, type KeyboardEvent } from 'react';
 import type React from 'react';
 
 import Box from '@mui/material/Box';
@@ -99,8 +99,9 @@ export function MilestoneBadge({
 }: MilestoneBadgeProps) {
   // Right-align the collapsed view when in the left column so text sits flush
   // against the centre spine instead of leaving a gap at the right edge of the card.
-  // Alignment always resets to left once the card is expanded (full reading flow).
-  const rightAlign = columnSide === 'left' && !isExpanded;
+  // Alignment resets to left on both expand AND hover (both reveal the full reading context).
+  const [isHovered, setIsHovered] = useState(false);
+  const rightAlign = columnSide === 'left' && !isExpanded && !isHovered;
   const hasDetails = !!m.details?.length;
   const colorKey = (m.color ?? 'primary') as HighlightedPaletteKey;
   const titleSlug = String(m.title)
@@ -108,8 +109,12 @@ export function MilestoneBadge({
     .toLowerCase();
   const detailsId = stableId ? `ms-details-${stableId}` : `ms-details-${titleSlug}`;
 
-  // Two-level title disclosure: collapsed shows shortTitle (glanceable), expanded shows full title.
-  const displayTitle = isExpanded ? m.title : (m.shortTitle ?? m.title);
+  // Two-level title disclosure: collapsed shows shortTitle (glanceable),
+  // hover or expanded reveals the full title.
+  const displayTitle = isExpanded || isHovered ? m.title : (m.shortTitle ?? m.title);
+
+  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
   const handleClick = useCallback(() => {
     if (hasDetails) onRequestExpand();
@@ -134,6 +139,8 @@ export function MilestoneBadge({
       aria-controls={hasDetails ? detailsId : undefined}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       sx={[
         (theme) => ({
           p: 2,
@@ -154,20 +161,29 @@ export function MilestoneBadge({
           transition:
             'box-shadow 0.22s, opacity 0.3s, filter 0.3s, background-color 0.22s, border-color 0.22s',
           ...(rightAlign && { textAlign: 'right' }),
-          ...(done && { opacity: 0.45, filter: 'grayscale(1)' }),
-          // Hover reveals the styled card — only when collapsed and interactive
+          ...(done && {
+            opacity: 0.45,
+            filter: 'grayscale(1)',
+          }),
+          // Hover reveals the styled card for ALL milestones (title preview),
+          // but cursor:pointer only for expandable ones.
+          // Done cards also restore full opacity/filter on hover so the opaque
+          // background.paper is fully visible and doesn't bleed through.
+          ...(!isExpanded && {
+            '&:hover': {
+              bgcolor: 'background.paper',
+              borderTopColor:
+                theme.vars!.palette[colorKey]?.main ?? theme.vars!.palette.primary.main,
+              boxShadow: `0 16px 40px rgba(${
+                theme.vars!.palette[colorKey]?.mainChannel ??
+                (theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']
+              } / 0.22)`,
+              ...(hasDetails && { cursor: 'pointer' }),
+              ...(done && { opacity: 1, filter: 'none' }),
+            },
+          }),
           ...(hasDetails &&
             !isExpanded && {
-              cursor: 'pointer',
-              '&:hover': {
-                bgcolor: 'background.paper',
-                borderTopColor:
-                  theme.vars!.palette[colorKey]?.main ?? theme.vars!.palette.primary.main,
-                boxShadow: `0 16px 40px rgba(${
-                  theme.vars!.palette[colorKey]?.mainChannel ??
-                  (theme.vars!.palette.grey as unknown as Record<string, string>)['500Channel']
-                } / 0.22)`,
-              },
               '&:focus-visible': {
                 bgcolor: 'background.paper',
                 borderTopColor:
@@ -184,20 +200,6 @@ export function MilestoneBadge({
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      {isExpanded && (
-        <Typography
-          variant="caption"
-          sx={{
-            color: 'text.secondary',
-            fontSize: MILESTONE_DATE_FONT_SIZE,
-            display: 'block',
-            mb: 0.5,
-          }}
-        >
-          {m.date}
-        </Typography>
-      )}
-
       {m.new && (
         <Box
           sx={{
@@ -224,6 +226,20 @@ export function MilestoneBadge({
             New
           </Typography>
         </Box>
+      )}
+
+      {m.date && (
+        <Typography
+          variant="caption"
+          sx={{
+            color: 'text.secondary',
+            fontSize: MILESTONE_DATE_FONT_SIZE,
+            display: 'block',
+            mb: 0.5,
+          }}
+        >
+          {m.date}
+        </Typography>
       )}
 
       <Box
@@ -333,7 +349,7 @@ export function MilestoneBadge({
         )}
       </Box>
 
-      {isExpanded && m.description && (
+      {(isExpanded || isHovered) && m.description && (
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
           {m.description}
         </Typography>
