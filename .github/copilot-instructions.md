@@ -136,6 +136,7 @@ At the start of every new Copilot session in this package, read these files:
 | `SelectableCard`                      | `src/components/selectable-card/`     | ✅ Shipped + tested |
 | `createIconRegistrar`                 | `src/utils/create-icon-registrar.ts`  | ✅ Shipped + tested |
 | `TimelineTwoColumn`                   | `src/components/timeline-two-column/` | ✅ Shipped + tested |
+| `IconActionBar`                       | `src/components/icon-action-bar/`     | ✅ Shipped + tested |
 
 ### Next planned work (priority order)
 

@@ -80,6 +80,7 @@ Full integration guides:
 | `SelectableCard`                                  | Clickable card on `ButtonBase` — correct `aria-pressed`, keyboard focus ring, and hover state without rediscovering the `Paper onClick` pitfall. |
 | `QuoteCard`                                       | Testimonial card with CSS-var tinted border and conditional attribution row.                                                                     |
 | `TimelineTwoColumn` + `PhaseCard` + `TimelineDot` | Two-column alternating timeline for career or roadmap layouts — phase cards, milestone badges, animated active dot, checklist mode.              |
+| `IconActionBar`                                   | Horizontal row of `Tooltip` + `IconButton` pairs — encodes the disabled-child `<span>` wrapper pattern so tooltips work on disabled buttons.    |
 
 **Full API documentation, prop tables, and live examples → [Storybook](./storybook-static/index.html)** (build locally with `npm run build-storybook`, then open the generated file)
 
