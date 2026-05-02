@@ -829,3 +829,111 @@ export const Responsive: Story = {
   ),
   argTypes: { phases: { control: false }, sx: { control: false } },
 };
+
+// ----------------------------------------------------------------------
+
+/**
+ * **FooterSlot** — a `ReactNode` rendered below icon strips in the always-visible
+ * card area, before the expandable detail bullets.
+ *
+ * ### When to use `footer` vs `details`
+ *
+ * | | `footer` | `details` |
+ * |---|---|---|
+ * | Always visible? | **Yes** — shown collapsed and expanded | No — hidden until card is opened |
+ * | Content type | Interactive elements (buttons, links, counters) | Plain text bullets |
+ * | Click events | Wrapped in `stopPropagation` — will NOT toggle card | N/A |
+ *
+ * ### The `stopPropagation` invariant — non-negotiable
+ *
+ * The footer Box has `onClick: e.stopPropagation()`. This prevents any click on
+ * a button, link, or other interactive element inside `footer` from bubbling up
+ * to the card Paper's own `onClick`, which would toggle expansion.
+ *
+ * Without this, clicking "Play sound" would simultaneously:
+ * 1. Trigger the button action
+ * 2. Toggle the card open/closed
+ *
+ * **Never remove the `stopPropagation` wrapper** from the footer Box.
+ *
+ * ### What to observe in this story
+ *
+ * 1. The "Play" button renders inside the card, below the description, always visible.
+ * 2. Clicking the button does NOT expand or collapse the card.
+ * 3. Clicking anywhere else on the card (title, date area) toggles the card normally.
+ */
+export const FooterSlot: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The `footer` prop accepts a `ReactNode` rendered below icon strips in the always-visible area. ' +
+          'The footer wrapper enforces `stopPropagation` — clicking a button inside `footer` does **not** ' +
+          'toggle the card. Verify: click the play button → card stays unchanged. Click the card title → card expands.',
+      },
+    },
+    layout: 'padded',
+  },
+  render: () => (
+    <TimelineTwoColumn
+      phases={[
+        {
+          key: 1,
+          title: 'First Internet Connection',
+          description: 'Dial-up over the phone line. That sound. The astronomical phone bills.',
+          date: '~1994',
+          color: 'info',
+          side: 'left',
+          variant: 'life-event',
+          icon: icon('solar:monitor-bold'),
+          details: [
+            'First internet via dial-up modem',
+            'That screeching handshake sound',
+            'Phone bills were brutal',
+          ],
+          footer: (
+            <Box
+              component="button"
+              type="button"
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.75,
+                px: 1.25,
+                py: 0.5,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1,
+                bgcolor: 'transparent',
+                cursor: 'pointer',
+                color: 'text.secondary',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                '&:hover': { color: 'primary.main', borderColor: 'primary.main' },
+              }}
+              onClick={() => alert('Playing modem sound — button click did NOT toggle the card.')}
+            >
+              <GiselleIcon icon="solar:play-bold" width={14} />
+              Play the sound
+            </Box>
+          ),
+        },
+        {
+          key: 2,
+          title: 'Platform Team',
+          description: 'Leading a platform engineering team building internal developer tools.',
+          date: '2022 – Now',
+          color: 'primary',
+          side: 'right',
+          active: true,
+          icon: icon('solar:servers-bold'),
+          details: [
+            'Internal developer platform for 200+ engineers',
+            'TypeScript monorepo with shared tooling',
+          ],
+        },
+      ]}
+    />
+  ),
+  argTypes: { phases: { control: false }, sx: { control: false } },
+};

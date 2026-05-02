@@ -231,7 +231,8 @@ function dotStatusLabel(
  * Used to populate dot tooltips in read-only mode with contextual information
  * that is NOT already visible in any card state (title + date are already on the card).
  */
-function truncateDescription(s: string, maxLen = 72): string {
+/** @internal — exported for unit tests only. Not part of the public API. */
+export function truncateDescription(s: string, maxLen = 72): string {
   const parts = s.split(/[.!?]/);
   const firstSentence = (parts[0] ?? '').trim();
   const text = firstSentence.length > 0 ? firstSentence : s;
@@ -247,7 +248,8 @@ function truncateDescription(s: string, maxLen = 72): string {
  *   just repeating the title + date already shown on the card.
  * - `phase.dotTooltip` always wins if provided.
  */
-function resolvePhaseTooltip(
+/** @internal — exported for unit tests only. Not part of the public API. */
+export function resolvePhaseTooltip(
   checklist: boolean,
   color: HighlightedPaletteKey,
   done: boolean,
@@ -268,7 +270,8 @@ function resolvePhaseTooltip(
  *   the milestone card, so hovering the dot gives the user a genuine preview.
  * - `ms.dotTooltip` always wins if provided.
  */
-function resolveMilestoneTooltip(
+/** @internal — exported for unit tests only. Not part of the public API. */
+export function resolveMilestoneTooltip(
   checklist: boolean,
   color: HighlightedPaletteKey,
   done: boolean,
