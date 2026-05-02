@@ -47,7 +47,7 @@ export type TimelineDotComponentProps = Omit<BoxProps, 'color' | 'onClick'> & {
 // ----------------------------------------------------------------------
 
 function getDotSize(isMilestone: boolean): number {
-  return isMilestone ? 32 : 42;
+  return isMilestone ? 34 : 42;
 }
 
 function getIconSize(isMilestone: boolean): number {
@@ -246,6 +246,7 @@ export function TimelineDot({
           color: theme.vars!.palette.common.white,
           // Milestone: white separator border + colored drop shadow.
           ...(isMilestone && {
+            padding: '2px',
             border: '2px solid',
             borderColor: 'background.paper',
             boxShadow: `0 2px 8px rgba(${
