@@ -28,18 +28,20 @@ for read-only use.
 
 **New behaviour:**
 
-| Mode | Tooltip content |
-|---|---|
+| Mode                            | Tooltip content                                     |
+| ------------------------------- | --------------------------------------------------- |
 | Read-only (no `checklist` prop) | First sentence of `description`, capped at 72 chars |
-| Checklist | Status label + date (previous behaviour, preserved) |
-| Either, with `dotTooltip` set | `dotTooltip` always wins |
+| Checklist                       | Status label + date (previous behaviour, preserved) |
+| Either, with `dotTooltip` set   | `dotTooltip` always wins                            |
 
 **New API — `TimelinePhase` and milestone:**
+
 ```ts
 dotTooltip?: string;  // overrides automatic tooltip on the phase or milestone dot
 ```
 
 **New exported helpers** (internal, exported for unit tests):
+
 ```ts
 truncateDescription(s: string, maxLen?: number): string
 resolvePhaseTooltip(checklist, color, done, phase): string
@@ -62,6 +64,7 @@ shoehorned into a minimal `life-event` card. The `marker` variant renders spine-
 floating label, no card.
 
 **New API:**
+
 ```ts
 variant?: 'scenario' | 'life-event' | 'marker';
 ```
@@ -79,6 +82,7 @@ wired to the 2003 birth-of-broadband milestone. The button belongs contextually 
 but is not part of the expandable detail bullets.
 
 **New API on `TimelinePhase`:**
+
 ```tsx
 footer?: ReactNode;
 ```
@@ -104,6 +108,7 @@ phases can clip each other. The fix measures each mounted milestone card with
 can reserve the correct slot height per phase.
 
 **Implementation:**
+
 - `MilestoneRowCtx` gains `onMeasure: (mi, el) => void`
 - Both left-column and right-column card `Box` elements get `ref` + `data-ms-card="true"`
 - `useRef<Record<string, number>>` accumulates heights; `useLayoutEffect` observes resizes
@@ -115,6 +120,7 @@ can reserve the correct slot height per phase.
 `sortMilestonesDesc` added to `utils.ts` (complement to the existing `sortMilestonesAsc`).
 
 **New behaviour:** milestone sort order now follows `sortOrder` prop:
+
 - `sortOrder='asc'` (roadmap) → milestones earliest-first
 - `sortOrder='desc'` (career timeline) → milestones latest-first (matches the
   top-to-bottom newest-first visual flow of the timeline)
@@ -130,6 +136,7 @@ clash with the palette-derived `bgcolor`. `dotBg` overrides the circle backgroun
 still enforcing success-green on `done=true` dots.
 
 **New API — `TimelinePhase` milestone:**
+
 ```ts
 dotBg?: string;  // CSS colour string, e.g. '#f7931a'
 ```
@@ -166,11 +173,11 @@ correctly against the larger dot.
 
 ## Tests
 
-| File | Status | Notes |
-|---|---|---|
-| `timeline-two-column.tooltip.test.ts` | ✅ new | 259 lines — all tooltip helper branches |
-| `phase-card.test.ts` | ✅ updated | footer slot + null fallback assertions added |
-| `timeline-two-column.column-placement.test.ts` | ✅ updated | minor import addition |
+| File                                           | Status     | Notes                                        |
+| ---------------------------------------------- | ---------- | -------------------------------------------- |
+| `timeline-two-column.tooltip.test.ts`          | ✅ new     | 259 lines — all tooltip helper branches      |
+| `phase-card.test.ts`                           | ✅ updated | footer slot + null fallback assertions added |
+| `timeline-two-column.column-placement.test.ts` | ✅ updated | minor import addition                        |
 
 All existing tests continue to pass. No regression in done-dot colour enforcement,
 corner badge positioning, or eye button WCAG tests.
