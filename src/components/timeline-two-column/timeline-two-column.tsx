@@ -1,6 +1,14 @@
 import type { TimelinePhase, HighlightedPaletteKey, TimelineTwoColumnProps } from './types';
 
-import { useMemo, useState, useEffect, useCallback, type ReactNode } from 'react';
+import {
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useLayoutEffect,
+  type ReactNode,
+} from 'react';
 
 import Box from '@mui/material/Box';
 import Timeline from '@mui/lab/Timeline';
@@ -331,6 +339,8 @@ type MilestoneRowCtx = {
   onMarkViewed: ((key: string) => void) | undefined;
   handleToggleMilestone: (phaseKey: number, mi: number) => void;
   handleExpandMilestone: (phaseKey: number, milestoneIndex: number) => void;
+  /** Called with the mounted card element so the parent can measure its height. */
+  onMeasure: (mi: number, el: HTMLDivElement | null) => void;
 };
 
 /** Resolves done state and effective color for a milestone in checklist mode. */
@@ -466,6 +476,7 @@ function buildMilestoneRow(
         {ctx.phaseSide === 'left' && (
           <Box
             data-ms-card="true"
+            ref={(el: HTMLDivElement | null) => ctx.onMeasure(mi, el)}
             onClick={stopProp}
             sx={(theme) => ({
               ...wrapperBase,
@@ -571,6 +582,7 @@ function buildMilestoneRow(
         {ctx.phaseSide === 'right' && (
           <Box
             data-ms-card="true"
+            ref={(el: HTMLDivElement | null) => ctx.onMeasure(mi, el)}
             onClick={stopProp}
             sx={(theme) => ({
               ...wrapperBase,
@@ -775,6 +787,34 @@ export function TimelineTwoColumn({
     return () => document.removeEventListener('click', handler);
   }, [anyExpanded]);
 
+  // Per-milestone card height measurement.
+  // Ref callbacks on each data-ms-card Box populate this map during the commit phase.
+  // useLayoutEffect then computes the required slot height per phase from the tallest
+  // measured card + a small breathing gap — running before the browser paints so there
+  // is no visible layout shift. This replaces the need for manual milestoneSlotHeight
+  // overrides on individual phases.
+  const msHeightMapRef = useRef<Record<string, number>>({});
+  const [msSlotHeights, setMsSlotHeights] = useState<Record<string, number>>({});
+  useLayoutEffect(() => {
+    const result: Record<string, number> = {};
+    sorted.forEach((phase) => {
+      const n = phase.milestones?.length ?? 0;
+      if (n === 0) return;
+      let maxH = 0;
+      for (let i = 0; i < n; i++) {
+        const h = msHeightMapRef.current[`${String(phase.key)}-${i}`] ?? 0;
+        if (h > maxH) maxH = h;
+      }
+      if (maxH > 0) {
+        result[String(phase.key)] = maxH + 16;
+      }
+    });
+    setMsSlotHeights((prev) => {
+      const changed = Object.keys(result).some((k) => result[k] !== prev[k]);
+      return changed ? result : prev;
+    });
+  }, [sorted]);
+
   // Stable reference for the viewed-key lookup — avoids creating a new Set on every render
   // when the `viewedKeys` prop is undefined.
   const effectiveViewedKeys = viewedKeys ?? EMPTY_VIEWED_KEYS;
@@ -957,6 +997,9 @@ export function TimelineTwoColumn({
             onMarkViewed,
             handleToggleMilestone,
             handleExpandMilestone,
+            onMeasure: (mi: number, el: HTMLDivElement | null) => {
+              if (el) msHeightMapRef.current[`${String(phase.key)}-${mi}`] = el.offsetHeight;
+            },
           };
 
           const rows: ReactNode[] = [];
@@ -1123,8 +1166,11 @@ export function TimelineTwoColumn({
                   minHeight:
                     (phaseMilestones.length + 1) *
                     (yearLabelValue !== null
-                      ? Math.max(milestoneSlotHeight, yearLabelMarginBottom + 80)
-                      : milestoneSlotHeight),
+                      ? Math.max(
+                          msSlotHeights[String(phase.key)] ?? milestoneSlotHeight,
+                          yearLabelMarginBottom + 80
+                        )
+                      : (msSlotHeights[String(phase.key)] ?? milestoneSlotHeight)),
                 }),
               }}
             >
