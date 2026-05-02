@@ -171,6 +171,18 @@ export type TimelinePhase = {
    * @default 'left'
    */
   textAlign?: 'left' | 'right';
+  /**
+   * Optional footer slot rendered at the bottom of the card's always-visible content area,
+   * below all icon strips and above the expandable detail bullets.
+   *
+   * Use for interactive elements (play buttons, links, counters) that belong contextually
+   * to the card but aren't part of the expandable detail section.
+   *
+   * ```tsx
+   * footer={<ModemSoundButton />}
+   * ```
+   */
+  footer?: ReactNode;
 };
 
 export type TimelineTwoColumnProps = Omit<BoxProps, 'children'> & {
