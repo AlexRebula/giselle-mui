@@ -16,6 +16,7 @@ import {
   parseLastDate,
   detectPhaseOverlaps,
   sortMilestonesAsc,
+  sortMilestonesDesc,
   sortPhasesByDate,
 } from './utils';
 
@@ -224,6 +225,44 @@ function dotStatusLabel(
   return date ? `${status} · ${date}` : status;
 }
 
+/**
+ * Resolves the tooltip label for a phase dot.
+ *
+ * - Checklist mode: shows status label + date (useful for task/roadmap tracking).
+ * - Read-only mode: shows the phase name + date (meaningful for career/portfolio timelines).
+ * - `phase.dotTooltip` always wins if provided.
+ */
+function resolvePhaseTooltip(
+  checklist: boolean,
+  color: HighlightedPaletteKey,
+  done: boolean,
+  phase: TimelinePhase
+): string {
+  if (phase.dotTooltip) return phase.dotTooltip;
+  if (checklist) return dotStatusLabel(color, done, phase.date);
+  const label = phase.shortTitle ?? phase.title;
+  return phase.date ? `${label} · ${phase.date}` : label;
+}
+
+/**
+ * Resolves the tooltip label for a milestone dot.
+ *
+ * - Checklist mode: shows status label + date.
+ * - Read-only mode: shows the milestone glanceable name + date.
+ * - `ms.dotTooltip` always wins if provided.
+ */
+function resolveMilestoneTooltip(
+  checklist: boolean,
+  color: HighlightedPaletteKey,
+  done: boolean,
+  ms: Milestone
+): string {
+  if (ms.dotTooltip) return ms.dotTooltip;
+  if (checklist) return dotStatusLabel(color, done, ms.date);
+  const label = ms.shortTitle ?? ms.title;
+  return ms.date ? `${label} · ${ms.date}` : label;
+}
+
 /** Resolves the JSX prop bag for the phase-row TimelineDot. */
 function buildPhaseDotTsxProps(
   phase: TimelinePhase,
@@ -364,12 +403,12 @@ function buildMilestoneRow(
 
   const wrapperBase = {
     position: 'absolute' as const,
-    zIndex: isThisMsExpanded ? 10 : 1,
+    zIndex: isThisMsExpanded ? 1000 : 1,
     transition: 'filter 0.2s ease, opacity 0.2s ease, transform 0.2s ease',
     // translateY(-50%) centers the card vertically on its dot (dot height = 30px, center = 15px)
     transform: 'translateY(-50%)',
-    // Raise hovered card above its siblings so nearby cards don't overlap it
-    '&:hover': { zIndex: 9 },
+    // Raise hovered card above adjacent phase cards so it is never overlapped
+    '&:hover': { zIndex: 999 },
     ...(suppressElevation && {
       filter: 'blur(1.5px)',
       opacity: 0.38,
@@ -405,6 +444,7 @@ function buildMilestoneRow(
       >
         {ctx.phaseSide === 'left' && (
           <Box
+            data-ms-card="true"
             onClick={stopProp}
             sx={(theme) => ({
               ...wrapperBase,
@@ -476,14 +516,15 @@ function buildMilestoneRow(
             </Typography>
           )}
           <Tooltip
-            title={dotStatusLabel(msColor, msDone, ms.date)}
-            placement={ctx.phaseSide === 'left' ? 'right' : 'left'}
+            title={resolveMilestoneTooltip(ctx.checklist, msColor, msDone, ms)}
+            placement="top"
             arrow
           >
             <span>
               <TimelineDot
                 icon={ms.icon}
                 color={msColor}
+                dotBg={ms.dotBg}
                 size="milestone"
                 done={msDone}
                 onClick={msDotClickAction}
@@ -508,6 +549,7 @@ function buildMilestoneRow(
       >
         {ctx.phaseSide === 'right' && (
           <Box
+            data-ms-card="true"
             onClick={stopProp}
             sx={(theme) => ({
               ...wrapperBase,
@@ -615,18 +657,20 @@ export function TimelineTwoColumn({
     const k = String(phaseKey);
     // Collapse any open phase card when a milestone opens.
     setExpandedPhaseKey(null);
-    // Toggle: clicking the same milestone again collapses it.
+    // Open-only: clicking an already-expanded card does NOT collapse it.
+    // Only an outside click (document listener) closes it.
     setExpandedMilestoneMap((prev) => ({
       ...prev,
-      [k]: prev[k] === milestoneIndex ? null : milestoneIndex,
+      [k]: milestoneIndex,
     }));
   }, []);
 
   const handleExpandPhaseCard = useCallback((phaseKey: number) => {
     // Collapse all milestones when a phase card opens.
     setExpandedMilestoneMap({});
-    // Toggle: clicking the same phase card again collapses it.
-    setExpandedPhaseKey((prev) => (prev === phaseKey ? null : phaseKey));
+    // Open-only: clicking an already-expanded card does NOT collapse it.
+    // Only an outside click (document listener) closes it.
+    setExpandedPhaseKey(phaseKey);
   }, []);
 
   const handleTogglePhase = useCallback(
@@ -671,13 +715,18 @@ export function TimelineTwoColumn({
     return d;
   }, []);
 
-  // Sort phases by date, then sort milestones within each phase ascending (earliest first).
+  // Sort phases by date, then sort milestones within each phase.
+  // Career timelines use 'desc' → milestones latest-first (matches the top-to-bottom newest-first flow).
+  // Roadmap timelines use 'asc' → milestones earliest-first.
+  const sortMilestones = sortOrder === 'asc' ? sortMilestonesAsc : sortMilestonesDesc;
   const sorted = useMemo(
     () =>
       sortPhasesByDate(phases, sortOrder).map((phase) => ({
         ...phase,
-        milestones: phase.milestones ? sortMilestonesAsc(phase.milestones) : phase.milestones,
+        milestones: phase.milestones ? sortMilestones(phase.milestones) : phase.milestones,
       })),
+    // sortMilestones is derived from sortOrder so adding sortOrder as dep is sufficient
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [phases, sortOrder]
   );
 
@@ -859,8 +908,8 @@ export function TimelineTwoColumn({
                     </Typography>
                   )}
                   <Tooltip
-                    title={dotStatusLabel(dotColor, isDone, phase.date)}
-                    placement={phase.side === 'left' ? 'right' : 'left'}
+                    title={resolvePhaseTooltip(checklist, dotColor, isDone, phase)}
+                    placement="top"
                     arrow
                   >
                     <span>
@@ -925,6 +974,10 @@ export function TimelineTwoColumn({
                 // Raise z-index when a milestone card is expanded so it floats
                 // above the next phase's row rather than being clipped behind it.
                 zIndex: expandedMiIdx === null ? 1 : 2,
+                // CSS :has() raises this <li> when any milestone card within it is hovered,
+                // preventing the next <li>'s phase card from painting over the hovered card.
+                // Supported: Chrome 121+, Firefox 121+, Safari 17+ (within browser support matrix).
+                '&:has([data-ms-card]:hover)': { zIndex: 3 },
                 // minHeight only applies when milestones are present — gives the spine
                 // enough height for all milestone dots to be evenly spaced.
                 // Phase card vertical gap is controlled by phaseCardGap (column paddingBottom)

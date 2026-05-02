@@ -55,6 +55,12 @@ export type TimelinePhase = {
   /** Optional expandable bullet-point details. */
   details?: string[];
   /**
+   * Custom tooltip shown on the phase dot in the centre spine.
+   * In read-only mode falls back to `shortTitle + date`.
+   * In checklist mode falls back to status label + date.
+   */
+  dotTooltip?: string;
+  /**
    * Tech stack icons for this entry. Each item provides a `ReactNode` icon and an accessible label.
    * Renders as a horizontal strip of icon slots with a tooltip per item.
    * Use `<GiselleIcon icon={...} width={24} />` or any icon element.
@@ -110,6 +116,18 @@ export type TimelinePhase = {
     overdue?: boolean;
     /** Marks this milestone as newly added — renders a "NEW" dot near the title. Clear once seen. */
     new?: boolean;
+    /**
+     * Overrides the spine dot circle background colour.
+     * Accepts any CSS colour string (e.g. `'#111'`).
+     * Useful when a brand icon has a specific colour that clashes with the palette-derived background.
+     */
+    dotBg?: string;
+    /**
+     * Custom tooltip shown on the milestone dot in the centre spine.
+     * In read-only mode falls back to `shortTitle + date`.
+     * In checklist mode falls back to status label + date.
+     */
+    dotTooltip?: string;
   }>;
   /**
    * Client logos shown as a horizontal strip directly in the card (always visible).

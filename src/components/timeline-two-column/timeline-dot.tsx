@@ -34,6 +34,12 @@ export type TimelineDotComponentProps = Omit<BoxProps, 'color' | 'onClick'> & {
    * and restart the spring-pop animation cleanly.
    */
   animationKey?: number;
+  /**
+   * Overrides the dot circle background colour. Accepts any CSS colour string (e.g. `'#111'`).
+   * Useful when a brand icon has a specific colour that clashes with the palette-derived background.
+   * Ignored when `done=true` — done dots always render success-green.
+   */
+  dotBg?: string;
   /** Makes the dot clickable. Omit for decorative (read-only) dots. */
   onClick?: () => void;
 };
@@ -149,6 +155,7 @@ export function TimelineDot({
   active = false,
   done = false,
   animationKey = 0,
+  dotBg,
   onClick,
   onKeyDown,
   role,
@@ -232,7 +239,10 @@ export function TimelineDot({
           alignItems: 'center',
           justifyContent: 'center',
           // All done dots: solid success-green fill with white icon (effectiveColor is already 'success').
-          bgcolor: theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main,
+          bgcolor:
+            !done && dotBg
+              ? dotBg
+              : (theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main),
           color: theme.vars!.palette.common.white,
           // Milestone: white separator border + colored drop shadow.
           ...(isMilestone && {
