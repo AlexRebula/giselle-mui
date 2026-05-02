@@ -226,10 +226,25 @@ function dotStatusLabel(
 }
 
 /**
+ * Returns the first sentence of a description, capped at `maxLen` characters.
+ *
+ * Used to populate dot tooltips in read-only mode with contextual information
+ * that is NOT already visible in any card state (title + date are already on the card).
+ */
+function truncateDescription(s: string, maxLen = 72): string {
+  const parts = s.split(/[.!?]/);
+  const firstSentence = (parts[0] ?? '').trim();
+  const text = firstSentence.length > 0 ? firstSentence : s;
+  return text.length <= maxLen ? text : `${text.slice(0, maxLen).trimEnd()}…`;
+}
+
+/**
  * Resolves the tooltip label for a phase dot.
  *
  * - Checklist mode: shows status label + date (useful for task/roadmap tracking).
- * - Read-only mode: shows the phase name + date (meaningful for career/portfolio timelines).
+ * - Read-only mode: shows the **description preview** — information not visible in
+ *   any collapsed card state, giving the dot tooltip genuine added value over
+ *   just repeating the title + date already shown on the card.
  * - `phase.dotTooltip` always wins if provided.
  */
 function resolvePhaseTooltip(
@@ -240,6 +255,7 @@ function resolvePhaseTooltip(
 ): string {
   if (phase.dotTooltip) return phase.dotTooltip;
   if (checklist) return dotStatusLabel(color, done, phase.date);
+  if (phase.description) return truncateDescription(phase.description);
   const label = phase.shortTitle ?? phase.title;
   return phase.date ? `${label} · ${phase.date}` : label;
 }
@@ -248,7 +264,8 @@ function resolvePhaseTooltip(
  * Resolves the tooltip label for a milestone dot.
  *
  * - Checklist mode: shows status label + date.
- * - Read-only mode: shows the milestone glanceable name + date.
+ * - Read-only mode: shows the **description preview** — not visible without opening
+ *   the milestone card, so hovering the dot gives the user a genuine preview.
  * - `ms.dotTooltip` always wins if provided.
  */
 function resolveMilestoneTooltip(
@@ -259,6 +276,7 @@ function resolveMilestoneTooltip(
 ): string {
   if (ms.dotTooltip) return ms.dotTooltip;
   if (checklist) return dotStatusLabel(color, done, ms.date);
+  if (ms.description) return truncateDescription(ms.description);
   const label = ms.shortTitle ?? ms.title;
   return ms.date ? `${label} · ${ms.date}` : label;
 }
@@ -770,6 +788,107 @@ export function TimelineTwoColumn({
         {sorted.map((phase, i) => {
           const { isDone, isOverdue, dotColor, yearLabelValue, phaseMilestones, isLastPhase } =
             resolvePhaseState(phase, i, sorted, lastKey, checklist, localPhaseDone, today);
+
+          // ── Marker variant ──────────────────────────────────────────────────
+          // variant='marker': spine-only row — dot + floating label, no card.
+          // Use for single point-in-time events that don't need a full card
+          // (e.g. a certification, a visa grant, a birth date outside any period).
+          // The label floats to whichever side `phase.side` specifies (direct, not inverted).
+          if (phase.variant === 'marker') {
+            const markerTooltip =
+              phase.dotTooltip ??
+              (phase.description ? truncateDescription(phase.description) : phase.title);
+            return (
+              <Box
+                key={phase.key}
+                component="li"
+                data-testid="tl-item"
+                sx={{
+                  position: 'relative',
+                  overflow: 'visible',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  zIndex: 1,
+                  minHeight: 40,
+                }}
+              >
+                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                  {/* Left label — shown when side === 'left' */}
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'center',
+                      pr: 1.5,
+                    }}
+                  >
+                    {phase.side === 'left' && (
+                      <Typography
+                        variant="caption"
+                        sx={{ color: 'text.secondary', fontWeight: 600, whiteSpace: 'nowrap' }}
+                      >
+                        {phase.shortTitle ?? phase.title}
+                        {phase.date && (
+                          <Box component="span" sx={{ ml: 0.75, fontWeight: 400, opacity: 0.7 }}>
+                            · {phase.date}
+                          </Box>
+                        )}
+                      </Typography>
+                    )}
+                  </Box>
+                  {/* Spine dot */}
+                  <Box
+                    data-col="center"
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      position: 'relative',
+                    }}
+                  >
+                    <Tooltip title={markerTooltip} placement="top" arrow>
+                      <span>
+                        <TimelineDot
+                          icon={phase.icon}
+                          color={dotColor}
+                          size="milestone"
+                          done={isDone}
+                        />
+                      </span>
+                    </Tooltip>
+                    {!isLastPhase && (
+                      <SpineConnector dotColor={dotColor} yearMilestone={yearLabelValue} />
+                    )}
+                  </Box>
+                  {/* Right label — shown when side !== 'left' */}
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: 'flex',
+                      justifyContent: 'flex-start',
+                      alignItems: 'center',
+                      pl: 1.5,
+                    }}
+                  >
+                    {phase.side !== 'left' && (
+                      <Typography
+                        variant="caption"
+                        sx={{ color: 'text.secondary', fontWeight: 600, whiteSpace: 'nowrap' }}
+                      >
+                        {phase.shortTitle ?? phase.title}
+                        {phase.date && (
+                          <Box component="span" sx={{ ml: 0.75, fontWeight: 400, opacity: 0.7 }}>
+                            · {phase.date}
+                          </Box>
+                        )}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+              </Box>
+            );
+          }
 
           const { dotClickAction, dotKeyDownHandler, dotAriaLabel } = resolvePhaseDotHandlers(
             phase,

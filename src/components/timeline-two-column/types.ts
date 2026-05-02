@@ -40,8 +40,9 @@ export type TimelinePhase = {
    * - EXPANDED (after click): full `title` + `description` + `details[]`
    */
   shortTitle?: string;
-  /** Short summary paragraph shown below the title on the default card view. */
-  description: string;
+  /** Short summary paragraph shown below the title on the default card view.
+   * Optional for `variant: 'marker'` entries, which have no card. */
+  description?: string;
   /** Human-readable date range (e.g. `'Jan 2020 – Mar 2022'`). Also used for automatic overdue detection in checklist mode. */
   date: string;
   /** Icon rendered inside the TimelineDot. Size is controlled via CSS (wrapping Box sets `& svg: { width, height }`) — pass any ReactNode icon slot. */
@@ -79,8 +80,10 @@ export type TimelinePhase = {
   /**
    * 'scenario' — coloured left border + badge label (used in case-001 for departure scenarios).
    * 'life-event' — coloured left border + tinted background (used in career timeline).
+   * 'marker' — spine-only: dot + floating label, no card. For single point-in-time events
+   *             that don't warrant a full phase card (e.g. a certification date, a visa grant).
    */
-  variant?: 'scenario' | 'life-event';
+  variant?: 'scenario' | 'life-event' | 'marker';
   /** Label shown as a badge above the card when variant='scenario'. */
   scenarioLabel?: string;
   /** Marks this phase as past-due without being done.
