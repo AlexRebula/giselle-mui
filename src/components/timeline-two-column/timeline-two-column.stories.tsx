@@ -52,7 +52,8 @@ type Story = StoryObj<typeof TimelineTwoColumn>;
 // ----------------------------------------------------------------------
 
 const icon = (name: string) => <GiselleIcon icon={name} width={20} />;
-const msIcon = (name: string) => <GiselleIcon icon={name} width={14} />;
+// Minimum 16 px per the repo readable-size rule for inline (non-interactive) icons.
+const msIcon = (name: string) => <GiselleIcon icon={name} width={16} />;
 
 /**
  * Read-only phases — generic, non-personal.
@@ -532,7 +533,7 @@ export const MarkerVariant: Story = {
  * - It predates any career period — no phase can contain it as a milestone.
  * - It needs only a label on the spine. No card needed.
  *
- * For the same reason, a *son's birth* can be elevated from a milestone on a job card
+ * For the same reason, a *child's birth* can be elevated from a milestone on a job card
  * to a standalone `variant: 'life-event'` phase — the event is independent of the job.
  * Its date determines whether it's a marker (single date, no card needed) or a life-event
  * phase (you want to expand it with more context).
@@ -540,7 +541,7 @@ export const MarkerVariant: Story = {
  * ### This story shows
  *
  * - A **marker** (birth date) at the top — spine dot, no card, tooltip shows description
- * - A **life-event phase** (emigration) — full card, expandable, `variant: 'life-event'`
+ * - A **life-event phase** (major relocation) — full card, expandable, `variant: 'life-event'`
  */
 export const LifeEventVsMarker: Story = {
   render: () => (
@@ -555,7 +556,7 @@ export const LifeEventVsMarker: Story = {
             side: 'left',
             variant: 'marker',
             icon: icon('solar:star-bold'),
-            description: 'Born on 1 January 1985 in Platform City, Slovenia.',
+            description: 'Born on 1 January 1985 in Platform City.',
           },
           {
             key: 0.5,
@@ -573,7 +574,7 @@ export const LifeEventVsMarker: Story = {
                 date: 'Dec 2009',
                 shortTitle: 'First production deploy',
                 title: 'First production deploy',
-                description: 'First solo deploy to production. It worked. I refreshed six times.',
+                description: 'First solo deploy to production. It worked. Refreshed six times.',
                 icon: msIcon('solar:rocket-bold'),
                 color: 'secondary',
                 done: true,
@@ -582,33 +583,33 @@ export const LifeEventVsMarker: Story = {
           },
           {
             key: 0.8,
-            title: 'My son is born',
+            title: 'Child born',
             date: '2011',
             color: 'success',
             side: 'left',
             variant: 'life-event',
             icon: icon('solar:heart-bold'),
             description:
-              'The milestone that changed the shape of everything that followed. The decision to move to Ljubljana came shortly after.',
+              'A milestone that changed the shape of everything that followed. New priorities, new perspective.',
             details: [
-              'Born 2011',
-              'Moved cities for the new chapter',
-              'The milestone that changed the shape of everything that followed',
+              'New chapter in life',
+              'Renewed focus on work–life balance',
+              'The milestone that changed everything that followed',
             ],
           },
           {
             key: 1,
-            title: 'Emigrated to New Zealand',
-            shortTitle: 'Emigrated',
+            title: 'Relocated Internationally',
+            shortTitle: 'Relocated',
             description:
-              'Left with a suitcase and six weeks of runway. Found a job before the runway ran out.',
+              'Left with a suitcase and six weeks of runway. Found a role before the runway ran out.',
             date: 'Mar 2012',
             color: 'info',
             side: 'left',
             variant: 'life-event',
             icon: icon('solar:airplane-bold'),
             details: [
-              'Arrived as a family of three',
+              'Arrived in a new country',
               'Six weeks of networking before first contract',
               'Permanent residency three years later',
             ],
@@ -913,7 +914,8 @@ export const FooterSlot: Story = {
               }}
               onClick={() => alert('Playing modem sound — button click did NOT toggle the card.')}
             >
-              <GiselleIcon icon="solar:play-bold" width={14} />
+              {/* Minimum 20 px: interactive icons (inside clickable button) must be >= 20 px. */}
+              <GiselleIcon icon="solar:play-bold" width={20} />
               Play the sound
             </Box>
           ),

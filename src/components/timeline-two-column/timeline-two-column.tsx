@@ -241,7 +241,10 @@ function dotStatusLabel(
  */
 /** @internal — exported for unit tests only. Not part of the public API. */
 export function truncateDescription(s: string, maxLen = 72): string {
-  const parts = s.split(/[.!?]/);
+  // Split only when a sentence-ending punctuation is followed by whitespace or end-of-string.
+  // This prevents splitting on decimal numbers (e.g. "TS 4.0") or abbreviations ("e.g.")
+  // where the period is NOT followed by whitespace.
+  const parts = s.split(/[.!?](?=\s|$)/);
   const firstSentence = (parts[0] ?? '').trim();
   const text = firstSentence.length > 0 ? firstSentence : s;
   return text.length <= maxLen ? text : `${text.slice(0, maxLen).trimEnd()}…`;
@@ -692,10 +695,11 @@ export function TimelineTwoColumn({
     setExpandedPhaseKey(null);
     // Open-only: clicking an already-expanded card does NOT collapse it.
     // Only an outside click (document listener) closes it.
-    setExpandedMilestoneMap((prev) => ({
-      ...prev,
-      [k]: milestoneIndex,
-    }));
+    // Early-return when already open to avoid an unnecessary re-render.
+    setExpandedMilestoneMap((prev) => {
+      if (prev[k] === milestoneIndex) return prev;
+      return { ...prev, [k]: milestoneIndex };
+    });
   }, []);
 
   const handleExpandPhaseCard = useCallback((phaseKey: number) => {
@@ -793,8 +797,14 @@ export function TimelineTwoColumn({
   // measured card + a small breathing gap — running before the browser paints so there
   // is no visible layout shift. This replaces the need for manual milestoneSlotHeight
   // overrides on individual phases.
+  //
+  // `measureVersion` is bumped whenever a card's measured height changes (e.g. on
+  // expand/collapse or after a font/image load). Adding it to the useLayoutEffect
+  // dependency array ensures slot heights are recomputed after any such change, preventing
+  // stale heights from causing overlap or clipping on re-measured cards.
   const msHeightMapRef = useRef<Record<string, number>>({});
   const [msSlotHeights, setMsSlotHeights] = useState<Record<string, number>>({});
+  const [measureVersion, setMeasureVersion] = useState(0);
   useLayoutEffect(() => {
     const result: Record<string, number> = {};
     sorted.forEach((phase) => {
@@ -813,7 +823,7 @@ export function TimelineTwoColumn({
       const changed = Object.keys(result).some((k) => result[k] !== prev[k]);
       return changed ? result : prev;
     });
-  }, [sorted]);
+  }, [sorted, measureVersion]);
 
   // Stable reference for the viewed-key lookup — avoids creating a new Set on every render
   // when the `viewedKeys` prop is undefined.
@@ -838,9 +848,10 @@ export function TimelineTwoColumn({
           // (e.g. a certification, a visa grant, a birth date outside any period).
           // The label floats to whichever side `phase.side` specifies (direct, not inverted).
           if (phase.variant === 'marker') {
-            const markerTooltip =
-              phase.dotTooltip ??
-              (phase.description ? truncateDescription(phase.description) : phase.title);
+            // Use resolvePhaseTooltip so the marker tooltip is consistent with all other
+            // phase dots: description preview → shortTitle + date → title fallback.
+            // Previously this fell back to bare `phase.title`, dropping date and shortTitle.
+            const markerTooltip = resolvePhaseTooltip(checklist, dotColor, isDone, phase);
             return (
               <Box
                 key={phase.key}
@@ -998,7 +1009,15 @@ export function TimelineTwoColumn({
             handleToggleMilestone,
             handleExpandMilestone,
             onMeasure: (mi: number, el: HTMLDivElement | null) => {
-              if (el) msHeightMapRef.current[`${String(phase.key)}-${mi}`] = el.offsetHeight;
+              if (!el) return;
+              const key = `${String(phase.key)}-${mi}`;
+              const newH = el.offsetHeight;
+              // Only bump measureVersion when the height actually changed so we don't
+              // trigger unnecessary re-renders on repeated renders with identical heights.
+              if (msHeightMapRef.current[key] !== newH) {
+                msHeightMapRef.current[key] = newH;
+                setMeasureVersion((v) => v + 1);
+              }
             },
           };
 

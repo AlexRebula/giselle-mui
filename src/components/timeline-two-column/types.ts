@@ -57,8 +57,14 @@ export type TimelinePhase = {
   details?: string[];
   /**
    * Custom tooltip shown on the phase dot in the centre spine.
-   * In read-only mode falls back to `shortTitle + date`.
-   * In checklist mode falls back to status label + date.
+   *
+   * When omitted the tooltip is computed automatically:
+   * - **Read-only mode:** first sentence of `description` (capped at 72 characters) →
+   *   falls back to `shortTitle ?? title` + `date` when `description` is absent.
+   * - **Checklist mode:** status label (`Done`, `Blocking`, etc.) + `date`.
+   *
+   * Set this explicitly to override the computed value with a custom metric, status
+   * note, or any text not derived from `description`.
    */
   dotTooltip?: string;
   /**
@@ -127,8 +133,13 @@ export type TimelinePhase = {
     dotBg?: string;
     /**
      * Custom tooltip shown on the milestone dot in the centre spine.
-     * In read-only mode falls back to `shortTitle + date`.
-     * In checklist mode falls back to status label + date.
+     *
+     * When omitted the tooltip is computed automatically:
+     * - **Read-only mode:** first sentence of `description` (capped at 72 characters) →
+     *   falls back to `shortTitle ?? title` + `date` when `description` is absent.
+     * - **Checklist mode:** status label (`Done`, `Blocking`, etc.) + `date`.
+     *
+     * Set this explicitly to override the computed value with a custom metric or note.
      */
     dotTooltip?: string;
   }>;

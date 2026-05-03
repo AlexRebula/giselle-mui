@@ -123,6 +123,24 @@ describe('truncateDescription', () => {
     expect(result.endsWith(' …')).toBe(false);
     expect(result.endsWith('…')).toBe(true);
   });
+
+  it('[regression] decimal numbers are not treated as sentence boundaries', () => {
+    // "TS 4.0" — the period is NOT followed by whitespace, so it must NOT split here.
+    // Before the fix, split(/[.!?]/) would have returned "TS 4" as the first sentence.
+    expect(truncateDescription('TS 4.0 is a great release')).toBe('TS 4.0 is a great release');
+  });
+
+  it('[regression] decimal numbers embedded mid-sentence are not split', () => {
+    // "v5.0" — the period is followed by a digit, not whitespace → not a sentence boundary.
+    expect(
+      truncateDescription('Migrated the entire codebase to v5.0 without breaking changes')
+    ).toBe('Migrated the entire codebase to v5.0 without breaking changes');
+  });
+
+  it('[regression] sentence boundary with whitespace is still detected', () => {
+    // Period followed by a space IS a valid boundary.
+    expect(truncateDescription('First sentence. Second sentence.')).toBe('First sentence');
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -228,16 +246,18 @@ describe('resolveMilestoneTooltip — checklist mode', () => {
 
 describe('resolveMilestoneTooltip — read-only mode', () => {
   it('description → truncated preview', () => {
-    // truncateDescription splits on ". " (period-space), so version numbers like "5.0"
-    // inside a description are safe. A plain period without a following space is not a boundary.
-    // Use a description where the first sentence boundary is unambiguous.
+    // truncateDescription splits only when a sentence-ending terminator is followed
+    // by whitespace or end-of-string.  Version numbers like "TS 5.0" or abbreviations
+    // like "e.g." are NOT split because the period is not followed by whitespace.
     const ms = milestone({ description: 'Decorators reached stable status. More detail here.' });
     expect(resolveMilestoneTooltip(false, 'primary', false, ms)).toBe(
       'Decorators reached stable status'
     );
   });
 
-  it('no description → title · date fallback', () => {
+  it('no description → title · date fallback (version numbers like "TS 4.0" are safe — no split)', () => {
+    // "TS 4.0" contains a period NOT followed by whitespace, so truncateDescription treats it
+    // as part of the word, not a sentence boundary. The full title is returned intact.
     const ms = milestone({ title: 'TS 4.0', date: 'Aug 2020' });
     expect(resolveMilestoneTooltip(false, 'primary', false, ms)).toBe('TS 4.0 · Aug 2020');
   });

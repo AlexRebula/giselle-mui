@@ -945,7 +945,7 @@ export function PhaseCard({
             )}
 
             {/* Optional footer slot — interactive elements below icon strips */}
-            {phase.footer && (
+            {phase.footer != null && (
               <Box sx={{ mt: 1 }} onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                 {phase.footer}
               </Box>
