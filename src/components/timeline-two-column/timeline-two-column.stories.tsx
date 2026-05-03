@@ -63,13 +63,13 @@ const msIcon = (name: string) => <GiselleIcon icon={name} width={16} />;
 const CAREER_PHASES: TimelinePhase[] = [
   {
     key: 0,
-    title: 'Born in Platform City',
-    date: '1 Jan 1985',
+    title: 'Platform v1.0 Released',
+    date: '1 Mar 2005',
     color: 'secondary',
     side: 'left',
     variant: 'marker',
     icon: icon('solar:star-bold'),
-    description: 'Born on 1 January 1985 in Platform City.',
+    description: 'First public release of the core platform library, published to npm.',
   },
   {
     key: 1,
@@ -292,8 +292,8 @@ const CHECKLIST_PHASES: TimelinePhase[] = [
  * in a portfolio or read-only narrative context. Read-only removes all of that overhead
  * and lets the data tell the story uninterrupted.
  *
- * Note the **marker** at the top of this timeline (birth date) — a spine-only item with
- * no card, demonstrating that the three item types work together in a single data array.
+ * Note the **marker** at the top of this timeline (a single-date launch event) — a spine-only
+ * item with no card, demonstrating that the three item types work together in a single data array.
  *
  * **What to verify:**
  * - Marker renders as dot + floating label, no card
@@ -404,8 +404,8 @@ export const ColumnPlacementInvariant: Story = {
  * - do not need an expandable card, and
  * - fall outside any existing phase's date range (so they can't be a milestone).
  *
- * Classic examples: a birth date at the start of a career timeline, a certification between
- * jobs, a visa grant, a redundancy date.
+ * Classic examples: a project launch date at the start of a timeline, a certification between
+ * roles, a public release, a platform migration date.
  *
  * ### When NOT to use a marker
  *
@@ -432,14 +432,14 @@ export const MarkerVariant: Story = {
         phases={[
           {
             key: 0,
-            title: 'Born in Platform City',
-            date: '1 Jan 1985',
+            title: 'Platform v1.0 Released',
+            date: '1 Mar 2005',
             color: 'secondary',
             side: 'left',
             variant: 'marker',
             icon: icon('solar:star-bold'),
             description:
-              'Born on 1 January 1985 — the first day of the year, which set unrealistic expectations for all future deadlines.',
+              'First public release of the core platform library — published to npm after six months of internal use.',
           },
           {
             key: 1,
@@ -510,14 +510,14 @@ export const MarkerVariant: Story = {
 // ----------------------------------------------------------------------
 
 /**
- * **Life-event vs marker decision** — when to use each item type for personal events.
+ * **Life-event vs marker decision** — when to use each item type for one-off events.
  *
  * ---
  *
  * ### The question this story answers
  *
- * Both `variant: 'life-event'` and `variant: 'marker'` can represent personal life events.
- * The decision rule is simple:
+ * Both `variant: 'life-event'` and `variant: 'marker'` represent discrete events
+ * that do not span a role or period. The decision rule is simple:
  *
  * | Question | If yes → use |
  * |---|---|
@@ -526,22 +526,26 @@ export const MarkerVariant: Story = {
  * | Needs an expandable card with context? | life-event phase |
  * | No card needed, just "this happened on this date"? | marker |
  *
- * ### Birth dates specifically
+ * ### When to choose `variant: 'marker'`
  *
- * A birth date is the clearest case for a **marker**:
- * - It has a precise date, not a range.
- * - It predates any career period — no phase can contain it as a milestone.
- * - It needs only a label on the spine. No card needed.
+ * Use a **marker** for any precise, single-date event that needs no expandable card:
+ * - A product launch date that predates any listed role.
+ * - A certification earned on a specific day.
+ * - A public release tagged to a commit SHA.
  *
- * For the same reason, a *child's birth* can be elevated from a milestone on a job card
- * to a standalone `variant: 'life-event'` phase — the event is independent of the job.
- * Its date determines whether it's a marker (single date, no card needed) or a life-event
- * phase (you want to expand it with more context).
+ * A marker is just a labelled dot on the spine — no card, no expansion, no date range.
+ *
+ * ### When to choose `variant: 'life-event'`
+ *
+ * Use a **life-event** when the event either spans time or carries context worth expanding:
+ * - A major workflow change (e.g. transitioning to fully remote).
+ * - An acquisition or strategic pivot with multiple sub-points.
+ * - Any event where the `details` array adds value the title alone cannot convey.
  *
  * ### This story shows
  *
- * - A **marker** (birth date) at the top — spine dot, no card, tooltip shows description
- * - A **life-event phase** (major relocation) — full card, expandable, `variant: 'life-event'`
+ * - A **marker** (product v1.0 launch) at the top — spine dot, no card, tooltip shows description
+ * - A **life-event phase** (workflow transition) — full card, expandable, `variant: 'life-event'`
  */
 export const LifeEventVsMarker: Story = {
   render: () => (
@@ -550,13 +554,13 @@ export const LifeEventVsMarker: Story = {
         phases={[
           {
             key: 0,
-            title: 'Born in Platform City',
-            date: '1 Jan 1985',
+            title: 'Platform v1.0 Released',
+            date: '1 Mar 2005',
             color: 'secondary',
             side: 'left',
             variant: 'marker',
             icon: icon('solar:star-bold'),
-            description: 'Born on 1 January 1985 in Platform City.',
+            description: 'First public release of the core platform library, published to npm.',
           },
           {
             key: 0.5,
@@ -574,7 +578,8 @@ export const LifeEventVsMarker: Story = {
                 date: 'Dec 2009',
                 shortTitle: 'First production deploy',
                 title: 'First production deploy',
-                description: 'First solo deploy to production. It worked. Refreshed six times.',
+                description:
+                  'First solo deploy to production without a rollback. Refreshed six times.',
                 icon: msIcon('solar:rocket-bold'),
                 color: 'secondary',
                 done: true,
@@ -583,35 +588,36 @@ export const LifeEventVsMarker: Story = {
           },
           {
             key: 0.8,
-            title: 'Child born',
+            title: 'Open-Source Foundation Joined',
+            shortTitle: 'OSS Foundation',
             date: '2011',
             color: 'success',
             side: 'left',
             variant: 'life-event',
             icon: icon('solar:heart-bold'),
             description:
-              'A milestone that changed the shape of everything that followed. New priorities, new perspective.',
+              'Joined the Platform Open-Source Foundation as a contributing member. Shifted focus toward community tooling.',
             details: [
-              'New chapter in life',
-              'Renewed focus on work–life balance',
-              'The milestone that changed everything that followed',
+              'Became a contributing member of the Platform OSS Foundation',
+              'Redirected 20% of working time to open-source tooling',
+              'First pull request accepted within two weeks',
             ],
           },
           {
             key: 1,
-            title: 'Relocated Internationally',
-            shortTitle: 'Relocated',
+            title: 'Remote-First Transition',
+            shortTitle: 'Remote-First',
             description:
-              'Left with a suitcase and six weeks of runway. Found a role before the runway ran out.',
+              'Team adopted a fully distributed remote model. Overhauled async communication, tooling, and delivery cadence.',
             date: 'Mar 2012',
             color: 'info',
             side: 'left',
             variant: 'life-event',
             icon: icon('solar:airplane-bold'),
             details: [
-              'Arrived in a new country',
-              'Six weeks of networking before first contract',
-              'Permanent residency three years later',
+              'Closed the main office; team moved fully distributed',
+              'Introduced async-first RFC process for major decisions',
+              'Delivery velocity increased 30% in the first two quarters',
             ],
           },
           {

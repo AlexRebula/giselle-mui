@@ -792,19 +792,33 @@ export function TimelineTwoColumn({
   }, [anyExpanded]);
 
   // Per-milestone card height measurement.
-  // Ref callbacks on each data-ms-card Box populate this map during the commit phase.
-  // useLayoutEffect then computes the required slot height per phase from the tallest
-  // measured card + a small breathing gap — running before the browser paints so there
-  // is no visible layout shift. This replaces the need for manual milestoneSlotHeight
-  // overrides on individual phases.
+  // ResizeObserver-based slot height measurement.
   //
-  // `measureVersion` is bumped whenever a card's measured height changes (e.g. on
-  // expand/collapse or after a font/image load). Adding it to the useLayoutEffect
-  // dependency array ensures slot heights are recomputed after any such change, preventing
-  // stale heights from causing overlap or clipping on re-measured cards.
+  // A ResizeObserver is attached to every data-ms-card element via the onMeasure context
+  // callback. When an element's content-box height changes — whether from React state
+  // (expand/collapse), a container resize, a font load, or an image completing — the
+  // observer fires asynchronously and bumps `measureVersion`. The subsequent
+  // useLayoutEffect recomputes slot heights from the tallest measured card + gap,
+  // eliminating stale heights that cause card overlap or clipping.
+  //
+  // Using ResizeObserver instead of reading `offsetHeight` synchronously in the ref
+  // callback avoids forced layout reads on every render.
+  //
+  // `msObserversRef` stores one ResizeObserver per measured element, keyed by
+  // `${phaseKey}-${mi}`. All observers are disconnected on unmount.
   const msHeightMapRef = useRef<Record<string, number>>({});
+  const msObserversRef = useRef<Map<string, ResizeObserver>>(new Map());
   const [msSlotHeights, setMsSlotHeights] = useState<Record<string, number>>({});
   const [measureVersion, setMeasureVersion] = useState(0);
+
+  useEffect(() => {
+    // Disconnect all ResizeObservers when the component unmounts.
+    const observers = msObserversRef.current;
+    return () => {
+      observers.forEach((ro) => ro.disconnect());
+      observers.clear();
+    };
+  }, []);
   useLayoutEffect(() => {
     const result: Record<string, number> = {};
     sorted.forEach((phase) => {
@@ -1009,15 +1023,24 @@ export function TimelineTwoColumn({
             handleToggleMilestone,
             handleExpandMilestone,
             onMeasure: (mi: number, el: HTMLDivElement | null) => {
-              if (!el) return;
               const key = `${String(phase.key)}-${mi}`;
-              const newH = el.offsetHeight;
-              // Only bump measureVersion when the height actually changed so we don't
-              // trigger unnecessary re-renders on repeated renders with identical heights.
-              if (msHeightMapRef.current[key] !== newH) {
-                msHeightMapRef.current[key] = newH;
-                setMeasureVersion((v) => v + 1);
-              }
+              // Disconnect the previous observer for this element (if any) regardless
+              // of whether el is null (unmount) or a new element (ref re-attach).
+              msObserversRef.current.get(key)?.disconnect();
+              msObserversRef.current.delete(key);
+              if (!el) return;
+              // Attach a ResizeObserver so height re-measurement fires whenever the
+              // card's content-box changes — expand/collapse, container resize, font
+              // load — without reading offsetHeight synchronously in the ref callback.
+              const ro = new ResizeObserver(() => {
+                const newH = el.offsetHeight;
+                if (msHeightMapRef.current[key] !== newH) {
+                  msHeightMapRef.current[key] = newH;
+                  setMeasureVersion((v) => v + 1);
+                }
+              });
+              ro.observe(el);
+              msObserversRef.current.set(key, ro);
             },
           };
 

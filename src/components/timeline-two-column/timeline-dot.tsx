@@ -17,7 +17,7 @@ export type TimelineDotComponentProps = Omit<BoxProps, 'color' | 'onClick'> & {
   /**
    * Size variant.
    * - `'phase'`: 42px (all states). Active state adds a pulsing ring halo — no size change.
-   * - `'milestone'`: 32px fixed.
+   * - `'milestone'`: 34px fixed.
    * @default 'phase'
    */
   size?: 'phase' | 'milestone';
@@ -245,7 +245,10 @@ export function TimelineDot({
               : (theme.vars!.palette[effectiveColor]?.main ?? theme.vars!.palette.primary.main),
           color: theme.vars!.palette.common.white,
           // Milestone: white separator border + colored drop shadow.
+          // boxSizing ensures padding + border are included in the 100%/100% dimensions
+          // so the circle never exceeds the outer 34px container regardless of box model reset.
           ...(isMilestone && {
+            boxSizing: 'border-box',
             padding: '2px',
             border: '2px solid',
             borderColor: 'background.paper',

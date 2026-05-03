@@ -658,10 +658,15 @@ describe('footer slot — stopPropagation invariant', () => {
     expect(stopPropagation).toHaveBeenCalledTimes(2);
   });
 
-  it('[regression] footer renders when phase.footer is a ReactNode (truthy check)', () => {
-    // Mirror of: {phase.footer && <Box ...>{phase.footer}</Box>}
-    const shouldRender = (footer: unknown): boolean => Boolean(footer);
+  it('[regression] footer renders when phase.footer is a ReactNode (nullish check)', () => {
+    // Mirror of: {phase.footer != null && <Box ...>{phase.footer}</Box>}
+    // Uses nullish check (not truthy) so that valid ReactNodes like 0 and empty string
+    // are not suppressed. Only null and undefined skip rendering.
+    const shouldRender = (footer: unknown): boolean => footer != null;
     expect(shouldRender(React.createElement('span', null, 'Play'))).toBe(true);
+    // Falsy-but-valid ReactNode values: 0 and '' must still render.
+    expect(shouldRender(0)).toBe(true);
+    expect(shouldRender('')).toBe(true);
     expect(shouldRender(undefined)).toBe(false);
     expect(shouldRender(null)).toBe(false);
   });
