@@ -203,20 +203,20 @@ from scratch in giselle-mui (copyright rule: no copy from the private repo).
 
 **Extraction candidates** (need only light cleanup — not a full rewrite):
 
-| Task | Status |
-|---|---|
-| Extract `TwoColumnShowcaseRow` — clean, zero Minimals, ready now | ⬜ |
-| Extract `OptionWithBlurb` — tiny wrapper, clean, zero Minimals | ⬜ |
-| Extract `SectionPendingLoader` — replace internal `Iconify` with `GiselleIcon` | ⬜ |
-| Extract `FloatingControlBar` — replace `varAlpha` (Phase A first) + `Iconify` → `GiselleIcon` | ⬜ |
+| Task                                                                                          | Status |
+| --------------------------------------------------------------------------------------------- | ------ |
+| Extract `TwoColumnShowcaseRow` — clean, zero Minimals, ready now                              | ⬜     |
+| Extract `OptionWithBlurb` — tiny wrapper, clean, zero Minimals                                | ⬜     |
+| Extract `SectionPendingLoader` — replace internal `Iconify` with `GiselleIcon`                | ⬜     |
+| Extract `FloatingControlBar` — replace `varAlpha` (Phase A first) + `Iconify` → `GiselleIcon` | ⬜     |
 
 **Write from scratch** (no copy from alexrebula — independent implementations):
 
-| Task | Status |
-|---|---|
-| `SectionContainer` — `Container` + consistent vertical padding + optional title/subtitle slot | ⬜ |
-| `HeroSection` — full-width hero: headline, subtitle, CTA slot, background tint via `varAlpha` | ⬜ |
-| `FAQAccordion` — MUI `Accordion` with consistent styling, icon slot, and accessible expand | ⬜ |
+| Task                                                                                          | Status |
+| --------------------------------------------------------------------------------------------- | ------ |
+| `SectionContainer` — `Container` + consistent vertical padding + optional title/subtitle slot | ⬜     |
+| `HeroSection` — full-width hero: headline, subtitle, CTA slot, background tint via `varAlpha` | ⬜     |
+| `FAQAccordion` — MUI `Accordion` with consistent styling, icon slot, and accessible expand    | ⬜     |
 
 **When this phase is done:**
 
@@ -225,4 +225,3 @@ A blank `create-next-app` project can install `@alexrebula/giselle-mui`, add
 components — no proprietary theme, no reimplemented patterns.
 
 Full gap analysis: [`docs/components/standalone-gap-analysis.md`](../components/standalone-gap-analysis.md)
-

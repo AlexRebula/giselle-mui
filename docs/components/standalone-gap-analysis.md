@@ -22,15 +22,15 @@ categorised here by its current status.
 These components are exported from `giselle-mui` and work in any MUI v7 project with zero
 additional setup.
 
-| Export | What it does | Used in alexrebula |
-|---|---|---|
-| `GiselleIcon` | Offline-safe Iconify icon wrapper | 5+ files |
-| `TimelineTwoColumn` | Alternating two-column expandable timeline | career-timeline, roadmap, case-001 |
-| `MetricCard` + `MetricCardDecoration` | Metric card with stat, label, and decoration slot | expertise-areas |
-| `QuoteCard` | Pull-quote card with author, source, and icon slot | testimonials |
-| `SelectableCard` | Keyboard-accessible selectable/toggle card | billing/plan pages |
-| `IconActionBar` | Row of icon buttons with tooltips | (ready, not yet wired) |
-| `createIconRegistrar` | Utility: registers Iconify icon sets offline | icon-sets files |
+| Export                                | What it does                                       | Used in alexrebula                 |
+| ------------------------------------- | -------------------------------------------------- | ---------------------------------- |
+| `GiselleIcon`                         | Offline-safe Iconify icon wrapper                  | 5+ files                           |
+| `TimelineTwoColumn`                   | Alternating two-column expandable timeline         | career-timeline, roadmap, case-001 |
+| `MetricCard` + `MetricCardDecoration` | Metric card with stat, label, and decoration slot  | expertise-areas                    |
+| `QuoteCard`                           | Pull-quote card with author, source, and icon slot | testimonials                       |
+| `SelectableCard`                      | Keyboard-accessible selectable/toggle card         | billing/plan pages                 |
+| `IconActionBar`                       | Row of icon buttons with tooltips                  | (ready, not yet wired)             |
+| `createIconRegistrar`                 | Utility: registers Iconify icon sets offline       | icon-sets files                    |
 
 ---
 
@@ -64,16 +64,16 @@ are currently only available by depending on Minimals (or reimplementing them fr
 
 ### Ready to extract (minimal changes needed)
 
-| Component | Source in alexrebula | What's needed before extraction |
-|---|---|---|
+| Component              | Source in alexrebula                      | What's needed before extraction           |
+| ---------------------- | ----------------------------------------- | ----------------------------------------- |
 | `TwoColumnShowcaseRow` | `src/components/two-column-showcase-row/` | Nothing — clean, zero Minimals, ready now |
-| `OptionWithBlurb` | `src/components/option-with-blurb/` | Nothing — tiny, clean, zero Minimals |
-| `SectionPendingLoader` | `src/components/section-pending-loader/` | Switch internal `Iconify` → `GiselleIcon` |
+| `OptionWithBlurb`      | `src/components/option-with-blurb/`       | Nothing — tiny, clean, zero Minimals      |
+| `SectionPendingLoader` | `src/components/section-pending-loader/`  | Switch internal `Iconify` → `GiselleIcon` |
 
 ### Need cleanup before extraction
 
-| Component | Source | What needs to change |
-|---|---|---|
+| Component                               | Source                             | What needs to change                                           |
+| --------------------------------------- | ---------------------------------- | -------------------------------------------------------------- |
 | `FloatingSubNav` / `FloatingControlBar` | `src/components/floating-sub-nav/` | Replace `varAlpha` (Phase A first) + `Iconify` → `GiselleIcon` |
 
 ### Need to be written from scratch
@@ -83,11 +83,11 @@ extracted into reusable components. They cannot be copied from alexrebula becaus
 repo uses the Minimals theme — any code that uses `varAlpha` from `minimal-shared/utils`
 must be rewritten independently.
 
-| Component | Pattern it encodes | Priority |
-|---|---|---|
-| `SectionContainer` | `Container` + consistent vertical padding + optional title/subtitle header. Used on every section. | High — needed by almost every page |
-| `HeroSection` | Full-width hero with headline, subtitle, and CTA buttons. Appears in home, about, services, contact. | High — every portfolio page has one |
-| `FAQAccordion` | MUI `Accordion` with consistent styling and optional icon. Used in home and services. | Medium |
+| Component                 | Pattern it encodes                                                                                            | Priority                                                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SectionContainer`        | `Container` + consistent vertical padding + optional title/subtitle header. Used on every section.            | High — needed by almost every page                                                                                                           |
+| `HeroSection`             | Full-width hero with headline, subtitle, and CTA buttons. Appears in home, about, services, contact.          | High — every portfolio page has one                                                                                                          |
+| `FAQAccordion`            | MUI `Accordion` with consistent styling and optional icon. Used in home and services.                         | Medium                                                                                                                                       |
 | `GiselleSettingsProvider` | Clean-room equivalent of Minimals `SettingsProvider` — localStorage + cookie adapters, generic state, drawer. | High — prerequisite for migrating off `minimal-shared` hooks entirely. Full plan: [`settings-provider-plan.md`](./settings-provider-plan.md) |
 
 ---
@@ -98,7 +98,7 @@ The minimum `layout.tsx` for a project built entirely on giselle-mui with no Min
 
 ```tsx
 // app/layout.tsx — zero Minimals
-import { GiselleThemeProvider } from '@alexrebula/giselle-mui';   // Phase C
+import { GiselleThemeProvider } from '@alexrebula/giselle-mui'; // Phase C
 import { IconRegistrar } from '@alexrebula/giselle-mui';
 import { createIconRegistrar } from '@alexrebula/giselle-mui';
 
