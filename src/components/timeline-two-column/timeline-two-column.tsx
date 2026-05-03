@@ -693,21 +693,22 @@ export function TimelineTwoColumn({
     const k = String(phaseKey);
     // Collapse any open phase card when a milestone opens.
     setExpandedPhaseKey(null);
-    // Open-only: clicking an already-expanded card does NOT collapse it.
-    // Only an outside click (document listener) closes it.
-    // Early-return when already open to avoid an unnecessary re-render.
-    setExpandedMilestoneMap((prev) => {
-      if (prev[k] === milestoneIndex) return prev;
-      return { ...prev, [k]: milestoneIndex };
-    });
+    // Toggle: clicking an already-expanded card collapses it.
+    // The wrapper Box calls stopPropagation() on the expanded card's click, so the
+    // document listener never fires on that card — toggle is the only close path for
+    // milestone cards. Without toggle, the card gets stuck open and all other milestone
+    // cards remain suppressed (pointerEvents: none), breaking hover on the whole timeline.
+    setExpandedMilestoneMap((prev) => ({
+      ...prev,
+      [k]: prev[k] === milestoneIndex ? null : milestoneIndex,
+    }));
   }, []);
 
   const handleExpandPhaseCard = useCallback((phaseKey: number) => {
     // Collapse all milestones when a phase card opens.
     setExpandedMilestoneMap({});
-    // Open-only: clicking an already-expanded card does NOT collapse it.
-    // Only an outside click (document listener) closes it.
-    setExpandedPhaseKey(phaseKey);
+    // Toggle: clicking an already-expanded phase card collapses it.
+    setExpandedPhaseKey((prev) => (prev === phaseKey ? null : phaseKey));
   }, []);
 
   const handleTogglePhase = useCallback(
