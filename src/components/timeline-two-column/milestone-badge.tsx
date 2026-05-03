@@ -1,7 +1,7 @@
 import type { PaperProps } from '@mui/material/Paper';
 import type { TimelinePhase, HighlightedPaletteKey } from './types';
 
-import { useCallback, useState, type ReactNode, type KeyboardEvent } from 'react';
+import { useCallback, type ReactNode, type KeyboardEvent } from 'react';
 import type React from 'react';
 
 import Box from '@mui/material/Box';
@@ -99,9 +99,7 @@ export function MilestoneBadge({
 }: MilestoneBadgeProps) {
   // Right-align the collapsed view when in the left column so text sits flush
   // against the centre spine instead of leaving a gap at the right edge of the card.
-  // Alignment resets to left only when expanded; hover may reveal more text
-  // but must not change column alignment.
-  const [isHovered, setIsHovered] = useState(false);
+  // Alignment resets to left only when expanded.
   const rightAlign = columnSide === 'left' && !isExpanded;
   const hasDetails = !!m.details?.length;
   const colorKey = (m.color ?? 'primary') as HighlightedPaletteKey;
@@ -111,11 +109,16 @@ export function MilestoneBadge({
   const detailsId = stableId ? `ms-details-${stableId}` : `ms-details-${titleSlug}`;
 
   // Two-level title disclosure: collapsed shows shortTitle (glanceable),
-  // hover or expanded reveals the full title.
-  const displayTitle = isExpanded || isHovered ? m.title : (m.shortTitle ?? m.title);
-
-  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
-  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
+  // expanded reveals the full title.
+  //
+  // IMPORTANT: hover must NOT change displayTitle. Changing content on hover
+  // changes card height, which triggers the ResizeObserver, which updates
+  // msSlotHeights, which changes the <li> minHeight, which shifts all milestone
+  // cards (their top:X% becomes different pixels) — causing a mouseleave that
+  // shrinks the card back, which shifts cards again, creating an infinite loop.
+  // The CSS :hover pseudo-class still reveals the card background and border
+  // (non-layout properties) without causing this feedback.
+  const displayTitle = isExpanded ? m.title : (m.shortTitle ?? m.title);
 
   const handleClick = useCallback(() => {
     if (hasDetails) onRequestExpand();
@@ -140,8 +143,6 @@ export function MilestoneBadge({
       aria-controls={hasDetails ? detailsId : undefined}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       sx={[
         (theme) => ({
           p: 2,
@@ -350,7 +351,7 @@ export function MilestoneBadge({
         )}
       </Box>
 
-      {(isExpanded || isHovered) && m.description && (
+      {isExpanded && m.description && (
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
           {m.description}
         </Typography>
