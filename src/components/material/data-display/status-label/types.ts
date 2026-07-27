@@ -3,13 +3,7 @@ import type { ChipProps } from '@mui/material/Chip';
 // ----------------------------------------------------------------------
 
 export type StatusLabelStatus =
-  | 'active'
-  | 'inactive'
-  | 'pending'
-  | 'review'
-  | 'done'
-  | 'cancelled'
-  | 'overdue';
+  'active' | 'inactive' | 'pending' | 'review' | 'done' | 'cancelled' | 'overdue';
 
 export type StatusColorKey = 'success' | 'warning' | 'info' | 'error' | 'default';
 

@@ -345,8 +345,7 @@ describe('clientLogoSx — client logo image', () => {
 
   it('removes grayscale on hover', () => {
     const hover = (clientLogoSx as Record<string, unknown>)['&:hover'] as
-      | Record<string, unknown>
-      | undefined;
+      Record<string, unknown> | undefined;
     expect(hover?.['filter']).toBe('none');
     expect(hover?.['opacity']).toBe(1);
   });
