@@ -134,14 +134,14 @@
     "framer-motion": "^12.38.0",
     "globals": "^17.6.0",
     "jsdom": "^25.0.0",
-    "prettier": "^3.0.0",
+    "prettier": "^3.9.4",
     "react": "^19.2.6",
     "react-apexcharts": "^2.1.0",
     "react-dom": "^19.2.6",
     "storybook": "^8.0.0",
     "tsup": "^8.0.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.1",
+    "typescript-eslint": "^8.62.1",
     "vite": "^5.0.0",
     "vitest": "^4.1.5"
   }
