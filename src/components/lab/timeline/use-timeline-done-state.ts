@@ -86,6 +86,7 @@ export function useTimelineDoneState(
 
   useEffect(() => {
     const fn: MilestoneSortFn = sortOrder === 'asc' ? sortMilestonesAsc : sortMilestonesDesc;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalPhaseDone(buildPhaseDoneRecord(phases));
     setLocalMilestoneDone(buildMilestoneDoneRecord(phases, fn));
     setLocalTaskDoneMap(buildTaskDoneRecord(phases, fn));

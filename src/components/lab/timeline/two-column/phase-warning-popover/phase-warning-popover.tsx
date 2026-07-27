@@ -87,6 +87,7 @@ export function PhaseWarningPopover({
       const range = parsePhaseRange(p);
       if (range) initial.set(p.key, range);
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOverrides(initial);
     setPendingApply(false);
   }, [open, conflictingPhases]);

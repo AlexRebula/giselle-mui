@@ -144,6 +144,7 @@ export function PhaseCard({
       {popoverMode && onPhasesChange && allPhases && (
         <PhaseWarningPopover
           open={popoverOpen}
+          // eslint-disable-next-line react-hooks/refs
           anchorEl={badgeRef.current}
           onClose={handleClosePopover}
           currentPhase={phase}

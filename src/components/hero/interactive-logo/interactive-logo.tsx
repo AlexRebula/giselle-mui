@@ -109,6 +109,7 @@ export function InteractiveHeroLogo({
 
   useEffect(() => {
     if (frameCount <= 1 || reducedMotion) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFrameIndex(0);
       return;
     }
@@ -187,6 +188,7 @@ export function InteractiveHeroLogo({
     const rawSrc =
       portraitSourceMap[activePortraitDirection] ?? portraitSourceMap[DEFAULT_PORTRAIT_DIRECTION];
     if (rawSrc) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActivePortraitSrcResolved(getRandomPortraitSrc(rawSrc));
     }
   }, [activePortraitDirection, portraitSourceMap]);
