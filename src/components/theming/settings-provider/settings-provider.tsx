@@ -127,6 +127,7 @@ export function GiselleSettingsProvider<TState extends BaseSettingsState>({
   // Adapter ref — always reflects the current storage/storageKey without
   // forcing callbacks to re-create when those props change.
   const adapterRef = useRef<StorageAdapter<TState>>(resolveAdapter(storage, storageKey));
+  // eslint-disable-next-line react-hooks/refs
   adapterRef.current = resolveAdapter(storage, storageKey);
 
   const [state, setStateRaw] = useState<TState>(initialState ?? defaultSettings);

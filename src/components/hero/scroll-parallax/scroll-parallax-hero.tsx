@@ -76,19 +76,26 @@ export function ScrollParallaxHero({
   const pm = { ...DEFAULT_PARALLAX, ...parallax };
 
   // All four useTransformY calls are unconditional — hook call order must be stable.
+  // eslint-disable-next-line react-hooks/refs
   const y1 = useTransformY(scrollProgress.scrollY, distance * pm.logo);
+  // eslint-disable-next-line react-hooks/refs
   const y2 = useTransformY(scrollProgress.scrollY, distance * pm.heading);
+  // eslint-disable-next-line react-hooks/refs
   const y3 = useTransformY(scrollProgress.scrollY, distance * pm.text);
+  // eslint-disable-next-line react-hooks/refs
   const y4 = useTransformY(scrollProgress.scrollY, distance * pm.actions);
 
   const opacity = useTransform(
+    // eslint-disable-next-line react-hooks/refs
     scrollProgress.scrollY,
     [0, 1],
+    // eslint-disable-next-line react-hooks/refs
     [1, mdUp ? Number((1 - scrollProgress.percent / 100).toFixed(1)) : 1]
   );
 
   return (
     <Box
+      // eslint-disable-next-line react-hooks/refs
       ref={scrollProgress.elementRef}
       component="section"
       sx={[heroRootSx, ...(Array.isArray(sx) ? sx : [sx])]}

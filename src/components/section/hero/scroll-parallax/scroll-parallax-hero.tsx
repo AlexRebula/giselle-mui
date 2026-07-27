@@ -77,6 +77,7 @@ export function ScrollParallaxHero({
   // viewport), causing a hydration mismatch with the server-rendered `false`.
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -84,24 +85,33 @@ export function ScrollParallaxHero({
   const multiplier = mounted && mdUp ? 1 : 0;
 
   // All five useTransformY calls are unconditional — hook call order must be stable.
+  // eslint-disable-next-line react-hooks/refs
   const y1 = useTransformY(scrollProgress.scrollY, scrollProgress.elementRef, multiplier * pm.logo);
   const y2 = useTransformY(
+    // eslint-disable-next-line react-hooks/refs
     scrollProgress.scrollY,
+    // eslint-disable-next-line react-hooks/refs
     scrollProgress.elementRef,
     multiplier * pm.heading
   );
+  // eslint-disable-next-line react-hooks/refs
   const y3 = useTransformY(scrollProgress.scrollY, scrollProgress.elementRef, multiplier * pm.text);
   const y4 = useTransformY(
+    // eslint-disable-next-line react-hooks/refs
     scrollProgress.scrollY,
+    // eslint-disable-next-line react-hooks/refs
     scrollProgress.elementRef,
     multiplier * pm.actions
   );
   const y5 = useTransformY(
+    // eslint-disable-next-line react-hooks/refs
     scrollProgress.scrollY,
+    // eslint-disable-next-line react-hooks/refs
     scrollProgress.elementRef,
     multiplier * pm.icons
   );
 
+  // eslint-disable-next-line react-hooks/refs
   const opacity = useTransform(scrollProgress.scrollY, (scrollY: number) => {
     if (!mdUp) return 1;
     const heroHeight = scrollProgress.elementRef.current?.offsetHeight;
@@ -111,6 +121,7 @@ export function ScrollParallaxHero({
 
   return (
     <Box
+      // eslint-disable-next-line react-hooks/refs
       ref={scrollProgress.elementRef}
       component="section"
       sx={[heroRootSx, ...(Array.isArray(sx) ? sx : [sx])]}

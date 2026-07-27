@@ -190,5 +190,16 @@ export default eslintTs.config(
       '@typescript-eslint/no-require-imports': 'off',
       'no-console': 'off',
     },
+  },
+
+  // ── Test files override ───────────────────────────────────────────────────
+  // react-hooks/globals fires on the standard test-harness pattern of capturing
+  // hook output in a module-level variable inside a lightweight Harness component.
+  // This is a known false positive for test-only render helpers.
+  {
+    files: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    rules: {
+      'react-hooks/globals': 'off',
+    },
   }
 );

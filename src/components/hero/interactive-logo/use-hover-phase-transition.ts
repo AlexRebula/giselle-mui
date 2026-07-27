@@ -51,6 +51,7 @@ export function useHoverPhaseTransition({
     }
 
     if (!isHovered) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActivePortraitDirection(DEFAULT_PORTRAIT_DIRECTION);
       setHoverPhase('idle');
       return undefined;

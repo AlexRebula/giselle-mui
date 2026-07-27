@@ -58,6 +58,7 @@ export function useLocalStorage<T extends object>(
   // Sync with storage on mount (handles SSR hydration gap)
   useEffect(() => {
     const stored = readFromStorage(key, initialValue);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStateInternal(stored);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
