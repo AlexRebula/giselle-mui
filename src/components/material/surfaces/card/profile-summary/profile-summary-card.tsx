@@ -22,6 +22,11 @@ export function ProfileSummaryCard({
         {name[0]}
       </Avatar>
       <Typography variant="h6">{name}</Typography>
+      {role && (
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {role}
+        </Typography>
+      )}
     </Paper>
   );
 }
