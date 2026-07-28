@@ -95,7 +95,10 @@ export type {
 export { StatCardRow } from './components/material/surfaces/card/stat-row';
 export type { StatCardRowProps } from './components/material/surfaces/card/stat-row';
 export { ProfileSummaryCard } from './components/material/surfaces/card/profile-summary';
-export type { ProfileSummaryCardProps, ProfileStat } from './components/material/surfaces/card/profile-summary';
+export type {
+  ProfileSummaryCardProps,
+  ProfileStat,
+} from './components/material/surfaces/card/profile-summary';
 
 export { useNestedChecklist } from './utils/hooks/use-nested-checklist/use-nested-checklist';
 export type { NestedChecklistState } from './utils/hooks/use-nested-checklist/use-nested-checklist';
