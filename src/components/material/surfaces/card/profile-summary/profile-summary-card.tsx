@@ -27,6 +27,19 @@ export function ProfileSummaryCard({
           {role}
         </Typography>
       )}
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        {stats.map((stat, index) => (
+          <Box key={stat.label}>
+            {index > 0 && <Divider orientation="vertical" flexItem />}
+            <Box sx={{ px: 2 }}>
+              <Typography variant="subtitle1">{stat.value}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                {stat.label}
+              </Typography>
+            </Box>
+          </Box>
+        ))}
+      </Box>
     </Paper>
   );
 }
