@@ -18,6 +18,9 @@ export function ProfileSummaryCard({
 }: ProfileSummaryCardProps) {
   return (
     <Paper sx={[{ p: 3, textAlign: 'center' }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
+      <Avatar src={avatarSrc} alt={name} sx={{ width: 64, height: 64, mx: 'auto', mb: 2 }}>
+        {name[0]}
+      </Avatar>
       <Typography variant="h6">{name}</Typography>
     </Paper>
   );
