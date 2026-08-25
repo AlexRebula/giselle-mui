@@ -434,6 +434,12 @@ is copied from any private or proprietary source. The public MIT boundary must n
 shell components depend on a theme context and settings context being available without
 consumer boilerplate.
 
+**Validation consumer note (added 2026-08-25):** once `AppTopBar` / `AppSidebarDrawer` /
+`AppLayout` ship, the Docusaurus skills site (`skills/site`) is a candidate second consumer to
+validate them against — swapping in these components for its own nav chrome, currently Infima
+default, would double as a giselle-mui dogfooding showcase. Not separately tracked; revisit
+here when Phase H starts.
+
 | Task                                                                                          | Label      | Status |
 | --------------------------------------------------------------------------------------------- | ---------- | ------ |
 | Define `TrackerSectionLayout` component — heading + stat grid + sidebar/timeline split        | Components | ⬜     |
