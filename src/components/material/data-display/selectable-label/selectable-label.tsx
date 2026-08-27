@@ -24,21 +24,28 @@ const CHECK_ICON = (
 
 /** A toggleable chip for multi-select filter groups, built on MUI `Chip` with `SelectableCard`'s selected-state styling. */
 export const SelectableLabel = forwardRef<HTMLDivElement, SelectableLabelProps>(
-  function SelectableLabel({ selected, onSelectedChange, sx, ...other }, ref) {
+  function SelectableLabel({ selected, onSelectedChange, disabled, sx, ...other }, ref) {
     const handleClick = useCallback(
       (e: MouseEvent<HTMLDivElement>) => {
+        // Guarded explicitly rather than trusting Chip's own disabled+onClick
+        // handling: under MUI v7 (one of this library's two supported peer
+        // ranges) Chip's clickable variant still invokes onClick when
+        // disabled — ButtonBase-based components like SelectableCard don't
+        // have this gap, but Chip isn't ButtonBase-based the same way.
+        if (disabled) return;
         // Mirrors ToggleIconButton: stops the click from also triggering a
         // parent's onClick (e.g. a filter row wrapper) alongside the toggle.
         e.stopPropagation();
         onSelectedChange?.(!selected);
       },
-      [selected, onSelectedChange]
+      [selected, disabled, onSelectedChange]
     );
 
     return (
       <Chip
         ref={ref}
         onClick={handleClick}
+        disabled={disabled}
         // aria-pressed communicates toggle/selection state to assistive
         // technologies, the same ARIA pattern SelectableCard uses.
         aria-pressed={selected}
