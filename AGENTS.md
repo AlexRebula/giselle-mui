@@ -8,7 +8,7 @@ Read this file first. It tells you what to read next and in what order before to
 
 Read [`docs/incidents/timeline-overflow-fix-overcomplication-aug-2026.md`](./docs/incidents/timeline-overflow-fix-overcomplication-aug-2026.md) once, now. It records an agent turning a one-line fix (a CSS property the user had already pinpointed via the browser inspector, screenshot and all) into two rounds of unrequested git-archaeology, a compensating fix that changed nothing observable, and only landing the correct fix after the user demanded it a second time, bluntly.
 
-**Rule:** when the user hands you a precise diagnosis — an exact selector, property, file, or line — try the literal fix that diagnosis implies first, and verify it against the actual reported symptom, before reaching for git blame, regression-test archaeology, or any "safer" alternative design. A `git log` explaining why a line exists is not evidence that removing it is unsafe; it is one data point to weigh against the live bug the user is looking at.
+**Rule:** when the user gives you a precise diagnosis, such as an exact selector, property, file, or line, try the literal fix that diagnosis implies first. Verify it against the actual reported symptom before reaching for git blame, regression-test archaeology, or any "safer" alternative design. A `git log` explaining why a line exists is not evidence that removing it is unsafe. It is one data point to weigh against the live bug the user is looking at.
 
 ---
 
