@@ -152,7 +152,7 @@ Created `package.json` to declare the monorepo workspace root:
   "private": true,
   "workspaces": [
     "giselle-mui",
-    "rm/presentation/alexrebula"
+    "<private-consuming-app>"
   ]
 }
 ```
