@@ -1,21 +1,44 @@
 import type { Preview } from '@storybook/react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme, extendTheme } from '@mui/material/styles';
 import { addCollection } from '@iconify/react';
-import { giselleTheme } from '../src/utils/theme/preset/theme-preset';
+import { giselleThemeOptions } from '../src/utils/theme/preset/theme-preset';
 import { solarStorybookIcons } from './solar-storybook-icons';
 
 // Register the Solar icon set offline so icons don't flicker due to CDN fetches.
 addCollection(solarStorybookIcons as Parameters<typeof addCollection>[0]);
 
+// Storybook's canvas is a fixed white background that never follows the
+// developer's OS dark-mode preference. Two separate MUI mechanisms both
+// need pinning away from OS-driven behaviour, not just one:
+// 1. `colorSchemeSelector` controls how the *stylesheet* is generated —
+//    pinned away from its 'media' default (production apps, incl.
+//    giselleTheme itself, keep 'media'; see GiselleThemeProvider's own
+//    documented gotcha) so dark-mode CSS variables live under an explicit
+//    class instead of an unconditional `@media (prefers-color-scheme)`
+//    block.
+// 2. `ThemeProvider`'s `defaultMode` prop (default: 'system') is a
+//    SEPARATE, JS-level mechanism: even with (1) fixed, ThemeProvider
+//    still resolves 'system' mode via its own `matchMedia` check at
+//    runtime and applies the resulting class itself — reproducing the
+//    identical OS-dependent bug through a different path. Both must be
+//    pinned for Storybook to render deterministically regardless of the
+//    developer's OS setting.
+const STORYBOOK_COLOR_SCHEME_SELECTOR = '.mode-%s';
+
 const muiDefaultTheme = createTheme({
-  cssVariables: true,
+  cssVariables: { colorSchemeSelector: STORYBOOK_COLOR_SCHEME_SELECTOR },
   colorSchemes: { light: true, dark: true },
+});
+
+const giselleStorybookTheme = extendTheme({
+  ...giselleThemeOptions,
+  colorSchemeSelector: STORYBOOK_COLOR_SCHEME_SELECTOR,
 });
 
 // Registry of themes available in the Storybook toolbar.
 const themes: Record<string, typeof muiDefaultTheme> = {
   'mui-default': muiDefaultTheme,
-  giselle: giselleTheme as unknown as typeof muiDefaultTheme,
+  giselle: giselleStorybookTheme as unknown as typeof muiDefaultTheme,
 };
 
 // Hide low-signal inherited args globally so controls focus on design decisions.
@@ -59,7 +82,7 @@ const preview: Preview = {
       const key = context.globals['theme'] as string | undefined;
       const selectedTheme = (key && themes[key]) || muiDefaultTheme;
       return (
-        <ThemeProvider theme={selectedTheme}>
+        <ThemeProvider theme={selectedTheme} defaultMode="light">
           <Story />
         </ThemeProvider>
       );

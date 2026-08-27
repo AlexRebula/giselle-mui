@@ -54,6 +54,9 @@ export type {
   StatusColorKey,
 } from './components/material/data-display/status-label';
 
+export { SelectableLabel } from './components/material/data-display/selectable-label';
+export type { SelectableLabelProps } from './components/material/data-display/selectable-label';
+
 export { Accordion } from './components/material/surfaces/card/accordion';
 export type { AccordionProps } from './components/material/surfaces/card/accordion';
 export { ACCORDION_DONE_MIN_TOUCH_TARGET } from './components/material/surfaces/card/accordion';
