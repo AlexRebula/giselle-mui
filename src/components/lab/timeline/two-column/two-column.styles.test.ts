@@ -485,8 +485,8 @@ describe('timelineRootSx — MUI Timeline root', () => {
     expect(reset['padding']).toBe(0);
   });
 
-  it('[regression] has overflowX:hidden to clip absolutely-positioned milestone cards at narrow widths', () => {
+  it('does not clip content with overflowX:hidden', () => {
     const sx = timelineRootSx as Record<string, unknown>;
-    expect(sx['overflowX']).toBe('hidden');
+    expect(sx['overflowX']).toBeUndefined();
   });
 });

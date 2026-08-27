@@ -305,7 +305,6 @@ export const centerColumnSx: SxProps<Theme> = {
 export const timelineRootSx: SxProps<Theme> = {
   p: 0,
   m: 0,
-  overflowX: 'hidden',
   '& .MuiTimelineItem-root:before': { flex: 0, padding: 0 },
 };
 
