@@ -23,6 +23,15 @@ const mockTheme = {
 } as unknown as Theme;
 
 describe('selectableLabelSx', () => {
+  it('sets an explicit text color in both selected and unselected states', () => {
+    expect((selectableLabelSx(false) as unknown as StyleFn)(mockTheme).color).toBe(
+      mockTheme.vars!.palette.text.primary
+    );
+    expect((selectableLabelSx(true) as unknown as StyleFn)(mockTheme).color).toBe(
+      mockTheme.vars!.palette.text.primary
+    );
+  });
+
   it('has no boxShadow when not selected', () => {
     const styles = (selectableLabelSx(false) as unknown as StyleFn)(mockTheme);
     expect(styles.boxShadow).toBeUndefined();

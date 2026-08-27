@@ -17,6 +17,12 @@ export const selectableLabelSx =
     const vars = theme.vars!;
     return {
       cursor: 'pointer',
+      // Set explicitly rather than left to inherit — Chip's own base styles
+      // set `color: inherit`, which makes the label's visible color depend
+      // on whatever ambient text color the chip happens to be mounted
+      // under. StatusLabel (a working precedent) never relies on this
+      // either; every color this component shows should be self-contained.
+      color: vars.palette.text.primary,
       transition: theme.transitions.create(['background-color', 'box-shadow'], {
         duration: theme.transitions.duration.shorter,
       }),
