@@ -300,22 +300,11 @@ export const centerColumnSx: SxProps<Theme> = {
 
 /**
  * MUI `<Timeline>` root sx — resets default padding/margin and removes the
- * pseudo-element that MUI adds before every `TimelineItem`. `overflowX:
- * 'hidden'` guards against a horizontal scrollbar at narrow viewport widths,
- * where absolutely-positioned phase/milestone cards (see `phaseRowSx`'s
- * `left`/`right` offsets) can poke past the flex container even with the
- * `minWidth: 0`/`flexShrink: 0` fixes elsewhere in this file — see the
- * regression test below. `mx`/`px` push the actual clip boundary outward by
- * the same amount as they push content inward (net zero on layout position),
- * so cards/spine sitting flush against the root's edge get breathing room
- * before that clip kicks in, instead of being cut off at rest.
+ * pseudo-element that MUI adds before every `TimelineItem`.
  */
 export const timelineRootSx: SxProps<Theme> = {
   p: 0,
   m: 0,
-  mx: -3,
-  px: 3,
-  overflowX: 'hidden',
   '& .MuiTimelineItem-root:before': { flex: 0, padding: 0 },
 };
 

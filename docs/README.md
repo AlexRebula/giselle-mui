@@ -46,6 +46,7 @@ Every component in this library exists because it solves a recurring problem tha
   - [cleanup-day-8-may-2026.md](./incidents/cleanup-day-8-may-2026.md)
   - [model-handoff-convention-loss-may-2026.md](./incidents/model-handoff-convention-loss-may-2026.md)
   - [timeline-hover-regression-may-2026.md](./incidents/timeline-hover-regression-may-2026.md)
+  - [timeline-overflow-fix-overcomplication-aug-2026.md](./incidents/timeline-overflow-fix-overcomplication-aug-2026.md) — AI behavioural incident, not a code regression: an agent overcomplicated a fix the user had already precisely diagnosed
 
 ## Archive
 
