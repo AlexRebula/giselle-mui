@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -28,7 +28,10 @@ import type { FeatureFlowHighlightCarouselProps } from './types';
  * with the selected slide. A fixed gradient scrim sits above the images so
  * text stays legible regardless of slide content.
  */
-export function FeatureFlowHighlightCarousel({ cards }: FeatureFlowHighlightCarouselProps) {
+export const FeatureFlowHighlightCarousel = React.forwardRef<
+  HTMLDivElement,
+  FeatureFlowHighlightCarouselProps
+>(function FeatureFlowHighlightCarousel({ cards, sx, ...other }, ref) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   if (!cards.length) return null;
@@ -37,7 +40,7 @@ export function FeatureFlowHighlightCarousel({ cards }: FeatureFlowHighlightCaro
   const selectedCard = cards[selectedIndex];
 
   return (
-    <Box sx={highlightCarouselRootSx}>
+    <Box ref={ref} sx={[highlightCarouselRootSx, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
       {/* Images: absolutely stacked, crossfade only — never slide.
           Purely decorative backdrop: the headline/detail below already
           convey the same content as real text, so every frame (including
@@ -92,4 +95,6 @@ export function FeatureFlowHighlightCarousel({ cards }: FeatureFlowHighlightCaro
       )}
     </Box>
   );
-}
+});
+
+FeatureFlowHighlightCarousel.displayName = 'FeatureFlowHighlightCarousel';

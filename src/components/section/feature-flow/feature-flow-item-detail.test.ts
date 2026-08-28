@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest';
-import { createElement } from 'react';
+import { createElement, createRef, act } from 'react';
+import ReactDOM from 'react-dom/client';
 
 import { renderWithTheme } from '../../../test-utils';
 import { FeatureFlowItemDetail } from './feature-flow-item-detail';
@@ -122,5 +123,32 @@ describe('FeatureFlowItemDetail', () => {
     // icon (TechIconStrip renders one per technology entry).
     const ariaHiddenCount = html.split('aria-hidden="true"').length - 1;
     expect(ariaHiddenCount).toBeGreaterThanOrEqual(3);
+  });
+
+  it('forwards arbitrary props to the root element', () => {
+    const html = renderWithTheme(
+      createElement(FeatureFlowItemDetail, {
+        item: baseItem,
+        'data-testid': 'item-detail',
+      } as never)
+    );
+    expect(html).toContain('data-testid="item-detail"');
+  });
+
+  it('forwards ref to the root element', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+    const ref = createRef<HTMLDivElement>();
+
+    act(() => {
+      root.render(createElement(FeatureFlowItemDetail, { item: baseItem, ref }));
+    });
+
+    expect(ref.current).not.toBeNull();
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+
+    act(() => root.unmount());
+    div.remove();
   });
 });

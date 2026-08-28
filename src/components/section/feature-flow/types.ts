@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import type { BoxProps } from '@mui/material/Box';
+import type { StackProps } from '@mui/material/Stack';
 import type { SxProps, Theme } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
@@ -91,7 +92,7 @@ export interface FeatureFlowSectionProps extends Omit<BoxProps, 'children'> {
 // Internal sub-component prop types (not exported from the package barrel).
 // ----------------------------------------------------------------------
 
-export interface FeatureFlowImageColumnProps {
+export interface FeatureFlowImageColumnProps extends Omit<StackProps, 'children'> {
   /** The src that should be fully visible right now. */
   activeSrc: string;
   /** In-flow src used purely to give the sticky column its natural height. */
@@ -99,14 +100,13 @@ export interface FeatureFlowImageColumnProps {
   /** Every src this column may ever show — all permanently mounted, crossfaded via opacity. */
   allSrcs: readonly string[];
   alt: string;
-  sx?: FeatureFlowImage['sx'];
 }
 
-export interface FeatureFlowItemDetailProps {
+export interface FeatureFlowItemDetailProps extends Omit<BoxProps, 'children'> {
   item: FeatureFlowItem;
 }
 
-export interface FeatureFlowHighlightCarouselProps {
+export interface FeatureFlowHighlightCarouselProps extends Omit<BoxProps, 'children'> {
   cards: readonly FeatureFlowHighlightCard[];
 }
 

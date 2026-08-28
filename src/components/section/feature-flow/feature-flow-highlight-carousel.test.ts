@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest';
-import { createElement, act } from 'react';
+import { createElement, createRef, act } from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { renderWithTheme } from '../../../test-utils';
@@ -78,6 +78,30 @@ describe('FeatureFlowHighlightCarousel', () => {
     act(() => nextButton?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
 
     expect(div.textContent).toContain('First headline');
+
+    act(() => root.unmount());
+    div.remove();
+  });
+
+  it('forwards arbitrary props to the root element', () => {
+    const html = renderWithTheme(
+      createElement(FeatureFlowHighlightCarousel, { cards, 'data-testid': 'carousel' } as never)
+    );
+    expect(html).toContain('data-testid="carousel"');
+  });
+
+  it('forwards ref to the root element', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+    const ref = createRef<HTMLDivElement>();
+
+    act(() => {
+      root.render(createElement(FeatureFlowHighlightCarousel, { cards, ref }));
+    });
+
+    expect(ref.current).not.toBeNull();
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
 
     act(() => root.unmount());
     div.remove();
