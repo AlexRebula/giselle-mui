@@ -1,0 +1,242 @@
+import type { SxProps, Theme } from '@mui/material/styles';
+
+import { channelAlpha } from '../../../utils/theme/theme-utils/theme-utils';
+import type { FeatureFlowItemButtonState } from './types';
+
+// ----------------------------------------------------------------------
+
+const GREY_500_CHANNEL = 'var(--mui-palette-grey-500Channel)';
+const COMMON_BLACK_CHANNEL = 'var(--mui-palette-common-blackChannel)';
+const COMMON_WHITE_CHANNEL = 'var(--mui-palette-common-whiteChannel)';
+
+export const HIGHLIGHT_CAROUSEL_HEIGHT = 570;
+
+// ----------------------------------------------------------------------
+
+/** Root `<section>` — clips horizontal overflow without creating a scroll container. */
+export const featureFlowRootSx: SxProps<Theme> = {
+  overflowX: 'clip',
+  position: 'relative',
+  py: { xs: 10, md: 20 },
+};
+
+/**
+ * The sticky image column's card — palette-tinted drop shadow, softened for dark mode.
+ */
+export const imageColumnCardSx: SxProps<Theme> = (theme) => ({
+  top: 0,
+  left: '50%',
+  width: 720,
+  maxWidth: '100%',
+  borderRadius: 2,
+  overflow: 'hidden',
+  position: 'absolute',
+  transform: 'translateX(-50%)',
+  bgcolor: 'background.default',
+  boxShadow: `-40px 40px 80px 0px ${channelAlpha(GREY_500_CHANNEL, 0.16)}`,
+  ...theme.applyStyles('dark', {
+    boxShadow: `-40px 40px 80px 0px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.16)}`,
+  }),
+});
+
+/** The expanded detail panel's tinted background + top border. */
+export const detailPanelSx: SxProps<Theme> = {
+  py: { xs: 6, md: 10 },
+  overflow: 'hidden',
+  position: 'relative',
+  bgcolor: channelAlpha('var(--mui-palette-primary-mainChannel)', 0.04),
+  borderTop: `1px solid ${channelAlpha('var(--mui-palette-primary-mainChannel)', 0.12)}`,
+};
+
+/**
+ * One item row in the description column.
+ *
+ * - `interactive: false` (no expansion data): quiet, no hover/press feedback, no cursor pointer.
+ * - Non-selected, interactive: fades on hover; brightens fully when it's the hovered/active item.
+ * - Selected (last-clicked) item: persistent elevated card, regardless of hover.
+ * - Expanded item: a left inset accent shows its detail panel is open.
+ */
+export const featureFlowItemSx =
+  ({ isSelected, isActive, isExpanded, interactive }: FeatureFlowItemButtonState): SxProps<Theme> =>
+  (theme) => ({
+    gap: 2,
+    display: 'flex',
+    alignItems: 'flex-start',
+    textAlign: 'left',
+    width: '100%',
+    cursor: interactive ? 'pointer' : 'default',
+    borderRadius: 1.5,
+    py: 3,
+    px: 2.5,
+    border: 'solid 1px transparent',
+    color: 'text.disabled',
+    outline: 'none',
+    transition: theme.transitions.create(
+      ['background-color', 'box-shadow', 'border-color', 'opacity'],
+      { duration: theme.transitions.duration.shorter }
+    ),
+    '&:focus-visible': {
+      outline: `2px dashed ${theme.vars!.palette.primary.main}`,
+      outlineOffset: 2,
+    },
+    ...(interactive &&
+      !isSelected && {
+        '&:hover': {
+          opacity: 0.72,
+          bgcolor: channelAlpha(GREY_500_CHANNEL, 0.08),
+        },
+        '&:active': {
+          opacity: 0.56,
+          bgcolor: channelAlpha(GREY_500_CHANNEL, 0.12),
+        },
+      }),
+    ...(interactive &&
+      !isSelected &&
+      isActive && {
+        opacity: 1,
+      }),
+    ...(interactive &&
+      isSelected && {
+        color: 'text.primary',
+        bgcolor: 'background.paper',
+        boxShadow: `-8px 8px 20px -4px ${channelAlpha(GREY_500_CHANNEL, 0.12)}`,
+        '&:hover': {
+          opacity: 1,
+          boxShadow: `0 0 2px 0 ${channelAlpha(GREY_500_CHANNEL, 0.08)}, -8px 20px 40px -4px ${channelAlpha(GREY_500_CHANNEL, 0.24)}`,
+        },
+        ...theme.applyStyles('dark', {
+          boxShadow: `-8px 8px 20px -4px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.12)}`,
+        }),
+      }),
+    ...(interactive &&
+      isExpanded && {
+        borderColor: channelAlpha('var(--mui-palette-primary-mainChannel)', 0.24),
+        boxShadow: isSelected
+          ? `inset 3px 0 0 ${theme.vars!.palette.primary.main}, -8px 8px 20px -4px ${channelAlpha(GREY_500_CHANNEL, 0.12)}`
+          : `inset 3px 0 0 ${theme.vars!.palette.primary.main}`,
+      }),
+  });
+
+// ----------------------------------------------------------------------
+// Image column
+// ----------------------------------------------------------------------
+
+/** Sticky within the tall grid track next to it (md+); static on mobile. */
+export const imageColumnStickyStackSx: SxProps<Theme> = {
+  position: { xs: 'relative', md: 'sticky' },
+  top: { md: 80 },
+  width: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+/**
+ * The outer, in-flow ghost image: invisible, purely gives the sticky Stack
+ * its natural height so `position: sticky` has room to travel.
+ */
+export const imageColumnOuterGhostSx: SxProps<Theme> = {
+  width: 720,
+  maxWidth: '100%',
+  display: 'block',
+  visibility: 'hidden',
+  pointerEvents: 'none',
+  userSelect: 'none',
+};
+
+/**
+ * The inner ghost image: gives the crossfade layer a reference box height so
+ * it doesn't collapse (all the crossfaded images are `position: absolute`).
+ */
+export const imageColumnInnerGhostSx: SxProps<Theme> = {
+  width: '100%',
+  display: 'block',
+  visibility: 'hidden',
+  pointerEvents: 'none',
+  userSelect: 'none',
+};
+
+/** Shared shape behind every permanently-mounted crossfade frame: only the active one is opaque. */
+const crossfadeOpacitySx = (isActive: boolean, durationSeconds: number): SxProps<Theme> => ({
+  opacity: isActive ? 1 : 0,
+  transition: `opacity ${durationSeconds}s ease`,
+});
+
+/** One permanently-mounted image-column crossfade frame; only the active one is opaque. */
+export const imageColumnFrameSx = (isActive: boolean): SxProps<Theme> => ({
+  width: '100%',
+  display: 'block',
+  pointerEvents: 'none',
+  userSelect: 'none',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  ...crossfadeOpacitySx(isActive, 0.4),
+});
+
+// ----------------------------------------------------------------------
+// Highlight carousel
+// ----------------------------------------------------------------------
+
+export const highlightCarouselRootSx: SxProps<Theme> = {
+  position: 'relative',
+  height: HIGHLIGHT_CAROUSEL_HEIGHT,
+  borderRadius: 2,
+  overflow: 'hidden',
+};
+
+/** Absolutely-stacked slide image: crossfades via opacity, never slides. */
+export const highlightSlideImageSx = (isActive: boolean): SxProps<Theme> => ({
+  position: 'absolute',
+  inset: 0,
+  width: 1,
+  height: 1,
+  objectFit: 'cover',
+  objectPosition: 'center top',
+  ...crossfadeOpacitySx(isActive, 0.5),
+});
+
+/** Fixed gradient scrim — sits above the images, never slides. */
+export const highlightScrimSx: SxProps<Theme> = {
+  position: 'absolute',
+  inset: 0,
+  pointerEvents: 'none',
+  background: `linear-gradient(to top, ${channelAlpha(COMMON_BLACK_CHANNEL, 1)} 0%, ${channelAlpha(COMMON_BLACK_CHANNEL, 0.5)} 40%, transparent 69%)`,
+};
+
+export const highlightTextSlotSx: SxProps<Theme> = {
+  position: 'relative',
+  height: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-end',
+  px: { xs: 3, md: 4 },
+  pb: { xs: 3, md: 4 },
+  color: 'common.white',
+};
+
+export const highlightControlsRowSx: SxProps<Theme> = {
+  position: 'absolute',
+  top: 16,
+  right: 16,
+  display: 'flex',
+  alignItems: 'center',
+  gap: 1,
+};
+
+/** Detail text under the headline — slightly translucent white, matches the scrim's dark backdrop. */
+export const highlightDetailTextSx: SxProps<Theme> = {
+  color: channelAlpha(COMMON_WHITE_CHANNEL, 0.9),
+  lineHeight: 1.7,
+};
+
+export const highlightIndexLabelSx: SxProps<Theme> = {
+  color: 'common.white',
+  minWidth: 32,
+  textAlign: 'center',
+};
+
+/** Prev/next arrow buttons — translucent white pill over the dark scrim. */
+export const highlightArrowButtonSx: SxProps<Theme> = {
+  color: 'common.white',
+  bgcolor: channelAlpha(COMMON_WHITE_CHANNEL, 0.12),
+};
