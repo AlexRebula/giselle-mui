@@ -1,11 +1,12 @@
 // ----------------------------------------------------------------------
 
 /**
- * String paths into `__fixtures__/images`, served by Storybook's
- * `staticDirs` config (see `.storybook/main.ts`) at build/dev time. Never
- * bundled into the published package — only `dist/` ships (see
- * `package.json` `files`). Used only by the canonical Storybook fixture
- * (issue #171), not exported from the package barrel.
+ * String paths into `components/section/feature-flow/__fixtures__/images`,
+ * served by Storybook's `staticDirs` config (see `.storybook/main.ts`) at
+ * build/dev time. Never bundled into the published package — only `dist/`
+ * ships (see `package.json` `files`). Used only by the `feature-flow` demo
+ * data factories in this folder (issue #171), not exported from the package
+ * barrel.
  */
 const BASE = '/fixture-assets/feature-flow';
 
