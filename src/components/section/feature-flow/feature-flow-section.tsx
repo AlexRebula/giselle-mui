@@ -21,6 +21,7 @@ import {
   hasExpansionData,
   useClientImagePrewarm,
   useImagePreloader,
+  useImageRevealTransform,
   useScrollDirection,
 } from './feature-flow-section.utils';
 import { FeatureFlowImageColumn } from './image-column';
@@ -101,6 +102,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
     const detailPanelNodesRef = useRef<Map<string, HTMLDivElement>>(new Map());
 
     const { direction: scrollDirection, isScrolling } = useScrollDirection();
+    const { ref: imageColumnRef, style: imageRevealStyle } = useImageRevealTransform();
 
     const activeItem = items[activeItemIndex] ?? items[0];
 
@@ -360,10 +362,12 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
 
               <Grid size={resolvedImageGridSize} sx={{ order: { xs: 2, md: isLeft ? 2 : 1 } }}>
                 <FeatureFlowImageColumn
+                  ref={imageColumnRef}
                   activeSrc={activeSrc}
                   ghostSrc={initiallyVisibleSrc ?? image.src}
                   allSrcs={allItemImageSrcs}
                   alt={image.alt}
+                  revealStyle={imageRevealStyle}
                   sx={image.sx}
                 />
               </Grid>

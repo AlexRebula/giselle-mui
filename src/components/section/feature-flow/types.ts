@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
+import type { RefObject, ReactNode } from 'react';
 
+import type { MotionValue } from 'framer-motion';
 import type { BoxProps } from '@mui/material/Box';
 import type { SxProps, Theme } from '@mui/material/styles';
 
@@ -68,6 +69,30 @@ export interface FeatureFlowImage {
 }
 
 export type FeatureFlowGridSize = Readonly<{ xs?: number; md?: number; lg?: number }>;
+
+/**
+ * Scroll-linked entrance transform for the image column card as a whole —
+ * opacity, y-offset, scale, and blur. Additive to the column's own per-image
+ * opacity crossfade (keyed to `activeSrc`), which this does not affect.
+ * Used directly by the main component (`useImageRevealTransform`) and by
+ * `image-column` (`FeatureFlowImageColumnProps['revealStyle']`), so it lives
+ * here rather than in either one's own sub-component `types.ts`. Each field
+ * also accepts a plain value so callers outside `FeatureFlowSection`
+ * (stories, tests) can render the column at a fixed resting state.
+ */
+export interface FeatureFlowImageRevealStyle {
+  opacity: MotionValue<number> | number;
+  y: MotionValue<number> | number;
+  scale: MotionValue<number> | number;
+  filter: MotionValue<string> | string;
+}
+
+/** Return value of `useImageRevealTransform`. */
+export interface ImageRevealTransform {
+  /** Attach to the element whose scroll-into-view progress drives the transform. */
+  ref: RefObject<HTMLDivElement | null>;
+  style: FeatureFlowImageRevealStyle;
+}
 
 export interface FeatureFlowSectionProps extends Omit<BoxProps, 'children'> {
   caption?: string;

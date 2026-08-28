@@ -4,6 +4,7 @@ import { createElement, createRef, act } from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { renderWithTheme } from '../../../../test-utils';
+import { GiselleThemeProvider } from '../../../theming/theme-provider/giselle/giselle';
 import { FeatureFlowImageColumn } from './feature-flow-image-column';
 
 const baseProps = {
@@ -95,5 +96,71 @@ describe('FeatureFlowImageColumn', () => {
 
     act(() => root.unmount());
     div.remove();
+  });
+
+  describe('revealStyle', () => {
+    it('renders fully revealed (opacity 1, no offset/scale/blur) when revealStyle is omitted', () => {
+      const html = renderWithTheme(createElement(FeatureFlowImageColumn, baseProps));
+      const cardMatch = html.match(/<div[^>]*style="[^"]*opacity:1[^"]*"[^>]*>/);
+      expect(cardMatch).not.toBeNull();
+      expect(cardMatch?.[0]).not.toContain('blur(');
+    });
+
+    it('applies the given opacity/y/scale/blur to the card, additive to the per-image crossfade', () => {
+      const html = renderWithTheme(
+        createElement(FeatureFlowImageColumn, {
+          ...baseProps,
+          revealStyle: { opacity: 0.4, y: 12, scale: 0.97, filter: 'blur(4px)' },
+        })
+      );
+
+      const cardMatch = html.match(/<div[^>]*style="[^"]*opacity:0\.4[^"]*"[^>]*>/);
+      expect(cardMatch).not.toBeNull();
+      // opacity/filter apply directly; y/scale are composed by framer-motion
+      // into a single `transform` (translateY + scale) — all four apply
+      // together on the same card element.
+      expect(cardMatch?.[0]).toContain('filter:blur(4px)');
+      expect(cardMatch?.[0]).toContain('transform:translateY(12px) scale(0.97)');
+
+      // The per-image crossfade (opacity 0/1 on individual frames, keyed to
+      // activeSrc) is unaffected — still present alongside the card-level reveal.
+      const activeImgMatch = html.match(/<img[^>]*src="\/b\.png"[^>]*>/);
+      expect(activeImgMatch?.[0]).not.toContain('aria-hidden');
+    });
+
+    it("doesn't override the outer card's own centering transform", () => {
+      // Regression test: the reveal transform is applied to an inner wrapper,
+      // not the outer card element that carries imageColumnCardSx's own
+      // `transform: translateX(-50%)` (horizontal centering) via a CSS class.
+      // Framer-motion's `style` prop composes `y`/`scale` into an inline
+      // `transform`, and an inline style always wins over a class rule for the
+      // same property — applying it to the same element as the centering
+      // transform would silently replace `translateX(-50%)` and re-break
+      // centering, even at rest (y:0/scale:1 still produce an inline
+      // `transform` string).
+      const div = document.createElement('div');
+      document.body.appendChild(div);
+      const root = ReactDOM.createRoot(div);
+
+      act(() => {
+        root.render(
+          createElement(GiselleThemeProvider, {
+            defaultMode: 'light',
+            children: createElement(FeatureFlowImageColumn, {
+              ...baseProps,
+              revealStyle: { opacity: 0.4, y: 12, scale: 0.97, filter: 'blur(4px)' },
+            }),
+          })
+        );
+      });
+
+      const revealEl = div.querySelector('[style*="opacity"]') as HTMLElement | null;
+      const cardEl = revealEl?.parentElement ?? null;
+      expect(cardEl).not.toBeNull();
+      expect(getComputedStyle(cardEl as HTMLElement).transform).toBe('translateX(-50%)');
+
+      act(() => root.unmount());
+      div.remove();
+    });
   });
 });

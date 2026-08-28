@@ -15,6 +15,16 @@ import type { FeatureFlowItem } from './types';
 // Mocked the same way as floating-sub-nav.test.ts: AnimatePresence becomes a
 // plain passthrough, motion.* become plain intrinsic elements — deterministic
 // mount/unmount with no animation timing involved.
+//
+// useScroll/useTransform/useMotionTemplate/useReducedMotion are stubbed the
+// same way, purely so useImageRevealTransform (which this tree now calls)
+// doesn't need real scroll tracking in jsdom: useTransform resolves straight
+// to each transform's resting ("to") value, useMotionTemplate reassembles its
+// tagged-template inputs into a plain string, and useReducedMotion reports no
+// preference. None of this suite's tests assert on the entrance transform
+// itself (that lives in feature-flow-section.utils.test.ts and image-column's
+// own test file) — this just keeps the rest of the tree rendering
+// deterministically.
 vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children?: ReactNode }) =>
     children === undefined ? null : children,
@@ -27,9 +37,14 @@ vi.mock('framer-motion', () => ({
           createElement(prop, rest, children),
     }
   ),
+  useScroll: () => ({ scrollYProgress: 0 }),
+  useTransform: (_value: unknown, _input: unknown, output: readonly unknown[]) =>
+    output[output.length - 1],
+  useMotionTemplate: (strings: TemplateStringsArray, ...values: unknown[]) =>
+    strings.reduce((acc, str, i) => `${acc}${str}${i < values.length ? values[i] : ''}`, ''),
   // The expanded detail panel can render FeatureFlowHighlightCarousel (via
-  // FeatureFlowItemDetail), which now also calls useReducedMotion for its
-  // own text slide-in — stub it here too so that render path doesn't throw.
+  // FeatureFlowItemDetail), which also calls useReducedMotion for its own
+  // text slide-in — stub it here too so that render path doesn't throw.
   useReducedMotion: () => false,
 }));
 
@@ -427,6 +442,40 @@ describe('FeatureFlowSection — image column hover/scroll behaviour', () => {
 
     const downImg = findFrame(div, '/down.png');
     expect(downImg?.hasAttribute('aria-hidden')).toBe(false);
+    cleanup();
+  });
+
+  // Regression test for a gap noted alongside the scroll-direction/hover-stack
+  // tests above: selecting an item is meant to lock the displayed image to
+  // that item's own sequence (see the `userHasSelected` guard in
+  // `hoverSequenceSources`), but that lock had never been exercised together
+  // with a subsequent scroll event.
+  it("keeps the selected item's image locked after a scroll event, instead of reverting to scroll-direction swapping", () => {
+    window.scrollY = 0;
+    const { div, cleanup } = mount({
+      items: [fullItem, secondItem],
+      image: { ...baseImage, scrollImages: ['/down.png', '/up.png'] },
+    });
+
+    const buttons = div.querySelectorAll('button[aria-pressed]');
+    const secondButton = Array.from(buttons).find((el) => el.textContent?.includes('Performance'));
+    act(() =>
+      (secondButton as HTMLElement | undefined)?.dispatchEvent(
+        new MouseEvent('click', { bubbles: true })
+      )
+    );
+
+    // Selecting the item locks its own image in as the displayed one.
+    expect(findFrame(div, '/perf-1.png')?.hasAttribute('aria-hidden')).toBe(false);
+
+    // A scroll event after selection must not override the lock back to the
+    // scroll-direction image.
+    window.scrollY = 200;
+    act(() => window.dispatchEvent(new Event('scroll')));
+
+    expect(findFrame(div, '/perf-1.png')?.hasAttribute('aria-hidden')).toBe(false);
+    expect(findFrame(div, '/down.png')?.hasAttribute('aria-hidden')).toBe(true);
+
     cleanup();
   });
 });
