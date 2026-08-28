@@ -9,8 +9,12 @@ import {
   imageColumnInnerGhostSx,
   imageColumnOuterGhostSx,
   imageColumnStickyStackSx,
-} from './feature-flow-section.styles';
+} from '../feature-flow-section.styles';
 import type { FeatureFlowImageColumnProps } from './types';
+
+// Re-export — keeps `import { FeatureFlowImageColumnProps } from
+// './feature-flow-image-column'` working alongside the folder barrel.
+export type { FeatureFlowImageColumnProps } from './types';
 
 // ----------------------------------------------------------------------
 

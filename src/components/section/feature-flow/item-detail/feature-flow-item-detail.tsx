@@ -6,13 +6,17 @@ import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-import { GiselleIcon } from '../../material/data-display/icon/giselle';
-import { MetricCard } from '../../material/surfaces/card/metric';
-import { TechIconStrip } from '../../material/data-display/icon/tech-strip';
-import { detailPanelSx } from './feature-flow-section.styles';
-import { isRichLongDescription } from './feature-flow-section.utils';
-import { FeatureFlowHighlightCarousel } from './feature-flow-highlight-carousel';
+import { GiselleIcon } from '../../../material/data-display/icon/giselle';
+import { MetricCard } from '../../../material/surfaces/card/metric';
+import { TechIconStrip } from '../../../material/data-display/icon/tech-strip';
+import { detailPanelSx } from '../feature-flow-section.styles';
+import { isRichLongDescription } from '../feature-flow-section.utils';
+import { FeatureFlowHighlightCarousel } from '../highlight-carousel';
 import type { FeatureFlowItemDetailProps } from './types';
+
+// Re-export — keeps `import { FeatureFlowItemDetailProps } from
+// './feature-flow-item-detail'` working alongside the folder barrel.
+export type { FeatureFlowItemDetailProps } from './types';
 
 // ----------------------------------------------------------------------
 

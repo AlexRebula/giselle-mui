@@ -22,8 +22,8 @@ import {
   useImagePreloader,
   useScrollDirection,
 } from './feature-flow-section.utils';
-import { FeatureFlowImageColumn } from './feature-flow-image-column';
-import { FeatureFlowItemDetail } from './feature-flow-item-detail';
+import { FeatureFlowImageColumn } from './image-column';
+import { FeatureFlowItemDetail } from './item-detail';
 import type { FeatureFlowItem, FeatureFlowSectionProps, FeatureFlowSubNavItem } from './types';
 
 // ----------------------------------------------------------------------

@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { GiselleIcon } from '../../material/data-display/icon/giselle';
+import { GiselleIcon } from '../../../material/data-display/icon/giselle';
 import {
   highlightArrowButtonSx,
   highlightCarouselRootSx,
@@ -14,8 +14,12 @@ import {
   highlightScrimSx,
   highlightSlideImageSx,
   highlightTextSlotSx,
-} from './feature-flow-section.styles';
+} from '../feature-flow-section.styles';
 import type { FeatureFlowHighlightCarouselProps } from './types';
+
+// Re-export — keeps `import { FeatureFlowHighlightCarouselProps } from
+// './feature-flow-highlight-carousel'` working alongside the folder barrel.
+export type { FeatureFlowHighlightCarouselProps } from './types';
 
 // ----------------------------------------------------------------------
 

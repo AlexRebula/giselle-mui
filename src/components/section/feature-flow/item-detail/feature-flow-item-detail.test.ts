@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { createElement, createRef, act } from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { renderWithTheme } from '../../../test-utils';
+import { renderWithTheme } from '../../../../test-utils';
 import { FeatureFlowItemDetail } from './feature-flow-item-detail';
-import type { FeatureFlowItem } from './types';
+import type { FeatureFlowItem } from '../types';
 
 const baseItem: FeatureFlowItem = {
   id: 'a',

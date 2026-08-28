@@ -75,17 +75,37 @@ Phase: `Section` | Priority tier: `T2`
 ```
 src/components/section/feature-flow/
   feature-flow-section.tsx                : public component — state orchestration, item list, detail panel wiring
-  feature-flow-section.styles.ts           : all style functions for this component and its sub-components
+  feature-flow-section.styles.ts           : shared style functions for this component
   feature-flow-section.styles.test.ts      : style-function tests
   feature-flow-section.const.ts            : fixed hover-step and scroll-idle timing constants
   feature-flow-section.utils.ts            : hasExpansionData, image preload/prewarm hooks, useScrollDirection
-  feature-flow-image-column.tsx            : internal — sticky crossfading image column (presentational)
-  feature-flow-item-detail.tsx             : internal — expanded detail panel (metrics, tech chips, highlight carousel)
-  feature-flow-highlight-carousel.tsx      : internal — self-contained highlight-card carousel
-  *.test.ts                                : unit tests, one per source file above
   feature-flow-section.stories.tsx         : Storybook stories
-  types.ts                                 : all public and internal prop types
-  index.ts                                 : barrel export (public API only)
+  feature-flow-section.test.ts             : unit tests for the main component
+  types.ts                                 : public prop types, shared across sub-components
+  index.ts                                 : barrel export (public API + sub-components)
   README.md                                : this file
   roadmap.md                               : open improvements and completed tasks
+
+  image-column/                            : internal sub-component — sticky crossfading image column (presentational)
+    feature-flow-image-column.tsx
+    feature-flow-image-column.test.ts
+    types.ts                               : FeatureFlowImageColumnProps
+    index.ts
+
+  item-detail/                             : internal sub-component — expanded detail panel (metrics, tech chips, highlight carousel)
+    feature-flow-item-detail.tsx
+    feature-flow-item-detail.test.ts
+    types.ts                               : FeatureFlowItemDetailProps
+    index.ts
+
+  highlight-carousel/                      : internal sub-component — self-contained highlight-card carousel
+    feature-flow-highlight-carousel.tsx
+    feature-flow-highlight-carousel.test.ts
+    types.ts                               : FeatureFlowHighlightCarouselProps
+    index.ts
 ```
+
+Each sub-component folder follows the nesting policy in `docs/components/cleanup-workflow.md`
+Scenario A — the pattern established by `TimelineTwoColumn`'s `milestone-badge/`,
+`phase-card/`, etc. Style factories used by a sub-component but not shared with
+siblings remain in the parent's `feature-flow-section.styles.ts`.
