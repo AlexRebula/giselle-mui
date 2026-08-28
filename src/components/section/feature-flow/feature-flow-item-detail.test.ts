@@ -104,4 +104,23 @@ describe('FeatureFlowItemDetail', () => {
     expect(html).toContain('Shipped 3 releases');
     expect(html).toContain('In under a month.');
   });
+
+  it('marks the header icon, metric icons, and tech chip icons as decorative (aria-hidden)', () => {
+    const html = renderWithTheme(
+      createElement(FeatureFlowItemDetail, {
+        item: {
+          ...baseItem,
+          metrics: [{ value: '20+', label: 'Years', icon: 'solar:star-bold' }],
+          technologies: [{ name: 'React', icon: 'logos:react' }],
+        },
+      })
+    );
+
+    // GiselleIcon forwards aria-hidden onto its own root <span>, not the
+    // inner Iconify <Icon>. One occurrence expected per icon instance
+    // rendered here: the header icon, the metric's icon, and the tech chip's
+    // icon (TechIconStrip renders one per technology entry).
+    const ariaHiddenCount = html.split('aria-hidden="true"').length - 1;
+    expect(ariaHiddenCount).toBeGreaterThanOrEqual(3);
+  });
 });

@@ -32,7 +32,12 @@ export function FeatureFlowItemDetail({ item }: FeatureFlowItemDetailProps) {
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack spacing={4}>
               <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-                <GiselleIcon icon={item.icon} width={44} sx={{ color: 'primary.main' }} />
+                <GiselleIcon
+                  icon={item.icon}
+                  width={44}
+                  sx={{ color: 'primary.main' }}
+                  aria-hidden="true"
+                />
                 <Typography variant="h3">{item.title}</Typography>
               </Stack>
 
@@ -53,7 +58,9 @@ export function FeatureFlowItemDetail({ item }: FeatureFlowItemDetailProps) {
                       value={value}
                       label={label}
                       sublabel={sublabel}
-                      icon={icon ? <GiselleIcon icon={icon} width={36} /> : undefined}
+                      icon={
+                        icon ? <GiselleIcon icon={icon} width={36} aria-hidden="true" /> : undefined
+                      }
                       color="primary"
                     />
                   ))}
@@ -74,7 +81,7 @@ export function FeatureFlowItemDetail({ item }: FeatureFlowItemDetailProps) {
                   centeredWrap={false}
                   items={item.technologies.map((tech) => ({
                     label: tech.name,
-                    icon: <GiselleIcon icon={tech.icon} width={32} />,
+                    icon: <GiselleIcon icon={tech.icon} width={32} aria-hidden="true" />,
                   }))}
                 />
               ) : null}
