@@ -67,6 +67,18 @@ describe('FeatureFlowItemDetail', () => {
     expect(html).toContain('Uptime');
   });
 
+  it('renders a metric sublabel when present', () => {
+    const html = renderWithTheme(
+      createElement(FeatureFlowItemDetail, {
+        item: {
+          ...baseItem,
+          metrics: [{ value: '20+', label: 'Years', sublabel: 'of experience' }],
+        },
+      })
+    );
+    expect(html).toContain('of experience');
+  });
+
   it('renders no technology chips when technologies is absent', () => {
     const html = renderWithTheme(createElement(FeatureFlowItemDetail, { item: baseItem }));
     expect(html).not.toContain('Technologies');

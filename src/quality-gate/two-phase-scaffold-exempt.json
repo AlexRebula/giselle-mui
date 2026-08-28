@@ -135,6 +135,7 @@
     "src/components/section/error/error-section.test.ts",
     "src/components/section/feature-flow/feature-flow-section.styles.test.ts",
     "src/components/section/feature-flow/feature-flow-section.test.ts",
+    "src/components/section/feature-flow/feature-flow-section.transition.test.ts",
     "src/components/section/feature-flow/feature-flow-section.utils.test.ts",
     "src/components/section/feature-flow/highlight-carousel/feature-flow-highlight-carousel.test.ts",
     "src/components/section/feature-flow/image-column/feature-flow-image-column.test.ts",

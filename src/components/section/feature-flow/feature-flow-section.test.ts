@@ -48,6 +48,10 @@ beforeAll(() => {
   });
   Object.defineProperty(window, 'scrollY', { value: 0, writable: true, configurable: true });
 
+  // jsdom does not implement scrollIntoView at all (not even as a no-op) —
+  // stub it so the expand-triggered scroll-into-view effect doesn't throw.
+  Element.prototype.scrollIntoView = vi.fn();
+
   // MotionViewport's `whileInView` (via framer-motion) requires IntersectionObserver,
   // which jsdom does not implement. A no-op stub is enough: the intersection state
   // itself is not under test here (that belongs to MotionViewport's own test suite).
@@ -262,6 +266,62 @@ describe('FeatureFlowSection — click-to-expand', () => {
     );
     act(() => row?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
     expect(div.querySelector('[aria-label="Section navigation"]')).toBeNull();
+    cleanup();
+  });
+});
+
+// ----------------------------------------------------------------------
+
+describe('FeatureFlowSection — scroll-into-view on expand', () => {
+  it('scrolls the detail panel into view once it exists in the DOM', () => {
+    const scrollIntoView = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    const button = div.querySelector('button[aria-pressed]');
+    act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    cleanup();
+  });
+
+  it('scrolls again when switching to a different expanded item via the sub-nav', () => {
+    const scrollIntoView = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+
+    const { div, cleanup } = mount({ items: [fullItem, secondItem], image: baseImage });
+    const buttons = div.querySelectorAll('button[aria-pressed]');
+    act(() => buttons[0]?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+
+    const subNavButtons = div.querySelectorAll('[aria-label="Section navigation"] button');
+    const performanceNavButton = Array.from(subNavButtons).find(
+      (el) => el.getAttribute('aria-label') === secondItem.title
+    );
+    act(() => performanceNavButton?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+
+    expect(scrollIntoView).toHaveBeenCalledTimes(2);
+    cleanup();
+  });
+
+  it('does not scroll when collapsing an expanded item', () => {
+    const scrollIntoView = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    act(() =>
+      div
+        .querySelector('button[aria-pressed]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    );
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+
+    act(() =>
+      div
+        .querySelector('button[aria-pressed]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    );
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
     cleanup();
   });
 });
