@@ -24,7 +24,7 @@ const MotionSvg = styled(motion.svg, {
  * Only rendered at ≥1440 px via base decoration styles.
  * @internal — used by `FaqSection` only.
  *
- * **Quality status (13 May 2026):** DoD 9/9 · Best practices 13/13
+ * **Quality status (28 Aug 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not yet run
  */
 export const FaqFloatLine = React.forwardRef<SVGSVGElement, SvgProps & { vertical?: boolean }>(
   function FaqFloatLine({ sx, vertical, ...other }, ref) {
@@ -80,6 +80,8 @@ FaqFloatLine.displayName = 'FaqFloatLine';
  * Decorative animated "+" mark.
  * Only rendered at ≥1440 px.
  * @internal — used by `FaqSection` only.
+ *
+ * **Quality status (28 Aug 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not yet run
  */
 export const FaqFloatPlusIcon = React.forwardRef<SVGSVGElement, SvgProps>(function FaqFloatPlusIcon(
   { sx, ...other },
@@ -120,6 +122,8 @@ FaqFloatPlusIcon.displayName = 'FaqFloatPlusIcon';
  * Decorative downward-pointing triangle.
  * Only rendered at ≥1440 px.
  * @internal — used by `FaqSection` only.
+ *
+ * **Quality status (28 Aug 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not yet run
  */
 export const FaqFloatTriangleDownIcon = React.forwardRef<SVGSVGElement, SvgProps>(
   function FaqFloatTriangleDownIcon({ sx, ...other }, ref) {

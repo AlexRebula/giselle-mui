@@ -1,6 +1,6 @@
 # FaqSection — Roadmap
 
-> Last updated: 14 May 2026
+> Last updated: 28 Aug 2026
 
 ## Status
 
@@ -17,6 +17,7 @@ Fully audited. FAQ accordion section with animated expand/collapse; exported fro
 ## Known gaps
 
 - The `FaqAccordion` export alias is still present to avoid breaking consumers. It should be removed once a semver bump is appropriate.
+- SonarQube has not been re-run against the four restructured sub-components since the 28 Aug 2026 nesting change.
 
 ## Completed
 
@@ -25,4 +26,4 @@ Fully audited. FAQ accordion section with animated expand/collapse; exported fro
 | Initial component shipped  | 13 May 2026 |
 | Renamed `FaqAccordion` → `FaqSection` (alias kept for backward compat) | 13 May 2026 |
 | Full cleanup audit (21/21) | 13 May 2026 |
-| Nested `bottom-lines`, `top-lines`, `motion-viewport`, `accordion-svg` sub-components into their own subfolders per the Scenario A policy reversal; added `displayName`/`forwardRef` to all four (giselle-mui#164) | 28 Aug 2026 |
+| Nested `bottom-lines`, `top-lines`, `motion-viewport`, `accordion-svg` sub-components into their own subfolders per the Scenario A policy reversal; added `displayName` to all four, `forwardRef` to the two (`motion-viewport`, `accordion-svg`) with a single ref-bearing root (giselle-mui#164) | 28 Aug 2026 |

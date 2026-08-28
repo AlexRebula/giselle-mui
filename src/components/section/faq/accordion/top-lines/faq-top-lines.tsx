@@ -12,7 +12,7 @@ import { FAQ_FLOAT_LINE_LEFT } from './faq-top-lines.const';
  *
  * @internal — used by `FaqSection` only.
  *
- * **Quality status (13 May 2026):** DoD 9/9 · Best practices 13/13
+ * **Quality status (28 Aug 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not yet run
  */
 export function FaqTopLines() {
   return (

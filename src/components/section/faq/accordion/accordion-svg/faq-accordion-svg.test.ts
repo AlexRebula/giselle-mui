@@ -63,6 +63,13 @@ describe('FaqFloatPlusIcon', () => {
     expect(html).toContain('height="16"');
   });
 
+  it('forwards arbitrary props to the root svg element', () => {
+    const html = renderWithTheme(
+      createElement(FaqFloatPlusIcon, { 'data-testid': 'float-plus-icon' } as never)
+    );
+    expect(html).toContain('data-testid="float-plus-icon"');
+  });
+
   it('forwards ref to the root svg element', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);
@@ -92,6 +99,13 @@ describe('FaqFloatTriangleDownIcon', () => {
     const html = renderWithTheme(createElement(FaqFloatTriangleDownIcon));
     expect(html).toContain('width="20"');
     expect(html).toContain('height="10"');
+  });
+
+  it('forwards arbitrary props to the root svg element', () => {
+    const html = renderWithTheme(
+      createElement(FaqFloatTriangleDownIcon, { 'data-testid': 'float-triangle-icon' } as never)
+    );
+    expect(html).toContain('data-testid="float-triangle-icon"');
   });
 
   it('forwards ref to the root svg element', () => {
