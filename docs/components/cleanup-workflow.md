@@ -14,7 +14,7 @@ Before reading a single line of implementation, answer this one question:
 | ----------------------------------------------------------------- | ------------------------------------ |
 | Exported from `src/index.ts`                                      | Standalone — needs its own subfolder |
 | Listed in `docs/component-inventory.md`                           | Standalone                           |
-| File lives flat inside a parent component folder                  | Sub-component — correctly flat       |
+| File lives inside a parent component's own subfolder               | Sub-component — needs its own named subfolder |
 | Only imported by one sibling `.tsx` in the same folder            | Sub-component                        |
 | Has its own `Props` type but is never consumed outside its folder | Sub-component                        |
 
@@ -124,10 +124,11 @@ Applies to any component exported from `src/motion-index.ts` (compiled to `dist/
 ### Step 5 — Sub-components
 
 - Any function that starts with a capital letter and returns JSX must not be defined inline in the parent `.tsx` file.
-- Extract each to its own flat `.tsx` file in the same folder (no nested subfolders).
-- Types for sub-components stay in the folder's `types.ts`. Constants stay in `*.const.ts`. Logic stays in `utils.ts`.
-- Add the sub-component to the folder's `index.ts` barrel.
-- Add at least one test for each sub-component (new `describe` block in the main `*.test.ts` or a dedicated `<sub-component>.test.ts`).
+- Extract each to its own named subfolder inside the parent folder — never a flat `.tsx` file. Every sub-component gets its own folder, unconditionally, with no size or complexity threshold (mirror `TimelineTwoColumn`'s `milestone-badge/`, `phase-card/`, `phase-warning-popover/`, `spine-connector/`, `timeline-dot/`).
+- Each sub-component folder gets its own `index.ts` barrel, its own `types.ts` if it has a props type (importing shared types from the parent's `types.ts` where needed), and its own co-located test file. Constants and shared logic that are genuinely parent-scoped stay in the parent's `*.const.ts` / `utils.ts`; anything specific to the sub-component moves with it.
+- Give every sub-component `displayName` and, where it wraps a DOM element or MUI component, `React.forwardRef` — see the Scenario A checklist below.
+- Add the sub-component to the parent folder's `index.ts` barrel (re-exporting from the sub-component's own folder).
+- Add at least one test for each sub-component, co-located in its own folder.
 
 ### Step 6 — Main `.tsx` cleanup
 
@@ -315,7 +316,7 @@ After all other DoD items are checked, record the final score in two places.
 export function MyComponent(...) {}
 ```
 
-- `n/21` = number of Scenario B DoD checklist items met (use `n/10` for Scenario A sub-components)
+- `n/21` = number of Scenario B DoD checklist items met (use `n/12` for Scenario A sub-components)
 - `n/13` = number of best-practices items met
 - The date is the date the cleanup was completed — update it when the component is significantly changed
 
@@ -332,7 +333,7 @@ Keep the label **generic** — "best practices" is the correct public-facing ter
 | Best practices   | n/13  | JSDoc prop coverage not verified · … |
 ```
 
-Use `DoD (Scenario A)` and `n/9` for sub-components.
+Use `DoD (Scenario A)` and `n/12` for sub-components.
 
 > Scores reflect the state at the cleanup date. Update the date and re-run SonarQube
 > whenever the component is significantly changed.
@@ -356,14 +357,15 @@ src/components/<name>/
   index.ts                — barrel: re-exports everything
   README.md               — why it exists, design decisions, file structure
   roadmap.md              — per-component planned improvements, known gaps, completed work
-  <sub-component>.tsx     — internal sub-components (flat, not in subfolders)
+  <sub-component>/        — internal sub-components, each in its own named subfolder (own index.ts,
+                            types.ts if it has props, co-located tests) — never a flat file
 ```
 
 ---
 
-## Scenario A — Sub-component (correctly flat inside a parent folder)
+## Scenario A — Sub-component (own named subfolder inside a parent folder)
 
-Use this checklist when Phase 0 confirms the component lives flat and belongs to a parent.
+Use this checklist when Phase 0 confirms the component belongs to a parent and needs its own named subfolder.
 
 ### Reconnaissance checks (run before touching any file)
 
@@ -399,22 +401,26 @@ Use this checklist when Phase 0 confirms the component lives flat and belongs to
 
 ### Rules that differ from a standalone component
 
-- **No own subfolder.** The file stays flat in the parent folder.
-- **No own `types.ts`, `utils.ts`, `*.styles.ts`, `*.const.ts`.** All of these belong to the parent folder's shared files.
-- **No own `index.ts` barrel.** Exported via the parent folder's `index.ts` only.
-- **No own `README.md`.** Document the sub-component in the parent folder's `README.md` under a "Sub-components" section.
-- **No own `*.stories.tsx`** unless it is independently useful to evaluate in isolation (apply the story decision rule: would a developer open this story to decide how to use it?).
-- **Tests** go in the parent's `*.test.ts` as a new `describe` block, or in a dedicated `<sub-component>.test.ts` flat in the same folder — never in a subfolder.
+- **Own named subfolder — mandatory, unconditional.** `<parent-folder>/<sub-component-name>/`. There is no size or complexity threshold — every sub-component gets its own folder, always, because components grow and need to be portable. Drop the parent's name/scope from the sub-component's folder name (e.g. `milestone-badge/`, not `two-column-milestone-badge/`); the exported component name and internal file basename keep the sub-component's full descriptive name (e.g. `milestone-badge/milestone-badge.tsx` exporting `MilestoneBadge`). See the folder-naming convention in `docs/naming-conventions.md` for the general rule this follows.
+- **Own `types.ts`.** The sub-component's `Props` type lives here. Import any shared types the parent or siblings also use from the parent's `../types.ts` — do not duplicate them.
+- **Own `*.styles.ts` / `*.const.ts` / `utils.ts`** for anything genuinely specific to this sub-component. Only what is truly shared across siblings or the parent stays in the parent folder's files.
+- **Own `index.ts` barrel.** Re-exports the component (and its types) from this subfolder; the parent folder's `index.ts` re-exports from the sub-component's folder in turn.
+- **Own `README.md`** is optional for a sub-component (unlike a standalone component, where it's mandatory) — a short doc comment on the component is sufficient unless the sub-component encodes a non-obvious design decision worth writing up on its own.
+- **Own `*.stories.tsx`** unless it is independently useful to evaluate in isolation (apply the story decision rule: would a developer open this story to decide how to use it?).
+- **Tests** are co-located inside the sub-component's own subfolder — never flat in the parent folder and never mixed into the parent's `*.test.ts`.
+- **`displayName` and `forwardRef`** — every sub-component gets a `displayName`. If it wraps a DOM element or an MUI component (i.e. it accepts and forwards a `ref`), it must use `React.forwardRef`.
 
 ### Definition of done for a sub-component
 
-- [ ] No `type` or `interface` declarations in the `.tsx` — all in parent `types.ts`
-- [ ] No sx with more than ~3 properties inline — all in parent `*.styles.ts`
+- [ ] Own named subfolder created, nested inside the parent folder
+- [ ] No `type` or `interface` declarations in the `.tsx` — all in this sub-component's own `types.ts` (shared types imported from parent `../types`)
+- [ ] No sx with more than ~3 properties inline — all in a styles file (own or parent's, whichever is genuinely shared)
 - [ ] No duplicated JSX blocks — extracted to a helper or util
 - [ ] All inline conditional logic that produces a derived value is in `utils.ts`
 - [ ] JSDoc covers all props including behaviour flags
-- [ ] At least one test `describe` block exists for this sub-component
-- [ ] Exported from parent `index.ts`
+- [ ] `displayName` set; `React.forwardRef` used if the sub-component wraps a DOM element or MUI component
+- [ ] At least one test file exists, co-located in this sub-component's own subfolder
+- [ ] Own `index.ts` barrel exists and is re-exported from the parent's `index.ts`
 - [ ] SonarQube: zero violations
 - [ ] `npm run check:verify` exits 0
 - [ ] Quality status added to JSDoc (one line) — Step 14
@@ -475,7 +481,7 @@ Complete this before starting any implementation steps. The goal is a clean move
 - **Own `<name>.stories.tsx`** — mandatory. Standalone components are independently evaluable by definition.
 - **Own `index.ts` barrel** — exports the component, all sub-components, types, constants, and any utils intended for consumers.
 - **Own `README.md`** — why it exists, why it belongs here, design decisions, library safety, file structure, related.
-- **Internal sub-components** live flat in the same folder (no nested subfolders) — Scenario A rules apply to them.
+- **Internal sub-components** each live in their own named subfolder inside this component's folder — Scenario A rules apply to them.
 - **Exported from `src/index.ts`** — the package barrel must export this component.
 
 ### Definition of done for a standalone component
@@ -487,7 +493,7 @@ Complete this before starting any implementation steps. The goal is a clean move
 - [ ] No named constants for sizes inline — all in `<name>.const.ts`
 - [ ] Regression tests for every size constant with a safety minimum
 - [ ] No pure logic functions in `.tsx` — all in `utils.ts`
-- [ ] No capital-letter helper components defined inside `.tsx` — each in its own flat `.tsx`
+- [ ] No capital-letter helper components defined inside `.tsx` — each extracted to its own named subfolder (Scenario A)
 - [ ] No `React.FC`, no `any`, no bare `<Box>` without props
 - [ ] `sx` array spread on root element
 - [ ] `...other` spread on root element
