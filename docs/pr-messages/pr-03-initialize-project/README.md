@@ -177,7 +177,7 @@ No import paths in the portfolio need to change at any point.
 ## What is NOT done yet
 
 - [ ] `yarn install` at workspace root (pending — verifies symlink wiring end-to-end)
-- [ ] Delete duplicate components from portfolio `src/components/alexrebula/giselle-mui/`
+- [ ] Delete duplicate components from the consuming portfolio app
 - [ ] Update portfolio import sites to use `'@littlebranches/giselle-mui'`
 - [ ] Storybook stories for all 4 components
 - [ ] npm publish (planned May/June 2026)

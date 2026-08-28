@@ -5,7 +5,7 @@ sidebar_label: 'Roadmap'
 
 # @littlebranches/giselle-mui — Roadmap
 
-> This file is the source of truth for the giselle-mui library build. It covers theme utilities (Phases A–D), components, and extraction candidates. Summary entries for completed phases bubble up to `alexrebula/docs/roadmap.md` Phase 1.5 (private companion repo — not linkable from here).
+> This file is the source of truth for the giselle-mui library build. It covers theme utilities (Phases A–D), components, and extraction candidates. Summary entries for completed phases bubble up to a private consuming app's own roadmap, Phase 1.5.
 
 ---
 
@@ -659,8 +659,8 @@ it. Thin wrappers only emerge if, while building demo pages, a repeated pattern 
 justifies the wrapper (e.g. a specific `expandIcon` + `disableGutters` combination needed
 on every accordion).
 
-**Full spec:** `alexrebula/docs/giselle-premium/giselle-mui-restructure-plan.md` —
-`GiselleMUIView` section (route structure, `nav-config.ts` data shape, atomic design taxonomy,
+**Full spec:** tracked in a private consuming app's own planning docs (`GiselleMUIView`
+section: route structure, `nav-config.ts` data shape, atomic design taxonomy,
 `View → Template → Organism` wiring pattern).
 
 **Blocked on:** Phase C (`GiselleThemeProvider`) — must be shipped and `yalc push`ed before

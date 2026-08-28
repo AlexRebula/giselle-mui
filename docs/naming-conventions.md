@@ -197,4 +197,4 @@ A good component name in giselle-mui satisfies all four:
 3. **Unique within the package.** No two components can produce the same folder name.
 4. **Portable.** The name makes sense outside the context of any specific project
    (portfolio, dashboard, task tracker). No names that embed project-specific concepts
-   like `ZigaTaskBadge` or `AlexEarningsCard`.
+   like `AcmeTaskBadge` or `NorthwindEarningsCard`.

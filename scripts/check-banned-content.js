@@ -55,6 +55,24 @@ function loadLocalPatterns() {
     .filter((line) => line.length > 0 && !line.startsWith('#'));
 }
 
+/**
+ * Load banned personal names from the gitignored
+ * scripts/.banned-personal-refs.local.json, if present. Kept as a separate
+ * file/mechanism from loadLocalPatterns per this org's documented
+ * convention (canonical list lives in the private oss-quality-standards
+ * extension repo; each public repo gets its own local copy here).
+ */
+function loadLocalPersonalRefs() {
+  const localFile = path.join(ROOT, 'scripts', '.banned-personal-refs.local.json');
+  if (!existsSync(localFile)) return [];
+  try {
+    const parsed = JSON.parse(readFileSync(localFile, 'utf-8'));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 // ── Banned patterns ────────────────────────────────────────────────────────
 
 /**
@@ -77,9 +95,9 @@ const BANNED_IDENTIFIERS = [
  * (docs/ or src/). Commercial theme kit names are safe to commit here —
  * every utility in giselle-mui is an independent implementation, and
  * naming these kits publicly is a defensive "not copied from" statement,
- * not a disclosure of anything private. Rationale belongs in
- * alexrebula/docs/ (private). Real private repo names/internal-only
- * project identifiers are loaded separately below — see loadLocalPatterns.
+ * not a disclosure of anything private. Rationale is tracked in a private
+ * consuming app's own docs. Real private repo names/internal-only project
+ * identifiers are loaded separately below — see loadLocalPatterns.
  */
 const BANNED_PRIVATE_REFS = [
   'Minimals',
@@ -94,6 +112,7 @@ const BANNED_PRIVATE_REFS = [
   'CodedThemes',
   'codedthemes',
   ...loadLocalPatterns(),
+  ...loadLocalPersonalRefs(),
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────

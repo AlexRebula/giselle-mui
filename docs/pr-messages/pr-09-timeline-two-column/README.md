@@ -135,7 +135,7 @@ Element type is invalid: expected a string (or class/function) but got: undefine
 
 Root cause: `giselle-mui` has `"type":"module"` in `package.json`. This triggers webpack 5's strict ESM mode (`fullySpecified: true`), which validates export names statically **before transpilation**. Extension-less barrel re-exports (`export { X } from './x'` without `.tsx`) cannot be resolved in strict ESM mode, so webpack marked `TimelineTwoColumn` as "not exported" — silently at compile time, fatally at runtime.
 
-Fix in `alexrebula/next.config.ts`:
+Fix in the consuming app's Next.js config:
 
 ```ts
 config.module.rules.push({
