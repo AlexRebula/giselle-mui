@@ -2,22 +2,14 @@
 import { describe, it, expect } from 'vitest';
 import type { Theme } from '@mui/material/styles';
 
-import { accordionItemSx, contactSectionSx, floatDecorationBase } from './faq-accordion.styles';
+import { accordionItemSx, contactSectionSx } from './faq-accordion.styles';
 
 // ----------------------------------------------------------------------
 
 const mockTheme = {
-  vars: {
-    palette: {
-      grey: { '500Channel': '145 158 171' },
-    },
-  },
   transitions: {
     create: () => 'background-color 200ms',
     duration: { shorter: 200 },
-  },
-  breakpoints: {
-    up: (bp: number) => `@media (min-width:${bp}px)`,
   },
 } as unknown as Theme;
 
@@ -59,26 +51,5 @@ describe('contactSectionSx', () => {
   it('uses left-to-right gradient direction', () => {
     const styles = contactSectionSx as Record<string, unknown>;
     expect(String(styles['background'])).toContain('to left');
-  });
-});
-
-// ----------------------------------------------------------------------
-
-describe('floatDecorationBase', () => {
-  it('is hidden by default (display: none)', () => {
-    const styles = floatDecorationBase(mockTheme);
-    expect(styles['display']).toBe('none');
-  });
-
-  it('shows at ≥1440 px breakpoint', () => {
-    const styles = floatDecorationBase(mockTheme);
-    const mediaKey = '@media (min-width:1440px)';
-    expect(styles[mediaKey]).toEqual({ display: 'block' });
-  });
-
-  it('is absolutely positioned with z-index 2', () => {
-    const styles = floatDecorationBase(mockTheme);
-    expect(styles['position']).toBe('absolute');
-    expect(styles['zIndex']).toBe(2);
   });
 });

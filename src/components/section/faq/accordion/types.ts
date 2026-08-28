@@ -1,17 +1,5 @@
 import type { ReactNode } from 'react';
-import type { SVGMotionProps } from 'framer-motion';
 import type { BoxProps } from '@mui/material/Box';
-import type { SxProps, Theme } from '@mui/material/styles';
-
-// ----------------------------------------------------------------------
-
-/**
- * Props for internal decorative SVG elements in `FaqSection`
- * (`FaqFloatLine`, `FaqFloatPlusIcon`, `FaqFloatTriangleDownIcon`).
- *
- * @internal
- */
-export type SvgProps = SVGMotionProps<SVGSVGElement> & { sx?: SxProps<Theme> };
 
 // ----------------------------------------------------------------------
 
@@ -50,10 +38,4 @@ export type FaqSectionProps = Omit<BoxProps, 'children'> & {
    * - `ReactNode` → rendered as-is.
    */
   contactIcon?: ReactNode | string;
-};
-
-/** @internal Props for the scroll-triggered animation container used by {@link FaqSection}. */
-export type FaqMotionViewportProps = {
-  children: ReactNode;
-  sx?: SxProps<Theme>;
 };

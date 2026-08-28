@@ -4,7 +4,7 @@
 > Existing components that pre-date it are already compliant; this formalises the rules
 > so new additions are consistent without debate.
 >
-> _Last updated: 16 May 2026_
+> _Last updated: 28 Aug 2026_
 
 ---
 
@@ -19,6 +19,57 @@
    Iconify's own `Icon` component. Everywhere else the name stands alone.
 5. **No `I` interface prefix.** TypeScript interfaces are `BalanceSummaryCardProps`, not
    `IBalanceSummaryCardProps`.
+6. **Drop a redundant category suffix/prefix from the folder name when the parent directory
+   already implies it — but keep it on the exported component and the file name.** Rule 3
+   ("folder name = component name in kebab") is the default; this is the one documented
+   exception. See **Folder-naming: dropping a redundant category suffix** below.
+
+---
+
+## Folder-naming: dropping a redundant category suffix
+
+When a component's folder sits directly inside a parent directory whose name already
+encodes the component's category suffix, drop that suffix from the **folder** name only.
+The exported component name and the internal file basename keep the full descriptive name
+unchanged — only the folder is shortened, because the parent directory already tells the
+reader the category.
+
+```
+src/components/chart/radial-progress/           ← folder drops "Card"
+  radial-progress-card.tsx                       ← file keeps full name
+  export function RadialProgressCard(...)        ← component keeps full name
+
+src/components/chart/sparkline-bar/              ← folder drops "Chart"
+  sparkline-bar-chart.tsx
+  export function SparklineBarChart(...)
+
+src/components/section/hero/section/             ← "hero" drops "Section" from the shared feature
+  hero-section.tsx                               ← namespace; the innermost "section" folder holds
+  export function HeroSection(...)               ← the component itself, alongside its own
+                                                    sub-components (buttons-row/, scroll-parallax/)
+
+src/components/section/feature-flow/             ← "feature-flow" drops "Section"
+src/components/section/error/                    ← "error" drops "Section"
+src/components/section/pricing/                  ← "pricing" drops "Section"
+```
+
+This also applies one level deeper, to a sub-component nested inside its parent component's
+own folder: drop the parent's name/scope from the sub-component's folder name, but keep the
+sub-component's own full name on its exported symbol and file. For example, inside
+`lab/timeline/two-column/`, the `MilestoneBadge` sub-component's folder is `milestone-badge/`
+(not `two-column-milestone-badge/`), and its file `milestone-badge/milestone-badge.tsx`
+exports `MilestoneBadge` — the full name, unabbreviated, because nothing in
+`milestone-badge/milestone-badge.tsx` is redundant with its parent folder name.
+
+**Why keep the full name on the file and component but shorten only the folder:** the file
+and component name are what a developer sees in an import statement, an error stack trace, or
+a search result, taken out of the context of the folder tree — so they must stay
+self-describing on their own. The folder name is only ever read in the context of its parent
+directory, where the category is already obvious, so shortening it there removes noise
+without losing information.
+
+See `docs/components/cleanup-workflow.md` Scenario A for how this applies when extracting an
+internal sub-component out of a parent component's `.tsx` file into its own subfolder.
 
 ---
 
