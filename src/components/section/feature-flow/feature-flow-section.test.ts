@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi, beforeAll } from 'vitest';
-import { createElement, act } from 'react';
+import { createElement, createRef, act } from 'react';
 import type { ReactNode } from 'react';
 import ReactDOM from 'react-dom/client';
 
@@ -134,6 +134,32 @@ describe('FeatureFlowSection — static rendering', () => {
       } as never)
     );
     expect(html).toContain('data-testid="feature-flow"');
+  });
+
+  it('forwards ref to the root <section> element', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+    const ref = createRef<HTMLElement>();
+
+    act(() => {
+      root.render(
+        createElement(GiselleThemeProvider, null, [
+          createElement(FeatureFlowSection, {
+            key: 'section',
+            items: [nonInteractiveItem],
+            image: baseImage,
+            ref,
+          }),
+        ])
+      );
+    });
+
+    expect(ref.current).not.toBeNull();
+    expect(ref.current?.tagName).toBe('SECTION');
+
+    act(() => root.unmount());
+    div.remove();
   });
 
   it('renders every item passed via the items prop', () => {
