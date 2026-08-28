@@ -30,15 +30,24 @@ src/sections-api/
     data.tsx                   — factory functions (`createXData()`-style); `.tsx` only
                                   where a field's content is itself JSX (e.g. a rich-text
                                   paragraph or a card), never JSX-as-presentation-logic
-    api.ts                     — barrel: re-exports the factory functions (and any
-                                  domain-local types) consumers should import from
+    api.ts                     — barrel: re-exports only the factory functions (and any
+                                  domain-local types actually needed by a consumer);
+                                  never re-exports raw data or internal helpers
     types.ts                   — only when a domain needs a type that doesn't already
                                   exist on the component itself; reuse the component's own
                                   prop types wherever they already cover the shape
+    <helper>.ts                — optional internal-only modules `data.tsx` imports from
+                                  (e.g. a path table, an icon lookup map) when splitting
+                                  them out of `data.tsx` keeps it more readable; these are
+                                  implementation details and are never re-exported from
+                                  `api.ts`
 ```
 
 A consumer (a story file) imports only from a domain's `api.ts` — never reaching into
-`data.tsx` or any other internal file directly.
+`data.tsx`, a helper module, or any other internal file directly. `api.ts` only ever
+exposes factory functions, never the raw data or helpers those factories are built from —
+that boundary is what keeps a future swap to an SDK-backed provider a change to a
+domain's internals only.
 
 ## Rules
 
