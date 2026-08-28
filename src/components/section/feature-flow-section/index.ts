@@ -1,4 +1,10 @@
-// Placeholder: not yet implemented.
-// When FeatureFlowSection is built, replace with:
-// export { FeatureFlowSection } from './feature-flow-section';
-// export type { FeatureFlowSectionProps } from './types';
+export { FeatureFlowSection } from './feature-flow-section';
+export type {
+  FeatureFlowGridSize,
+  FeatureFlowHighlightCard,
+  FeatureFlowImage,
+  FeatureFlowItem,
+  FeatureFlowMetric,
+  FeatureFlowSectionProps,
+  FeatureFlowTechnology,
+} from './types';

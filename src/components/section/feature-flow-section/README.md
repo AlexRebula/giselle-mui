@@ -17,19 +17,19 @@ the component owns no app-specific asset paths or icon lookup tables.
 
 ## Planned API
 
-| Prop | Type | Default | Description |
-| ---- | ---- | ------- | ----------- |
-| `items` | `FeatureFlowItem[]` | — | The list of feature items rendered in the description column. |
-| `image` | `FeatureFlowImage` | — | The sticky image column's source(s). |
-| `caption` | `string` | — | Small label above the title. |
-| `title` | `string` | — | Section heading. |
-| `txtGradient` | `string` | — | Gradient-accent word appended after `title`. |
-| `description` | `ReactNode` | — | Supporting copy below the title. |
-| `layoutDirection` | `'left' \| 'right'` | `'left'` | Which side the description column renders on. |
-| `columnSpacing` | `{ xs?: number; md?: number }` | — | Grid column spacing override. |
-| `descriptionGridSize` | `{ xs?; md?; lg? }` | derived from `layoutDirection` | Description column grid size override. |
-| `imageGridSize` | `{ xs?; md?; lg? }` | derived from `layoutDirection` | Image column grid size override. |
-| `sx` | `SxProps<Theme>` | — | MUI sx forwarded to root. |
+| Prop                  | Type                           | Default                        | Description                                                   |
+| --------------------- | ------------------------------ | ------------------------------ | ------------------------------------------------------------- |
+| `items`               | `FeatureFlowItem[]`            | —                              | The list of feature items rendered in the description column. |
+| `image`               | `FeatureFlowImage`             | —                              | The sticky image column's source(s).                          |
+| `caption`             | `string`                       | —                              | Small label above the title.                                  |
+| `title`               | `string`                       | —                              | Section heading.                                              |
+| `txtGradient`         | `string`                       | —                              | Gradient-accent word appended after `title`.                  |
+| `description`         | `ReactNode`                    | —                              | Supporting copy below the title.                              |
+| `layoutDirection`     | `'left' \| 'right'`            | `'left'`                       | Which side the description column renders on.                 |
+| `columnSpacing`       | `{ xs?: number; md?: number }` | —                              | Grid column spacing override.                                 |
+| `descriptionGridSize` | `{ xs?; md?; lg? }`            | derived from `layoutDirection` | Description column grid size override.                        |
+| `imageGridSize`       | `{ xs?; md?; lg? }`            | derived from `layoutDirection` | Image column grid size override.                              |
+| `sx`                  | `SxProps<Theme>`               | —                              | MUI sx forwarded to root.                                     |
 
 `FeatureFlowItem` fields: `id`, `icon`, `title`, `description`, `subtitle?`, `imgUrl?`,
 `longDescription?`, `technologies?: { name: string; icon: string }[]`, `metrics?`,
@@ -48,6 +48,16 @@ set is rendered as non-interactive (no click affordance, no detail panel).
   crossfade behaviour, not something a consumer should need to tune.
 - Image preloading/prewarming (SSR `preload` hint + idle-time client prewarm) is
   always-on internal behaviour, not exposed as configuration.
+- The floating sub-nav (`FloatingSubNav` from `components/material/navigation/floating-sub-nav`)
+  is an existing, already-public giselle-mui component — this component consumes it
+  rather than shipping its own duplicate.
+- The highlight-card carousel, the sticky image column, and the expanded detail panel
+  are internal sub-components colocated in this folder. They are not exported from the
+  package barrel: they only make sense as part of `FeatureFlowSection` and are not
+  reusable in isolation.
+- Scroll direction is tracked with a plain `window` scroll listener
+  (`useScrollDirection` in `feature-flow-section.utils.ts`) rather than framer-motion's
+  `useScroll`, keeping the scroll/idle state machine simple to unit test.
 
 ## Phase
 
@@ -55,4 +65,22 @@ Phase: `Section` | Priority tier: `T2`
 
 ## File structure
 
-_Filled in when implementation begins._
+```
+src/components/section/feature-flow-section/
+  feature-flow-section.tsx                : public component — state orchestration, item list, detail panel wiring
+  feature-flow-section.styles.ts           : root/detail-panel/item-row style functions
+  feature-flow-section.const.ts            : fixed hover-step and scroll-idle timing constants
+  feature-flow-section.utils.ts            : hasExpansionData, image preload/prewarm hooks, useScrollDirection
+  feature-flow-image-column.tsx            : internal — sticky crossfading image column (presentational)
+  feature-flow-image-column.styles.ts      : image column style functions
+  feature-flow-item-detail.tsx             : internal — expanded detail panel (metrics, tech chips, highlight carousel)
+  feature-flow-highlight-carousel.tsx      : internal — self-contained highlight-card carousel
+  feature-flow-highlight-carousel.styles.ts: highlight carousel style functions
+  *.test.ts                                : unit tests, one per source file above
+  *.styles.test.ts                         : style-function tests
+  feature-flow-section.stories.tsx         : Storybook stories
+  types.ts                                 : all public and internal prop types
+  index.ts                                 : barrel export (public API only)
+  README.md                                : this file
+  roadmap.md                               : open improvements and completed tasks
+```

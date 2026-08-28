@@ -135,6 +135,17 @@ export type {
   HeroSlotProps,
 } from './components/section/hero/section';
 
+export { FeatureFlowSection } from './components/section/feature-flow-section';
+export type {
+  FeatureFlowGridSize,
+  FeatureFlowHighlightCard,
+  FeatureFlowImage,
+  FeatureFlowItem,
+  FeatureFlowMetric,
+  FeatureFlowSectionProps,
+  FeatureFlowTechnology,
+} from './components/section/feature-flow-section';
+
 export { resolveMaturityColor, resolveMaturityLabel } from './utils/maturity/maturity-utils';
 // --- Phase I: Main bundle additions ---
 export { AnimatedGradientText } from './components/material/data-display/animated-gradient';
