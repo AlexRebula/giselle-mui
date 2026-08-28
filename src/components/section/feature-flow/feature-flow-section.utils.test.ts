@@ -9,16 +9,41 @@ import {
   isRichLongDescription,
   useClientImagePrewarm,
   useImagePreloader,
+  useImageRevealTransform,
   useScrollDirection,
   type ScrollDirectionState,
 } from './feature-flow-section.utils';
-import { SCROLL_IDLE_TIMEOUT_MS } from './feature-flow-section.const';
+import {
+  IMAGE_REVEAL_BLUR_FROM_PX,
+  IMAGE_REVEAL_OPACITY_FROM,
+  IMAGE_REVEAL_SCALE_FROM,
+  IMAGE_REVEAL_SCROLL_OFFSET,
+  IMAGE_REVEAL_Y_FROM_PX,
+  SCROLL_IDLE_TIMEOUT_MS,
+} from './feature-flow-section.const';
 import type { FeatureFlowItem } from './types';
 
 vi.mock('react-dom', async () => {
   const actual = await vi.importActual<typeof ReactDOMModule>('react-dom');
   return { ...actual, preload: vi.fn() };
 });
+
+// useImageRevealTransform's own hook calls are stubbed so its tests assert on
+// *wiring* (which ref, which offset window, which input/output ranges) rather
+// than on framer-motion's real scroll-tracking timing, which needs a real
+// scrollable DOM this suite doesn't have. `useScroll` reports zero progress;
+// `useTransform` resolves to the "from" (index 0) end of its output range —
+// i.e. the transform's state at scroll progress 0 — `useMotionTemplate`
+// reassembles its tagged-template inputs into a plain string, and
+// `useReducedMotion` reports no preference (the reduced-motion branch is
+// exercised in its own describe block below, with this mocked `true`).
+vi.mock('framer-motion', () => ({
+  useScroll: vi.fn(() => ({ scrollYProgress: 0 })),
+  useTransform: vi.fn((_value: unknown, _input: unknown, output: readonly unknown[]) => output[0]),
+  useMotionTemplate: (strings: TemplateStringsArray, ...values: unknown[]) =>
+    strings.reduce((acc, str, i) => `${acc}${str}${i < values.length ? values[i] : ''}`, ''),
+  useReducedMotion: vi.fn(() => false),
+}));
 
 // ---------------------------------------------------------------------------
 // Harness — minimal component that captures a hook's return value.
@@ -198,5 +223,57 @@ describe('useScrollDirection', () => {
 
     hook.cleanup();
     vi.useRealTimers();
+  });
+});
+
+describe('useImageRevealTransform', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('tracks the returned ref over IMAGE_REVEAL_SCROLL_OFFSET', async () => {
+    const { useScroll } = await import('framer-motion');
+    const hook = mountHook(useImageRevealTransform);
+
+    expect(useScroll).toHaveBeenCalledWith({
+      target: hook.value.ref,
+      offset: IMAGE_REVEAL_SCROLL_OFFSET,
+    });
+
+    hook.cleanup();
+  });
+
+  it('derives opacity/y/scale/blur from scroll progress into their own resting ranges', async () => {
+    const { useTransform } = await import('framer-motion');
+    const hook = mountHook(useImageRevealTransform);
+
+    // Every transform reads the same scrollYProgress (0 under this suite's
+    // stub) over [0, 1], each into its own [from, resting] output range.
+    expect(useTransform).toHaveBeenCalledWith(0, [0, 1], [IMAGE_REVEAL_OPACITY_FROM, 1]);
+    expect(useTransform).toHaveBeenCalledWith(0, [0, 1], [IMAGE_REVEAL_Y_FROM_PX, 0]);
+    expect(useTransform).toHaveBeenCalledWith(0, [0, 1], [IMAGE_REVEAL_SCALE_FROM, 1]);
+    expect(useTransform).toHaveBeenCalledWith(0, [0, 1], [IMAGE_REVEAL_BLUR_FROM_PX, 0]);
+
+    hook.cleanup();
+  });
+
+  it('pins every value to its resting state when prefers-reduced-motion is set, instead of the scroll-driven "from" range', async () => {
+    const { useTransform, useReducedMotion } = await import('framer-motion');
+    (useReducedMotion as ReturnType<typeof vi.fn>).mockReturnValueOnce(true);
+    const hook = mountHook(useImageRevealTransform);
+
+    expect(useTransform).toHaveBeenCalledWith(0, [0, 1], [1, 1]);
+    expect(useTransform).toHaveBeenCalledWith(0, [0, 1], [0, 0]);
+    expect(hook.value.style.filter).toBe('blur(0px)');
+
+    hook.cleanup();
+  });
+
+  it('resolves the composed blur filter string from the blur motion value', () => {
+    const hook = mountHook(useImageRevealTransform);
+
+    expect(hook.value.style.filter).toBe(`blur(${IMAGE_REVEAL_BLUR_FROM_PX}px)`);
+
+    hook.cleanup();
   });
 });

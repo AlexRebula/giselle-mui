@@ -1,8 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { preload } from 'react-dom';
+import { useMotionTemplate, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 
-import { SCROLL_IDLE_TIMEOUT_MS } from './feature-flow-section.const';
-import type { FeatureFlowItem } from './types';
+import {
+  IMAGE_REVEAL_BLUR_FROM_PX,
+  IMAGE_REVEAL_OPACITY_FROM,
+  IMAGE_REVEAL_SCALE_FROM,
+  IMAGE_REVEAL_SCROLL_OFFSET,
+  IMAGE_REVEAL_Y_FROM_PX,
+  SCROLL_IDLE_TIMEOUT_MS,
+} from './feature-flow-section.const';
+import type { FeatureFlowItem, ImageRevealTransform } from './types';
 
 // ----------------------------------------------------------------------
 
@@ -133,4 +141,57 @@ export function useScrollDirection(): ScrollDirectionState {
   }, []);
 
   return state;
+}
+
+// ----------------------------------------------------------------------
+
+/**
+ * Ties the sticky image column's entrance to scroll progress: opacity,
+ * y-offset, scale, and blur all resolve from their `IMAGE_REVEAL_*_FROM`
+ * starting values to their resting state (visible, in place, full scale,
+ * sharp) over `IMAGE_REVEAL_SCROLL_OFFSET` — the column's top edge crossing
+ * 90% down the viewport through 40% down (roughly the vertical center).
+ *
+ * Respects `prefers-reduced-motion`: when set, every value stays pinned to
+ * its resting state regardless of scroll progress, instead of animating in.
+ *
+ * Returns a `ref` to attach to the tracked element and the derived motion
+ * values to apply via `style`. Doesn't touch the image column's own
+ * per-image opacity crossfade, which stays keyed to the active src.
+ */
+export function useImageRevealTransform(): ImageRevealTransform {
+  const ref = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: IMAGE_REVEAL_SCROLL_OFFSET,
+  });
+
+  // Fixed 4 hook calls — never conditional, never in a loop (same reasoning
+  // as useScrollParallax's fixed 5 layers): only each call's output range
+  // varies with `reducedMotion`, never whether the call happens at all.
+  const opacity = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reducedMotion ? [1, 1] : [IMAGE_REVEAL_OPACITY_FROM, 1]
+  );
+  const y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reducedMotion ? [0, 0] : [IMAGE_REVEAL_Y_FROM_PX, 0]
+  );
+  const scale = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reducedMotion ? [1, 1] : [IMAGE_REVEAL_SCALE_FROM, 1]
+  );
+  const blurPx = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reducedMotion ? [0, 0] : [IMAGE_REVEAL_BLUR_FROM_PX, 0]
+  );
+  const filter = useMotionTemplate`blur(${blurPx}px)`;
+
+  return { ref, style: { opacity, y, scale, filter } };
 }

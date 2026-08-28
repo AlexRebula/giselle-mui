@@ -1,3 +1,5 @@
+import type { UseScrollOptions } from 'framer-motion';
+
 // ----------------------------------------------------------------------
 
 /**
@@ -14,3 +16,24 @@ export const HOVER_STEP_DELAY_MS = 180;
  * Fixed internal timing, not exposed as a prop.
  */
 export const SCROLL_IDLE_TIMEOUT_MS = 1000;
+
+// ----------------------------------------------------------------------
+// Image column entrance transform
+// ----------------------------------------------------------------------
+
+/**
+ * Viewport-offset window (see framer-motion's `useScroll` `offset` option)
+ * over which the sticky image column's entrance transform resolves: begins
+ * as the column's top edge crosses 90% down the viewport (just entering
+ * view) and settles into its resting state by 40% down (roughly the
+ * vertical center) — the same conceptual "entering the viewport" window the
+ * scroll-direction detection tracks, expressed as an element-relative range.
+ */
+export const IMAGE_REVEAL_SCROLL_OFFSET: UseScrollOptions['offset'] = ['start 90%', 'start 40%'];
+
+/** Entrance transform starting values — each resolves to its resting state
+ * (opacity 1, y 0, scale 1, blur 0) as scroll progress goes from 0 to 1. */
+export const IMAGE_REVEAL_OPACITY_FROM = 0;
+export const IMAGE_REVEAL_Y_FROM_PX = 32;
+export const IMAGE_REVEAL_SCALE_FROM = 0.94;
+export const IMAGE_REVEAL_BLUR_FROM_PX = 12;
