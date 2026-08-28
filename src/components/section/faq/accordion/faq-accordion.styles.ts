@@ -1,7 +1,7 @@
-import type { SxProps, Theme, CSSObject } from '@mui/material/styles';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 import { channelAlpha } from '../../../../utils/theme/theme-utils/theme-utils';
-import { FAQ_CONTENT_MAX_WIDTH, FAQ_FLOAT_LINE_LEFT } from './faq-accordion.const';
+import { FAQ_CONTENT_MAX_WIDTH } from './faq-accordion.const';
 
 // ----------------------------------------------------------------------
 
@@ -48,39 +48,3 @@ export const contactSectionSx: SxProps<Theme> = {
   textAlign: 'center',
   background: `linear-gradient(to left, ${channelAlpha('var(--mui-palette-grey-500Channel)', 0.08)}, transparent)`,
 };
-
-/**
- * Base decoration styles for float SVG elements.
- * Only visible at ≥1440 px — purely decorative, hidden on narrower viewports.
- */
-/**
- * Stack of two decorative triangles in the top-left corner of the section.
- * Positioned absolutely relative to the motion viewport.
- */
-export const topTriangleStackSx: SxProps<Theme> = {
-  alignItems: 'center',
-  top: 64,
-  left: FAQ_FLOAT_LINE_LEFT,
-  position: 'absolute',
-  transform: 'translateX(-50%)',
-};
-
-/**
- * Smaller of the two stacked triangles — slightly reduced and more opaque.
- */
-export const smallTriangleSx: SxProps<Theme> = {
-  width: 30,
-  height: 15,
-  opacity: 0.24,
-  position: 'static',
-};
-
-export const floatDecorationBase = (theme: Theme): CSSObject => ({
-  zIndex: 2,
-  display: 'none',
-  color: 'grey.500',
-  position: 'absolute',
-  '& line': { strokeDasharray: 3, stroke: 'currentColor' },
-  '& path': { fill: 'currentColor', stroke: 'currentColor' },
-  [theme.breakpoints.up(1440)]: { display: 'block' },
-});

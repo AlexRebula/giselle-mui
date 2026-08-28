@@ -4,11 +4,7 @@ import { describe, it, expect } from 'vitest';
 
 import { fade } from '../../../motion/variants/fade';
 import { container } from '../../../motion/variants/container';
-import {
-  FAQ_CONTENT_MAX_WIDTH,
-  FAQ_FLOAT_LINE_LEFT,
-  FAQ_PLUS_ICON_LEFT,
-} from './faq-accordion.const';
+import { FAQ_CONTENT_MAX_WIDTH } from './faq-accordion.const';
 
 // ----------------------------------------------------------------------
 
@@ -66,14 +62,6 @@ describe('container', () => {
 describe('readability — minimum size constants (regression)', () => {
   it('[regression] FAQ_CONTENT_MAX_WIDTH is a positive number', () => {
     expect(FAQ_CONTENT_MAX_WIDTH).toBeGreaterThan(0);
-  });
-
-  it('[regression] FAQ_FLOAT_LINE_LEFT is a positive number', () => {
-    expect(FAQ_FLOAT_LINE_LEFT).toBeGreaterThan(0);
-  });
-
-  it('[regression] FAQ_PLUS_ICON_LEFT is a positive number', () => {
-    expect(FAQ_PLUS_ICON_LEFT).toBeGreaterThan(0);
   });
 
   it('[regression] FAQ_CONTENT_MAX_WIDTH >= 600 (readable content width)', () => {
