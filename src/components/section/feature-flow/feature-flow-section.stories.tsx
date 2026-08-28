@@ -1,5 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
+import {
+  canonicalImage,
+  canonicalItems,
+  canonicalSectionConfig,
+} from './__fixtures__/canonical-content';
+import { withNavAdjacentContext } from './__fixtures__/nav-adjacent-decorator';
+import {
+  itemWithNoHighlightCards,
+  itemWithNoImage,
+  itemWithNoMetrics,
+  itemWithNoTechnologies,
+  itemWithVeryLongDescription,
+} from './__fixtures__/synthetic-edge-cases';
 import { FeatureFlowSection } from './feature-flow-section';
 import type { FeatureFlowItem } from './types';
 
@@ -92,6 +105,100 @@ export const RightLayout: Story = {
       items={items}
       image={image}
       layoutDirection="right"
+    />
+  ),
+};
+
+// ----------------------------------------------------------------------
+// Canonical — real content (issue #171)
+// ----------------------------------------------------------------------
+
+/**
+ * Canonical story: all six real expertise items — real titles, descriptions,
+ * images, technology name/icon pairs, metrics, and highlight cards — copied
+ * literally from the consuming portfolio app's own production content (see
+ * `__fixtures__/canonical-content.tsx`). Distinct from the synthetic stories
+ * below, which use placeholder data for isolated edge cases.
+ *
+ * Wrapped in `withNavAdjacentContext` (`__fixtures__/nav-adjacent-decorator.tsx`)
+ * — a giselle-mui-local demonstration harness that mimics the shape of a
+ * consuming app's own "nav appears once you scroll past this point" pattern
+ * (scroll/active-item context, a small nav-like UI element, and a visibility
+ * sentinel). It is not a port of any specific app's nav component.
+ *
+ * Demonstrates, live in this story:
+ * - `FeatureFlowSection`'s own `FloatingSubNav`: one entry generated per
+ *   item, active-item tracking, and click-to-scroll.
+ * - The scroll-into-view-on-expand behaviour (issue #169) firing correctly
+ *   inside this decorator's own scrollable context.
+ *
+ * See `feature-flow-section.canonical-story.test.ts` for an automated
+ * interaction test composed from this exact story.
+ */
+export const Canonical: Story = {
+  decorators: [withNavAdjacentContext],
+  render: () => (
+    <FeatureFlowSection
+      title={canonicalSectionConfig.title}
+      txtGradient={canonicalSectionConfig.txtGradient}
+      description={canonicalSectionConfig.description}
+      layoutDirection={canonicalSectionConfig.layoutDirection}
+      columnSpacing={canonicalSectionConfig.columnSpacing}
+      descriptionGridSize={canonicalSectionConfig.descriptionGridSize}
+      imageGridSize={canonicalSectionConfig.imageGridSize}
+      items={canonicalItems}
+      image={canonicalImage}
+    />
+  ),
+};
+
+// ----------------------------------------------------------------------
+// Synthetic edge cases — placeholder data, not the real content
+// ----------------------------------------------------------------------
+
+/** Edge case: an item with no `imgUrl` — the image column falls back to the shared image config. */
+export const EdgeCaseNoImage: Story = {
+  render: () => (
+    <FeatureFlowSection title="Edge case — no image" items={[itemWithNoImage]} image={image} />
+  ),
+};
+
+/** Edge case: an item with no `technologies` — no technology chip strip renders. */
+export const EdgeCaseNoTechnologies: Story = {
+  render: () => (
+    <FeatureFlowSection
+      title="Edge case — no technologies"
+      items={[itemWithNoTechnologies]}
+      image={image}
+    />
+  ),
+};
+
+/** Edge case: an item with no `metrics` — no metrics grid renders. */
+export const EdgeCaseNoMetrics: Story = {
+  render: () => (
+    <FeatureFlowSection title="Edge case — no metrics" items={[itemWithNoMetrics]} image={image} />
+  ),
+};
+
+/** Edge case: an item with no `highlightCards` — no carousel renders in the right column. */
+export const EdgeCaseNoHighlightCards: Story = {
+  render: () => (
+    <FeatureFlowSection
+      title="Edge case — no highlight cards"
+      items={[itemWithNoHighlightCards]}
+      image={image}
+    />
+  ),
+};
+
+/** Edge case: an item with a very long `longDescription` — confirms typography wraps sanely. */
+export const EdgeCaseVeryLongDescription: Story = {
+  render: () => (
+    <FeatureFlowSection
+      title="Edge case — very long description"
+      items={[itemWithVeryLongDescription]}
+      image={image}
     />
   ),
 };
