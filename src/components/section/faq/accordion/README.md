@@ -61,18 +61,46 @@ safer than passing `hideContactFooter: true` — the default state is the simple
 ## File structure
 
 ```
-faq-accordion.tsx          — JSX composition only
-types.ts                   — FaqItem, FaqSectionProps
-utils.ts                   — fadeVariants, containerVariants, svgLineTransition (no JSX)
-faq-accordion.styles.ts    — sx constants and factories
-faq-accordion.const.ts     — named size/spacing constants
-faq-accordion-svg.tsx      — internal SVG decoration sub-components
-faq-motion-viewport.tsx    — internal scroll-triggered animation wrapper
-faq-accordion.stories.tsx  — Storybook stories
-faq-accordion.test.ts      — Vitest unit tests
-faq-accordion.styles.test.ts — mock-theme assertions for styles
-index.ts                   — barrel
-README.md                  — this file
+src/components/section/faq/accordion/
+  faq-accordion.tsx            : public component — JSX composition, accordion state
+  faq-accordion.styles.ts      : parent-only sx constants and factories
+  faq-accordion.styles.test.ts : mock-theme assertions for the styles above
+  faq-accordion.const.ts       : parent-only named size/spacing constants
+  faq-accordion.stories.tsx    : Storybook stories
+  faq-accordion.test.ts        : unit tests for the main component and its motion variants
+  types.ts                     : FaqItem, FaqSectionProps
+  index.ts                     : barrel export (public API + sub-components)
+  README.md                    : this file
+  roadmap.md                   : open improvements and completed tasks
+
+  bottom-lines/                : internal sub-component — decorative bottom-edge lines/plus icons
+    faq-bottom-lines.tsx
+    faq-bottom-lines.const.ts
+    faq-bottom-lines.test.ts
+    index.ts
+
+  top-lines/                   : internal sub-component — decorative top-edge triangles/float line
+    faq-top-lines.tsx
+    faq-top-lines.styles.ts
+    faq-top-lines.styles.test.ts
+    faq-top-lines.const.ts
+    faq-top-lines.test.ts
+    index.ts
+
+  motion-viewport/              : internal sub-component — scroll-triggered animation container
+    faq-motion-viewport.tsx
+    faq-motion-viewport.test.ts
+    types.ts                   : FaqMotionViewportProps
+    index.ts
+
+  accordion-svg/                : internal sub-component — decorative SVG primitives (line/plus/triangle)
+    faq-accordion-svg.tsx
+    faq-accordion-svg.styles.ts
+    faq-accordion-svg.styles.test.ts
+    faq-accordion-svg.utils.ts : svgLineTransition
+    faq-accordion-svg.test.ts
+    types.ts                   : SvgProps
+    index.ts
 ```
 
 ## Quality status — 13 May 2026

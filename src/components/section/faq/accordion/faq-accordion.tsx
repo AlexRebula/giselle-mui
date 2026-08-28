@@ -16,9 +16,9 @@ import { GiselleIcon } from '../../../material/data-display/icon/giselle';
 import { SectionTitle } from '../../../material/layout/section-title';
 import { fade } from '../../../motion/variants/fade';
 import { contentBoxSx, accordionItemSx, contactSectionSx } from './faq-accordion.styles';
-import { FaqMotionViewport } from './faq-motion-viewport';
-import { FaqTopLines } from './faq-top-lines';
-import { FaqBottomLines } from './faq-bottom-lines';
+import { FaqMotionViewport } from './motion-viewport';
+import { FaqTopLines } from './top-lines';
+import { FaqBottomLines } from './bottom-lines';
 
 // ----------------------------------------------------------------------
 

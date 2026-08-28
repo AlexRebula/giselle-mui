@@ -1,5 +1,5 @@
-import { FaqFloatLine, FaqFloatPlusIcon } from './faq-accordion-svg';
-import { FAQ_PLUS_ICON_LEFT } from './faq-accordion.const';
+import { FaqFloatLine, FaqFloatPlusIcon } from '../accordion-svg';
+import { FAQ_PLUS_ICON_LEFT } from './faq-bottom-lines.const';
 
 // ----------------------------------------------------------------------
 
@@ -21,3 +21,5 @@ export function FaqBottomLines() {
     </>
   );
 }
+
+FaqBottomLines.displayName = 'FaqBottomLines';

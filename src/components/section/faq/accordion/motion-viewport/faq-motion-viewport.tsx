@@ -1,11 +1,12 @@
 import type { Theme } from '@mui/material/styles';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import type { FaqMotionViewportProps } from './types';
-import { container } from '../../../motion/variants/container';
+import { container } from '../../../../motion/variants/container';
 
 // ----------------------------------------------------------------------
 
@@ -26,22 +27,31 @@ const MotionBox = motion(Box);
  *
  * **Quality status (13 May 2026):** DoD 9/9 · Best practices 13/13
  */
-export function FaqMotionViewport({ children, sx }: FaqMotionViewportProps) {
-  const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+export const FaqMotionViewport = React.forwardRef<HTMLDivElement, FaqMotionViewportProps>(
+  function FaqMotionViewport({ children, sx }, ref) {
+    const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
-  if (smDown) {
-    return <Box sx={sx}>{children}</Box>;
+    if (smDown) {
+      return (
+        <Box ref={ref} sx={sx}>
+          {children}
+        </Box>
+      );
+    }
+
+    return (
+      <MotionBox
+        ref={ref}
+        initial="initial"
+        whileInView="animate"
+        variants={container()}
+        viewport={{ once: true, amount: 0.3 }}
+        sx={sx}
+      >
+        {children}
+      </MotionBox>
+    );
   }
+);
 
-  return (
-    <MotionBox
-      initial="initial"
-      whileInView="animate"
-      variants={container()}
-      viewport={{ once: true, amount: 0.3 }}
-      sx={sx}
-    >
-      {children}
-    </MotionBox>
-  );
-}
+FaqMotionViewport.displayName = 'FaqMotionViewport';

@@ -1,8 +1,8 @@
 import Stack from '@mui/material/Stack';
 
-import { topTriangleStackSx, smallTriangleSx } from './faq-accordion.styles';
-import { FaqFloatTriangleDownIcon, FaqFloatLine } from './faq-accordion-svg';
-import { FAQ_FLOAT_LINE_LEFT } from './faq-accordion.const';
+import { FaqFloatTriangleDownIcon, FaqFloatLine } from '../accordion-svg';
+import { topTriangleStackSx, smallTriangleSx } from './faq-top-lines.styles';
+import { FAQ_FLOAT_LINE_LEFT } from './faq-top-lines.const';
 
 // ----------------------------------------------------------------------
 
@@ -25,3 +25,5 @@ export function FaqTopLines() {
     </>
   );
 }
+
+FaqTopLines.displayName = 'FaqTopLines';
