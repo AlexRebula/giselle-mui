@@ -118,9 +118,3 @@ export interface FeatureFlowSubNavItem {
   label: string;
   icon: ReactNode;
 }
-
-export interface FeatureFlowSubNavProps {
-  items: readonly FeatureFlowSubNavItem[];
-  activeId: string | null;
-  onSelect: (id: string) => void;
-}

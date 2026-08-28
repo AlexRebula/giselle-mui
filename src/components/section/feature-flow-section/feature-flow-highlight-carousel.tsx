@@ -6,8 +6,11 @@ import Typography from '@mui/material/Typography';
 
 import { GiselleIcon } from '../../material/data-display/icon/giselle';
 import {
+  highlightArrowButtonSx,
   highlightCarouselRootSx,
   highlightControlsRowSx,
+  highlightDetailTextSx,
+  highlightIndexLabelSx,
   highlightScrimSx,
   highlightSlideImageSx,
   highlightTextSlotSx,
@@ -55,24 +58,21 @@ export function FeatureFlowHighlightCarousel({ cards }: FeatureFlowHighlightCaro
         <Typography variant="h4" sx={{ mb: 1 }}>
           {selectedCard?.headline}
         </Typography>
-        <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.9)', lineHeight: 1.7 }}>
+        <Typography variant="body1" sx={highlightDetailTextSx}>
           {selectedCard?.detail}
         </Typography>
       </Box>
 
       {cards.length > 1 && (
         <Box sx={highlightControlsRowSx}>
-          <Typography
-            variant="caption"
-            sx={{ color: 'common.white', minWidth: 32, textAlign: 'center' }}
-          >
+          <Typography variant="caption" sx={highlightIndexLabelSx}>
             {selectedIndex + 1}/{cards.length}
           </Typography>
           <IconButton
             aria-label="Previous highlight"
             size="small"
             onClick={() => goTo(selectedIndex - 1)}
-            sx={{ color: 'common.white', bgcolor: 'rgba(255,255,255,0.12)' }}
+            sx={highlightArrowButtonSx}
           >
             <GiselleIcon icon="solar:alt-arrow-left-bold" width={18} aria-hidden="true" />
           </IconButton>
@@ -80,7 +80,7 @@ export function FeatureFlowHighlightCarousel({ cards }: FeatureFlowHighlightCaro
             aria-label="Next highlight"
             size="small"
             onClick={() => goTo(selectedIndex + 1)}
-            sx={{ color: 'common.white', bgcolor: 'rgba(255,255,255,0.12)' }}
+            sx={highlightArrowButtonSx}
           >
             <GiselleIcon icon="solar:alt-arrow-right-bold" width={18} aria-hidden="true" />
           </IconButton>
