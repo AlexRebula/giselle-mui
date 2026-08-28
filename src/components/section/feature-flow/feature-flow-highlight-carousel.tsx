@@ -38,12 +38,16 @@ export function FeatureFlowHighlightCarousel({ cards }: FeatureFlowHighlightCaro
 
   return (
     <Box sx={highlightCarouselRootSx}>
-      {/* Images: absolutely stacked, crossfade only — never slide */}
+      {/* Images: absolutely stacked, crossfade only — never slide.
+          Purely decorative backdrop: the headline/detail below already
+          convey the same content as real text, so every frame (including
+          the active one) is aria-hidden to avoid a duplicate announcement. */}
       {cards.map((card, index) => (
         <Box
           key={card.headline}
           component="img"
-          alt={card.headline}
+          alt=""
+          aria-hidden="true"
           src={card.src ?? ''}
           loading={index === selectedIndex ? 'eager' : 'lazy'}
           sx={highlightSlideImageSx(index === selectedIndex)}

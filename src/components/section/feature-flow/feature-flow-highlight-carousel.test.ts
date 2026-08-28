@@ -36,6 +36,16 @@ describe('FeatureFlowHighlightCarousel', () => {
     expect(html).toContain('aria-label="Next highlight"');
   });
 
+  it('marks every slide image as decorative (empty alt, aria-hidden), including the active one', () => {
+    const html = renderWithTheme(createElement(FeatureFlowHighlightCarousel, { cards }));
+    const imgMatches = html.match(/<img[^>]*>/g) ?? [];
+    expect(imgMatches.length).toBe(cards.length);
+    for (const img of imgMatches) {
+      expect(img).toContain('alt=""');
+      expect(img).toContain('aria-hidden="true"');
+    }
+  });
+
   it('advances to the next slide when the next control is clicked', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);
