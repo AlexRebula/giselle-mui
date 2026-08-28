@@ -468,4 +468,3 @@ or `:has()` rule when they were moved to absolute positioning.
 - Fix commit (Bug 2 — incorrect): `4d865ea`
 - Fix commit (final — Bugs 2b + 3): `0c82104`
 - Original PR description: [`docs/pr-messages/pr-14-feature-timeline-improvements.md`](../pr-messages/pr-14/pr-14-feature-timeline-improvements.md)
-- Blog post: [#43 — I Pushed Broken Code Because I Trusted AI (And the Approve-All Button)](../../rm/presentation/alexrebula/docs/blog-post-ideas/ai/43-ai-regression-approve-all-and-discipline.md)

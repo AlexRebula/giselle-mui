@@ -30,13 +30,48 @@
  * Called by quality-gate.js as step "0a — Banned content scan".
  */
 
-import { readdirSync, readFileSync, statSync } from 'fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
+
+/**
+ * Load additional private-ref patterns from the gitignored local file, if
+ * present. One pattern per line; blank lines and `#` comments are skipped.
+ * IMPORTANT — never add an actual private repo name or internal-only
+ * project identifier directly to BANNED_PRIVATE_REFS below: this script is
+ * committed and public, anyone can read it. Real private repo names/paths
+ * belong only here, in `.banned-patterns.local` (not committed).
+ */
+function loadLocalPatterns() {
+  const localFile = path.join(ROOT, '.banned-patterns.local');
+  if (!existsSync(localFile)) return [];
+  return readFileSync(localFile, 'utf-8')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('#'));
+}
+
+/**
+ * Load banned personal names from the gitignored
+ * scripts/.banned-personal-refs.local.json, if present. Kept as a separate
+ * file/mechanism from loadLocalPatterns per this org's documented
+ * convention (canonical list lives in the private oss-quality-standards
+ * extension repo; each public repo gets its own local copy here).
+ */
+function loadLocalPersonalRefs() {
+  const localFile = path.join(ROOT, 'scripts', '.banned-personal-refs.local.json');
+  if (!existsSync(localFile)) return [];
+  try {
+    const parsed = JSON.parse(readFileSync(localFile, 'utf-8'));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
 
 // ── Banned patterns ────────────────────────────────────────────────────────
 
@@ -57,15 +92,14 @@ const BANNED_IDENTIFIERS = [
 
 /**
  * Private path/reference patterns that must not appear in any public file
- * (docs/ or src/).
- * These are internal case/project identifiers or commercial-kit names that
- * have no place in a public open-source repository.
+ * (docs/ or src/). Commercial theme kit names are safe to commit here —
+ * every utility in giselle-mui is an independent implementation, and
+ * naming these kits publicly is a defensive "not copied from" statement,
+ * not a disclosure of anything private. Rationale is tracked in a private
+ * consuming app's own docs. Real private repo names/internal-only project
+ * identifiers are loaded separately below — see loadLocalPatterns.
  */
 const BANNED_PRIVATE_REFS = [
-  'case-001',
-  // Commercial theme kit names. Every utility in giselle-mui is an independent
-  // implementation. A reader of the public history should see no connection to
-  // any commercial product. Rationale belongs in alexrebula/docs/ (private).
   'Minimals',
   'minimals',
   'Devias',
@@ -77,6 +111,8 @@ const BANNED_PRIVATE_REFS = [
   'thefront',
   'CodedThemes',
   'codedthemes',
+  ...loadLocalPatterns(),
+  ...loadLocalPersonalRefs(),
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────

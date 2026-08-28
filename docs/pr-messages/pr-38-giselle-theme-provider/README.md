@@ -182,10 +182,10 @@ runtime, different TypeScript shapes. See [Design decisions](#design-decisions) 
 - `giselle-mui/docs/roadmap.md` — Phase C heading marked `✅ Done — 13 May 2026`; all 7 task
   checkboxes set to ✅; aspirational code snippet updated to reflect actual shipped implementation
   (`giselleThemeOptions`, `deepMerge`, `defaultMode`)
-- `alexrebula/docs/roadmap.md` — Phase C summary updated (bubble-up rule):
+- A private consuming app's own roadmap doc — Phase C summary updated (bubble-up rule):
   `✅ Phase C shipped (GiselleThemeProvider component — zero-config, themeOverrides, full custom
   theme prop; Vitest + Storybook; giselleThemeOptions export for Option B consumers) — 13 May 2026`
-- `alexrebula/src/sections-api/roadmap/data.tsx` — `giselle-mui Phase B/C` milestone:
+- That same app's `giselle-mui Phase B/C` milestone data:
   `color: 'warning'` → `color: 'success'`; description updated to include 13 May 2026 delivery
   date and `giselleThemeOptions` export
 
@@ -221,8 +221,8 @@ runtime, different TypeScript shapes. See [Design decisions](#design-decisions) 
 | `docs/theming/nextjs.md`                                    | Updated — zero-config section added; Option B corrected to use `giselleThemeOptions` spread                                   |
 | `.storybook/preview.tsx`                                    | Updated — `giselleTheme` registered; default changed to `'giselle'`; `🥭 Giselle` toolbar item; Phase B TODO comments removed |
 | `giselle-mui/docs/roadmap.md`                               | Updated — Phase C ✅ Done 13 May 2026; code snippet corrected                                                                 |
-| `alexrebula/docs/roadmap.md`                                | Updated — Phase C summary entry (bubble-up rule)                                                                              |
-| `alexrebula/src/sections-api/roadmap/data.tsx`              | Updated — milestone color and description                                                                                     |
+| A private consuming app's own roadmap doc                   | Updated — Phase C summary entry (bubble-up rule)                                                                              |
+| That same app's roadmap milestone data                       | Updated — milestone color and description                                                                                     |
 
 ---
 

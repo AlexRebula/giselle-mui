@@ -328,4 +328,4 @@ This is a one-import swap. The context shape is identical.
 
 - [`docs/roadmap.md`](../roadmap.md) — Phase D milestone table
 - [`docs/theming/nextjs.md`](../theming/nextjs.md) — consumer wiring guide
-- `alexrebula/docs/roadmap.md` — Phase 1.5 extraction milestone
+- A private consuming app's own roadmap doc — Phase 1.5 extraction milestone

@@ -66,7 +66,7 @@ is shared with `StatCard`. Consumers already know this type — no new vocabular
 
 - No banned identifier names (`varAlpha`, `varFade`, `varBlur`, `customShadows`).
 - No `_mock` or personal data.
-- No imports from `alexrebula/src/`.
+- No imports from any private consuming app.
 - `react-apexcharts` is a peer dependency — not bundled.
 
 ---

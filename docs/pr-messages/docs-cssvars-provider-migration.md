@@ -106,9 +106,6 @@ Three occurrences:
 - **`docs/pr-messages/feature-phase-warning-popover.md`** — historical PR record documenting
   the original Storybook migration. Accurate as written.
 - **`docs/pr-messages/feature-timeline-two-column.md`** — historical PR record.
-- **`alexrebula/docs/roadmap/data.tsx` lines 525, 536** — blog post #34 titles: "Unit testing
-  MUI v7 components with Vitest and jsdom (without CssVarsProvider)". The post topic is
-  testing _without needing_ the provider — the title is correct and intentional.
 
 ---
 

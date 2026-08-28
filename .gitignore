@@ -17,3 +17,5 @@ scripts/gate-timing.log
 
 # Smart gate telemetry log — local only, never committed
 scripts/gate-timing.log
+.banned-patterns.local
+scripts/.banned-personal-refs.local.json

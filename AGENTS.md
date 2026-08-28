@@ -4,6 +4,17 @@ Read this file first. It tells you what to read next and in what order before to
 
 ---
 
+## ⚠️ PUBLIC REPOSITORY: read before writing anything
+
+This repo is public and published to npm. Anyone can read every commit, issue, PR, and comment.
+
+**Rules, non-negotiable:**
+
+- **Never reference private repository names, or file paths inside them**, in commits, PR descriptions, issue/PR bodies or comments, or committed docs — not even generically-worded ones that would let a reader infer a private repo's existence or structure. Describe anything sourced from a private context generically instead (e.g. "settled in an internal design session," "a private consuming app").
+- `scripts/check-banned-content.js` enforces a private-reference denylist against committed files (`docs/`, `src/`) as a backstop, but it does not cover content posted live via `gh issue`/`gh pr`/`gh api` — that is caught by a separate mechanism outside this repo. Do not treat "the scanner passed" as proof a comment or issue body is clean; check it yourself before posting.
+
+---
+
 ## 0. Before fixing anything the user has already diagnosed
 
 Read [`docs/incidents/timeline-overflow-fix-overcomplication-aug-2026.md`](./docs/incidents/timeline-overflow-fix-overcomplication-aug-2026.md) once, now. It records an agent turning a one-line fix (a CSS property the user had already pinpointed via the browser inspector, screenshot and all) into two rounds of unrequested git-archaeology, a compensating fix that changed nothing observable, and only landing the correct fix after the user demanded it a second time, bluntly.
