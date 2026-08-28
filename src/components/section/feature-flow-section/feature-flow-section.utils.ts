@@ -16,9 +16,17 @@ export function hasExpansionData(item: FeatureFlowItem): boolean {
     item.longDescription ||
     item.technologies?.length ||
     item.metrics?.length ||
-    item.highlightCards?.length ||
-    item.ctaLabel
+    item.highlightCards?.length
   );
+}
+
+/**
+ * True when `longDescription` is rich content (not a plain string, and not
+ * absent) that should render directly rather than be wrapped in a
+ * `Typography` paragraph alongside the plain-string fallback to `description`.
+ */
+export function isRichLongDescription(item: FeatureFlowItem): boolean {
+  return typeof item.longDescription !== 'string' && item.longDescription != null;
 }
 
 // ----------------------------------------------------------------------

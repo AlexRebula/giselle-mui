@@ -33,8 +33,8 @@ the component owns no app-specific asset paths or icon lookup tables.
 
 `FeatureFlowItem` fields: `id`, `icon`, `title`, `description`, `subtitle?`, `imgUrl?`,
 `longDescription?`, `technologies?: { name: string; icon: string }[]`, `metrics?`,
-`highlightCards?`, `ctaLabel?`, `ctaHref?`. An item with none of the "expansion" fields
-set is rendered as non-interactive (no click affordance, no detail panel).
+`highlightCards?`. An item with none of the "expansion" fields set is rendered as
+non-interactive (no click affordance, no detail panel).
 
 ## Design decisions
 
@@ -59,6 +59,13 @@ set is rendered as non-interactive (no click affordance, no detail panel).
   (`useScrollDirection` in `feature-flow-section.utils.ts`) rather than framer-motion's
   `useScroll`, keeping the scroll/idle state machine simple to unit test.
 
+## Quality status — 28 Aug 2026
+
+| Dimension        | Score | Open items                                                                                                    |
+| ---------------- | ----- | --------------------------------------------------------------------------------------------------------------- |
+| DoD (Scenario B) | 19/20 | `feature-flow-section.const.ts`'s timing constants are intentionally not re-exported (fixed, not configurable) |
+| Best practices   | 10/13 | No `Responsive` story · crossfade transitions don't respect `prefers-reduced-motion` · default story doesn't demonstrate the scroll-direction image swap (`scrollImages` unset) |
+
 ## Phase
 
 Phase: `Section` | Priority tier: `T2`
@@ -68,16 +75,14 @@ Phase: `Section` | Priority tier: `T2`
 ```
 src/components/section/feature-flow-section/
   feature-flow-section.tsx                : public component — state orchestration, item list, detail panel wiring
-  feature-flow-section.styles.ts           : root/detail-panel/item-row style functions
+  feature-flow-section.styles.ts           : all style functions for this component and its sub-components
+  feature-flow-section.styles.test.ts      : style-function tests
   feature-flow-section.const.ts            : fixed hover-step and scroll-idle timing constants
   feature-flow-section.utils.ts            : hasExpansionData, image preload/prewarm hooks, useScrollDirection
   feature-flow-image-column.tsx            : internal — sticky crossfading image column (presentational)
-  feature-flow-image-column.styles.ts      : image column style functions
   feature-flow-item-detail.tsx             : internal — expanded detail panel (metrics, tech chips, highlight carousel)
   feature-flow-highlight-carousel.tsx      : internal — self-contained highlight-card carousel
-  feature-flow-highlight-carousel.styles.ts: highlight carousel style functions
   *.test.ts                                : unit tests, one per source file above
-  *.styles.test.ts                         : style-function tests
   feature-flow-section.stories.tsx         : Storybook stories
   types.ts                                 : all public and internal prop types
   index.ts                                 : barrel export (public API only)

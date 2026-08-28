@@ -2,12 +2,12 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
 import {
+  imageColumnCardSx,
   imageColumnFrameSx,
   imageColumnInnerGhostSx,
   imageColumnOuterGhostSx,
   imageColumnStickyStackSx,
-} from './feature-flow-image-column.styles';
-import { imageColumnCardSx } from './feature-flow-section.styles';
+} from './feature-flow-section.styles';
 import type { FeatureFlowImageColumnProps } from './types';
 
 // ----------------------------------------------------------------------
@@ -42,7 +42,7 @@ export function FeatureFlowImageColumn({
             <Box
               key={src}
               component="img"
-              alt={src === ghostSrc ? alt : ''}
+              alt={src === activeSrc ? alt : ''}
               aria-hidden={src === activeSrc ? undefined : true}
               src={src}
               fetchPriority={src === ghostSrc ? 'high' : 'auto'}

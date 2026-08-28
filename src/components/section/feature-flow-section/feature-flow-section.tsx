@@ -32,8 +32,8 @@ import type { FeatureFlowItem, FeatureFlowSectionProps, FeatureFlowSubNavItem } 
  * `FeatureFlowSection` — a scrollable list of expandable feature items paired
  * with a sticky image column that reacts to hover and scroll direction.
  * Clicking an item with expansion data (metrics, technologies, highlight
- * cards, a long description, or a CTA) opens a detail panel below the grid;
- * a floating sub-nav appears once any item is expanded and tracks which one
+ * cards, or a long description) opens a detail panel below the grid; a
+ * floating sub-nav appears once any item is expanded and tracks which one
  * is active.
  *
  * @example
@@ -53,6 +53,8 @@ import type { FeatureFlowItem, FeatureFlowSectionProps, FeatureFlowSubNavItem } 
  *   image={{ src: '/images/design-systems.png', alt: 'Design systems preview' }}
  * />
  * ```
+ *
+ * **Quality status (28 Aug 2026):** DoD 19/20 · Best practices 10/13
  */
 export function FeatureFlowSection({
   caption,

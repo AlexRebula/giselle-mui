@@ -6,6 +6,7 @@ import type * as ReactDOMModule from 'react-dom';
 
 import {
   hasExpansionData,
+  isRichLongDescription,
   useClientImagePrewarm,
   useImagePreloader,
   useScrollDirection,
@@ -83,14 +84,26 @@ describe('hasExpansionData', () => {
     ).toBe(true);
   });
 
-  it('is true when ctaLabel is set', () => {
-    expect(hasExpansionData({ ...baseItem, ctaLabel: 'Learn more' })).toBe(true);
-  });
-
   it('is false when technologies/metrics/highlightCards are empty arrays', () => {
     expect(
       hasExpansionData({ ...baseItem, technologies: [], metrics: [], highlightCards: [] })
     ).toBe(false);
+  });
+});
+
+describe('isRichLongDescription', () => {
+  it('is false when longDescription is absent', () => {
+    expect(isRichLongDescription(baseItem)).toBe(false);
+  });
+
+  it('is false when longDescription is a plain string', () => {
+    expect(isRichLongDescription({ ...baseItem, longDescription: 'Plain text' })).toBe(false);
+  });
+
+  it('is true when longDescription is a non-string ReactNode', () => {
+    expect(isRichLongDescription({ ...baseItem, longDescription: createElement('div') })).toBe(
+      true
+    );
   });
 });
 

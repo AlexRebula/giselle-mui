@@ -47,10 +47,6 @@ export interface FeatureFlowItem {
   /** Rich prose shown in the expanded detail panel. Falls back to `description`. */
   longDescription?: ReactNode;
   technologies?: readonly FeatureFlowTechnology[];
-  /** Call-to-action label shown in the expanded detail panel. */
-  ctaLabel?: string;
-  /** Call-to-action URL shown in the expanded detail panel. */
-  ctaHref?: string;
   highlightCards?: readonly FeatureFlowHighlightCard[];
   /** 1–3 high-impact stat blocks shown above the long description. */
   metrics?: readonly FeatureFlowMetric[];
@@ -83,6 +79,7 @@ export interface FeatureFlowSectionProps extends Omit<BoxProps, 'children'> {
   image: FeatureFlowImage;
   /** Which side the description column renders on. @default 'left' */
   layoutDirection?: 'left' | 'right';
+  /** @default { xs: 0, md: 8 } */
   columnSpacing?: Readonly<{ xs?: number; md?: number }>;
   /** @default derived from `layoutDirection` */
   descriptionGridSize?: FeatureFlowGridSize;
@@ -117,4 +114,12 @@ export interface FeatureFlowSubNavItem {
   id: string;
   label: string;
   icon: ReactNode;
+}
+
+/** Visual state driving a single item row's `sx` in the description column. */
+export interface FeatureFlowItemButtonState {
+  isSelected: boolean;
+  isActive: boolean;
+  isExpanded: boolean;
+  interactive: boolean;
 }

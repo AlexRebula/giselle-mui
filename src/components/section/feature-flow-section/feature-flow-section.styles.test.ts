@@ -5,7 +5,9 @@ import {
   detailPanelSx,
   featureFlowItemSx,
   featureFlowRootSx,
+  highlightSlideImageSx,
   imageColumnCardSx,
+  imageColumnFrameSx,
 } from './feature-flow-section.styles';
 
 // ----------------------------------------------------------------------
@@ -99,5 +101,29 @@ describe('featureFlowItemSx', () => {
     );
     expect(String(styles['borderColor'])).toContain('rgba(var(--mui-palette-primary-mainChannel)');
     expect(String(styles['boxShadow'])).toContain('inset 3px 0 0');
+  });
+});
+
+describe('imageColumnFrameSx', () => {
+  it('gives the active frame full opacity and a 0.4s transition', () => {
+    expect(imageColumnFrameSx(true)).toMatchObject({ opacity: 1, transition: 'opacity 0.4s ease' });
+  });
+
+  it('gives an inactive frame zero opacity', () => {
+    expect(imageColumnFrameSx(false)).toMatchObject({ opacity: 0 });
+  });
+});
+
+describe('highlightSlideImageSx', () => {
+  it('gives the active slide full opacity and a 0.5s transition', () => {
+    expect(highlightSlideImageSx(true)).toMatchObject({
+      opacity: 1,
+      transition: 'opacity 0.5s ease',
+      objectFit: 'cover',
+    });
+  });
+
+  it('gives an inactive slide zero opacity', () => {
+    expect(highlightSlideImageSx(false)).toMatchObject({ opacity: 0 });
   });
 });

@@ -14,7 +14,7 @@ import {
   highlightScrimSx,
   highlightSlideImageSx,
   highlightTextSlotSx,
-} from './feature-flow-highlight-carousel.styles';
+} from './feature-flow-section.styles';
 import type { FeatureFlowHighlightCarouselProps } from './types';
 
 // ----------------------------------------------------------------------

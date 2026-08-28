@@ -8,6 +8,7 @@ import { GiselleIcon } from '../../material/data-display/icon/giselle';
 import { MetricCard } from '../../material/surfaces/card/metric';
 import { TechIconStrip } from '../../material/data-display/icon/tech-strip';
 import { detailPanelSx } from './feature-flow-section.styles';
+import { isRichLongDescription } from './feature-flow-section.utils';
 import { FeatureFlowHighlightCarousel } from './feature-flow-highlight-carousel';
 import type { FeatureFlowItemDetailProps } from './types';
 
@@ -59,7 +60,7 @@ export function FeatureFlowItemDetail({ item }: FeatureFlowItemDetailProps) {
                 </Box>
               ) : null}
 
-              {typeof item.longDescription !== 'string' && item.longDescription != null ? (
+              {isRichLongDescription(item) ? (
                 item.longDescription
               ) : (
                 <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.8 }}>

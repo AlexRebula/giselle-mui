@@ -47,7 +47,7 @@ describe('FeatureFlowImageColumn', () => {
     expect(inactiveImgMatch).toContain('aria-hidden="true"');
   });
 
-  it('sets the alt text only on the image matching ghostSrc', () => {
+  it('sets the alt text only on the currently-active (visible) image, not the ghost frame', () => {
     const html = renderWithTheme(
       createElement(FeatureFlowImageColumn, {
         activeSrc: '/b.png',
@@ -56,6 +56,9 @@ describe('FeatureFlowImageColumn', () => {
         alt: 'A descriptive alt',
       })
     );
-    expect(html).toContain('alt="A descriptive alt"');
+    const activeImgMatch = html.match(/<img[^>]*src="\/b\.png"[^>]*>/);
+    const nonActiveGhostImgMatch = html.match(/<img[^>]*src="\/a\.png"[^>]*>/g)?.[1];
+    expect(activeImgMatch?.[0]).toContain('alt="A descriptive alt"');
+    expect(nonActiveGhostImgMatch).toContain('alt=""');
   });
 });
