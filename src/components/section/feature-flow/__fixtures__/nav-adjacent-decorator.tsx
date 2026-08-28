@@ -37,6 +37,9 @@ export interface NavAdjacentContextValue {
   setActiveSectionId: (id: string | null) => void;
 }
 
+/** id assigned to the one demo "section" this harness ever tracks as active. */
+const DEMO_SECTION_ID = 'feature-flow';
+
 const NavAdjacentContext = createContext<NavAdjacentContextValue | null>(null);
 
 /** Reads the demo nav/scroll context. Throws outside `NavAdjacentDecorator`. */
@@ -110,19 +113,23 @@ function DemoFloatingNav() {
 }
 DemoFloatingNav.displayName = 'DemoFloatingNav';
 
-// `setActiveSectionId` is exposed on the context (matching the shape a real
-// scroll provider exposes) but intentionally never called by anything in
-// this harness: `FeatureFlowSection` has no external "active item changed"
-// callback to wire it to, and adding one would mean changing the
-// component's own API — out of scope for a story-only fixture. A consumer
-// of this context (e.g. a future story) can call it directly.
 function NavAdjacentProvider({ children }: { children: ReactNode }) {
   const [isNavVisible, setIsNavVisible] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
 
+  // Once the sentinel scrolls out of view, the demo nav appears AND marks the
+  // one section this harness knows about as active — mirroring the shape a
+  // real scroll provider exposes (nav visibility and active-section tracking
+  // move together), without requiring any change to `FeatureFlowSection`'s
+  // own API.
+  const handleSentinelVisibilityChange = (pastSentinel: boolean) => {
+    setIsNavVisible(pastSentinel);
+    setActiveSectionId(pastSentinel ? DEMO_SECTION_ID : null);
+  };
+
   return (
     <NavAdjacentContext.Provider value={{ isNavVisible, activeSectionId, setActiveSectionId }}>
-      <NavSentinel onVisibilityChange={setIsNavVisible} />
+      <NavSentinel onVisibilityChange={handleSentinelVisibilityChange} />
       <DemoFloatingNav />
       {children}
     </NavAdjacentContext.Provider>
