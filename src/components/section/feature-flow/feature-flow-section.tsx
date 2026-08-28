@@ -130,7 +130,6 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
     // sequence) changes, restart the step-through from the first frame and
     // advance one step every HOVER_STEP_DELAY_MS until the last frame.
     useEffect(() => {
-       
       setHoverPhase(0);
       if (hoverSequenceSources.length <= 1) return undefined;
 
@@ -151,7 +150,6 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
     // different item without the user clicking it.
     useEffect(() => {
       if (!isScrolling) {
-         
         setActiveItemIndex(selectedItemIndex);
         setHoverPhase(0);
       }
