@@ -136,6 +136,7 @@
     "src/components/section/faq/accordion/accordion-svg/faq-accordion-svg.styles.test.ts",
     "src/components/section/faq/accordion/accordion-svg/faq-accordion-svg.test.ts",
     "src/components/section/faq/accordion/bottom-lines/faq-bottom-lines.test.ts",
+    "src/components/section/feature-flow/feature-flow-section.canonical-story.test.ts",
     "src/components/section/feature-flow/feature-flow-section.styles.test.ts",
     "src/components/section/feature-flow/feature-flow-section.test.ts",
     "src/components/section/feature-flow/feature-flow-section.transition.test.ts",
