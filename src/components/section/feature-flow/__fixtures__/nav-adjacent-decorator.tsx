@@ -79,6 +79,7 @@ function NavSentinel({
     <Box ref={ref} data-testid="nav-adjacent-sentinel" aria-hidden="true" sx={{ height: 1 }} />
   );
 }
+NavSentinel.displayName = 'NavSentinel';
 
 /**
  * A small floating bar driven entirely by `NavAdjacentContext` — the
@@ -107,7 +108,14 @@ function DemoFloatingNav() {
     </Box>
   );
 }
+DemoFloatingNav.displayName = 'DemoFloatingNav';
 
+// `setActiveSectionId` is exposed on the context (matching the shape a real
+// scroll provider exposes) but intentionally never called by anything in
+// this harness: `FeatureFlowSection` has no external "active item changed"
+// callback to wire it to, and adding one would mean changing the
+// component's own API — out of scope for a story-only fixture. A consumer
+// of this context (e.g. a future story) can call it directly.
 function NavAdjacentProvider({ children }: { children: ReactNode }) {
   const [isNavVisible, setIsNavVisible] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
@@ -120,6 +128,7 @@ function NavAdjacentProvider({ children }: { children: ReactNode }) {
     </NavAdjacentContext.Provider>
   );
 }
+NavAdjacentProvider.displayName = 'NavAdjacentProvider';
 
 /**
  * Storybook decorator applying the nav-adjacent demonstration harness around

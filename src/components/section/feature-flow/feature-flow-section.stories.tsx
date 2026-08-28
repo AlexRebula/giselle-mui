@@ -138,17 +138,7 @@ export const RightLayout: Story = {
 export const Canonical: Story = {
   decorators: [withNavAdjacentContext],
   render: () => (
-    <FeatureFlowSection
-      title={canonicalSectionConfig.title}
-      txtGradient={canonicalSectionConfig.txtGradient}
-      description={canonicalSectionConfig.description}
-      layoutDirection={canonicalSectionConfig.layoutDirection}
-      columnSpacing={canonicalSectionConfig.columnSpacing}
-      descriptionGridSize={canonicalSectionConfig.descriptionGridSize}
-      imageGridSize={canonicalSectionConfig.imageGridSize}
-      items={canonicalItems}
-      image={canonicalImage}
-    />
+    <FeatureFlowSection {...canonicalSectionConfig} items={canonicalItems} image={canonicalImage} />
   ),
 };
 
