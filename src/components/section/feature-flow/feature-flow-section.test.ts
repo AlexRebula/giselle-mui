@@ -27,6 +27,10 @@ vi.mock('framer-motion', () => ({
           createElement(prop, rest, children),
     }
   ),
+  // The expanded detail panel can render FeatureFlowHighlightCarousel (via
+  // FeatureFlowItemDetail), which now also calls useReducedMotion for its
+  // own text slide-in — stub it here too so that render path doesn't throw.
+  useReducedMotion: () => false,
 }));
 
 // MotionViewport calls useMediaQuery, which calls window.matchMedia in an
