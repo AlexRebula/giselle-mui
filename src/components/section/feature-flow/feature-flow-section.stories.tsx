@@ -6,7 +6,7 @@ import type { FeatureFlowItem } from './types';
 // ----------------------------------------------------------------------
 
 const meta: Meta<typeof FeatureFlowSection> = {
-  title: 'Section/Feature Flow Section',
+  title: 'Section/Feature Flow',
   component: FeatureFlowSection,
   parameters: { layout: 'fullscreen' },
   argTypes: {

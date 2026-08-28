@@ -73,7 +73,7 @@ Phase: `Section` | Priority tier: `T2`
 ## File structure
 
 ```
-src/components/section/feature-flow-section/
+src/components/section/feature-flow/
   feature-flow-section.tsx                : public component — state orchestration, item list, detail panel wiring
   feature-flow-section.styles.ts           : all style functions for this component and its sub-components
   feature-flow-section.styles.test.ts      : style-function tests
