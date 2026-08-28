@@ -9,6 +9,7 @@ import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import ButtonBase from '@mui/material/ButtonBase';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import { GiselleIcon } from '../../material/data-display/icon/giselle';
 import { SectionTitle } from '../../material/layout/section-title';
@@ -87,8 +88,17 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
     const [userHasSelected, setUserHasSelected] = useState(false);
     const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
     const [hoverImageIndex, setHoverImageIndex] = useState(0);
+    // Non-null while waiting for the newly-expanded item's detail panel to
+    // exist in the DOM (it may not be mounted yet — see the effect below).
+    const [pendingScrollItemId, setPendingScrollItemId] = useState<string | null>(null);
 
     const hoverImageIndexRef = useRef(0);
+    // Keyed by item id rather than a single ref: `AnimatePresence mode="wait"`
+    // means at most one detail panel is ever mounted at a time, but the ref
+    // callback for the outgoing item can fire (with `null`) after the
+    // incoming item's effect has already scheduled its own poll — keying by
+    // id keeps each lookup unambiguous regardless of that ordering.
+    const detailPanelNodesRef = useRef<Map<string, HTMLDivElement>>(new Map());
 
     const { direction: scrollDirection, isScrolling } = useScrollDirection();
 
@@ -217,6 +227,42 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
 
     const expandedItem = items.find((item) => item.id === expandedItemId) ?? null;
 
+    // Restores the "opening an item jumps the viewer to its detail panel"
+    // behavior: on expand, poll (via requestAnimationFrame) until the panel
+    // actually exists in the DOM — `AnimatePresence mode="wait"` delays its
+    // mount until any previously-expanded item's exit transition finishes —
+    // then scroll it into view. `pendingScrollItemId` drives a loading
+    // indicator for that gap; collapsing (expandedItemId → null) clears it
+    // without scrolling anywhere.
+    useEffect(() => {
+      if (!expandedItemId) {
+        setPendingScrollItemId(null);
+        return undefined;
+      }
+
+      let rafId: number | undefined;
+      let cancelled = false;
+
+      const attemptScroll = () => {
+        if (cancelled) return;
+        const node = detailPanelNodesRef.current.get(expandedItemId);
+        if (node) {
+          node.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+          setPendingScrollItemId((current) => (current === expandedItemId ? null : current));
+          return;
+        }
+        rafId = globalThis.requestAnimationFrame(attemptScroll);
+      };
+
+      setPendingScrollItemId(expandedItemId);
+      attemptScroll();
+
+      return () => {
+        cancelled = true;
+        if (rafId !== undefined) globalThis.cancelAnimationFrame(rafId);
+      };
+    }, [expandedItemId]);
+
     return (
       <Box
         ref={ref}
@@ -325,6 +371,14 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
           </Container>
         </MotionViewport>
 
+        {pendingScrollItemId && (
+          <LinearProgress
+            aria-label="Loading item detail panel"
+            aria-live="polite"
+            aria-busy="true"
+          />
+        )}
+
         <AnimatePresence mode="wait">
           {expandedItem && (
             <motion.div
@@ -334,7 +388,16 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.22, ease: 'easeOut' }}
             >
-              <FeatureFlowItemDetail item={expandedItem} />
+              <FeatureFlowItemDetail
+                item={expandedItem}
+                ref={(node) => {
+                  if (node) {
+                    detailPanelNodesRef.current.set(expandedItem.id, node);
+                  } else {
+                    detailPanelNodesRef.current.delete(expandedItem.id);
+                  }
+                }}
+              />
             </motion.div>
           )}
         </AnimatePresence>
