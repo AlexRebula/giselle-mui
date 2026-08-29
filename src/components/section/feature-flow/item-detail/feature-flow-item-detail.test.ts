@@ -84,15 +84,15 @@ describe('FeatureFlowItemDetail', () => {
       );
     });
 
-    // MetricCardDecoration renders as a faint, rotated gradient rectangle
-    // (opacity 0.1, transform: rotate(40deg)) — a distinguishing computed
-    // style no other element in this tree has, so its presence confirms the
-    // `decoration` prop reached MetricCard.
-    const decorationNode = Array.from(div.querySelectorAll('*')).find(
-      (el) => window.getComputedStyle(el).opacity === '0.1'
-    );
-    expect(decorationNode).toBeDefined();
-    expect(window.getComputedStyle(decorationNode as Element).transform).toBe('rotate(40deg)');
+    // MetricCard only renders its aria-hidden decoration-overlay wrapper Box
+    // when a `decoration` prop is passed (see metric-card.tsx) — this metric
+    // has no icon, so that wrapper's presence, containing exactly one child
+    // (the decoration itself), confirms the `decoration` prop reached
+    // MetricCard without depending on the decoration's own style values.
+    const paper = div.querySelector('.MuiPaper-root');
+    const decorationWrapper = paper?.querySelector(':scope > [aria-hidden="true"]');
+    expect(decorationWrapper).not.toBeNull();
+    expect(decorationWrapper?.children.length).toBe(1);
 
     act(() => root.unmount());
     div.remove();

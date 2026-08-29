@@ -13,6 +13,16 @@ export const HIGHLIGHT_CAROUSEL_HEIGHT = 570;
 
 // ----------------------------------------------------------------------
 
+/** Selected item's `:hover` box-shadow shape — same offsets for light and dark, differing only in channel + alpha. */
+const selectedHoverShadow = (channel: string, innerAlpha: number, outerAlpha: number) =>
+  `0 0 2px 0 ${channelAlpha(channel, innerAlpha)}, -8px 20px 40px -4px ${channelAlpha(channel, outerAlpha)}`;
+
+/** Selected item's `:active` box-shadow shape — tighter than `:hover`, same offsets for light and dark. */
+const selectedActiveShadow = (channel: string, innerAlpha: number, outerAlpha: number) =>
+  `0 0 1px 0 ${channelAlpha(channel, innerAlpha)}, -1px 2px 4px -1px ${channelAlpha(channel, outerAlpha)}`;
+
+// ----------------------------------------------------------------------
+
 /** Root `<section>` — clips horizontal overflow without creating a scroll container. */
 export const featureFlowRootSx: SxProps<Theme> = {
   overflowX: 'clip',
@@ -102,19 +112,19 @@ export const featureFlowItemSx =
         boxShadow: `-8px 8px 20px -4px ${channelAlpha(GREY_500_CHANNEL, 0.12)}`,
         '&:hover': {
           opacity: 1,
-          boxShadow: `0 0 2px 0 ${channelAlpha(GREY_500_CHANNEL, 0.08)}, -8px 20px 40px -4px ${channelAlpha(GREY_500_CHANNEL, 0.24)}`,
+          boxShadow: selectedHoverShadow(GREY_500_CHANNEL, 0.08, 0.24),
         },
         '&:active': {
           opacity: 1,
-          boxShadow: `0 0 1px 0 ${channelAlpha(GREY_500_CHANNEL, 0.04)}, -1px 2px 4px -1px ${channelAlpha(GREY_500_CHANNEL, 0.06)}`,
+          boxShadow: selectedActiveShadow(GREY_500_CHANNEL, 0.04, 0.06),
         },
         ...theme.applyStyles('dark', {
           boxShadow: `-8px 8px 20px -4px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.12)}`,
           '&:hover': {
-            boxShadow: `0 0 2px 0 ${channelAlpha(COMMON_BLACK_CHANNEL, 0.12)}, -8px 20px 40px -4px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.32)}`,
+            boxShadow: selectedHoverShadow(COMMON_BLACK_CHANNEL, 0.12, 0.32),
           },
           '&:active': {
-            boxShadow: `0 0 1px 0 ${channelAlpha(COMMON_BLACK_CHANNEL, 0.04)}, -1px 2px 4px -1px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.08)}`,
+            boxShadow: selectedActiveShadow(COMMON_BLACK_CHANNEL, 0.04, 0.08),
           },
         }),
       }),
