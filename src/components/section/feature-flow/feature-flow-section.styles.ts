@@ -104,8 +104,18 @@ export const featureFlowItemSx =
           opacity: 1,
           boxShadow: `0 0 2px 0 ${channelAlpha(GREY_500_CHANNEL, 0.08)}, -8px 20px 40px -4px ${channelAlpha(GREY_500_CHANNEL, 0.24)}`,
         },
+        '&:active': {
+          opacity: 1,
+          boxShadow: `0 0 1px 0 ${channelAlpha(GREY_500_CHANNEL, 0.04)}, -1px 2px 4px -1px ${channelAlpha(GREY_500_CHANNEL, 0.06)}`,
+        },
         ...theme.applyStyles('dark', {
           boxShadow: `-8px 8px 20px -4px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.12)}`,
+          '&:hover': {
+            boxShadow: `0 0 2px 0 ${channelAlpha(COMMON_BLACK_CHANNEL, 0.12)}, -8px 20px 40px -4px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.32)}`,
+          },
+          '&:active': {
+            boxShadow: `0 0 1px 0 ${channelAlpha(COMMON_BLACK_CHANNEL, 0.04)}, -1px 2px 4px -1px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.08)}`,
+          },
         }),
       }),
     ...(interactive &&

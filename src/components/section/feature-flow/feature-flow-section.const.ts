@@ -37,3 +37,17 @@ export const IMAGE_REVEAL_OPACITY_FROM = 0;
 export const IMAGE_REVEAL_Y_FROM_PX = 32;
 export const IMAGE_REVEAL_SCALE_FROM = 0.94;
 export const IMAGE_REVEAL_BLUR_FROM_PX = 12;
+
+// ----------------------------------------------------------------------
+// Detail panel layout transition
+// ----------------------------------------------------------------------
+
+/**
+ * Layout transition for the `m.div` wrapping the expanded detail panel and
+ * `FloatingSubNav`: smoothly animates the container's height when the
+ * expanded item changes, instead of jumping instantly. Matches the original
+ * `expertise-areas.tsx`'s equivalent wrapper.
+ */
+export const DETAIL_PANEL_LAYOUT_TRANSITION = {
+  layout: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
+} as const;

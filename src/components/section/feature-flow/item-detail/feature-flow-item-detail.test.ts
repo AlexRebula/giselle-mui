@@ -4,6 +4,7 @@ import { createElement, createRef, act } from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { renderWithTheme } from '../../../../test-utils';
+import { GiselleThemeProvider } from '../../../theming/theme-provider/giselle/giselle';
 import { FeatureFlowItemDetail } from './feature-flow-item-detail';
 import type { FeatureFlowItem } from '../types';
 
@@ -65,6 +66,36 @@ describe('FeatureFlowItemDetail', () => {
     expect(html).toContain('Years');
     expect(html).toContain('99%');
     expect(html).toContain('Uptime');
+  });
+
+  it('renders a MetricCardDecoration inside each MetricCard, matching the original visual treatment (issue #177)', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+
+    act(() => {
+      root.render(
+        createElement(GiselleThemeProvider, {
+          defaultMode: 'light',
+          children: createElement(FeatureFlowItemDetail, {
+            item: { ...baseItem, metrics: [{ value: '20+', label: 'Years' }] },
+          }),
+        })
+      );
+    });
+
+    // MetricCardDecoration renders as a faint, rotated gradient rectangle
+    // (opacity 0.1, transform: rotate(40deg)) — a distinguishing computed
+    // style no other element in this tree has, so its presence confirms the
+    // `decoration` prop reached MetricCard.
+    const decorationNode = Array.from(div.querySelectorAll('*')).find(
+      (el) => window.getComputedStyle(el).opacity === '0.1'
+    );
+    expect(decorationNode).toBeDefined();
+    expect(window.getComputedStyle(decorationNode as Element).transform).toBe('rotate(40deg)');
+
+    act(() => root.unmount());
+    div.remove();
   });
 
   it('renders a metric sublabel when present', () => {

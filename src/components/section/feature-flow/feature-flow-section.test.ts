@@ -384,6 +384,26 @@ describe('FeatureFlowSection — floating sub-nav', () => {
     expect(div.textContent).not.toContain('Shipped fast');
     cleanup();
   });
+
+  it('wraps the detail panel and sub-nav as a single layout-animated container, not two separate root-level children (issue #177)', () => {
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    const button = div.querySelector('button[aria-pressed]');
+    act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+
+    const section = div.querySelector('section');
+    expect(section).not.toBeNull();
+    expect(div.querySelector('[aria-label="Section navigation"]')).not.toBeNull();
+
+    // Today (pre-fix) the expanded detail panel and FloatingSubNav's root are
+    // two separate direct children of <section> (plus MotionViewport's own
+    // Box = 3 total). Wrapping both in a single layout-animated `m.div` (so
+    // the container height transitions smoothly between them, matching the
+    // original `expertise-areas.tsx`) collapses that to 2: MotionViewport's
+    // Box, and the new wrapper holding both.
+    expect(section?.children.length).toBe(2);
+
+    cleanup();
+  });
 });
 
 // ----------------------------------------------------------------------
