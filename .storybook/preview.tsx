@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react';
+import { domMax, LazyMotion } from 'framer-motion';
 import { ThemeProvider, createTheme, extendTheme } from '@mui/material/styles';
 import { addCollection } from '@iconify/react';
 import { giselleThemeOptions } from '../src/utils/theme/preset/theme-preset';
@@ -75,6 +76,10 @@ export const globalTypes = {
 // Wraps every story in MUI ThemeProvider so that --mui-palette-* CSS custom
 // properties are injected into the DOM — required by giselle-mui components that
 // reference theme.vars.palette.* or var(--mui-palette-...) directly.
+//
+// Also wraps every story in a (non-strict) LazyMotion provider with all features
+// loaded — required for `MotionViewport` (used by `FeatureFlowSection`), which
+// renders via `m.div` rather than `motion.div` (see src/components/motion/README.md).
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [
@@ -83,7 +88,9 @@ const preview: Preview = {
       const selectedTheme = (key && themes[key]) || muiDefaultTheme;
       return (
         <ThemeProvider theme={selectedTheme} defaultMode="light">
-          <Story />
+          <LazyMotion features={domMax}>
+            <Story />
+          </LazyMotion>
         </ThemeProvider>
       );
     },

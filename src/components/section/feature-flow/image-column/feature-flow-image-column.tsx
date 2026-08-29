@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -73,7 +73,7 @@ export const FeatureFlowImageColumn = React.forwardRef<HTMLDivElement, FeatureFl
               above — that outer `Box` owns `imageColumnCardSx`'s own `transform`
               (translateX(-50%), for horizontal centering), and an inline motion
               `transform` would silently replace it if applied to the same node. */}
-          <Box component={motion.div} style={revealStyle} sx={{ width: 1, position: 'relative' }}>
+          <Box component={m.div} style={revealStyle} sx={{ width: 1, position: 'relative' }}>
             <Box component="img" alt="" aria-hidden src={ghostSrc} sx={imageColumnInnerGhostSx} />
             {allSrcs.map((src) => (
               <Box

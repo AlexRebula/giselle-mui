@@ -10,10 +10,8 @@ import { pillVariants } from './floating-sub-nav.animations';
 import { SubNavButton } from './sub-nav-button';
 
 // framer-motion uses browser APIs — mock AnimatePresence and motion to plain wrappers
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }: { children: React.ReactNode }) =>
-    React.createElement(React.Fragment, null, children),
-  motion: new Proxy(
+vi.mock('framer-motion', () => {
+  const motionProxy = new Proxy(
     {},
     {
       get:
@@ -21,8 +19,15 @@ vi.mock('framer-motion', () => ({
         ({ children, ...rest }: { children?: React.ReactNode; [key: string]: unknown }) =>
           React.createElement(prop, rest, children),
     }
-  ),
-}));
+  );
+
+  return {
+    AnimatePresence: ({ children }: { children: React.ReactNode }) =>
+      React.createElement(React.Fragment, null, children),
+    motion: motionProxy,
+    m: motionProxy,
+  };
+});
 
 // ----------------------------------------------------------------------
 

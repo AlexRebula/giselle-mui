@@ -25,10 +25,8 @@ import type { FeatureFlowItem } from './types';
 // itself (that lives in feature-flow-section.utils.test.ts and image-column's
 // own test file) — this just keeps the rest of the tree rendering
 // deterministically.
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }: { children?: ReactNode }) =>
-    children === undefined ? null : children,
-  motion: new Proxy(
+vi.mock('framer-motion', () => {
+  const motionProxy = new Proxy(
     {},
     {
       get:
@@ -36,17 +34,24 @@ vi.mock('framer-motion', () => ({
         ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) =>
           createElement(prop, rest, children),
     }
-  ),
-  useScroll: () => ({ scrollYProgress: 0 }),
-  useTransform: (_value: unknown, _input: unknown, output: readonly unknown[]) =>
-    output[output.length - 1],
-  useMotionTemplate: (strings: TemplateStringsArray, ...values: unknown[]) =>
-    strings.reduce((acc, str, i) => `${acc}${str}${i < values.length ? values[i] : ''}`, ''),
-  // The expanded detail panel can render FeatureFlowHighlightCarousel (via
-  // FeatureFlowItemDetail), which also calls useReducedMotion for its own
-  // text slide-in — stub it here too so that render path doesn't throw.
-  useReducedMotion: () => false,
-}));
+  );
+
+  return {
+    AnimatePresence: ({ children }: { children?: ReactNode }) =>
+      children === undefined ? null : children,
+    motion: motionProxy,
+    m: motionProxy,
+    useScroll: () => ({ scrollYProgress: 0 }),
+    useTransform: (_value: unknown, _input: unknown, output: readonly unknown[]) =>
+      output[output.length - 1],
+    useMotionTemplate: (strings: TemplateStringsArray, ...values: unknown[]) =>
+      strings.reduce((acc, str, i) => `${acc}${str}${i < values.length ? values[i] : ''}`, ''),
+    // The expanded detail panel can render FeatureFlowHighlightCarousel (via
+    // FeatureFlowItemDetail), which also calls useReducedMotion for its own
+    // text slide-in — stub it here too so that render path doesn't throw.
+    useReducedMotion: () => false,
+  };
+});
 
 // MotionViewport calls useMediaQuery, which calls window.matchMedia in an
 // effect once mounted with a real DOM (createRoot + act). jsdom does not

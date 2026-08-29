@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -385,7 +385,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
 
         <AnimatePresence mode="wait">
           {expandedItem && (
-            <motion.div
+            <m.div
               key={expandedItem.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -402,7 +402,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
                   }
                 }}
               />
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
 

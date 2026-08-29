@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -79,7 +79,7 @@ export const FeatureFlowHighlightCarousel = React.forwardRef<
           keyed by index so a slide change swaps the whole text block. */}
       <Box sx={highlightTextSlotSx}>
         <AnimatePresence mode="wait" custom={step}>
-          <motion.div
+          <m.div
             key={selectedIndex}
             custom={step}
             variants={textVariants}
@@ -94,7 +94,7 @@ export const FeatureFlowHighlightCarousel = React.forwardRef<
             <Typography variant="body1" sx={highlightDetailTextSx}>
               {selectedCard?.detail}
             </Typography>
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </Box>
 
