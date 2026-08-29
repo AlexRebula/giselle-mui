@@ -59,3 +59,11 @@ Read both before building or modifying a component.
 ## 5. Quality gate
 
 Run `npm run check:verify` before opening any PR. The pre-push hook enforces this automatically — a push will fail if the gate does not pass.
+
+---
+
+## 6. AI Reviewer Instructions
+
+Load: https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/main/docs/AGENTS.md
+
+Scope: the full document applies to this repo — giselle-mui is the React + MUI component library that document's "Scope — React + MUI (current)" section targets. A bare `/review-pr <N>` without `--standards-url` silently skips these rules; load this file explicitly when reviewing a PR here.
