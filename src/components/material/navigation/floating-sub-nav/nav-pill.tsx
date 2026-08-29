@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -13,7 +13,7 @@ import { SubNavButton } from './sub-nav-button';
 
 /**
  * Animated pill container rendered by `FloatingSubNav`.
- * Wraps a row of `SubNavButton` elements inside a `motion.div` that slides
+ * Wraps a row of `SubNavButton` elements inside an `m.div` that slides
  * in from below on mount and slides out on unmount via `AnimatePresence`.
  *
  * This is an internal sub-component — always rendered by `FloatingSubNav`,
@@ -23,7 +23,7 @@ import { SubNavButton } from './sub-nav-button';
  */
 export function NavPill({ items, activeId, onPress }: NavPillProps) {
   return (
-    <motion.div
+    <m.div
       variants={pillVariants}
       initial="initial"
       animate="animate"
@@ -42,6 +42,6 @@ export function NavPill({ items, activeId, onPress }: NavPillProps) {
           ))}
         </Stack>
       </Box>
-    </motion.div>
+    </m.div>
   );
 }

@@ -13,10 +13,8 @@ import { highlightTextVariants } from './feature-flow-highlight-carousel.animati
 // Mocked the same way as feature-flow-section.test.ts / floating-sub-nav.test.ts:
 // AnimatePresence becomes a plain passthrough, motion.* become plain intrinsic
 // elements — deterministic mount/unmount with no animation timing involved.
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }: { children?: ReactNode }) =>
-    children === undefined ? null : children,
-  motion: new Proxy(
+vi.mock('framer-motion', () => {
+  const motionProxy = new Proxy(
     {},
     {
       get:
@@ -24,9 +22,16 @@ vi.mock('framer-motion', () => ({
         ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) =>
           createElement(prop, rest, children),
     }
-  ),
-  useReducedMotion: () => false,
-}));
+  );
+
+  return {
+    AnimatePresence: ({ children }: { children?: ReactNode }) =>
+      children === undefined ? null : children,
+    motion: motionProxy,
+    m: motionProxy,
+    useReducedMotion: () => false,
+  };
+});
 
 const cards = [
   { headline: 'First headline', detail: 'First detail', src: '/a.png' },

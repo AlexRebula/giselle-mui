@@ -26,10 +26,8 @@ import * as stories from './feature-flow-section.stories';
 // finish in jsdom, which would leave "exiting" content in the DOM
 // indefinitely. Transition timing itself is `.transition.test.ts`'s own
 // concern, not this suite's.
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }: { children?: ReactNode }) =>
-    children === undefined ? null : children,
-  motion: new Proxy(
+vi.mock('framer-motion', () => {
+  const motionProxy = new Proxy(
     {},
     {
       get:
@@ -37,14 +35,21 @@ vi.mock('framer-motion', () => ({
         ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) =>
           createElement(prop, rest, children),
     }
-  ),
-  useScroll: () => ({ scrollYProgress: 0 }),
-  useTransform: (_value: unknown, _input: unknown, output: readonly unknown[]) =>
-    output[output.length - 1],
-  useMotionTemplate: (strings: TemplateStringsArray, ...values: unknown[]) =>
-    strings.reduce((acc, str, i) => `${acc}${str}${i < values.length ? values[i] : ''}`, ''),
-  useReducedMotion: () => false,
-}));
+  );
+
+  return {
+    AnimatePresence: ({ children }: { children?: ReactNode }) =>
+      children === undefined ? null : children,
+    motion: motionProxy,
+    m: motionProxy,
+    useScroll: () => ({ scrollYProgress: 0 }),
+    useTransform: (_value: unknown, _input: unknown, output: readonly unknown[]) =>
+      output[output.length - 1],
+    useMotionTemplate: (strings: TemplateStringsArray, ...values: unknown[]) =>
+      strings.reduce((acc, str, i) => `${acc}${str}${i < values.length ? values[i] : ''}`, ''),
+    useReducedMotion: () => false,
+  };
+});
 
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {

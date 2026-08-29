@@ -31,10 +31,13 @@ top content is visible, the bottom content fades in at 0.05s intervals, and the 
 half-rendered page. `disableAnimateOnMobile={true}` (the default) disables the stagger on `sm`
 and below, letting the content render immediately.
 
-**`motion.div` not `m.div`**
+**`m.div` not `motion.div`**
 
-Same rule as `MotionContainer` — `motion.*` works without a `LazyMotion` provider. Library
-components must not impose invisible provider requirements on the consumer's tree.
+Exception to the package's default rule (see `../README.md`): this component composes into
+`FeatureFlowSection`, which must render inside a consumer's `<LazyMotion strict>` tree — that
+mode forbids raw `motion.*` anywhere in the tree, including inside a nested library component.
+Consumers using `<MotionViewport>` (directly, or via `FeatureFlowSection`) must provide a
+`<LazyMotion>` ancestor with features loaded.
 
 ## Library safety
 

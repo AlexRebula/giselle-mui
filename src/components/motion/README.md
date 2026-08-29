@@ -22,16 +22,21 @@ A shared, tested, named set removes ambiguity and prevents drift.
 
 ---
 
-## The `motion.*` vs `m.*` rule — non-negotiable
+## The `motion.*` vs `m.*` rule
 
-**Always use `motion.div`, `motion.span`, etc. Never use `m.div`.**
+**Default: use `motion.div`, `motion.span`, etc. — not `m.div`.**
 
 The `m.*` API is framer-motion's tree-shaken surface that requires a `<LazyMotion>` provider
-in every consumer's component tree. Without it, `m.div` throws at runtime. Since this library
-cannot control what providers are in the consumer's tree, using `m.*` creates an invisible
-hard dependency.
+in every consumer's component tree. Without it, `m.div` renders without animating (or throws,
+under `<LazyMotion strict>`, if a sibling still uses raw `motion.*`). Since this library cannot
+control what providers are in the consumer's tree, using `m.*` creates an invisible dependency
+— so components default to `motion.*`, which works without any provider.
 
-`motion.*` works without any provider and is always safe.
+**Exception: `<MotionViewport>` uses `m.div`.** It's composed by `FeatureFlowSection`, which
+needs to render inside a consumer's `<LazyMotion strict>` tree (that mode forbids raw
+`motion.*` anywhere in the tree, including inside a nested library component). Any consumer
+using `<MotionViewport>` (directly, or via `FeatureFlowSection`) must provide a `<LazyMotion>`
+ancestor with features loaded. `<MotionContainer>` still uses `motion.*` and needs no provider.
 
 ---
 
@@ -175,13 +180,16 @@ import { motion } from 'framer-motion';
 Scroll-triggered stagger container. Fires `container()` variants when the element enters
 the viewport. Automatically disabled on `sm` and below by default.
 
+Uses `m.div` internally (see the rule above) — requires a `<LazyMotion>` ancestor with
+features loaded somewhere in the consumer's tree.
+
 ```tsx
 import { MotionViewport, fade } from '@littlebranches/giselle-mui/motion';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 <MotionViewport>
-  <motion.div variants={fade('inUp')}>Title</motion.div>
-  <motion.div variants={fade('inUp')}>Body</motion.div>
+  <m.div variants={fade('inUp')}>Title</m.div>
+  <m.div variants={fade('inUp')}>Body</m.div>
 </MotionViewport>;
 ```
 
