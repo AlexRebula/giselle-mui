@@ -347,7 +347,6 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
                         type="button"
                         aria-pressed={isSelected}
                         component={m.button}
-                        nativeButton
                         variants={fade('inUp', { distance: 24 })}
                         onMouseEnter={() => handleItemHover(index)}
                         onFocus={() => handleItemHover(index)}
