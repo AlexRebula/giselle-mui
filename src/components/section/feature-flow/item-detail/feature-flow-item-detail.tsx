@@ -7,7 +7,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
 import { GiselleIcon } from '../../../material/data-display/icon/giselle';
-import { MetricCard } from '../../../material/surfaces/card/metric';
+import { MetricCard, MetricCardDecoration } from '../../../material/surfaces/card/metric';
 import { TechIconStrip } from '../../../material/data-display/icon/tech-strip';
 import { detailPanelSx } from '../feature-flow-section.styles';
 import { isRichLongDescription } from '../feature-flow-section.utils';
@@ -71,6 +71,7 @@ export const FeatureFlowItemDetail = React.forwardRef<HTMLDivElement, FeatureFlo
                           ) : undefined
                         }
                         color="primary"
+                        decoration={<MetricCardDecoration color="primary" />}
                       />
                     ))}
                   </Box>

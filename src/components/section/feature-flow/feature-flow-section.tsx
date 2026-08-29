@@ -14,8 +14,9 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { GiselleIcon } from '../../material/data-display/icon/giselle';
 import { SectionTitle } from '../../material/layout/section-title';
 import { FloatingSubNav } from '../../material/navigation/floating-sub-nav';
+import { fade } from '../../motion/variants/fade';
 import { MotionViewport } from '../../motion/viewport';
-import { HOVER_STEP_DELAY_MS } from './feature-flow-section.const';
+import { DETAIL_PANEL_LAYOUT_TRANSITION, HOVER_STEP_DELAY_MS } from './feature-flow-section.const';
 import { featureFlowItemSx, featureFlowRootSx } from './feature-flow-section.styles';
 import {
   hasExpansionData,
@@ -324,6 +325,8 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
                       return (
                         <Box
                           key={item.id}
+                          component={m.div}
+                          variants={fade('inUp', { distance: 24 })}
                           onMouseEnter={() => handleItemHover(index)}
                           sx={featureFlowItemSx({
                             isSelected,
@@ -343,6 +346,8 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
                         disableRipple
                         type="button"
                         aria-pressed={isSelected}
+                        component={m.button}
+                        variants={fade('inUp', { distance: 24 })}
                         onMouseEnter={() => handleItemHover(index)}
                         onFocus={() => handleItemHover(index)}
                         onClick={() => handleItemClick(item, index)}
@@ -383,35 +388,37 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
           />
         )}
 
-        <AnimatePresence mode="wait">
-          {expandedItem && (
-            <m.div
-              key={expandedItem.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
-            >
-              <FeatureFlowItemDetail
-                item={expandedItem}
-                ref={(node) => {
-                  if (node) {
-                    detailPanelNodesRef.current.set(expandedItem.id, node);
-                  } else {
-                    detailPanelNodesRef.current.delete(expandedItem.id);
-                  }
-                }}
-              />
-            </m.div>
-          )}
-        </AnimatePresence>
+        <m.div layout transition={DETAIL_PANEL_LAYOUT_TRANSITION}>
+          <AnimatePresence mode="wait">
+            {expandedItem && (
+              <m.div
+                key={expandedItem.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                <FeatureFlowItemDetail
+                  item={expandedItem}
+                  ref={(node) => {
+                    if (node) {
+                      detailPanelNodesRef.current.set(expandedItem.id, node);
+                    } else {
+                      detailPanelNodesRef.current.delete(expandedItem.id);
+                    }
+                  }}
+                />
+              </m.div>
+            )}
+          </AnimatePresence>
 
-        <FloatingSubNav
-          sticky
-          items={subNavItems}
-          activeId={expandedItemId}
-          onSelect={handleSubNavSelect}
-        />
+          <FloatingSubNav
+            sticky
+            items={subNavItems}
+            activeId={expandedItemId}
+            onSelect={handleSubNavSelect}
+          />
+        </m.div>
       </Box>
     );
   }

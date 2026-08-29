@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Theme } from '@mui/material/styles';
 
+import { channelAlpha } from '../../../utils/theme/theme-utils/theme-utils';
 import {
   detailPanelSx,
   featureFlowItemSx,
@@ -11,6 +12,9 @@ import {
 } from './feature-flow-section.styles';
 
 // ----------------------------------------------------------------------
+
+const GREY_500_CHANNEL = 'var(--mui-palette-grey-500Channel)';
+const COMMON_BLACK_CHANNEL = 'var(--mui-palette-common-blackChannel)';
 
 const mockTheme = {
   vars: {
@@ -27,13 +31,23 @@ const mockTheme = {
     create: () => 'all 200ms',
     duration: { shorter: 200 },
   },
+  // Identity passthrough — merges "dark" overrides directly into the
+  // returned object, as if dark mode were always active. Use `mockLightTheme`
+  // below to resolve the pre-override (light-only) branch instead.
   applyStyles: (_mode: string, styles: Record<string, unknown>) => styles,
+} as unknown as Theme;
+
+// `applyStyles` never contributes anything — resolves the styles object as
+// they stand before any dark-mode override is merged in.
+const mockLightTheme = {
+  ...(mockTheme as unknown as Record<string, unknown>),
+  applyStyles: () => ({}),
 } as unknown as Theme;
 
 type StyleFn = (theme: Theme) => Record<string, unknown>;
 
-function resolve<T>(sx: T) {
-  return (sx as unknown as StyleFn)(mockTheme);
+function resolve<T>(sx: T, theme: Theme = mockTheme) {
+  return (sx as unknown as StyleFn)(theme);
 }
 
 // ----------------------------------------------------------------------
@@ -101,6 +115,44 @@ describe('featureFlowItemSx', () => {
     );
     expect(String(styles['borderColor'])).toContain('rgba(var(--mui-palette-primary-mainChannel)');
     expect(String(styles['boxShadow'])).toContain('inset 3px 0 0');
+  });
+
+  it('selected items get a tighter :active shadow than :hover, in light mode', () => {
+    const styles = resolve(
+      featureFlowItemSx({
+        isSelected: true,
+        isActive: false,
+        isExpanded: false,
+        interactive: true,
+      }),
+      mockLightTheme
+    );
+    const hover = styles['&:hover'] as Record<string, unknown>;
+    const active = styles['&:active'] as Record<string, unknown>;
+
+    expect(active).toBeDefined();
+    expect(active['opacity']).toBe(1);
+    expect(active['boxShadow']).toBe(
+      `0 0 1px 0 ${channelAlpha(GREY_500_CHANNEL, 0.04)}, -1px 2px 4px -1px ${channelAlpha(GREY_500_CHANNEL, 0.06)}`
+    );
+    expect(active['boxShadow']).not.toBe(hover['boxShadow']);
+  });
+
+  it('selected items get dark-mode :hover and :active shadow overrides matching the resting dark boxShadow palette', () => {
+    // mockTheme's applyStyles passthrough merges the dark branch in directly,
+    // so resolving with it simulates dark mode being active.
+    const styles = resolve(
+      featureFlowItemSx({ isSelected: true, isActive: false, isExpanded: false, interactive: true })
+    );
+    const hover = styles['&:hover'] as Record<string, unknown>;
+    const active = styles['&:active'] as Record<string, unknown>;
+
+    expect(String(hover['boxShadow'])).toBe(
+      `0 0 2px 0 ${channelAlpha(COMMON_BLACK_CHANNEL, 0.12)}, -8px 20px 40px -4px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.32)}`
+    );
+    expect(String(active['boxShadow'])).toBe(
+      `0 0 1px 0 ${channelAlpha(COMMON_BLACK_CHANNEL, 0.04)}, -1px 2px 4px -1px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.08)}`
+    );
   });
 });
 

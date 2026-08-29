@@ -4,6 +4,7 @@ import { createElement, createRef, act } from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { renderWithTheme } from '../../../../test-utils';
+import { GiselleThemeProvider } from '../../../theming/theme-provider/giselle/giselle';
 import { FeatureFlowItemDetail } from './feature-flow-item-detail';
 import type { FeatureFlowItem } from '../types';
 
@@ -65,6 +66,36 @@ describe('FeatureFlowItemDetail', () => {
     expect(html).toContain('Years');
     expect(html).toContain('99%');
     expect(html).toContain('Uptime');
+  });
+
+  it('renders a MetricCardDecoration inside each MetricCard, matching the original visual treatment (issue #177)', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+
+    act(() => {
+      root.render(
+        createElement(GiselleThemeProvider, {
+          defaultMode: 'light',
+          children: createElement(FeatureFlowItemDetail, {
+            item: { ...baseItem, metrics: [{ value: '20+', label: 'Years' }] },
+          }),
+        })
+      );
+    });
+
+    // MetricCard only renders its aria-hidden decoration-overlay wrapper Box
+    // when a `decoration` prop is passed (see metric-card.tsx) — this metric
+    // has no icon, so that wrapper's presence, containing exactly one child
+    // (the decoration itself), confirms the `decoration` prop reached
+    // MetricCard without depending on the decoration's own style values.
+    const paper = div.querySelector('.MuiPaper-root');
+    const decorationWrapper = paper?.querySelector(':scope > [aria-hidden="true"]');
+    expect(decorationWrapper).not.toBeNull();
+    expect(decorationWrapper?.children.length).toBe(1);
+
+    act(() => root.unmount());
+    div.remove();
   });
 
   it('renders a metric sublabel when present', () => {
