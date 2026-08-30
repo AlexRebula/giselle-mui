@@ -12,11 +12,12 @@ addCollection(solarStorybookIcons as Parameters<typeof addCollection>[0]);
 // developer's OS dark-mode preference. Two separate MUI mechanisms both
 // need pinning away from OS-driven behaviour, not just one:
 // 1. `colorSchemeSelector` controls how the *stylesheet* is generated —
-//    pinned away from its 'media' default (production apps, incl.
-//    giselleTheme itself, keep 'media'; see GiselleThemeProvider's own
-//    documented gotcha) so dark-mode CSS variables live under an explicit
-//    class instead of an unconditional `@media (prefers-color-scheme)`
-//    block.
+//    pinned here to Storybook's own class-based selector (2), overriding
+//    whatever `giselleThemeOptions` itself sets (see theme-preset.ts —
+//    fixed to 'data-mui-color-scheme' in #190/#191; previously the
+//    implicit 'media' default) so dark-mode CSS variables live under an
+//    explicit class instead of tracking the developer's actual OS
+//    preference.
 // 2. `ThemeProvider`'s `defaultMode` prop (default: 'system') is a
 //    SEPARATE, JS-level mechanism: even with (1) fixed, ThemeProvider
 //    still resolves 'system' mode via its own `matchMedia` check at
