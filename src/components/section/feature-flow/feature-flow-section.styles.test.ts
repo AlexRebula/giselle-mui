@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { createTheme } from '@mui/material/styles';
 import type { Theme } from '@mui/material/styles';
 
 import { channelAlpha } from '../../../utils/theme/theme-utils/theme-utils';
@@ -51,6 +52,18 @@ function resolve<T>(sx: T, theme: Theme = mockTheme) {
   return (sx as unknown as StyleFn)(theme);
 }
 
+/** Reads a flat `zIndex` off a plain (non-theme-function) `SxProps` object. */
+function getZIndex(sx: unknown): unknown {
+  return (sx as Record<string, unknown>)['zIndex'];
+}
+
+// The real MUI default theme's `zIndex.speedDial` — the value
+// `FloatingSubNav`'s sticky wrapper actually uses via `theme.zIndex.speedDial`
+// (see `floating-sub-nav.styles.ts`), unmodified by this repo's theme preset
+// (confirmed: it doesn't touch `zIndex`). Read from a real theme instance
+// rather than hardcoded, so this stays correct if MUI's default ever changes.
+const REAL_SPEED_DIAL_Z_INDEX = createTheme().zIndex.speedDial;
+
 // ----------------------------------------------------------------------
 
 describe('featureFlowRootSx', () => {
@@ -80,7 +93,7 @@ describe('detailPanelSx', () => {
   // `imageColumnStickyStackSx` again, regardless of DOM order — see that
   // sx's own regression test below for the mechanism.
   it("[regression] does not set an explicit zIndex, so it can't out-stack the sticky image column", () => {
-    expect((detailPanelSx as Record<string, unknown>)['zIndex']).toBeUndefined();
+    expect(getZIndex(detailPanelSx)).toBeUndefined();
   });
 });
 
@@ -199,17 +212,19 @@ describe('imageColumnStickyStackSx', () => {
     });
   });
 
-  // Regression test for issue #193: the sticky image column and
-  // `FeatureFlowItemDetail` (below it in DOM order) are siblings with no
+  // Regression test for issue #193: the sticky image column's true DOM
+  // sibling at `<section>`'s level (`MotionViewport`, several levels up from
+  // this sx) and `FeatureFlowItemDetail`'s wrapping `m.div layout` have no
   // stacking-context-establishing ancestor between them and their nearest
-  // shared one. Neither previously set `zIndex`, so both stacked at the
+  // shared one — see `imageColumnStickyStackSx`'s own JSDoc for the verified
+  // mechanism. Neither previously set `zIndex`, so both stacked at the
   // default `z-index: auto` level — where paint order falls back to DOM
   // order, and the later element (the detail panel/highlight carousel)
   // painted over the sticky photo once they scrolled into overlap. An
   // explicit positive `zIndex` here lifts the image column's stacking
   // context above any `z-index: auto` sibling, independent of DOM order.
   it('[regression] sets an explicit positive zIndex so it paints above the (DOM-later) detail panel', () => {
-    const zIndex = (imageColumnStickyStackSx as Record<string, unknown>)['zIndex'];
+    const zIndex = getZIndex(imageColumnStickyStackSx);
     expect(typeof zIndex).toBe('number');
     expect(zIndex as number).toBeGreaterThan(0);
   });
@@ -217,12 +232,13 @@ describe('imageColumnStickyStackSx', () => {
   // Regression test for issue #193's acceptance criterion "Verify the
   // floating sub-nav still wins for its own chrome": `FloatingSubNav`'s
   // sticky wrapper (`floating-sub-nav.styles.ts`) sets
-  // `zIndex: theme.zIndex.speedDial` — MUI's default 1050, unmodified by
-  // this repo's theme preset. This image column's zIndex must stay below
-  // that so the sub-nav still paints on top of it.
-  it("[regression] stays below FloatingSubNav's zIndex.speedDial (1050) so the sub-nav still wins", () => {
-    const zIndex = (imageColumnStickyStackSx as Record<string, unknown>)['zIndex'] as number;
-    expect(zIndex).toBeLessThan(1050);
+  // `zIndex: theme.zIndex.speedDial`. This image column's zIndex must stay
+  // below the real value MUI resolves for that token — not a hardcoded
+  // copy of it — so this keeps catching a regression even if MUI's default
+  // ever changes.
+  it("[regression] stays below FloatingSubNav's real zIndex.speedDial so the sub-nav still wins", () => {
+    const zIndex = getZIndex(imageColumnStickyStackSx) as number;
+    expect(zIndex).toBeLessThan(REAL_SPEED_DIAL_Z_INDEX);
   });
 });
 
