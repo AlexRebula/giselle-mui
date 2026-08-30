@@ -387,14 +387,25 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
               </m.div>
             )}
           </AnimatePresence>
-
-          <FloatingSubNav
-            sticky
-            items={subNavItems}
-            activeId={expandedItemId}
-            onSelect={handleSubNavSelect}
-          />
         </m.div>
+
+        {/* Deliberately NOT nested inside the `m.div layout` above (see #193):
+            framer-motion's `layout` prop keeps a persistent, non-'none'
+            `transform` on that node even at rest, which makes it establish
+            its own CSS stacking context. FloatingSubNav's zIndex:1050 would
+            then only out-rank content *inside* that context (like the detail
+            panel) — it couldn't escape to out-rank the sticky image column,
+            which lives entirely outside it. Rendering it as a sibling here
+            keeps it in the same stacking context as the image column, so its
+            explicit zIndex still wins where it needs to. Its own zero-height
+            sticky wrapper contributes nothing to the `layout` height
+            transition either way, so this doesn't change that animation. */}
+        <FloatingSubNav
+          sticky
+          items={subNavItems}
+          activeId={expandedItemId}
+          onSelect={handleSubNavSelect}
+        />
       </Box>
     );
   }

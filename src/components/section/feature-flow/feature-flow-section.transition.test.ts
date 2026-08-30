@@ -187,6 +187,60 @@ describe('FeatureFlowSection — real AnimatePresence transition', () => {
 
     cleanup();
   });
+
+  // Regression test for issue #193/#195 review: `imageColumnStickyStackSx`'s
+  // `zIndex: 1` only makes the sticky image column paint over
+  // `FeatureFlowItemDetail` if *every* ancestor between the sticky element
+  // and `<section>` stays at `transform: none` — a transform (even an
+  // identity one) creates a CSS stacking context that would trap the
+  // zIndex inside it, unable to reach the detail panel it needs to beat.
+  // `MotionViewport` (an `m.div`) is the one ancestor in that chain driven by
+  // real framer-motion; this test renders it for real (no framer-motion
+  // mock, unlike feature-flow-section.test.ts) and asserts it — and every
+  // other ancestor up to `<section>` — never ends up with a non-'none'
+  // transform, which would silently break the fix without any sx-level test
+  // catching it.
+  it('[regression] no ancestor between the sticky image column and <section> carries a transform', async () => {
+    const { div, cleanup } = mount({ items: [firstItem], image: baseImage });
+
+    // Let MotionViewport's whileInView entrance actually settle.
+    await waitFor(() => true, { timeout: 50 });
+
+    const section = div.querySelector('section');
+    expect(section).not.toBeNull();
+
+    const img = div.querySelector('img[alt="Preview"]');
+    expect(img).not.toBeNull();
+
+    // Found by its zIndex rather than `position: sticky`: that value is set
+    // via an `{ xs, md }` responsive breakpoint (media-query-gated CSS),
+    // which jsdom's `getComputedStyle` does not reliably resolve. `zIndex: 1`
+    // is a flat, unconditional value in the same sx object, so it's a
+    // reliable marker for the same element in this environment.
+    let node: Element | null = img;
+    let stickyAncestor: Element | null = null;
+    while (node && node !== section) {
+      if (getComputedStyle(node).zIndex === '1') {
+        stickyAncestor = node;
+        break;
+      }
+      node = node.parentElement;
+    }
+    expect(stickyAncestor).not.toBeNull();
+
+    // jsdom's `getComputedStyle` resolves an *inline* `transform` (what
+    // framer-motion actually sets via direct DOM mutation) reliably, but
+    // returns `''` rather than the real-browser initial value `'none'` for
+    // elements with no transform at all — so "no transform" here means
+    // neither string, not just `'none'`.
+    node = (stickyAncestor as Element).parentElement;
+    while (node && node !== section) {
+      expect(['', 'none']).toContain(getComputedStyle(node).transform);
+      node = node.parentElement;
+    }
+
+    cleanup();
+  });
 });
 
 // ----------------------------------------------------------------------

@@ -147,13 +147,34 @@ export const featureFlowItemSx =
 // Image column
 // ----------------------------------------------------------------------
 
-/** Sticky within the tall grid track next to it (md+); static on mobile. */
+/**
+ * Sticky within the tall grid track next to it (md+); static on mobile.
+ *
+ * `zIndex: 1` is required for the sticky photo to paint over
+ * `FeatureFlowItemDetail` once they scroll into overlap (see #193). The true
+ * DOM sibling pair at `<section>`'s level is `MotionViewport` (wraps this
+ * image column, several levels down) and the `m.div layout` wrapping the
+ * detail panel (see `DETAIL_PANEL_LAYOUT_TRANSITION`) — not this stack and
+ * the detail panel directly. Neither `MotionViewport`'s rendered root nor
+ * any ancestor between it and this stack sets an explicit `zIndex` or ends
+ * up with a non-`none` transform (confirmed live, and guarded by the
+ * regression test in `feature-flow-section.transition.test.ts` that renders
+ * real framer-motion, not a mock) — so both `MotionViewport` and this stack
+ * stay at the default `z-index: auto` level until this `zIndex: 1`, where
+ * paint order otherwise falls back to DOM order, putting the later,
+ * non-sticky detail panel on top instead of the sticky image. `1` is enough
+ * to win against any `z-index: auto` sibling; it stays well under
+ * `FloatingSubNav`'s `theme.zIndex.speedDial` so that still wins over both
+ * (`FloatingSubNav` renders outside that same `m.div layout` for exactly
+ * this reason — see the comment at its call site in `feature-flow-section.tsx`).
+ */
 export const imageColumnStickyStackSx: SxProps<Theme> = {
   position: { xs: 'relative', md: 'sticky' },
   top: { md: 80 },
   width: 1,
   alignItems: 'center',
   justifyContent: 'center',
+  zIndex: 1,
 };
 
 /**
