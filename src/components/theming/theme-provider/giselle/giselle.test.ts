@@ -1,11 +1,38 @@
 // @vitest-environment jsdom
 import React, { act } from 'react';
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import ReactDOM from 'react-dom/client';
 import { extendTheme } from '@mui/material/styles';
 
 import { GiselleThemeProvider } from './giselle';
+
+// ----------------------------------------------------------------------
+
+/**
+ * Mocks `window.matchMedia` to report a fixed `prefers-color-scheme`
+ * preference, and returns a restore function. jsdom does not implement
+ * `matchMedia` at all — MUI's system-mode detection treats a missing
+ * `matchMedia` as "no system preference available" and silently no-ops,
+ * which is why a dark-OS scenario must be mocked explicitly rather than
+ * left unmocked.
+ */
+function mockPrefersColorScheme(scheme: 'light' | 'dark') {
+  const original = window.matchMedia;
+  window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    matches: query === '(prefers-color-scheme: dark)' && scheme === 'dark',
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }));
+  return () => {
+    window.matchMedia = original;
+  };
+}
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +61,8 @@ describe('GiselleThemeProvider — defaultMode', () => {
     await act(async () => {
       container?.remove();
     });
+    document.documentElement.removeAttribute('data-mui-color-scheme');
+    window.localStorage.clear();
   });
 
   it('accepts defaultMode prop and renders children without error', async () => {
@@ -44,11 +73,30 @@ describe('GiselleThemeProvider — defaultMode', () => {
         React.createElement(GiselleThemeProvider, { defaultMode: 'light', children: CHILD })
       );
     });
-    // MUI sets data-mui-color-scheme via matchMedia / localStorage — browser APIs not
-    // available in jsdom. What we verify here: defaultMode is accepted as a prop and
-    // the children render without error. The attribute-setting behaviour is MUI's
-    // responsibility and is covered by MUI's own test suite.
     expect(container.querySelector('[data-testid="child"]')).not.toBeNull();
+  });
+
+  // Regression test for issue #190: with `colorSchemeSelector` left at
+  // `extendTheme()`'s default of `'media'`, this explicit `defaultMode`
+  // override had no effect at all — the resolved scheme just kept tracking
+  // the mocked dark OS preference. Asserting against a *dark*-preference
+  // machine (rather than an unmocked one, where the OS preference happens to
+  // be indeterminate in jsdom) is what proves the override — not mere
+  // coincidence — is what produced 'light'.
+  it('defaultMode="light" forces the light scheme even when the OS prefers dark', async () => {
+    const restoreMatchMedia = mockPrefersColorScheme('dark');
+    try {
+      await act(async () => {
+        container = document.createElement('div');
+        document.body.appendChild(container);
+        ReactDOM.createRoot(container).render(
+          React.createElement(GiselleThemeProvider, { defaultMode: 'light', children: CHILD })
+        );
+      });
+      expect(document.documentElement.getAttribute('data-mui-color-scheme')).toBe('light');
+    } finally {
+      restoreMatchMedia();
+    }
   });
 });
 

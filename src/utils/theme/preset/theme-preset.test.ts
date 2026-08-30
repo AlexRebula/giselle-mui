@@ -111,6 +111,25 @@ describe('giselleTheme', () => {
 });
 
 // ----------------------------------------------------------------------
+// Regression test for issue #190: an unset `colorSchemeSelector` silently
+// defaults to `'media'` in `extendTheme()`, under which MUI's `setMode`
+// (what `GiselleThemeProvider`'s `defaultMode` prop drives) has no effect —
+// a consumer passing `defaultMode="light"` would silently keep tracking the
+// OS/browser `prefers-color-scheme` instead. Pinning the non-`'media'` value
+// here guards against that regression re-appearing at the theme-options
+// level; the behavioural half (the attribute actually flips) is covered in
+// `giselle.test.ts`.
+describe('giselleTheme — colorSchemeSelector (issue #190)', () => {
+  it('does not default to "media" (which would make defaultMode overrides a no-op)', () => {
+    expect(giselleTheme.colorSchemeSelector).not.toBe('media');
+  });
+
+  it('uses the data-mui-color-scheme attribute documented in docs/theming/nextjs.md', () => {
+    expect(giselleTheme.colorSchemeSelector).toBe('data-mui-color-scheme');
+  });
+});
+
+// ----------------------------------------------------------------------
 // Regression test for issue #185: `--mui-palette-grey-500Channel` never
 // existed in the generated CSS-vars stylesheet. `extendTheme()` only
 // auto-generates `*Channel` tokens for palette entries shaped like a

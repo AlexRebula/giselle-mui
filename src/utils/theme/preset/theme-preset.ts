@@ -108,6 +108,14 @@ type GreyPaletteWithChannel = NonNullable<ColorSystemOptions['palette']>['grey']
  * `giselleTheme` when you only need the already-resolved theme object.
  */
 export const giselleThemeOptions: CssVarsThemeOptions = {
+  // `extendTheme()` defaults an unset `colorSchemeSelector` to `'media'`, under
+  // which MUI's `useColorScheme().setMode` — what `GiselleThemeProvider`'s
+  // `defaultMode` prop drives — has no effect (MUI logs this explicitly: "The
+  // `setMode` function has no effect if `colorSchemeSelector` is `media`").
+  // A data attribute lets an explicit `defaultMode` override the OS
+  // preference; see docs/theming/nextjs.md's troubleshooting section, which
+  // already documents this exact attribute name (see issue #190).
+  colorSchemeSelector: 'data-mui-color-scheme',
   colorSchemes: {
     light: {
       palette: {
