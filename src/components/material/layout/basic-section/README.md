@@ -16,16 +16,16 @@ this once, not per-project. The previous, consumer-local implementation
 (`svg-elements.tsx` in the private consuming app) imported `varFade` — a proprietary
 utility name from a commercial theme kit, and one of giselle-mui's own banned
 identifiers (`AGENTS.md` §12). That's why it was never ported in as-is: this component
-is a fresh, original implementation of the same *visual idea* (corner marks, border
+is a fresh, original implementation of the same _visual idea_ (corner marks, border
 lines), not a port of that code.
 
 ## Planned API
 
-| Prop        | Type              | Default | Description                                    |
-| ----------- | ----------------- | ------- | ------------------------------------------------ |
-| `children`  | `React.ReactNode` | —       | Required. Section content.                       |
-| `decorated` | `boolean`         | `true`  | Renders the corner plus-marks and border lines.  |
-| `sx`        | `SxProps<Theme>`  | —       | Forwarded to the root `<section>`.               |
+| Prop        | Type              | Default | Description                                     |
+| ----------- | ----------------- | ------- | ----------------------------------------------- |
+| `children`  | `React.ReactNode` | —       | Required. Section content.                      |
+| `decorated` | `boolean`         | `true`  | Renders the corner plus-marks and border lines. |
+| `sx`        | `SxProps<Theme>`  | —       | Forwarded to the root `<section>`.              |
 
 ## Design decisions
 
@@ -36,8 +36,9 @@ lines), not a port of that code.
 - **The corner-mark and border-line pieces are not separately exported.** They're small,
   single-purpose, non-reusable-elsewhere SVGs — internal to `basic-section.tsx`, not a
   multi-component feature.
-- **Original implementation, not a port.** No `varFade`, no Minimals-derived naming or
-  styling values — this is a new design achieving the same visual effect.
+- **Original implementation, not a port.** No `varFade`, and no naming or styling values
+  carried over from the prior consumer-local implementation or the commercial theme kit
+  it was based on — this is a new design achieving the same visual effect.
 - **Composes with, does not replace, `SectionContainer`.** `SectionContainer` is a
   spacing-only shell ("no background colour, no border, no decoration" per its own
   README) — content-width and vertical rhythm. `BasicSection` is the decorative outer
@@ -48,8 +49,21 @@ lines), not a port of that code.
 
 ## Phase
 
-Phase: `planned` | Priority tier: `T1`
+Phase: `implemented` | Priority tier: `T1`
 
 ## File structure
+
+```
+basic-section/
+  basic-section.tsx         : BasicSection component + internal CornerMark/BorderLine
+  basic-section.styles.ts   : style functions and layout constants
+  basic-section.test.ts     : unit tests
+  basic-section.styles.test.ts : style tests
+  basic-section.stories.tsx : Default, NotDecorated
+  types.ts                 : BasicSectionProps
+  index.ts                 : barrel
+  README.md                : this file
+  roadmap.md                : open improvements and completed tasks
+```
 
 _Filled in when implementation begins._

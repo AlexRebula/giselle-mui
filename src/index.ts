@@ -128,6 +128,9 @@ export type { SectionTitleProps } from './components/material/layout/section-tit
 export { SectionContainer } from './components/material/layout/section-container';
 export type { SectionContainerProps } from './components/material/layout/section-container';
 
+export { BasicSection } from './components/material/layout/basic-section';
+export type { BasicSectionProps } from './components/material/layout/basic-section';
+
 export { HeroSection } from './components/section/hero/section';
 export type {
   HeroColorKey,
