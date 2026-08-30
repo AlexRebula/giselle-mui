@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest';
+import { grey } from '@mui/material/colors';
 
 import { hexToChannel } from '../theme-utils/theme-utils';
 import {
@@ -152,5 +153,21 @@ describe('giselleTheme — grey Channel token (issue #185)', () => {
     expect(varsGrey['500Channel']).toBeDefined();
     // theme.vars values are `var(--token, fallback)` references, not raw values.
     expect(varsGrey['500Channel']).toContain('--mui-palette-grey-500Channel');
+  });
+
+  // The three tests above only walk the in-memory theme object — the actual
+  // bug was that the CSS variable never made it into the *generated
+  // stylesheet* MUI injects into the page (that's what a real
+  // `getComputedStyle()` in a browser reads from). This test exercises the
+  // same `generateStyleSheets()` call `CssVarsProvider` uses at runtime, so a
+  // future regression in the CSS-var emission path — not just the theme
+  // object's shape — would fail here too.
+  it('generateStyleSheets() actually emits --mui-palette-grey-500Channel as a real CSS custom property', () => {
+    const themeWithStyleSheets = giselleTheme as unknown as {
+      generateStyleSheets?: () => Record<string, unknown>[];
+    };
+    const sheets = themeWithStyleSheets.generateStyleSheets?.();
+    const serialized = JSON.stringify(sheets);
+    expect(serialized).toContain(`"--mui-palette-grey-500Channel":"${hexToChannel(grey[500])}"`);
   });
 });
