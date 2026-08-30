@@ -144,6 +144,7 @@
     "src/components/section/feature-flow/highlight-carousel/feature-flow-highlight-carousel.test.ts",
     "src/components/section/feature-flow/image-column/feature-flow-image-column.test.ts",
     "src/components/section/feature-flow/item-detail/feature-flow-item-detail.test.ts",
+    "src/components/section/feature-flow/item-row/feature-flow-item-row.test.ts",
     "src/components/section/faq/accordion/faq-accordion.styles.test.ts",
     "src/components/section/faq/accordion/faq-accordion.test.ts",
     "src/components/section/faq/accordion/motion-viewport/faq-motion-viewport.test.ts",
