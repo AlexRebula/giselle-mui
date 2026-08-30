@@ -147,13 +147,26 @@ export const featureFlowItemSx =
 // Image column
 // ----------------------------------------------------------------------
 
-/** Sticky within the tall grid track next to it (md+); static on mobile. */
+/**
+ * Sticky within the tall grid track next to it (md+); static on mobile.
+ *
+ * `zIndex: 1` is required for the sticky photo to paint over
+ * `FeatureFlowItemDetail` once they scroll into overlap (see #193):
+ * `FeatureFlowItemDetail` sits later in DOM order as this section's sibling,
+ * and neither it nor any ancestor between them sets an explicit `zIndex`, so
+ * without this they'd both stack at the default `z-index: auto` level, where
+ * paint order falls back to DOM order — putting the later, non-sticky detail
+ * panel on top instead of the sticky image. `1` is enough to win against any
+ * `z-index: auto` sibling; it stays well under `FloatingSubNav`'s
+ * `theme.zIndex.speedDial` so that still wins over both.
+ */
 export const imageColumnStickyStackSx: SxProps<Theme> = {
   position: { xs: 'relative', md: 'sticky' },
   top: { md: 80 },
   width: 1,
   alignItems: 'center',
   justifyContent: 'center',
+  zIndex: 1,
 };
 
 /**
