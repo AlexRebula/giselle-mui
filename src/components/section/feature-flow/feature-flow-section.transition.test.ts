@@ -188,3 +188,66 @@ describe('FeatureFlowSection — real AnimatePresence transition', () => {
     cleanup();
   });
 });
+
+// ----------------------------------------------------------------------
+
+describe('FeatureFlowSection — keyboard focus-reset (real framer-motion)', () => {
+  // These live here rather than in feature-flow-section.test.ts because that
+  // file's framer-motion mock (`vi.mock('framer-motion', ...)`) returns a
+  // fresh function identity from its Proxy every time `m.button`/`m.div` is
+  // accessed. React treats a changed component-type identity as a reason to
+  // unmount and remount, so any hover/focus-triggered re-render there
+  // silently disconnects the very button a test just focused — breaking any
+  // assertion that focuses one element, waits for a re-render, then acts on
+  // that same element again (as a real "focus A, then focus B" blur-reset
+  // test needs to). This file's real, unmocked framer-motion exports have
+  // stable identity across renders, so the DOM nodes stay connected and
+  // these interactions can be tested for real.
+
+  const findFrame = (div: HTMLElement, src: string) =>
+    Array.from(div.querySelectorAll('img[fetchpriority]')).find(
+      (img) => img.getAttribute('src') === src
+    );
+
+  const rowItems: [FeatureFlowItem, FeatureFlowItem] = [
+    { ...firstItem, imgUrl: ['/design-1.png'] },
+    { ...secondItem, imgUrl: ['/perf-1.png'] },
+  ];
+
+  it('resets the preview when focus leaves the row group entirely (mirrors onMouseLeave)', () => {
+    const { div, cleanup } = mount({ items: rowItems, image: baseImage });
+    const buttons = div.querySelectorAll('button[aria-pressed]');
+    const secondButton = Array.from(buttons).find((el) =>
+      el.textContent?.includes('Performance')
+    ) as HTMLElement;
+
+    act(() => secondButton.focus());
+    expect(findFrame(div, '/perf-1.png')?.hasAttribute('aria-hidden')).toBe(false);
+
+    const outsideButton = document.createElement('button');
+    document.body.appendChild(outsideButton);
+    act(() => outsideButton.focus());
+
+    expect(findFrame(div, '/design-1.png')?.hasAttribute('aria-hidden')).toBe(false);
+
+    outsideButton.remove();
+    cleanup();
+  });
+
+  it('does not reset the preview when focus moves from one row to another within the group', () => {
+    const { div, cleanup } = mount({ items: rowItems, image: baseImage });
+    const buttons = div.querySelectorAll('button[aria-pressed]');
+    const firstButton = Array.from(buttons).find((el) =>
+      el.textContent?.includes('Design systems')
+    ) as HTMLElement;
+    const secondButton = Array.from(buttons).find((el) =>
+      el.textContent?.includes('Performance')
+    ) as HTMLElement;
+
+    act(() => firstButton.focus());
+    act(() => secondButton.focus());
+
+    expect(findFrame(div, '/perf-1.png')?.hasAttribute('aria-hidden')).toBe(false);
+    cleanup();
+  });
+});
