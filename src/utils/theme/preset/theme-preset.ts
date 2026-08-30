@@ -11,7 +11,10 @@
  */
 
 import { extendTheme } from '@mui/material/styles';
-import type { CssVarsThemeOptions } from '@mui/material/styles';
+import type { ColorSystemOptions, CssVarsThemeOptions } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
+
+import { hexToChannel } from '../theme-utils/theme-utils';
 
 // ----------------------------------------------------------------------
 // Brand palette constants
@@ -59,6 +62,41 @@ export const GISELLE_PRIMARY_DARK_MAIN = '#76C442';
 export const GISELLE_SECONDARY_MAIN = '#F5A623';
 
 // ----------------------------------------------------------------------
+// Custom CSS-vars channel tokens
+// ----------------------------------------------------------------------
+
+/**
+ * `grey[500]` as a space-separated RGB channel string, for `channelAlpha()`
+ * tinting (e.g. `channelAlpha(theme.vars.palette.grey['500Channel'], 0.08)`).
+ *
+ * **Why this exists:** MUI's `extendTheme()` only auto-generates `*Channel`
+ * CSS variables for palette entries shaped like a `PaletteColor` (anything
+ * with a `.main`), plus a short hardcoded list (`background.default/paper`,
+ * `common.background/onBackground`, `divider`, `text.primary/secondary`,
+ * `action.active/selected`). The numbered `grey` scale isn't one of them —
+ * `--mui-palette-grey-500Channel` is never emitted by default, even though
+ * `--mui-palette-grey-500` (the plain hex) is. Several components across
+ * this library reference `grey['500Channel']` for hover tints and tinted
+ * shadows; without this explicit token those `rgba(var(...) / alpha)`
+ * declarations resolve to an unset custom property, which browsers treat as
+ * invalid and silently drop (see issue #185).
+ */
+const GREY_500_CHANNEL = hexToChannel(grey[500]);
+
+/**
+ * MUI's type for `palette.grey` (`ColorPartial`) only lists the numbered and
+ * `A`-prefixed shades — it has no room for a custom `500Channel` token, so a
+ * plain object literal can't be assigned to it directly. Every existing
+ * *read* of `theme.vars.palette.grey['500Channel']` elsewhere in this
+ * codebase (e.g. `floating-sub-nav.styles.ts`) already casts through
+ * `Record<string, string>` for the same reason — this is the write-side
+ * equivalent.
+ */
+type GreyPaletteWithChannel = NonNullable<ColorSystemOptions['palette']>['grey'] & {
+  '500Channel': string;
+};
+
+// ----------------------------------------------------------------------
 // Theme preset
 // ----------------------------------------------------------------------
 
@@ -79,6 +117,14 @@ export const giselleThemeOptions: CssVarsThemeOptions = {
         success: { main: '#388E3C' },
         warning: { main: '#ED6C02' },
         error: { main: '#D32F2F' },
+        // `grey` is shared between the light and dark schemes (MUI's default
+        // scale isn't overridden here), so the same channel value applies to
+        // both — see `GREY_500_CHANNEL` above for why this is needed at all.
+        // MUI's `ColorPartial` type only lists the numbered/A-prefixed grey
+        // shades, not custom channel tokens — cast, same as every existing
+        // *read* of `theme.vars.palette.grey['500Channel']` elsewhere in this
+        // codebase (e.g. `floating-sub-nav.styles.ts`).
+        grey: { '500Channel': GREY_500_CHANNEL } as unknown as GreyPaletteWithChannel,
       },
     },
     dark: {
@@ -89,6 +135,7 @@ export const giselleThemeOptions: CssVarsThemeOptions = {
         success: { main: '#66BB6A' },
         warning: { main: '#FFA726' },
         error: { main: '#F44336' },
+        grey: { '500Channel': GREY_500_CHANNEL } as unknown as GreyPaletteWithChannel,
       },
     },
   },

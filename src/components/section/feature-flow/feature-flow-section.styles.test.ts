@@ -101,6 +101,32 @@ describe('featureFlowItemSx', () => {
     expect(styles['&:hover']).toBeDefined();
   });
 
+  // Regression test for issue #185: the row is rendered as `component={m.button}`
+  // with `variants={fade('inUp', …)}` for its entrance animation. Once that
+  // animation settles, framer-motion leaves a permanent inline
+  // `style="opacity: 1"` on the element — and inline styles always win over a
+  // class-based `:hover`/`:active` rule, no matter how specific, unless that
+  // rule carries `!important`. Confirmed live in Storybook: hovering a
+  // non-selected item's `getComputedStyle().opacity` stayed `1` even though
+  // the `:hover` rule (with `opacity: 0.72`) was present and matched — the
+  // rule lost to framer-motion's inline style. Without `!important` here, the
+  // dimming half of the hover tint can never actually render.
+  it("interactive, non-selected items' hover/active opacity beats framer-motion's persistent inline opacity style with !important", () => {
+    const styles = resolve(
+      featureFlowItemSx({
+        isSelected: false,
+        isActive: false,
+        isExpanded: false,
+        interactive: true,
+      })
+    );
+    const hover = styles['&:hover'] as Record<string, unknown>;
+    const active = styles['&:active'] as Record<string, unknown>;
+
+    expect(String(hover['opacity'])).toContain('!important');
+    expect(String(active['opacity'])).toContain('!important');
+  });
+
   it('selected items get a persistent elevated background', () => {
     const styles = resolve(
       featureFlowItemSx({ isSelected: true, isActive: false, isExpanded: false, interactive: true })

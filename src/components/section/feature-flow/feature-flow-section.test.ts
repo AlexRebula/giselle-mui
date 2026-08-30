@@ -212,6 +212,25 @@ describe('FeatureFlowSection — static rendering', () => {
     expect(html).not.toContain('aria-pressed');
   });
 
+  // Regression coverage for issue #185: the reported symptoms (missing hover
+  // tint, missing selected-item box-shadow) were originally suspected to be a
+  // state-wiring bug — `isSelected` never actually reaching the item that
+  // visually renders as selected on initial mount. That hypothesis turned out
+  // to be wrong (the real causes were a missing theme CSS variable and a
+  // framer-motion/CSS specificity conflict — see feature-flow-section.styles.ts
+  // and theme-preset.ts) but is worth guarding explicitly so it can't
+  // regress silently: `selectedItemIndex` defaults to `0`, so the first
+  // interactive item must render `aria-pressed="true"` on mount, before any
+  // click.
+  it('the first interactive item is aria-pressed on initial mount, before any click (isSelected defaults correctly)', () => {
+    const { div, cleanup } = mount({ items: [fullItem, secondItem], image: baseImage });
+    const buttons = Array.from(div.querySelectorAll('button[aria-pressed]'));
+
+    expect(buttons[0]?.getAttribute('aria-pressed')).toBe('true');
+    expect(buttons[1]?.getAttribute('aria-pressed')).toBe('false');
+    cleanup();
+  });
+
   it('renders no metrics grid, tech chips, or highlight carousel before any item is expanded', () => {
     const html = renderWithTheme(
       createElement(FeatureFlowSection, { items: [fullItem], image: baseImage })
