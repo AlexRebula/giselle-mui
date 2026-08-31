@@ -12,8 +12,8 @@ export type { FeatureFlowDescriptionColumnProps } from './types';
 // ----------------------------------------------------------------------
 
 /**
- * `FeatureFlowDescriptionColumn` — the title and interactive row list shown
- * in `FeatureFlowSection`'s left (by default) column. Not exported from the
+ * `FeatureFlowDescriptionColumn` — the title and row list shown in
+ * `FeatureFlowSection`'s left (by default) column. Not exported from the
  * package barrel: an implementation detail of `FeatureFlowSection`, mirroring
  * `FeatureFlowImageColumn`'s own sub-component split for the opposite column.
  */
@@ -60,7 +60,7 @@ export function FeatureFlowDescriptionColumn({
         }}
       >
         {items.map((item, index) => {
-          const interactive = hasExpansionData(item);
+          const expandable = hasExpansionData(item);
           const isSelected = index === selectedItemIndex;
           const isActive = index === activeItemIndex;
           const isExpanded = item.id === expandedItemId;
@@ -71,7 +71,7 @@ export function FeatureFlowDescriptionColumn({
               icon={item.icon}
               title={item.title}
               description={item.description}
-              interactive={interactive}
+              expandable={expandable}
               isSelected={isSelected}
               isActive={isActive}
               isExpanded={isExpanded}

@@ -14,7 +14,7 @@ const baseProps: FeatureFlowItemRowProps = {
   icon: 'solar:code-bold',
   title: 'Design systems',
   description: 'Consistent, accessible UI at scale.',
-  interactive: true,
+  expandable: true,
   isSelected: false,
   isActive: false,
   isExpanded: false,
@@ -53,12 +53,16 @@ describe('FeatureFlowItemRow', () => {
     expect(html).toContain('Consistent, accessible UI at scale.');
   });
 
-  describe('interactive rows', () => {
-    it('renders as a real button', () => {
-      const html = renderWithTheme(createElement(FeatureFlowItemRow, baseProps));
-      expect(html).toContain('<button');
-    });
+  it('always renders as a real button, expandable or not', () => {
+    const expandableHtml = renderWithTheme(createElement(FeatureFlowItemRow, baseProps));
+    const quietHtml = renderWithTheme(
+      createElement(FeatureFlowItemRow, { ...baseProps, expandable: false })
+    );
+    expect(expandableHtml).toContain('<button');
+    expect(quietHtml).toContain('<button');
+  });
 
+  describe('expandable rows', () => {
     it('reflects isSelected via aria-pressed', () => {
       const html = renderWithTheme(
         createElement(FeatureFlowItemRow, { ...baseProps, isSelected: true })
@@ -94,7 +98,7 @@ describe('FeatureFlowItemRow', () => {
     });
 
     it('forwards ref to the root <button>', () => {
-      const ref = createRef<HTMLElement>();
+      const ref = createRef<HTMLButtonElement>();
       const div = document.createElement('div');
       document.body.appendChild(div);
       const root = ReactDOM.createRoot(div);
@@ -116,47 +120,43 @@ describe('FeatureFlowItemRow', () => {
     });
   });
 
-  describe('non-interactive rows', () => {
-    const nonInteractiveProps: FeatureFlowItemRowProps = { ...baseProps, interactive: false };
+  describe('non-expandable rows', () => {
+    const nonExpandableProps: FeatureFlowItemRowProps = { ...baseProps, expandable: false };
 
-    it('does not render as a button', () => {
-      const html = renderWithTheme(createElement(FeatureFlowItemRow, nonInteractiveProps));
-      expect(html).not.toContain('<button');
+    it('has no aria-pressed attribute, since there is nothing to toggle', () => {
+      const html = renderWithTheme(createElement(FeatureFlowItemRow, nonExpandableProps));
+      expect(html).not.toContain('aria-pressed');
     });
 
-    it('is focusable via tabIndex, so the hover-preview is keyboard-reachable', () => {
-      const html = renderWithTheme(createElement(FeatureFlowItemRow, nonInteractiveProps));
-      expect(html).toContain('tabindex="0"');
-    });
-
-    it('calls onHover on mouse enter and onFocus on focus, same as interactive rows', () => {
-      const onHover = vi.fn();
-      const onFocus = vi.fn();
-      const { div, cleanup } = mount({ ...nonInteractiveProps, onHover, onFocus });
-      const row = div.firstElementChild as HTMLElement;
-
-      act(() => row.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })));
-      expect(onHover).toHaveBeenCalledTimes(1);
-
-      act(() => row.focus());
-      expect(onFocus).toHaveBeenCalledTimes(1);
-
-      cleanup();
-    });
-
-    it('never fires onSelect, even on click', () => {
+    it('never fires onSelect, even on click, since no onClick is wired', () => {
       const onSelect = vi.fn();
-      const { div, cleanup } = mount({ ...nonInteractiveProps, onSelect });
-      const row = div.firstElementChild as HTMLElement;
+      const { div, cleanup } = mount({ ...nonExpandableProps, onSelect });
 
-      act(() => row.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+      act(() =>
+        div.querySelector('button')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+      );
 
       expect(onSelect).not.toHaveBeenCalled();
       cleanup();
     });
 
-    it('forwards ref to the root element', () => {
-      const ref = createRef<HTMLElement>();
+    it('calls onHover on mouse enter and onFocus on focus, same as expandable rows', () => {
+      const onHover = vi.fn();
+      const onFocus = vi.fn();
+      const { div, cleanup } = mount({ ...nonExpandableProps, onHover, onFocus });
+      const button = div.querySelector('button') as HTMLButtonElement;
+
+      act(() => button.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })));
+      expect(onHover).toHaveBeenCalledTimes(1);
+
+      act(() => button.focus());
+      expect(onFocus).toHaveBeenCalledTimes(1);
+
+      cleanup();
+    });
+
+    it('forwards ref to the root <button>', () => {
+      const ref = createRef<HTMLButtonElement>();
       const div = document.createElement('div');
       document.body.appendChild(div);
       const root = ReactDOM.createRoot(div);
@@ -166,12 +166,12 @@ describe('FeatureFlowItemRow', () => {
           createElement(
             GiselleThemeProvider,
             null,
-            createElement(FeatureFlowItemRow, { ...nonInteractiveProps, ref })
+            createElement(FeatureFlowItemRow, { ...nonExpandableProps, ref })
           )
         );
       });
 
-      expect(ref.current).not.toBeNull();
+      expect(ref.current?.tagName).toBe('BUTTON');
 
       act(() => root.unmount());
       div.remove();

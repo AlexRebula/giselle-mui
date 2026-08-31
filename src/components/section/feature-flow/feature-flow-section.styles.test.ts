@@ -103,26 +103,26 @@ describe('detailPanelSx', () => {
 });
 
 describe('featureFlowItemSx', () => {
-  it('non-interactive items get cursor: default and no hover styles', () => {
+  it('non-expandable items get cursor: default and no hover styles', () => {
     const styles = resolve(
       featureFlowItemSx({
         isSelected: false,
         isActive: false,
         isExpanded: false,
-        interactive: false,
+        expandable: false,
       })
     );
     expect(styles['cursor']).toBe('default');
     expect(styles['&:hover']).toBeUndefined();
   });
 
-  it('interactive, non-selected items get cursor: pointer and a hover style', () => {
+  it('expandable, non-selected items get cursor: pointer and a hover style', () => {
     const styles = resolve(
       featureFlowItemSx({
         isSelected: false,
         isActive: false,
         isExpanded: false,
-        interactive: true,
+        expandable: true,
       })
     );
     expect(styles['cursor']).toBe('pointer');
@@ -139,13 +139,13 @@ describe('featureFlowItemSx', () => {
   // the `:hover` rule (with `opacity: 0.72`) was present and matched — the
   // rule lost to framer-motion's inline style. Without `!important` here, the
   // dimming half of the hover tint can never actually render.
-  it("interactive, non-selected items' hover/active opacity beats framer-motion's persistent inline opacity style with !important", () => {
+  it("expandable, non-selected items' hover/active opacity beats framer-motion's persistent inline opacity style with !important", () => {
     const styles = resolve(
       featureFlowItemSx({
         isSelected: false,
         isActive: false,
         isExpanded: false,
-        interactive: true,
+        expandable: true,
       })
     );
     const hover = styles['&:hover'] as Record<string, unknown>;
@@ -157,7 +157,7 @@ describe('featureFlowItemSx', () => {
 
   it('selected items get a persistent elevated background', () => {
     const styles = resolve(
-      featureFlowItemSx({ isSelected: true, isActive: false, isExpanded: false, interactive: true })
+      featureFlowItemSx({ isSelected: true, isActive: false, isExpanded: false, expandable: true })
     );
     expect(styles['bgcolor']).toBe('background.paper');
     expect(String(styles['boxShadow'])).toContain('rgba(');
@@ -165,7 +165,7 @@ describe('featureFlowItemSx', () => {
 
   it('expanded items get an inset accent border colour', () => {
     const styles = resolve(
-      featureFlowItemSx({ isSelected: false, isActive: false, isExpanded: true, interactive: true })
+      featureFlowItemSx({ isSelected: false, isActive: false, isExpanded: true, expandable: true })
     );
     expect(String(styles['borderColor'])).toContain('rgba(var(--mui-palette-primary-mainChannel)');
     expect(String(styles['boxShadow'])).toContain('inset 3px 0 0');
@@ -177,7 +177,7 @@ describe('featureFlowItemSx', () => {
         isSelected: true,
         isActive: false,
         isExpanded: false,
-        interactive: true,
+        expandable: true,
       }),
       mockLightTheme
     );
@@ -196,7 +196,7 @@ describe('featureFlowItemSx', () => {
     // mockTheme's applyStyles passthrough merges the dark branch in directly,
     // so resolving with it simulates dark mode being active.
     const styles = resolve(
-      featureFlowItemSx({ isSelected: true, isActive: false, isExpanded: false, interactive: true })
+      featureFlowItemSx({ isSelected: true, isActive: false, isExpanded: false, expandable: true })
     );
     const hover = styles['&:hover'] as Record<string, unknown>;
     const active = styles['&:active'] as Record<string, unknown>;

@@ -154,5 +154,12 @@ export interface FeatureFlowItemButtonState {
   isSelected: boolean;
   isActive: boolean;
   isExpanded: boolean;
-  interactive: boolean;
+  /**
+   * Whether this item has expansion data (metrics, technologies, highlight
+   * cards, or a long description) — gates the hover/press/selected/expanded
+   * *visual* treatment. Every row is a real, focusable `ButtonBase`
+   * regardless of this value; items without expansion data just don't get
+   * an `onClick` handler (see #198) and stay visually quiet.
+   */
+  expandable: boolean;
 }

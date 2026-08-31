@@ -5,22 +5,21 @@ export interface FeatureFlowItemRowProps {
   description: string;
   /**
    * Whether this item has expansion data (metrics, technologies, highlight
-   * cards, or a long description). Interactive rows render as a real
-   * `<button>` and can be clicked to expand; non-interactive rows are
-   * focusable (so the hover-preview effect is keyboard-reachable) but are
-   * not buttons — nothing happens on activation.
+   * cards, or a long description). Every row is a real `ButtonBase`
+   * regardless of this value (see #198) — it only gates the visual
+   * hover/press/selected/expanded treatment and whether `onSelect` is wired.
    */
-  interactive: boolean;
-  /** Persistent: this is the last-clicked item (only meaningful when `interactive`). */
+  expandable: boolean;
+  /** Persistent: this is the last-clicked item (only meaningful when `expandable`). */
   isSelected: boolean;
-  /** Transient: this is the currently-previewed item (hover or focus, either row type). */
+  /** Transient: this is the currently-previewed item (hover or focus, any row). */
   isActive: boolean;
-  /** This item's detail panel is currently open (only meaningful when `interactive`). */
+  /** This item's detail panel is currently open (only meaningful when `expandable`). */
   isExpanded: boolean;
   /** Fires on mouse enter — makes this the previewed item. */
   onHover: () => void;
   /** Fires on focus — makes this the previewed item (keyboard equivalent of `onHover`). */
   onFocus: () => void;
-  /** Fires on click. Only ever called for interactive rows — never wired for non-interactive ones. */
+  /** Fires on click. Only wired when `expandable` — never called otherwise. */
   onSelect: () => void;
 }
