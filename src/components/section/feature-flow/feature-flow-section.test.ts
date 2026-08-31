@@ -435,8 +435,14 @@ describe('FeatureFlowSection — floating sub-nav', () => {
     // restoring 3 children — but `layout` stays on the div that actually
     // changes height, so #177's smooth-transition behavior is unaffected;
     // FloatingSubNav's own zero-height sticky wrapper never contributed to
-    // that measured height either way.
-    expect(section?.children.length).toBe(3);
+    // that measured height either way. `<section>` also carries
+    // `BasicSection`'s own decorative elements as additional direct
+    // children (all `aria-hidden="true"`) since #193/#198's follow-up —
+    // filter those out to count only real content children.
+    const contentChildren = Array.from(section?.children ?? []).filter(
+      (child) => child.getAttribute('aria-hidden') !== 'true'
+    );
+    expect(contentChildren.length).toBe(3);
 
     cleanup();
   });

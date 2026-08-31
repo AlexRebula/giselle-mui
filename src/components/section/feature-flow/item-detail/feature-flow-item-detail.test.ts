@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, expect, it } from 'vitest';
-import { createElement, createRef, act } from 'react';
+import { describe, expect, it, vi } from 'vitest';
+import { createElement, act } from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { renderWithTheme } from '../../../../test-utils';
@@ -178,18 +178,38 @@ describe('FeatureFlowItemDetail', () => {
     expect(html).toContain('data-testid="item-detail"');
   });
 
-  it('forwards ref to the root element', () => {
+  it('renders nothing when item is null', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);
     const root = ReactDOM.createRoot(div);
-    const ref = createRef<HTMLDivElement>();
 
     act(() => {
-      root.render(createElement(FeatureFlowItemDetail, { item: baseItem, ref }));
+      root.render(createElement(FeatureFlowItemDetail, { item: null }));
     });
 
-    expect(ref.current).not.toBeNull();
-    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+    expect(div.textContent).toBe('');
+
+    act(() => root.unmount());
+    div.remove();
+  });
+
+  it('calls onNodeRef with the panel node and item id once mounted, and null once unmounted', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+    const onNodeRef = vi.fn();
+
+    act(() => {
+      root.render(createElement(FeatureFlowItemDetail, { item: baseItem, onNodeRef }));
+    });
+
+    expect(onNodeRef).toHaveBeenCalledWith('a', expect.any(HTMLDivElement));
+
+    act(() => {
+      root.render(createElement(FeatureFlowItemDetail, { item: null, onNodeRef }));
+    });
+
+    expect(onNodeRef).toHaveBeenCalledWith('a', null);
 
     act(() => root.unmount());
     div.remove();

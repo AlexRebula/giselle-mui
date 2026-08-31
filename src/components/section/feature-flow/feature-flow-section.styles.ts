@@ -23,10 +23,11 @@ const selectedActiveShadow = (channel: string, innerAlpha: number, outerAlpha: n
 
 // ----------------------------------------------------------------------
 
-/** Root `<section>` — clips horizontal overflow without creating a scroll container. */
+/**
+ * Root `<section>` additions on top of `BasicSection`'s own base
+ * (`position: relative`, `overflowX: clip` — no need to repeat those here).
+ */
 export const featureFlowRootSx: SxProps<Theme> = {
-  overflowX: 'clip',
-  position: 'relative',
   py: { xs: 10, md: 20 },
 };
 

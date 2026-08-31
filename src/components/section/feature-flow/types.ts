@@ -110,6 +110,12 @@ export interface FeatureFlowSectionProps extends Omit<BoxProps, 'children'> {
   descriptionGridSize?: FeatureFlowGridSize;
   /** @default derived from `layoutDirection` */
   imageGridSize?: FeatureFlowGridSize;
+  /**
+   * Renders the standard `BasicSection` decorative frame (corner marks,
+   * border lines) around the whole section.
+   * @default true
+   */
+  decoration?: boolean;
 }
 
 // ----------------------------------------------------------------------

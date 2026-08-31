@@ -67,8 +67,13 @@ const REAL_SPEED_DIAL_Z_INDEX = createTheme().zIndex.speedDial;
 // ----------------------------------------------------------------------
 
 describe('featureFlowRootSx', () => {
-  it('clips horizontal overflow without creating a scroll container', () => {
-    expect(featureFlowRootSx).toMatchObject({ overflowX: 'clip', position: 'relative' });
+  it("adds vertical padding on top of BasicSection's own base", () => {
+    expect(featureFlowRootSx).toMatchObject({ py: { xs: 10, md: 20 } });
+  });
+
+  it("does not duplicate BasicSection's own position/overflowX base", () => {
+    expect(featureFlowRootSx).not.toHaveProperty('position');
+    expect(featureFlowRootSx).not.toHaveProperty('overflowX');
   });
 });
 

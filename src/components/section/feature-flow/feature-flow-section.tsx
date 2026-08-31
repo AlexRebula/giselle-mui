@@ -1,19 +1,18 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { m, AnimatePresence } from 'framer-motion';
 
-import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import { GiselleIcon } from '../../material/data-display/icon/giselle';
+import { BasicSection } from '../../material/layout/basic-section';
 import { SectionTitle } from '../../material/layout/section-title';
 import { FloatingSubNav } from '../../material/navigation/floating-sub-nav';
 import { MotionViewport } from '../../motion/viewport';
-import { DETAIL_PANEL_LAYOUT_TRANSITION, HOVER_STEP_DELAY_MS } from './feature-flow-section.const';
+import { HOVER_STEP_DELAY_MS } from './feature-flow-section.const';
 import { featureFlowRootSx } from './feature-flow-section.styles';
 import {
   hasExpansionData,
@@ -70,6 +69,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
       columnSpacing = { xs: 0, md: 8 },
       descriptionGridSize,
       imageGridSize,
+      decoration = true,
       sx,
       ...other
     },
@@ -265,9 +265,9 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
     }, [expandedItemId]);
 
     return (
-      <Box
+      <BasicSection
         ref={ref}
-        component="section"
+        decoration={decoration}
         sx={[featureFlowRootSx, ...(Array.isArray(sx) ? sx : [sx])]}
         {...other}
       >
@@ -364,49 +364,31 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
           />
         )}
 
-        <m.div layout transition={DETAIL_PANEL_LAYOUT_TRANSITION}>
-          <AnimatePresence mode="wait">
-            {expandedItem && (
-              <m.div
-                key={expandedItem.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.22, ease: 'easeOut' }}
-              >
-                <FeatureFlowItemDetail
-                  item={expandedItem}
-                  ref={(node) => {
-                    if (node) {
-                      detailPanelNodesRef.current.set(expandedItem.id, node);
-                    } else {
-                      detailPanelNodesRef.current.delete(expandedItem.id);
-                    }
-                  }}
-                />
-              </m.div>
-            )}
-          </AnimatePresence>
-        </m.div>
+        <FeatureFlowItemDetail
+          item={expandedItem}
+          onNodeRef={(itemId, node) => {
+            if (node) {
+              detailPanelNodesRef.current.set(itemId, node);
+            } else {
+              detailPanelNodesRef.current.delete(itemId);
+            }
+          }}
+        />
 
-        {/* Deliberately NOT nested inside the `m.div layout` above (see #193):
-            framer-motion's `layout` prop keeps a persistent, non-'none'
-            `transform` on that node even at rest, which makes it establish
-            its own CSS stacking context. FloatingSubNav's zIndex:1050 would
-            then only out-rank content *inside* that context (like the detail
-            panel) — it couldn't escape to out-rank the sticky image column,
-            which lives entirely outside it. Rendering it as a sibling here
-            keeps it in the same stacking context as the image column, so its
-            explicit zIndex still wins where it needs to. Its own zero-height
-            sticky wrapper contributes nothing to the `layout` height
-            transition either way, so this doesn't change that animation. */}
+        {/* FloatingSubNav is deliberately a sibling of FeatureFlowItemDetail,
+            not nested inside it (see #193 and FeatureFlowItemDetail's own
+            JSDoc for the stacking-context mechanism): its explicit
+            `zIndex: theme.zIndex.speedDial` needs to compete directly with
+            the sticky image column, and FeatureFlowItemDetail's `layout`
+            transition would otherwise trap it in a nested stacking context
+            that can't escape to do that. */}
         <FloatingSubNav
           sticky
           items={subNavItems}
           activeId={expandedItemId}
           onSelect={handleSubNavSelect}
         />
-      </Box>
+      </BasicSection>
     );
   }
 );
