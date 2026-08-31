@@ -271,7 +271,7 @@ export const highlightControlsRowSx: SxProps<Theme> = {
   gap: 1,
 };
 
-/** Detail text under the headline — slightly translucent white, matches the scrim's dark backdrop. */
+/** Description text under the title — slightly translucent white, matches the scrim's dark backdrop. */
 export const highlightDetailTextSx: SxProps<Theme> = {
   color: channelAlpha(COMMON_WHITE_CHANNEL, 0.9),
   lineHeight: 1.7,

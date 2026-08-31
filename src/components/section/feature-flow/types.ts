@@ -27,12 +27,20 @@ export interface FeatureFlowTechnology {
   icon: string;
 }
 
-/** One slide in an item's highlight-card carousel. */
+/**
+ * One slide in an item's highlight-card carousel. Deliberately generic
+ * (`title`/`description`, not e.g. `headline`/`detail`) — this shape is
+ * reused for any kind of documentation content, not just marketing
+ * highlights (see #200): a skill-flow's individual skills, for instance,
+ * are exactly a list of these.
+ */
 export interface FeatureFlowHighlightCard {
-  headline: string;
-  detail: string;
+  title: string;
+  description: string;
   /** Slide background image. Falls back to a neutral placeholder when omitted. */
-  src?: string;
+  media?: string;
+  /** Optional link — e.g. to a full docs page for this card's subject. */
+  href?: string;
 }
 
 /** A single feature/expertise item rendered in the description column. */
@@ -116,6 +124,16 @@ export interface FeatureFlowSectionProps extends Omit<BoxProps, 'children'> {
    * @default true
    */
   decoration?: boolean;
+  /**
+   * Overrides what renders in the image column: called with the currently
+   * previewed item (hover, focus, or last-selected) and whether that
+   * item's own detail panel is expanded. Defaults to the built-in
+   * `FeatureFlowImageColumn` (driven by `image`) when omitted — for
+   * example, a skills-documentation consumer could render a heading and
+   * short description here instead of an image, swapping to a fuller
+   * carousel-style view once expanded.
+   */
+  renderRightPanel?: (activeItem: FeatureFlowItem, isActiveExpanded: boolean) => ReactNode;
 }
 
 // ----------------------------------------------------------------------

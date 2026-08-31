@@ -107,7 +107,7 @@ const fullItem: FeatureFlowItem = {
   imgUrl: ['/design-1.png', '/design-2.png'],
   metrics: [{ value: '20+', label: 'Components' }],
   technologies: [{ name: 'React', icon: 'logos:react' }],
-  highlightCards: [{ headline: 'Shipped fast', detail: 'Under a month.' }],
+  highlightCards: [{ title: 'Shipped fast', description: 'Under a month.' }],
 };
 
 const secondItem: FeatureFlowItem = {
@@ -559,6 +559,62 @@ describe('FeatureFlowSection — image preloading', () => {
     expect(preloadHrefs).toEqual(
       expect.arrayContaining(['/design-1.png', '/design-2.png', '/perf-1.png', '/base.png'])
     );
+    cleanup();
+  });
+});
+
+// ----------------------------------------------------------------------
+
+describe('FeatureFlowSection — renderRightPanel', () => {
+  it('renders the default FeatureFlowImageColumn when renderRightPanel is omitted', () => {
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    expect(div.querySelector('img')).not.toBeNull();
+    cleanup();
+  });
+
+  it('renders renderRightPanel output instead of the default image column when provided', () => {
+    const renderRightPanel = vi.fn(() => createElement('span', null, 'Custom panel'));
+    const { div, cleanup } = mount({
+      items: [fullItem, secondItem],
+      image: baseImage,
+      renderRightPanel,
+    });
+
+    expect(div.textContent).toContain('Custom panel');
+    expect(div.querySelector('img[fetchpriority]')).toBeNull();
+    cleanup();
+  });
+
+  it('calls renderRightPanel with the active item and whether it is expanded', () => {
+    const renderRightPanel = vi.fn(() => null);
+    const { div, cleanup } = mount({
+      items: [fullItem, secondItem],
+      image: baseImage,
+      renderRightPanel,
+    });
+
+    expect(renderRightPanel).toHaveBeenCalledWith(fullItem, false);
+
+    const button = div.querySelector('button[aria-pressed]');
+    act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+
+    expect(renderRightPanel).toHaveBeenLastCalledWith(fullItem, true);
+    cleanup();
+  });
+
+  it('reflects hover in the active item passed to renderRightPanel', () => {
+    const renderRightPanel = vi.fn(() => null);
+    const { div, cleanup } = mount({
+      items: [fullItem, secondItem],
+      image: baseImage,
+      renderRightPanel,
+    });
+
+    const buttons = Array.from(div.querySelectorAll('button[aria-pressed]'));
+    const secondButton = buttons.find((el) => el.textContent?.includes('Performance'));
+    act(() => secondButton?.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })));
+
+    expect(renderRightPanel).toHaveBeenLastCalledWith(secondItem, false);
     cleanup();
   });
 });

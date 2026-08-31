@@ -105,7 +105,7 @@ describe('hasExpansionData', () => {
 
   it('is true when highlightCards has entries', () => {
     expect(
-      hasExpansionData({ ...baseItem, highlightCards: [{ headline: 'H', detail: 'D' }] })
+      hasExpansionData({ ...baseItem, highlightCards: [{ title: 'T', description: 'D' }] })
     ).toBe(true);
   });
 

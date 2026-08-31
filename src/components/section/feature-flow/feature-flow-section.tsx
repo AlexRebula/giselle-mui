@@ -3,13 +3,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Container from '@mui/material/Container';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import { GiselleIcon } from '../../material/data-display/icon/giselle';
 import { BasicSection } from '../../material/layout/basic-section';
-import { SectionTitle } from '../../material/layout/section-title';
 import { FloatingSubNav } from '../../material/navigation/floating-sub-nav';
 import { MotionViewport } from '../../motion/viewport';
 import { HOVER_STEP_DELAY_MS } from './feature-flow-section.const';
@@ -21,9 +18,9 @@ import {
   useImageRevealTransform,
   useScrollDirection,
 } from './feature-flow-section.utils';
+import { FeatureFlowDescriptionColumn } from './description-column';
 import { FeatureFlowImageColumn } from './image-column';
 import { FeatureFlowItemDetail } from './item-detail';
-import { FeatureFlowItemRow } from './item-row';
 import type { FeatureFlowItem, FeatureFlowSectionProps, FeatureFlowSubNavItem } from './types';
 
 // ----------------------------------------------------------------------
@@ -70,6 +67,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
       descriptionGridSize,
       imageGridSize,
       decoration = true,
+      renderRightPanel,
       sx,
       ...other
     },
@@ -194,6 +192,13 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
       setHoverPhase(0);
     };
 
+    // Resets the previewed item back to the last-selected one, once the
+    // pointer or keyboard focus leaves the row group entirely.
+    const handleLeave = () => {
+      setActiveItemIndex(selectedItemIndex);
+      setHoverPhase(0);
+    };
+
     const handleItemClick = (item: FeatureFlowItem, index: number) => {
       if (!hasExpansionData(item)) return;
       setActiveItemIndex(index);
@@ -264,130 +269,106 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
       };
     }, [expandedItemId]);
 
+    // `renderRightPanel`, when provided, fully replaces the default
+    // image column — e.g. a skills-documentation consumer showing a
+    // heading/description pair instead of an image. Falls back to `null`
+    // rather than the default when `items` is empty (no active item to
+    // hand the override), matching the default column's own behaviour.
+    let rightPanel: React.ReactNode;
+    if (renderRightPanel) {
+      rightPanel = activeItem
+        ? renderRightPanel(activeItem, activeItem.id === expandedItemId)
+        : null;
+    } else {
+      rightPanel = (
+        <FeatureFlowImageColumn
+          ref={imageColumnRef}
+          activeSrc={activeSrc}
+          ghostSrc={initiallyVisibleSrc ?? image.src}
+          allSrcs={allItemImageSrcs}
+          alt={image.alt}
+          revealStyle={imageRevealStyle}
+          sx={image.sx}
+        />
+      );
+    }
+
     return (
       <BasicSection
         ref={ref}
         decoration={decoration}
+        containerSx={{ position: 'relative' }}
+        containerPy={0}
+        unconstrainedChildren={
+          <>
+            {pendingScrollItemId && (
+              <LinearProgress
+                aria-label="Loading item detail panel"
+                aria-live="polite"
+                aria-busy="true"
+              />
+            )}
+
+            <FeatureFlowItemDetail
+              item={expandedItem}
+              onNodeRef={(itemId, node) => {
+                if (node) {
+                  detailPanelNodesRef.current.set(itemId, node);
+                } else {
+                  detailPanelNodesRef.current.delete(itemId);
+                }
+              }}
+            />
+
+            {/* FloatingSubNav is deliberately a sibling of FeatureFlowItemDetail,
+                not nested inside it (see #193 and FeatureFlowItemDetail's own
+                JSDoc for the stacking-context mechanism): its explicit
+                `zIndex: theme.zIndex.speedDial` needs to compete directly with
+                the sticky image column, and FeatureFlowItemDetail's `layout`
+                transition would otherwise trap it in a nested stacking context
+                that can't escape to do that. */}
+            <FloatingSubNav
+              sticky
+              items={subNavItems}
+              activeId={expandedItemId}
+              onSelect={handleSubNavSelect}
+            />
+          </>
+        }
         sx={[featureFlowRootSx, ...(Array.isArray(sx) ? sx : [sx])]}
         {...other}
       >
         <MotionViewport>
-          <Container sx={{ position: 'relative' }}>
+          <Grid
+            container
+            columnSpacing={columnSpacing}
+            rowSpacing={{ xs: 5, md: 0 }}
+            sx={{ position: 'relative' }}
+          >
             <Grid
-              container
-              columnSpacing={columnSpacing}
-              rowSpacing={{ xs: 5, md: 0 }}
-              sx={{ position: 'relative' }}
+              size={resolvedDescriptionGridSize}
+              sx={{ order: { xs: 1, md: isLeft ? 1 : 2 }, pl: { md: isLeft ? 0 : 4 } }}
             >
-              <Grid
-                size={resolvedDescriptionGridSize}
-                sx={{ order: { xs: 1, md: isLeft ? 1 : 2 }, pl: { md: isLeft ? 0 : 4 } }}
-              >
-                {title && (
-                  <SectionTitle
-                    caption={caption}
-                    title={title}
-                    txtGradient={txtGradient}
-                    description={description}
-                    sx={{ mb: { xs: 5, md: 8 }, textAlign: { xs: 'center', md: 'left' } }}
-                  />
-                )}
-
-                <Stack
-                  spacing={1.5}
-                  sx={{ maxWidth: { sm: 560, md: 400 }, mx: { xs: 'auto', md: 'unset' } }}
-                  onMouseLeave={() => {
-                    setActiveItemIndex(selectedItemIndex);
-                    setHoverPhase(0);
-                  }}
-                  onBlur={(event) => {
-                    // Mirrors onMouseLeave's reset, for keyboard navigation:
-                    // only reset once focus actually leaves this whole row
-                    // group, not when it moves from one row to the next
-                    // within it (relatedTarget is the element about to gain
-                    // focus).
-                    if (
-                      event.relatedTarget instanceof Node &&
-                      event.currentTarget.contains(event.relatedTarget)
-                    ) {
-                      return;
-                    }
-                    setActiveItemIndex(selectedItemIndex);
-                    setHoverPhase(0);
-                  }}
-                >
-                  {items.map((item, index) => {
-                    const interactive = hasExpansionData(item);
-                    const isSelected = index === selectedItemIndex;
-                    const isActive = index === activeItemIndex;
-                    const isExpanded = item.id === expandedItemId;
-
-                    return (
-                      <FeatureFlowItemRow
-                        key={item.id}
-                        icon={item.icon}
-                        title={item.title}
-                        description={item.description}
-                        interactive={interactive}
-                        isSelected={isSelected}
-                        isActive={isActive}
-                        isExpanded={isExpanded}
-                        onHover={() => handleItemHover(index)}
-                        onFocus={() => handleItemHover(index)}
-                        onSelect={() => handleItemClick(item, index)}
-                      />
-                    );
-                  })}
-                </Stack>
-              </Grid>
-
-              <Grid size={resolvedImageGridSize} sx={{ order: { xs: 2, md: isLeft ? 2 : 1 } }}>
-                <FeatureFlowImageColumn
-                  ref={imageColumnRef}
-                  activeSrc={activeSrc}
-                  ghostSrc={initiallyVisibleSrc ?? image.src}
-                  allSrcs={allItemImageSrcs}
-                  alt={image.alt}
-                  revealStyle={imageRevealStyle}
-                  sx={image.sx}
-                />
-              </Grid>
+              <FeatureFlowDescriptionColumn
+                caption={caption}
+                title={title}
+                txtGradient={txtGradient}
+                description={description}
+                items={items}
+                selectedItemIndex={selectedItemIndex}
+                activeItemIndex={activeItemIndex}
+                expandedItemId={expandedItemId}
+                onItemHover={handleItemHover}
+                onItemSelect={handleItemClick}
+                onLeave={handleLeave}
+              />
             </Grid>
-          </Container>
+
+            <Grid size={resolvedImageGridSize} sx={{ order: { xs: 2, md: isLeft ? 2 : 1 } }}>
+              {rightPanel}
+            </Grid>
+          </Grid>
         </MotionViewport>
-
-        {pendingScrollItemId && (
-          <LinearProgress
-            aria-label="Loading item detail panel"
-            aria-live="polite"
-            aria-busy="true"
-          />
-        )}
-
-        <FeatureFlowItemDetail
-          item={expandedItem}
-          onNodeRef={(itemId, node) => {
-            if (node) {
-              detailPanelNodesRef.current.set(itemId, node);
-            } else {
-              detailPanelNodesRef.current.delete(itemId);
-            }
-          }}
-        />
-
-        {/* FloatingSubNav is deliberately a sibling of FeatureFlowItemDetail,
-            not nested inside it (see #193 and FeatureFlowItemDetail's own
-            JSDoc for the stacking-context mechanism): its explicit
-            `zIndex: theme.zIndex.speedDial` needs to compete directly with
-            the sticky image column, and FeatureFlowItemDetail's `layout`
-            transition would otherwise trap it in a nested stacking context
-            that can't escape to do that. */}
-        <FloatingSubNav
-          sticky
-          items={subNavItems}
-          activeId={expandedItemId}
-          onSelect={handleSubNavSelect}
-        />
       </BasicSection>
     );
   }

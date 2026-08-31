@@ -34,8 +34,8 @@ vi.mock('framer-motion', () => {
 });
 
 const cards = [
-  { headline: 'First headline', detail: 'First detail', src: '/a.png' },
-  { headline: 'Second headline', detail: 'Second detail', src: '/b.png' },
+  { title: 'First title', description: 'First description', media: '/a.png' },
+  { title: 'Second title', description: 'Second description', media: '/b.png' },
 ];
 
 describe('FeatureFlowHighlightCarousel', () => {
@@ -44,10 +44,25 @@ describe('FeatureFlowHighlightCarousel', () => {
     expect(html).toBe('');
   });
 
-  it('renders the first card headline and detail as the initial slide', () => {
+  it('renders the first card title and description as the initial slide', () => {
     const html = renderWithTheme(createElement(FeatureFlowHighlightCarousel, { cards }));
-    expect(html).toContain('First headline');
-    expect(html).toContain('First detail');
+    expect(html).toContain('First title');
+    expect(html).toContain('First description');
+  });
+
+  it('renders a "Learn more" link when the card has an href', () => {
+    const html = renderWithTheme(
+      createElement(FeatureFlowHighlightCarousel, {
+        cards: [{ ...cards[0]!, href: '/docs/first' }],
+      })
+    );
+    expect(html).toContain('href="/docs/first"');
+    expect(html).toContain('Learn more');
+  });
+
+  it('renders no link when the card has no href', () => {
+    const html = renderWithTheme(createElement(FeatureFlowHighlightCarousel, { cards }));
+    expect(html).not.toContain('Learn more');
   });
 
   it('does not render arrow controls for a single card', () => {
@@ -104,7 +119,7 @@ describe('FeatureFlowHighlightCarousel', () => {
       nextButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    expect(div.textContent).toContain('Second headline');
+    expect(div.textContent).toContain('Second title');
 
     act(() => root.unmount());
     div.remove();
@@ -122,7 +137,7 @@ describe('FeatureFlowHighlightCarousel', () => {
     act(() => nextButton?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
     act(() => nextButton?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
 
-    expect(div.textContent).toContain('First headline');
+    expect(div.textContent).toContain('First title');
 
     act(() => root.unmount());
     div.remove();

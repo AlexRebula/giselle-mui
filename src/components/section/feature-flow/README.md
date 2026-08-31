@@ -29,12 +29,18 @@ the component owns no app-specific asset paths or icon lookup tables.
 | `columnSpacing`       | `{ xs?: number; md?: number }` | —                              | Grid column spacing override.                                 |
 | `descriptionGridSize` | `{ xs?; md?; lg? }`            | derived from `layoutDirection` | Description column grid size override.                        |
 | `imageGridSize`       | `{ xs?; md?; lg? }`            | derived from `layoutDirection` | Image column grid size override.                              |
+| `decoration`          | `boolean`                      | `true`                          | Renders `BasicSection`'s standard decorative frame around the whole section. |
+| `renderRightPanel`    | `(item: FeatureFlowItem, isActiveExpanded: boolean) => ReactNode` | —   | Overrides the image column entirely — e.g. a non-image, documentation-style right panel. Falls back to the built-in `FeatureFlowImageColumn` (driven by `image`) when omitted. |
 | `sx`                  | `SxProps<Theme>`               | —                              | MUI sx forwarded to root.                                     |
 
 `FeatureFlowItem` fields: `id`, `icon`, `title`, `description`, `subtitle?`, `imgUrl?`,
 `longDescription?`, `technologies?: { name: string; icon: string }[]`, `metrics?`,
-`highlightCards?`. An item with none of the "expansion" fields set is rendered as
-non-interactive (no click affordance, no detail panel).
+`highlightCards?: FeatureFlowHighlightCard[]`. An item with none of the "expansion"
+fields set is rendered as non-interactive (no click affordance, no detail panel).
+
+`FeatureFlowHighlightCard` fields: `title`, `description`, `media?` (background image),
+`href?` (rendered as a "Learn more" link) — deliberately generic, not marketing-specific:
+this is any documentation content presented as a carousel slide, not just a highlight.
 
 ## Design decisions
 
@@ -51,10 +57,14 @@ non-interactive (no click affordance, no detail panel).
 - The floating sub-nav (`FloatingSubNav` from `components/material/navigation/floating-sub-nav`)
   is an existing, already-public giselle-mui component — this component consumes it
   rather than shipping its own duplicate.
-- The highlight-card carousel, the sticky image column, and the expanded detail panel
-  are internal sub-components colocated in this folder. They are not exported from the
-  package barrel: they only make sense as part of `FeatureFlowSection` and are not
-  reusable in isolation.
+- The highlight-card carousel, the sticky image column, the description column, and the
+  expanded detail panel are internal sub-components colocated in this folder. They are
+  not exported from the package barrel: they only make sense as part of
+  `FeatureFlowSection` and are not reusable in isolation.
+- `renderRightPanel` is a render-prop, not a plain `ReactNode` slot: the right column's
+  content needs to react to which row is hovered/active/expanded, and that state lives
+  inside `FeatureFlowSection` — a static node can't respond to it without the consumer
+  re-deriving the same hover tracking this component already does.
 - Scroll direction is tracked with a plain `window` scroll listener
   (`useScrollDirection` in `feature-flow-section.utils.ts`) rather than framer-motion's
   `useScroll`, keeping the scroll/idle state machine simple to unit test.
@@ -85,6 +95,18 @@ src/components/section/feature-flow/
   index.ts                                 : barrel export (public API + sub-components)
   README.md                                : this file
   roadmap.md                               : open improvements and completed tasks
+
+  description-column/                      : internal sub-component — title + interactive row list (presentational)
+    feature-flow-description-column.tsx
+    feature-flow-description-column.test.ts
+    types.ts                               : FeatureFlowDescriptionColumnProps
+    index.ts
+
+  item-row/                                : internal sub-component — one row in the description column
+    feature-flow-item-row.tsx
+    feature-flow-item-row.test.ts
+    types.ts                               : FeatureFlowItemRowProps
+    index.ts
 
   image-column/                            : internal sub-component — sticky crossfading image column (presentational)
     feature-flow-image-column.tsx

@@ -141,7 +141,7 @@ describe('FeatureFlowItemDetail', () => {
       createElement(FeatureFlowItemDetail, {
         item: {
           ...baseItem,
-          highlightCards: [{ headline: 'Shipped 3 releases', detail: 'In under a month.' }],
+          highlightCards: [{ title: 'Shipped 3 releases', description: 'In under a month.' }],
         },
       })
     );

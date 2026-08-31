@@ -48,8 +48,11 @@ const items: FeatureFlowItem[] = [
       { name: 'Storybook', icon: 'logos:storybook-icon' },
     ],
     highlightCards: [
-      { headline: 'Adopted across 6 teams', detail: 'Rolled out with zero breaking changes.' },
-      { headline: 'Cut review time in half', detail: 'Shared patterns need less back-and-forth.' },
+      { title: 'Adopted across 6 teams', description: 'Rolled out with zero breaking changes.' },
+      {
+        title: 'Cut review time in half',
+        description: 'Shared patterns need less back-and-forth.',
+      },
     ],
   },
   {
@@ -174,4 +177,28 @@ export const EdgeCaseNoHighlightCards: Story = {
 /** Edge case: an item with a very long `longDescription` — confirms typography wraps sanely. */
 export const EdgeCaseVeryLongDescription: Story = {
   render: renderEdgeCase('Edge case — very long description', edgeCaseItems.veryLongDescription),
+};
+
+/**
+ * `renderRightPanel` overrides the right column entirely — here, a heading
+ * and description swap with the hovered/active row instead of an image.
+ * Demonstrates the shape a non-image consumer (e.g. skills documentation)
+ * would use: no image column, no image-related props needed on the item.
+ */
+export const CustomRightPanel: Story = {
+  render: () => (
+    <FeatureFlowSection
+      caption="What we do"
+      title="Where we add the most value"
+      items={items}
+      image={image}
+      renderRightPanel={(activeItem, isActiveExpanded) => (
+        <div style={{ padding: 24 }}>
+          <h3>{activeItem.title}</h3>
+          <p>{activeItem.description}</p>
+          <p style={{ opacity: 0.6 }}>{isActiveExpanded ? 'Expanded' : 'Not expanded'}</p>
+        </div>
+      )}
+    />
+  ),
 };
