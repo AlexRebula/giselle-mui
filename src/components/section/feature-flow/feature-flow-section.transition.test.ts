@@ -187,4 +187,121 @@ describe('FeatureFlowSection — real AnimatePresence transition', () => {
 
     cleanup();
   });
+
+  // Regression test for issue #193/#195 review: `imageColumnStickyStackSx`'s
+  // `zIndex: 1` only makes the sticky image column paint over
+  // `FeatureFlowItemDetail` if *every* ancestor between the sticky element
+  // and `<section>` stays at `transform: none` — a transform (even an
+  // identity one) creates a CSS stacking context that would trap the
+  // zIndex inside it, unable to reach the detail panel it needs to beat.
+  // `MotionViewport` (an `m.div`) is the one ancestor in that chain driven by
+  // real framer-motion; this test renders it for real (no framer-motion
+  // mock, unlike feature-flow-section.test.ts) and asserts it — and every
+  // other ancestor up to `<section>` — never ends up with a non-'none'
+  // transform, which would silently break the fix without any sx-level test
+  // catching it.
+  it('[regression] no ancestor between the sticky image column and <section> carries a transform', async () => {
+    const { div, cleanup } = mount({ items: [firstItem], image: baseImage });
+
+    // Let MotionViewport's whileInView entrance actually settle.
+    await waitFor(() => true, { timeout: 50 });
+
+    const section = div.querySelector('section');
+    expect(section).not.toBeNull();
+
+    const img = div.querySelector('img[alt="Preview"]');
+    expect(img).not.toBeNull();
+
+    // Found by its zIndex rather than `position: sticky`: that value is set
+    // via an `{ xs, md }` responsive breakpoint (media-query-gated CSS),
+    // which jsdom's `getComputedStyle` does not reliably resolve. `zIndex: 1`
+    // is a flat, unconditional value in the same sx object, so it's a
+    // reliable marker for the same element in this environment.
+    let node: Element | null = img;
+    let stickyAncestor: Element | null = null;
+    while (node && node !== section) {
+      if (getComputedStyle(node).zIndex === '1') {
+        stickyAncestor = node;
+        break;
+      }
+      node = node.parentElement;
+    }
+    expect(stickyAncestor).not.toBeNull();
+
+    // jsdom's `getComputedStyle` resolves an *inline* `transform` (what
+    // framer-motion actually sets via direct DOM mutation) reliably, but
+    // returns `''` rather than the real-browser initial value `'none'` for
+    // elements with no transform at all — so "no transform" here means
+    // neither string, not just `'none'`.
+    node = (stickyAncestor as Element).parentElement;
+    while (node && node !== section) {
+      expect(['', 'none']).toContain(getComputedStyle(node).transform);
+      node = node.parentElement;
+    }
+
+    cleanup();
+  });
+});
+
+// ----------------------------------------------------------------------
+
+describe('FeatureFlowSection — keyboard focus-reset (real framer-motion)', () => {
+  // These live here rather than in feature-flow-section.test.ts because that
+  // file's framer-motion mock (`vi.mock('framer-motion', ...)`) returns a
+  // fresh function identity from its Proxy every time `m.button`/`m.div` is
+  // accessed. React treats a changed component-type identity as a reason to
+  // unmount and remount, so any hover/focus-triggered re-render there
+  // silently disconnects the very button a test just focused — breaking any
+  // assertion that focuses one element, waits for a re-render, then acts on
+  // that same element again (as a real "focus A, then focus B" blur-reset
+  // test needs to). This file's real, unmocked framer-motion exports have
+  // stable identity across renders, so the DOM nodes stay connected and
+  // these interactions can be tested for real.
+
+  const findFrame = (div: HTMLElement, src: string) =>
+    Array.from(div.querySelectorAll('img[fetchpriority]')).find(
+      (img) => img.getAttribute('src') === src
+    );
+
+  const rowItems: [FeatureFlowItem, FeatureFlowItem] = [
+    { ...firstItem, imgUrl: ['/design-1.png'] },
+    { ...secondItem, imgUrl: ['/perf-1.png'] },
+  ];
+
+  it('resets the preview when focus leaves the row group entirely (mirrors onMouseLeave)', () => {
+    const { div, cleanup } = mount({ items: rowItems, image: baseImage });
+    const buttons = div.querySelectorAll('button[aria-pressed]');
+    const secondButton = Array.from(buttons).find((el) =>
+      el.textContent?.includes('Performance')
+    ) as HTMLElement;
+
+    act(() => secondButton.focus());
+    expect(findFrame(div, '/perf-1.png')?.hasAttribute('aria-hidden')).toBe(false);
+
+    const outsideButton = document.createElement('button');
+    document.body.appendChild(outsideButton);
+    act(() => outsideButton.focus());
+
+    expect(findFrame(div, '/design-1.png')?.hasAttribute('aria-hidden')).toBe(false);
+
+    outsideButton.remove();
+    cleanup();
+  });
+
+  it('does not reset the preview when focus moves from one row to another within the group', () => {
+    const { div, cleanup } = mount({ items: rowItems, image: baseImage });
+    const buttons = div.querySelectorAll('button[aria-pressed]');
+    const firstButton = Array.from(buttons).find((el) =>
+      el.textContent?.includes('Design systems')
+    ) as HTMLElement;
+    const secondButton = Array.from(buttons).find((el) =>
+      el.textContent?.includes('Performance')
+    ) as HTMLElement;
+
+    act(() => firstButton.focus());
+    act(() => secondButton.focus());
+
+    expect(findFrame(div, '/perf-1.png')?.hasAttribute('aria-hidden')).toBe(false);
+    cleanup();
+  });
 });

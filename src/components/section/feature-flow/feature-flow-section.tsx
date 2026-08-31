@@ -7,17 +7,14 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import ButtonBase from '@mui/material/ButtonBase';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import { GiselleIcon } from '../../material/data-display/icon/giselle';
 import { SectionTitle } from '../../material/layout/section-title';
 import { FloatingSubNav } from '../../material/navigation/floating-sub-nav';
-import { fade } from '../../motion/variants/fade';
 import { MotionViewport } from '../../motion/viewport';
 import { DETAIL_PANEL_LAYOUT_TRANSITION, HOVER_STEP_DELAY_MS } from './feature-flow-section.const';
-import { featureFlowItemSx, featureFlowRootSx } from './feature-flow-section.styles';
+import { featureFlowRootSx } from './feature-flow-section.styles';
 import {
   hasExpansionData,
   useClientImagePrewarm,
@@ -27,6 +24,7 @@ import {
 } from './feature-flow-section.utils';
 import { FeatureFlowImageColumn } from './image-column';
 import { FeatureFlowItemDetail } from './item-detail';
+import { FeatureFlowItemRow } from './item-row';
 import type { FeatureFlowItem, FeatureFlowSectionProps, FeatureFlowSubNavItem } from './types';
 
 // ----------------------------------------------------------------------
@@ -302,6 +300,21 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
                     setActiveItemIndex(selectedItemIndex);
                     setHoverPhase(0);
                   }}
+                  onBlur={(event) => {
+                    // Mirrors onMouseLeave's reset, for keyboard navigation:
+                    // only reset once focus actually leaves this whole row
+                    // group, not when it moves from one row to the next
+                    // within it (relatedTarget is the element about to gain
+                    // focus).
+                    if (
+                      event.relatedTarget instanceof Node &&
+                      event.currentTarget.contains(event.relatedTarget)
+                    ) {
+                      return;
+                    }
+                    setActiveItemIndex(selectedItemIndex);
+                    setHoverPhase(0);
+                  }}
                 >
                   {items.map((item, index) => {
                     const interactive = hasExpansionData(item);
@@ -309,57 +322,20 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
                     const isActive = index === activeItemIndex;
                     const isExpanded = item.id === expandedItemId;
 
-                    const rowContent = (
-                      <>
-                        <GiselleIcon icon={item.icon} width={48} aria-hidden="true" />
-                        <Stack spacing={1} sx={{ flex: 1, minWidth: 0 }}>
-                          <Typography variant="h4" component="h6" color="inherit">
-                            {item.title}
-                          </Typography>
-                          <Typography color="inherit">{item.description}</Typography>
-                        </Stack>
-                      </>
-                    );
-
-                    if (!interactive) {
-                      return (
-                        <Box
-                          key={item.id}
-                          component={m.div}
-                          variants={fade('inUp', { distance: 24 })}
-                          onMouseEnter={() => handleItemHover(index)}
-                          sx={featureFlowItemSx({
-                            isSelected,
-                            isActive,
-                            isExpanded,
-                            interactive: false,
-                          })}
-                        >
-                          {rowContent}
-                        </Box>
-                      );
-                    }
-
                     return (
-                      <ButtonBase
+                      <FeatureFlowItemRow
                         key={item.id}
-                        disableRipple
-                        type="button"
-                        aria-pressed={isSelected}
-                        component={m.button}
-                        variants={fade('inUp', { distance: 24 })}
-                        onMouseEnter={() => handleItemHover(index)}
+                        icon={item.icon}
+                        title={item.title}
+                        description={item.description}
+                        interactive={interactive}
+                        isSelected={isSelected}
+                        isActive={isActive}
+                        isExpanded={isExpanded}
+                        onHover={() => handleItemHover(index)}
                         onFocus={() => handleItemHover(index)}
-                        onClick={() => handleItemClick(item, index)}
-                        sx={featureFlowItemSx({
-                          isSelected,
-                          isActive,
-                          isExpanded,
-                          interactive: true,
-                        })}
-                      >
-                        {rowContent}
-                      </ButtonBase>
+                        onSelect={() => handleItemClick(item, index)}
+                      />
                     );
                   })}
                 </Stack>
@@ -411,14 +387,25 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
               </m.div>
             )}
           </AnimatePresence>
-
-          <FloatingSubNav
-            sticky
-            items={subNavItems}
-            activeId={expandedItemId}
-            onSelect={handleSubNavSelect}
-          />
         </m.div>
+
+        {/* Deliberately NOT nested inside the `m.div layout` above (see #193):
+            framer-motion's `layout` prop keeps a persistent, non-'none'
+            `transform` on that node even at rest, which makes it establish
+            its own CSS stacking context. FloatingSubNav's zIndex:1050 would
+            then only out-rank content *inside* that context (like the detail
+            panel) — it couldn't escape to out-rank the sticky image column,
+            which lives entirely outside it. Rendering it as a sibling here
+            keeps it in the same stacking context as the image column, so its
+            explicit zIndex still wins where it needs to. Its own zero-height
+            sticky wrapper contributes nothing to the `layout` height
+            transition either way, so this doesn't change that animation. */}
+        <FloatingSubNav
+          sticky
+          items={subNavItems}
+          activeId={expandedItemId}
+          onSelect={handleSubNavSelect}
+        />
       </Box>
     );
   }

@@ -43,10 +43,12 @@ export const IMAGE_REVEAL_BLUR_FROM_PX = 12;
 // ----------------------------------------------------------------------
 
 /**
- * Layout transition for the `m.div` wrapping the expanded detail panel and
- * `FloatingSubNav`: smoothly animates the container's height when the
- * expanded item changes, instead of jumping instantly. Matches the original
- * `expertise-areas.tsx`'s equivalent wrapper.
+ * Layout transition for the `m.div` wrapping the expanded detail panel:
+ * smoothly animates the container's height when the expanded item changes,
+ * instead of jumping instantly. Matches the original `expertise-areas.tsx`'s
+ * equivalent wrapper. `FloatingSubNav` deliberately sits outside this `m.div`
+ * (see #193) — its own zero-height sticky wrapper doesn't affect the height
+ * being animated here either way.
  */
 export const DETAIL_PANEL_LAYOUT_TRANSITION = {
   layout: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },

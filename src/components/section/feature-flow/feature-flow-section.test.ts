@@ -404,7 +404,7 @@ describe('FeatureFlowSection — floating sub-nav', () => {
     cleanup();
   });
 
-  it('wraps the detail panel and sub-nav as a single layout-animated container, not two separate root-level children (issue #177)', () => {
+  it('wraps only the detail panel in the layout-animated container; FloatingSubNav is a separate sibling (issue #177, restructured by #193)', () => {
     const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
     const button = div.querySelector('button[aria-pressed]');
     act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
@@ -413,13 +413,30 @@ describe('FeatureFlowSection — floating sub-nav', () => {
     expect(section).not.toBeNull();
     expect(div.querySelector('[aria-label="Section navigation"]')).not.toBeNull();
 
-    // Today (pre-fix) the expanded detail panel and FloatingSubNav's root are
-    // two separate direct children of <section> (plus MotionViewport's own
-    // Box = 3 total). Wrapping both in a single layout-animated `m.div` (so
-    // the container height transitions smoothly between them, matching the
-    // original `expertise-areas.tsx`) collapses that to 2: MotionViewport's
-    // Box, and the new wrapper holding both.
-    expect(section?.children.length).toBe(2);
+    // #177 originally wrapped the expanded detail panel and FloatingSubNav's
+    // root together in one layout-animated `m.div`, so the container height
+    // transitions smoothly when a panel opens/closes (its actual acceptance
+    // criterion) — collapsing what would otherwise be 3 direct children of
+    // <section> (MotionViewport's Box, the detail panel, FloatingSubNav) to 2.
+    //
+    // #193 requires FloatingSubNav to still paint over the sticky image
+    // column. `m.div layout` keeps a persistent non-'none' `transform` even
+    // at rest (confirmed live: framer-motion's projection system for the
+    // `layout` prop), which makes it a CSS stacking context — trapping
+    // FloatingSubNav's zIndex:1050 inside it so it can only out-rank
+    // *siblings within that same context* (like the detail panel), never an
+    // element entirely outside it (the sticky image, whose own explicit
+    // zIndex:1 lives elsewhere in the tree). No zIndex value on either side
+    // can fix this while both stay nested under the same transform-bearing
+    // parent — nesting is a hard partition, not a value comparison.
+    //
+    // So `m.div layout` now wraps only the AnimatePresence/detail-panel
+    // portion; FloatingSubNav renders as `<section>`'s next direct sibling,
+    // restoring 3 children — but `layout` stays on the div that actually
+    // changes height, so #177's smooth-transition behavior is unaffected;
+    // FloatingSubNav's own zero-height sticky wrapper never contributed to
+    // that measured height either way.
+    expect(section?.children.length).toBe(3);
 
     cleanup();
   });
