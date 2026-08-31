@@ -665,3 +665,92 @@ describe('FeatureFlowSection — renderRightPanel', () => {
     cleanup();
   });
 });
+
+// ----------------------------------------------------------------------
+
+describe('FeatureFlowSection — renderHighlightPanel', () => {
+  function expandFullItem(div: HTMLElement) {
+    const button = div.querySelector('button[aria-pressed]');
+    act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+  }
+
+  it('renders the default FeatureFlowHighlightCarousel when renderHighlightPanel is omitted', () => {
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    expandFullItem(div);
+
+    expect(div.textContent).toContain('Shipped fast');
+    cleanup();
+  });
+
+  it('renders renderHighlightPanel output instead of the default carousel when provided', () => {
+    const renderHighlightPanel = vi.fn(() => createElement('span', null, 'Custom highlight panel'));
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage, renderHighlightPanel });
+    expandFullItem(div);
+
+    expect(div.textContent).toContain('Custom highlight panel');
+    expect(div.textContent).not.toContain('Shipped fast');
+    cleanup();
+  });
+
+  it('calls renderHighlightPanel with the expanded item', () => {
+    const renderHighlightPanel = vi.fn(() => null);
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage, renderHighlightPanel });
+    expandFullItem(div);
+
+    expect(renderHighlightPanel).toHaveBeenCalledWith(fullItem);
+    cleanup();
+  });
+
+  it('is not called while no item is expanded', () => {
+    const renderHighlightPanel = vi.fn(() => null);
+    const { cleanup } = mount({ items: [fullItem], image: baseImage, renderHighlightPanel });
+
+    expect(renderHighlightPanel).not.toHaveBeenCalled();
+    cleanup();
+  });
+});
+
+// ----------------------------------------------------------------------
+
+describe('FeatureFlowSection — itemDetailSx', () => {
+  it("merges onto the expanded detail panel's own background, overriding detailPanelSx's default tint", () => {
+    const { div, cleanup } = mount({
+      items: [fullItem],
+      image: baseImage,
+      itemDetailSx: { bgcolor: 'rgb(1, 2, 3)' },
+    });
+    const button = div.querySelector('button[aria-pressed]');
+    act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+
+    const candidates = [...div.querySelectorAll<HTMLElement>('[class*="MuiBox-root"]')];
+    const matched = candidates.some(
+      (el) => getComputedStyle(el).backgroundColor === 'rgb(1, 2, 3)'
+    );
+    expect(matched).toBe(true);
+    cleanup();
+  });
+});
+
+describe('FeatureFlowSection — detailPanelColor', () => {
+  it("tints the expanded detail panel using the given palette colour's channel, not the primary default", () => {
+    const { div, cleanup } = mount({
+      items: [fullItem],
+      image: baseImage,
+      detailPanelColor: 'grey',
+    });
+    const button = div.querySelector('button[aria-pressed]');
+    act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+
+    const styleText = [...document.styleSheets]
+      .flatMap((sheet) => {
+        try {
+          return [...sheet.cssRules].map((rule) => rule.cssText);
+        } catch {
+          return [];
+        }
+      })
+      .join('\n');
+    expect(styleText).toContain('--mui-palette-grey-500Channel');
+    cleanup();
+  });
+});

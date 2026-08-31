@@ -93,10 +93,24 @@ describe('imageColumnCardSx', () => {
 });
 
 describe('detailPanelSx', () => {
-  it('tints the background using the primary channel', () => {
-    expect(String((detailPanelSx as Record<string, unknown>)['bgcolor'])).toContain(
-      'rgba(var(--mui-palette-primary-mainChannel)'
-    );
+  it('tints the background using the primary channel by default', () => {
+    const styles = detailPanelSx() as Record<string, unknown>;
+    expect(String(styles['bgcolor'])).toContain('rgba(var(--mui-palette-primary-mainChannel)');
+  });
+
+  it('tints the background using each standard palette colour channel', () => {
+    const keys = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
+    for (const color of keys) {
+      const styles = detailPanelSx(color) as Record<string, unknown>;
+      expect(String(styles['bgcolor'])).toContain(`rgba(var(--mui-palette-${color}-mainChannel)`);
+      expect(String(styles['borderTop'])).toContain(`rgba(var(--mui-palette-${color}-mainChannel)`);
+    }
+  });
+
+  it("tints the background using grey's own channel, not a templated --mui-palette-grey-mainChannel", () => {
+    const styles = detailPanelSx('grey') as Record<string, unknown>;
+    expect(String(styles['bgcolor'])).toContain('rgba(var(--mui-palette-grey-500Channel)');
+    expect(String(styles['bgcolor'])).not.toContain('grey-mainChannel');
   });
 
   // Regression test for issue #193: `detailPanelSx` must stay at the default
@@ -105,7 +119,7 @@ describe('detailPanelSx', () => {
   // `imageColumnStickyStackSx` again, regardless of DOM order — see that
   // sx's own regression test below for the mechanism.
   it("[regression] does not set an explicit zIndex, so it can't out-stack the sticky image column", () => {
-    expect(getZIndex(detailPanelSx)).toBeUndefined();
+    expect(getZIndex(detailPanelSx())).toBeUndefined();
   });
 });
 

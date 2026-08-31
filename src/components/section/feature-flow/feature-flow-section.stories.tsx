@@ -6,6 +6,7 @@ import {
   createFeatureFlowCanonicalSectionConfig,
   createFeatureFlowEdgeCaseItems,
 } from '../../../sections-api/feature-flow/api';
+import { Accordion } from '../../material/surfaces/card/accordion';
 import { withNavAdjacentContext } from './__fixtures__/nav-adjacent-decorator';
 import { FeatureFlowSection } from './feature-flow-section';
 import type { FeatureFlowItem } from './types';
@@ -197,6 +198,35 @@ export const CustomRightPanel: Story = {
           <h3>{activeItem.title}</h3>
           <p>{activeItem.description}</p>
           <p style={{ opacity: 0.6 }}>{isActiveExpanded ? 'Expanded' : 'Not expanded'}</p>
+        </div>
+      )}
+    />
+  ),
+};
+
+/**
+ * `renderHighlightPanel` overrides the expanded detail panel's right column
+ * entirely — here, one `Accordion` per highlight card instead of the
+ * built-in one-at-a-time carousel. Demonstrates the shape a documentation
+ * consumer (e.g. a skill or article list) would use: every item's title is
+ * visible at once, each expandable independently, rather than paged through.
+ * Click "Design systems" (the only item with `highlightCards` in this
+ * story's data) to see it.
+ */
+export const CustomHighlightPanel: Story = {
+  render: () => (
+    <FeatureFlowSection
+      caption="What we do"
+      title="Where we add the most value"
+      items={items}
+      image={image}
+      renderHighlightPanel={(item) => (
+        <div>
+          {(item.highlightCards ?? []).map((card) => (
+            <Accordion key={card.title} title={card.title}>
+              <p>{card.description}</p>
+            </Accordion>
+          ))}
         </div>
       )}
     />
