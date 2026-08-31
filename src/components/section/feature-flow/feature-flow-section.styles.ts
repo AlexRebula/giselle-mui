@@ -59,22 +59,24 @@ export const detailPanelSx: SxProps<Theme> = {
 };
 
 /**
- * One item row in the description column.
+ * One item row in the description column. Every row is a real, focusable
+ * `ButtonBase` regardless of `expandable` (see #198) — this only gates the
+ * *visual* treatment:
  *
- * - `interactive: false` (no expansion data): quiet, no hover/press feedback, no cursor pointer.
- * - Non-selected, interactive: fades on hover; brightens fully when it's the hovered/active item.
+ * - `expandable: false` (no expansion data): quiet, no hover/press feedback, no cursor pointer.
+ * - Non-selected, expandable: fades on hover; brightens fully when it's the hovered/active item.
  * - Selected (last-clicked) item: persistent elevated card, regardless of hover.
  * - Expanded item: a left inset accent shows its detail panel is open.
  */
 export const featureFlowItemSx =
-  ({ isSelected, isActive, isExpanded, interactive }: FeatureFlowItemButtonState): SxProps<Theme> =>
+  ({ isSelected, isActive, isExpanded, expandable }: FeatureFlowItemButtonState): SxProps<Theme> =>
   (theme) => ({
     gap: 2,
     display: 'flex',
     alignItems: 'flex-start',
     textAlign: 'left',
     width: '100%',
-    cursor: interactive ? 'pointer' : 'default',
+    cursor: expandable ? 'pointer' : 'default',
     borderRadius: 1.5,
     py: 3,
     px: 2.5,
@@ -89,7 +91,7 @@ export const featureFlowItemSx =
       outline: `2px dashed ${theme.vars!.palette.primary.main}`,
       outlineOffset: 2,
     },
-    ...(interactive &&
+    ...(expandable &&
       !isSelected && {
         // `!important` is required here: this row renders as `component={m.button}`
         // with `variants={fade('inUp', …)}` for its entrance animation, and once
@@ -106,12 +108,12 @@ export const featureFlowItemSx =
           bgcolor: channelAlpha(GREY_500_CHANNEL, 0.12),
         },
       }),
-    ...(interactive &&
+    ...(expandable &&
       !isSelected &&
       isActive && {
         opacity: 1,
       }),
-    ...(interactive &&
+    ...(expandable &&
       isSelected && {
         color: 'text.primary',
         bgcolor: 'background.paper',
@@ -134,7 +136,7 @@ export const featureFlowItemSx =
           },
         }),
       }),
-    ...(interactive &&
+    ...(expandable &&
       isExpanded && {
         borderColor: channelAlpha('var(--mui-palette-primary-mainChannel)', 0.24),
         boxShadow: isSelected

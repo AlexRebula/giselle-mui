@@ -317,7 +317,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
                   }}
                 >
                   {items.map((item, index) => {
-                    const interactive = hasExpansionData(item);
+                    const expandable = hasExpansionData(item);
                     const isSelected = index === selectedItemIndex;
                     const isActive = index === activeItemIndex;
                     const isExpanded = item.id === expandedItemId;
@@ -328,7 +328,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
                         icon={item.icon}
                         title={item.title}
                         description={item.description}
-                        interactive={interactive}
+                        expandable={expandable}
                         isSelected={isSelected}
                         isActive={isActive}
                         isExpanded={isExpanded}
