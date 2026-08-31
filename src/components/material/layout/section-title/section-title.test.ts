@@ -57,9 +57,24 @@ describe('SectionTitle', () => {
     expect(html.match(/Build/g)?.length).toBe(1);
   });
 
-  it('renders as h2 heading', () => {
+  it('renders as h2 heading by default', () => {
     const html = renderToStaticMarkup(React.createElement(SectionTitle, { title: 'Heading' }));
     expect(html).toContain('<h2');
+  });
+
+  it('renders as h1 when titleComponent="h1"', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(SectionTitle, { title: 'Heading', titleComponent: 'h1' })
+    );
+    expect(html).toContain('<h1');
+    expect(html).not.toContain('<h2');
+  });
+
+  it('keeps h2 visual sizing (MuiTypography-h2 class) even when rendered as an h1 tag', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(SectionTitle, { title: 'Heading', titleComponent: 'h1' })
+    );
+    expect(html).toContain('MuiTypography-h2');
   });
 });
 

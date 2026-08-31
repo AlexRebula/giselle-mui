@@ -15,8 +15,16 @@ export type SectionTitleProps = Omit<BoxProps, 'title'> & {
    * `text.primary` to a 20% alpha of the same channel.
    */
   txtGradient?: string;
-  /** Main heading text. Rendered as an `h2`. */
+  /** Main heading text. */
   title: ReactNode;
+  /**
+   * Rendered tag for the heading. `h1` keeps this component's own `h2`
+   * visual sizing/weight - only the semantic tag changes, so a page's one
+   * real `<h1>` (e.g. its own hero) can still look identical to every other
+   * `SectionTitle` on the page.
+   * @default 'h2'
+   */
+  titleComponent?: 'h1' | 'h2';
   /**
    * Short overline label rendered above the heading.
    * Styled as `overline` typography in `text.disabled` colour.

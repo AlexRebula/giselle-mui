@@ -3,7 +3,7 @@
 ## Why it exists
 
 Every portfolio and product site needs a consistent heading group: an optional overline caption,
-a main `h2` heading with an optional gradient accent word, and an optional supporting description.
+a main heading (`h2` by default) with an optional gradient accent word, and an optional supporting description.
 Getting the gradient-clip technique right (`WebkitBackgroundClip: 'text'`, `WebkitTextFillColor: 'transparent'`)
 is non-obvious in MUI v7 CSS-variables mode, where `theme.palette.*` values are unavailable and
 `theme.vars.palette.*` must be used for tintable channel references.
@@ -24,6 +24,10 @@ means every consumer rediscovers the gradient-clip CSS trick and the correct `th
   forking the component. This avoids prop explosion (no `titleSx`, `captionSx`, etc.).
 - **No `color` prop** — `SectionTitle` is purely structural/typographic. Consumers use `sx` to
   apply colour overrides at the slot level if needed.
+- **`titleComponent` changes the tag, never the size** — `variant="h2"` stays fixed regardless of
+  `titleComponent`, so a page's one real `<h1>` (rendered via `titleComponent="h1"`) still looks
+  identical to every other `SectionTitle` on the page. A separate `variant` prop wasn't added:
+  nothing asked for a genuinely different _size_, only correct heading semantics for one section.
 
 ## Library safety
 
@@ -41,7 +45,7 @@ section-title/
   section-title.styles.ts    — txtGradientSpanSx factory
   section-title.styles.test.ts — mock-theme assertions for txtGradientSpanSx
   section-title.test.ts      — renderToStaticMarkup tests for both components
-  section-title.stories.tsx  — Full, TitleOnly, CaptionAndGradient, Centred, CaptionStandalone, Responsive
+  section-title.stories.tsx  — Full, TitleOnly, CaptionAndGradient, Centred, AsPageH1, CaptionStandalone, Responsive
   index.ts                   — barrel: SectionTitle, SectionCaption, types
   README.md                  — this file
 ```

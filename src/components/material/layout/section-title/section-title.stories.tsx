@@ -63,6 +63,19 @@ export const Centred: Story = {
   },
 };
 
+/**
+ * `titleComponent="h1"` renders the page's actual `<h1>` tag while keeping
+ * `variant="h2"` sizing - use for the one section (e.g. a homepage hero)
+ * that should carry the page's real H1, so it still looks identical to
+ * every other `SectionTitle` on the same page.
+ */
+export const AsPageH1: Story = {
+  args: {
+    ...Full.args,
+    titleComponent: 'h1',
+  },
+};
+
 /** `SectionCaption` used standalone — for when you need just the overline label. */
 export const CaptionStandalone: Story = {
   render: () => (

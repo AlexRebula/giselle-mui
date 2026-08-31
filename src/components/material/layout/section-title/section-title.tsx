@@ -13,8 +13,9 @@ export { SectionCaption } from './section-caption';
 
 /**
  * `SectionTitle` renders a stacked heading group: optional overline caption,
- * an `h2` heading with an optional gradient accent word, and an optional
- * description paragraph.
+ * a heading (`h2` by default, an `h1`-tagged option for a page's one real
+ * H1) with an optional gradient accent word, and an optional description
+ * paragraph.
  *
  * ## Usage
  *
@@ -32,6 +33,12 @@ export { SectionCaption } from './section-caption';
  * `text.primary → text.primary @20%` left-to-right gradient. In dark mode
  * `text.primary` resolves to near-white, giving a natural fade-out.
  *
+ * ## Page H1
+ * Pass `titleComponent="h1"` for the one section that should carry the
+ * page's actual `<h1>` (e.g. a homepage's hero) - the rendered tag changes,
+ * `variant="h2"` sizing does not, so it still looks identical to every
+ * other `SectionTitle` on the page.
+ *
  * **Quality status (13 May 2026):** DoD 20/20 · Best practices 13/13
  */
 export function SectionTitle({
@@ -41,6 +48,7 @@ export function SectionTitle({
   slotProps,
   txtGradient,
   description,
+  titleComponent = 'h2',
   ...other
 }: SectionTitleProps) {
   return (
@@ -56,7 +64,7 @@ export function SectionTitle({
       {...other}
     >
       {caption && <SectionCaption title={caption} sx={slotProps?.caption?.sx} />}
-      <Typography component="h2" variant="h2" sx={slotProps?.title?.sx}>
+      <Typography component={titleComponent} variant="h2" sx={slotProps?.title?.sx}>
         {title}{' '}
         {txtGradient && (
           <Box component="span" sx={txtGradientSpanSx}>
