@@ -335,7 +335,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
             />
           </>
         }
-        sx={[featureFlowRootSx, ...(Array.isArray(sx) ? sx : [sx])]}
+        sx={[featureFlowRootSx(Boolean(expandedItemId)), ...(Array.isArray(sx) ? sx : [sx])]}
         {...other}
       >
         <MotionViewport>
@@ -343,7 +343,17 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
             container
             columnSpacing={columnSpacing}
             rowSpacing={{ xs: 5, md: 0 }}
-            sx={{ position: 'relative' }}
+            sx={(theme) => ({
+              position: 'relative',
+              // Only when a detail panel is showing: without this, the last
+              // row's card sits flush against the detail panel's border —
+              // detailPanelSx's own py pushes its *content* down from that
+              // border, not the border away from what's above it.
+              pb: expandedItemId ? { xs: 5, md: 8 } : 0,
+              transition: theme.transitions.create('padding-bottom', {
+                duration: theme.transitions.duration.short,
+              }),
+            })}
           >
             <Grid
               size={resolvedDescriptionGridSize}

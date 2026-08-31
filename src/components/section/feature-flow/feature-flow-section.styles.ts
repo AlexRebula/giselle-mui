@@ -26,10 +26,20 @@ const selectedActiveShadow = (channel: string, innerAlpha: number, outerAlpha: n
 /**
  * Root `<section>` additions on top of `BasicSection`'s own base
  * (`position: relative`, `overflowX: clip` — no need to repeat those here).
+ *
+ * `pb` drops to a fixed, smaller value while a detail panel is expanded:
+ * `detailPanelSx`'s own `py` already gives space after the panel/sub-nav
+ * that renders below the main grid in that state, so the section's own
+ * full (responsive) bottom padding would just double up past it. Computed
+ * directly here (one set of rules) rather than layered on as a separate
+ * `sx` array entry meant to out-cascade this — that relies on
+ * array/insertion order beating a same-specificity responsive rule, which
+ * isn't guaranteed.
  */
-export const featureFlowRootSx: SxProps<Theme> = {
-  py: { xs: 10, md: 20 },
-};
+export const featureFlowRootSx = (isExpanded: boolean): SxProps<Theme> => ({
+  pt: { xs: 10, md: 20 },
+  pb: isExpanded ? 10 : { xs: 10, md: 20 },
+});
 
 /**
  * The sticky image column's card — palette-tinted drop shadow, softened for dark mode.

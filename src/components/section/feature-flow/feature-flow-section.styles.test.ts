@@ -67,13 +67,20 @@ const REAL_SPEED_DIAL_Z_INDEX = createTheme().zIndex.speedDial;
 // ----------------------------------------------------------------------
 
 describe('featureFlowRootSx', () => {
-  it("adds vertical padding on top of BasicSection's own base", () => {
-    expect(featureFlowRootSx).toMatchObject({ py: { xs: 10, md: 20 } });
+  it('adds top and bottom padding when nothing is expanded', () => {
+    expect(featureFlowRootSx(false)).toMatchObject({
+      pt: { xs: 10, md: 20 },
+      pb: { xs: 10, md: 20 },
+    });
+  });
+
+  it('keeps top padding but reduces bottom padding to a fixed value once a detail panel is expanded', () => {
+    expect(featureFlowRootSx(true)).toMatchObject({ pt: { xs: 10, md: 20 }, pb: 10 });
   });
 
   it("does not duplicate BasicSection's own position/overflowX base", () => {
-    expect(featureFlowRootSx).not.toHaveProperty('position');
-    expect(featureFlowRootSx).not.toHaveProperty('overflowX');
+    expect(featureFlowRootSx(false)).not.toHaveProperty('position');
+    expect(featureFlowRootSx(false)).not.toHaveProperty('overflowX');
   });
 });
 

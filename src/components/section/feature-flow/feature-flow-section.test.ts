@@ -311,6 +311,53 @@ describe('FeatureFlowSection — click-to-expand', () => {
     expect(div.querySelector('[aria-label="Section navigation"]')).toBeNull();
     cleanup();
   });
+
+  // Regression: without this, the main grid's last row sits flush against
+  // the detail panel's border-top — detailPanelSx's own `py` only pushes the
+  // panel's *content* down from that border, never the border away from
+  // whatever precedes it.
+  it('adds bottom padding to the main grid only once a detail panel is expanded', () => {
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    const grid = () =>
+      div.querySelector('button[aria-pressed]')?.closest('.MuiGrid-container') as HTMLElement;
+
+    expect(getComputedStyle(grid()).paddingBottom).toBe('0px');
+
+    act(() =>
+      div
+        .querySelector('button[aria-pressed]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    );
+
+    expect(getComputedStyle(grid()).paddingBottom).not.toBe('0px');
+    cleanup();
+  });
+
+  // Regression: featureFlowRootSx's own pb gives the section breathing room
+  // after the row list/image when nothing is expanded. Once a detail panel
+  // renders below that, detailPanelSx's own py already provides equivalent
+  // space after it — without zeroing featureFlowRootSx's pb for that state,
+  // the section would double up on bottom space past the panel/sub-nav.
+  it("reduces the outer section's own bottom padding to a fixed value once a detail panel is expanded", () => {
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    const section = () => div.querySelector('section') as HTMLElement;
+    const before = getComputedStyle(section()).paddingBottom;
+
+    act(() =>
+      div
+        .querySelector('button[aria-pressed]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    );
+
+    const after = getComputedStyle(section()).paddingBottom;
+    // Flat (non-responsive) once expanded, unlike the responsive resting
+    // value — theme.spacing(10) regardless of viewport breakpoint. jsdom
+    // doesn't resolve calc()/custom-property values, so this checks the
+    // unresolved expression rather than a pixel value.
+    expect(after).toBe('calc(10 * var(--mui-spacing))');
+    expect(after).not.toBe(before);
+    cleanup();
+  });
 });
 
 // ----------------------------------------------------------------------
