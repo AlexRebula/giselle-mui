@@ -57,7 +57,10 @@ export type { FeatureFlowItemDetailProps } from './types';
  * content `Box` for scroll-into-view purposes — both coexist.
  */
 export const FeatureFlowItemDetail = React.forwardRef<HTMLDivElement, FeatureFlowItemDetailProps>(
-  function FeatureFlowItemDetail({ item, onNodeRef, renderHighlightPanel, sx, ...other }, ref) {
+  function FeatureFlowItemDetail(
+    { item, onNodeRef, renderHighlightPanel, detailPanelColor = 'primary', sx, ...other },
+    ref
+  ) {
     const reducedMotion = useReducedMotion();
     const slideDistance = reducedMotion ? 0 : 8;
 
@@ -74,7 +77,7 @@ export const FeatureFlowItemDetail = React.forwardRef<HTMLDivElement, FeatureFlo
             >
               <Box
                 ref={(node: HTMLDivElement | null) => onNodeRef?.(item.id, node)}
-                sx={[detailPanelSx, ...(Array.isArray(sx) ? sx : [sx])]}
+                sx={[detailPanelSx(detailPanelColor), ...(Array.isArray(sx) ? sx : [sx])]}
                 {...other}
               >
                 <Container>

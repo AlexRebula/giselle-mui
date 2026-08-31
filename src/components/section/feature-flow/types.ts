@@ -79,6 +79,17 @@ export interface FeatureFlowImage {
 export type FeatureFlowGridSize = Readonly<{ xs?: number; md?: number; lg?: number }>;
 
 /**
+ * Palette colour key for the expanded detail panel's background tint
+ * (`detailPanelSx`) — same vocabulary as `HeroSectionProps['color']`, plus
+ * `'grey'` for a neutral tint that matches a page's own background instead
+ * of a brand colour (`grey` isn't a standard MUI `PaletteColor` with its own
+ * `.main`/`.mainChannel`, so it's handled as its own case rather than being
+ * part of the templated `--mui-palette-<key>-mainChannel` the other six share).
+ */
+export type FeatureFlowDetailColorKey =
+  'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error' | 'grey';
+
+/**
  * Scroll-linked entrance transform for the image column card as a whole —
  * opacity, y-offset, scale, and blur. Additive to the column's own per-image
  * opacity crossfade (keyed to `activeSrc`), which this does not affect.
@@ -145,10 +156,23 @@ export interface FeatureFlowSectionProps extends Omit<BoxProps, 'children'> {
    */
   renderHighlightPanel?: (item: FeatureFlowItem) => ReactNode;
   /**
+   * Palette colour the expanded detail panel's background/border-top are
+   * tinted with (`detailPanelSx`) — the same `channelAlpha(mainChannel, …)`
+   * technique `HeroSectionProps['color']` uses, so it looks correct in both
+   * light and dark mode with no hardcoded hex values. Pass `'grey'` for a
+   * neutral tint that reads as part of the page rather than the brand
+   * colour — useful when a consumer's own detail-panel content (e.g. an
+   * `Accordion` via `renderHighlightPanel`) needs a plain backdrop to show
+   * its own hover/expanded state against.
+   * @default 'primary'
+   */
+  detailPanelColor?: FeatureFlowDetailColorKey;
+  /**
    * `sx` merged onto the expanded detail panel's own root (after
-   * `detailPanelSx`, so it can override the built-in tinted background/
-   * border-top) — distinct from this component's own root `sx`, which
-   * targets the outer `<section>`, not the detail panel specifically.
+   * `detailPanelSx`, so it can override anything `detailPanelColor` sets,
+   * or any other built-in style) — distinct from this component's own root
+   * `sx`, which targets the outer `<section>`, not the detail panel
+   * specifically.
    */
   itemDetailSx?: SxProps<Theme>;
 }

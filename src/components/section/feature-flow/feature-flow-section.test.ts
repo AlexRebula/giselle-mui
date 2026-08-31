@@ -730,3 +730,27 @@ describe('FeatureFlowSection — itemDetailSx', () => {
     cleanup();
   });
 });
+
+describe('FeatureFlowSection — detailPanelColor', () => {
+  it("tints the expanded detail panel using the given palette colour's channel, not the primary default", () => {
+    const { div, cleanup } = mount({
+      items: [fullItem],
+      image: baseImage,
+      detailPanelColor: 'grey',
+    });
+    const button = div.querySelector('button[aria-pressed]');
+    act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+
+    const styleText = [...document.styleSheets]
+      .flatMap((sheet) => {
+        try {
+          return [...sheet.cssRules].map((rule) => rule.cssText);
+        } catch {
+          return [];
+        }
+      })
+      .join('\n');
+    expect(styleText).toContain('--mui-palette-grey-500Channel');
+    cleanup();
+  });
+});

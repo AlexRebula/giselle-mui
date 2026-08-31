@@ -1,7 +1,7 @@
 import type { SxProps, Theme } from '@mui/material/styles';
 
 import { channelAlpha } from '../../../utils/theme/theme-utils/theme-utils';
-import type { FeatureFlowItemButtonState } from './types';
+import type { FeatureFlowDetailColorKey, FeatureFlowItemButtonState } from './types';
 
 // ----------------------------------------------------------------------
 
@@ -60,13 +60,31 @@ export const imageColumnCardSx: SxProps<Theme> = (theme) => ({
   }),
 });
 
-/** The expanded detail panel's tinted background + top border. */
-export const detailPanelSx: SxProps<Theme> = {
-  py: { xs: 6, md: 10 },
-  overflow: 'hidden',
-  position: 'relative',
-  bgcolor: channelAlpha('var(--mui-palette-primary-mainChannel)', 0.04),
-  borderTop: `1px solid ${channelAlpha('var(--mui-palette-primary-mainChannel)', 0.12)}`,
+/**
+ * Resolves a `FeatureFlowDetailColorKey` to its CSS-variable channel string.
+ * `'grey'` is the one key with no `.main`/`.mainChannel` shape (it isn't a
+ * standard MUI `PaletteColor`), so it maps to the already-defined
+ * `GREY_500_CHANNEL` instead of the templated `--mui-palette-<key>-mainChannel`
+ * the other six share.
+ */
+const detailPanelChannel = (color: FeatureFlowDetailColorKey): string =>
+  color === 'grey' ? GREY_500_CHANNEL : `var(--mui-palette-${color}-mainChannel)`;
+
+/**
+ * The expanded detail panel's tinted background + top border, using the
+ * same `channelAlpha(mainChannel, …)` technique `HeroSection`'s own `color`
+ * prop uses — works in light and dark mode with no hardcoded hex values.
+ * @param color @default 'primary'
+ */
+export const detailPanelSx = (color: FeatureFlowDetailColorKey = 'primary'): SxProps<Theme> => {
+  const channel = detailPanelChannel(color);
+  return {
+    py: { xs: 6, md: 10 },
+    overflow: 'hidden',
+    position: 'relative',
+    bgcolor: channelAlpha(channel, 0.04),
+    borderTop: `1px solid ${channelAlpha(channel, 0.12)}`,
+  };
 };
 
 /**

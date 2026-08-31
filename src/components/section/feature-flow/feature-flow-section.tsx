@@ -69,6 +69,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
       decoration = true,
       renderRightPanel,
       renderHighlightPanel,
+      detailPanelColor,
       itemDetailSx,
       sx,
       ...other
@@ -321,6 +322,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
                 }
               }}
               renderHighlightPanel={renderHighlightPanel}
+              detailPanelColor={detailPanelColor}
               sx={itemDetailSx}
             />
 

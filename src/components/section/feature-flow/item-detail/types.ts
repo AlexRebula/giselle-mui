@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { BoxProps } from '@mui/material/Box';
 
-import type { FeatureFlowItem } from '../types';
+import type { FeatureFlowDetailColorKey, FeatureFlowItem } from '../types';
 
 // ----------------------------------------------------------------------
 
@@ -31,4 +31,10 @@ export interface FeatureFlowItemDetailProps extends Omit<BoxProps, 'children'> {
    * data" looks like, same as `FeatureFlowSectionProps.renderRightPanel`.
    */
   renderHighlightPanel?: (item: FeatureFlowItem) => ReactNode;
+  /**
+   * Palette colour the panel's background/border-top are tinted with. See
+   * `FeatureFlowSectionProps['detailPanelColor']` for the full rationale.
+   * @default 'primary'
+   */
+  detailPanelColor?: FeatureFlowDetailColorKey;
 }
