@@ -9,6 +9,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import { GiselleIcon } from '../../../material/data-display/icon/giselle';
 import { fade } from '../../../motion/variants/fade';
 import { featureFlowItemSx } from '../feature-flow-section.styles';
+import { itemRowTextSlotSx } from './feature-flow-item-row.styles';
 import type { FeatureFlowItemRowProps } from './types';
 
 // ----------------------------------------------------------------------
@@ -62,7 +63,7 @@ export const FeatureFlowItemRow = React.forwardRef<HTMLButtonElement, FeatureFlo
         ]}
       >
         <GiselleIcon icon={icon} width={48} aria-hidden="true" />
-        <Stack spacing={1} sx={{ flex: 1, minWidth: 0 }}>
+        <Stack spacing={1} sx={itemRowTextSlotSx}>
           <Typography variant="h4" component="h6" color="inherit">
             {title}
           </Typography>

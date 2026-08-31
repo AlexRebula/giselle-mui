@@ -67,6 +67,8 @@ Phase: `Section` | Priority tier: `T2`
 src/components/section/feature-flow/item-row/
   feature-flow-item-row.tsx      : component
   feature-flow-item-row.test.ts  : unit tests
+  feature-flow-item-row.styles.ts      : sx constants
+  feature-flow-item-row.styles.test.ts : style assertions
   feature-flow-item-row.stories.tsx : Storybook stories
   types.ts                       : FeatureFlowItemRowProps
   index.ts                       : barrel export

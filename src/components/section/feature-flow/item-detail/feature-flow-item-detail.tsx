@@ -15,6 +15,12 @@ import { DETAIL_PANEL_LAYOUT_TRANSITION } from '../feature-flow-section.const';
 import { detailPanelSx } from '../feature-flow-section.styles';
 import { isRichLongDescription } from '../feature-flow-section.utils';
 import { FeatureFlowHighlightCarousel } from '../highlight-carousel';
+import {
+  itemDetailHeaderIconSx,
+  itemDetailHeaderSlotSx,
+  itemDetailLongDescriptionSx,
+  itemDetailMetricsGridSx,
+} from './feature-flow-item-detail.styles';
 import type { FeatureFlowItemDetailProps } from './types';
 
 // Re-export — keeps `import { FeatureFlowItemDetailProps } from
@@ -74,27 +80,18 @@ export const FeatureFlowItemDetail = React.forwardRef<HTMLDivElement, FeatureFlo
                   <Grid container spacing={{ xs: 4, md: 8 }}>
                     <Grid size={{ xs: 12, md: 6 }}>
                       <Stack spacing={4}>
-                        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                        <Stack direction="row" spacing={2} sx={itemDetailHeaderSlotSx}>
                           <GiselleIcon
                             icon={item.icon}
                             width={44}
-                            sx={{ color: 'primary.main' }}
+                            sx={itemDetailHeaderIconSx}
                             aria-hidden="true"
                           />
                           <Typography variant="h3">{item.title}</Typography>
                         </Stack>
 
                         {item.metrics?.length ? (
-                          <Box
-                            sx={{
-                              display: 'grid',
-                              gap: 2,
-                              gridTemplateColumns: {
-                                xs: 'repeat(1, 1fr)',
-                                sm: `repeat(${Math.min(item.metrics.length, 3)}, 1fr)`,
-                              },
-                            }}
-                          >
+                          <Box sx={itemDetailMetricsGridSx(item.metrics.length)}>
                             {item.metrics.map(({ value, label, sublabel, icon }) => (
                               <MetricCard
                                 key={label}
@@ -116,10 +113,7 @@ export const FeatureFlowItemDetail = React.forwardRef<HTMLDivElement, FeatureFlo
                         {isRichLongDescription(item) ? (
                           item.longDescription
                         ) : (
-                          <Typography
-                            variant="body1"
-                            sx={{ color: 'text.secondary', lineHeight: 1.8 }}
-                          >
+                          <Typography variant="body1" sx={itemDetailLongDescriptionSx}>
                             {item.longDescription ?? item.description}
                           </Typography>
                         )}

@@ -21,3 +21,4 @@ _None currently._
 | Extracted from `FeatureFlowSection`'s inline `.map()` loop; every row a real `ButtonBase` regardless of expansion data (#198) | 31 Aug 2026 |
 | `...other` passthrough (native button attributes, minus repurposed/owned ones) and array-safe `sx` merge                      | 31 Aug 2026 |
 | Entrance slide distance zeroes under `prefers-reduced-motion`, matching `FeatureFlowHighlightCarousel`'s own pattern          | 31 Aug 2026 |
+| Inline `sx` extracted to `feature-flow-item-row.styles.ts` per the zero-tolerance sx policy (`cleanup-workflow.md`)           | 31 Aug 2026 |

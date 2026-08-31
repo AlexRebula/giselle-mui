@@ -10,13 +10,13 @@ Before reading a single line of implementation, answer this one question:
 
 > Is this component **independently usable by a consumer**, or does it only make sense inside one specific parent?
 
-| Signal                                                            | Role                                 |
-| ----------------------------------------------------------------- | ------------------------------------ |
-| Exported from `src/index.ts`                                      | Standalone — needs its own subfolder |
-| Listed in `docs/component-inventory.md`                           | Standalone                           |
-| File lives inside a parent component's own subfolder               | Sub-component — needs its own named subfolder |
-| Only imported by one sibling `.tsx` in the same folder            | Sub-component                        |
-| Has its own `Props` type but is never consumed outside its folder | Sub-component                        |
+| Signal                                                            | Role                                          |
+| ----------------------------------------------------------------- | --------------------------------------------- |
+| Exported from `src/index.ts`                                      | Standalone — needs its own subfolder          |
+| Listed in `docs/component-inventory.md`                           | Standalone                                    |
+| File lives inside a parent component's own subfolder              | Sub-component — needs its own named subfolder |
+| Only imported by one sibling `.tsx` in the same folder            | Sub-component                                 |
+| Has its own `Props` type but is never consumed outside its folder | Sub-component                                 |
 
 The answer determines which scenario applies for every step in Phase 2. Do not skip this — confusing the two scenarios leads to the wrong folder structure and the wrong barrel exports.
 
@@ -69,7 +69,7 @@ Answer these in order. Stop at the first yes.
 
 ### Step 3 — Styles
 
-- Move every `sx={}` object with more than ~3 properties out of `.tsx` files and into `<component-name>.styles.ts`.
+- Move every `sx={}` object out of `.tsx` files and into `<component-name>.styles.ts`, regardless of property count. (Zero-tolerance, extended from story files to component files 2026-08-31 — see the policy note at the end of Step 3.)
 - **`style={{}}` on `motion.*` elements: no inline object literals, ever.** Every `style` prop on a `motion.*` component must reference a named export from `<component-name>.styles.ts`, regardless of property count.
   - Static `style` objects → module-level `const` in styles.ts.
   - `MotionValue`-based `style` objects → factory function in styles.ts that accepts the `MotionValue` args and returns the style object. The factory is defined in styles.ts; the _call_ happens in JSX (identical pattern to dynamic `sx` factories):
@@ -98,6 +98,8 @@ Conflating the two makes names misleading the moment the child content changes. 
 When two style constants are structurally identical except for one varying argument (e.g. `side: 'left' | 'right'`, `blurred: boolean`), they should be a single factory, not two separate exports. Two static constants will diverge silently during refactors — one gets updated, the other doesn't. A factory makes the relationship explicit in the type signature and keeps the structure in one place.
 
 Check every `*.styles.ts` file for sibling pairs. If they share the same shape and differ only by one dimension, merge them. See `timelineColumnSx`, `msColumnBoxSx`, and `markerLabelSlotSx` in `two-column.styles.ts` as canonical examples.
+
+**Policy: zero-tolerance inline `sx`, component files included (2026-08-31).** Component `.tsx` files previously used a "~3 properties" threshold — anything smaller could stay inline — while only `.stories.tsx` files (Step 8) were zero-tolerance. That split is retired: every `sx={}` object in a component `.tsx` file must now be extracted to `<component-name>.styles.ts`, regardless of property count, including single-property objects (`sx={{ color: 'primary.main' }}`) and layout one-liners (`sx={{ flex: 1, minWidth: 0 }}`). Reasoning mirrors the story-file rule: consistent discoverability (all styles grep-findable in one file per component), no per-render object allocations for static styles, and uniform enforcement avoids "is 2 properties ok?" debates. There are no exceptions for sub-components, internal/unexported components, or components with only one or two callers of `sx`. A shared style used by more than one sub-component still belongs in the _parent's_ `*.styles.ts` (see "Style constant vs wrapper component" in `docs/component-api-contract.md`); a style used only by one component belongs in that component's own `*.styles.ts`.
 
 ### Step 3b — Animations (motion subpath components only)
 
@@ -136,7 +138,7 @@ The `.tsx` file is the **composition layer only** after the above steps. Verify:
 
 - [ ] No `type` or `interface` declarations
 - [ ] No named constants for sizes or spacing
-- [ ] No `sx={}` with more than ~3 properties inline
+- [ ] No inline `sx={}` — every sx object, regardless of property count, lives in `<component-name>.styles.ts`
 - [ ] No pure logic functions (no JSX return)
 - [ ] No capital-letter helper components defined inside the file
 - [ ] No `React.FC` — plain function declarations only
@@ -180,7 +182,7 @@ Review or create `<component-name>.stories.tsx`:
 - [ ] Decision-doc stories added for every non-obvious design or accessibility rule in this component
 - [ ] Named component helpers used for any story render function that uses React hooks
 - [ ] **No hardcoded hex, rgb, or rgba literals in any story file.** Story scaffold chrome (breakpoint labels, dashed borders, dividers) must use MUI theme tokens via `sx` on MUI components (`<Typography>`, `<Box>`). Never use `style={{ color: '#666' }}` or `style={{ border: '1px dashed #ccc' }}`; use `sx={{ color: 'text.secondary' }}` and `sx={{ border: '1px dashed', borderColor: 'divider' }}` instead. This ensures story chrome respects dark mode automatically. **Use the shared constants from `src/stories-defaults.ts`** — never re-define equivalent patterns inline:
-- [ ] **Zero inline `sx={{}}` in story files.** Every `sx` object in a story file — regardless of property count — must be extracted to a module-level named constant before the first story export. Reasoning: (1) consistent discoverability — all styles grep-findable at file top, (2) no per-render object allocations for static styles, (3) uniform enforcement avoids "is 2 properties ok?" debates. The `~3 properties` threshold does not apply to story files. There are **no exceptions** — not even single-property objects or `{ width }` loop variables.
+- [ ] **Zero inline `sx={{}}` in story files.** Every `sx` object in a story file — regardless of property count — must be extracted to a module-level named constant before the first story export. Reasoning: (1) consistent discoverability — all styles grep-findable at file top, (2) no per-render object allocations for static styles, (3) uniform enforcement avoids "is 2 properties ok?" debates. This same zero-tolerance rule now also applies to component `.tsx` files (see Step 3's policy note) — there is no longer a threshold split between story files and component files. There are **no exceptions** — not even single-property objects or `{ width }` loop variables.
 
   | Constant                          | Usage                                                                                      |
   | --------------------------------- | ------------------------------------------------------------------------------------------ |
@@ -414,7 +416,7 @@ Use this checklist when Phase 0 confirms the component belongs to a parent and n
 
 - [ ] Own named subfolder created, nested inside the parent folder
 - [ ] No `type` or `interface` declarations in the `.tsx` — all in this sub-component's own `types.ts` (shared types imported from parent `../types`)
-- [ ] No sx with more than ~3 properties inline — all in a styles file (own or parent's, whichever is genuinely shared)
+- [ ] No inline sx — all extracted to a styles file, regardless of property count (own or parent's, whichever is genuinely shared)
 - [ ] No duplicated JSX blocks — extracted to a helper or util
 - [ ] All inline conditional logic that produces a derived value is in `utils.ts`
 - [ ] JSDoc covers all props including behaviour flags
@@ -488,7 +490,7 @@ Complete this before starting any implementation steps. The goal is a clean move
 
 - [ ] Own subfolder created with all companion files present
 - [ ] No `type` or `interface` declarations in `.tsx` — all in `types.ts`
-- [ ] No sx with more than ~3 properties inline — all in `<name>.styles.ts`
+- [ ] No inline sx — all in `<name>.styles.ts`, regardless of property count
 - [ ] `<name>.styles.test.ts` covers every exported factory
 - [ ] No named constants for sizes inline — all in `<name>.const.ts`
 - [ ] Regression tests for every size constant with a safety minimum

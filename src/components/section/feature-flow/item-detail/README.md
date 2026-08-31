@@ -58,6 +58,8 @@ Phase: `Section` | Priority tier: `T2`
 src/components/section/feature-flow/item-detail/
   feature-flow-item-detail.tsx      : component
   feature-flow-item-detail.test.ts  : unit tests
+  feature-flow-item-detail.styles.ts      : sx constants and factories
+  feature-flow-item-detail.styles.test.ts : mock-theme assertions for style factories
   feature-flow-item-detail.stories.tsx : Storybook stories
   types.ts                          : FeatureFlowItemDetailProps
   index.ts                          : barrel export
