@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { BoxProps } from '@mui/material/Box';
 
 import type { FeatureFlowItem } from '../types';
@@ -20,4 +21,14 @@ export interface FeatureFlowItemDetailProps extends Omit<BoxProps, 'children'> {
    * showing changes over time and at most one is ever mounted.
    */
   onNodeRef?: (itemId: string, node: HTMLDivElement | null) => void;
+  /**
+   * Overrides what renders in the right column: called with the currently
+   * expanded item. Defaults to the built-in `FeatureFlowHighlightCarousel`
+   * (gated on `item.highlightCards` being non-empty) when omitted — e.g. a
+   * documentation consumer could render an `Accordion` per highlight card
+   * instead of a one-at-a-time carousel. Always called when provided,
+   * regardless of `item.highlightCards` — the consumer decides what "no
+   * data" looks like, same as `FeatureFlowSectionProps.renderRightPanel`.
+   */
+  renderHighlightPanel?: (item: FeatureFlowItem) => ReactNode;
 }

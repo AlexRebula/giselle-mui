@@ -48,7 +48,8 @@ export type { FeatureFlowItemDetailProps } from './types';
  * `zIndex` still wins where it needs to.
  *
  * Left column: icon + title, metrics grid, long description, technology
- * chips. Right column: the highlight-card carousel (when present).
+ * chips. Right column: the highlight-card carousel (when present), or
+ * `renderHighlightPanel`'s own content when provided.
  *
  * `ref` is forwarded to the outer `m.div layout` wrapper: the one node that
  * stays mounted regardless of which item (or none) is currently showing.
@@ -56,7 +57,7 @@ export type { FeatureFlowItemDetailProps } from './types';
  * content `Box` for scroll-into-view purposes — both coexist.
  */
 export const FeatureFlowItemDetail = React.forwardRef<HTMLDivElement, FeatureFlowItemDetailProps>(
-  function FeatureFlowItemDetail({ item, onNodeRef, sx, ...other }, ref) {
+  function FeatureFlowItemDetail({ item, onNodeRef, renderHighlightPanel, sx, ...other }, ref) {
     const reducedMotion = useReducedMotion();
     const slideDistance = reducedMotion ? 0 : 8;
 
@@ -131,10 +132,14 @@ export const FeatureFlowItemDetail = React.forwardRef<HTMLDivElement, FeatureFlo
                       </Stack>
                     </Grid>
 
-                    {(item.highlightCards ?? []).length > 0 && (
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <FeatureFlowHighlightCarousel cards={item.highlightCards ?? []} />
-                      </Grid>
+                    {renderHighlightPanel ? (
+                      <Grid size={{ xs: 12, md: 6 }}>{renderHighlightPanel(item)}</Grid>
+                    ) : (
+                      (item.highlightCards ?? []).length > 0 && (
+                        <Grid size={{ xs: 12, md: 6 }}>
+                          <FeatureFlowHighlightCarousel cards={item.highlightCards ?? []} />
+                        </Grid>
+                      )
                     )}
                   </Grid>
                 </Container>

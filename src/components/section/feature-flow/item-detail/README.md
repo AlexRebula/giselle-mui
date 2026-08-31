@@ -21,6 +21,7 @@ that animation logic in one tested place.
 | ----------- | -------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------- |
 | `item`      | `FeatureFlowItem \| null`                                | —       | The currently-expanded item, or `null` when none is expanded.                      |
 | `onNodeRef` | `(itemId: string, node: HTMLDivElement \| null) => void` | —       | Fires with the inner per-item content node for scroll-into-view, on mount/unmount. |
+| `renderHighlightPanel` | `(item: FeatureFlowItem) => ReactNode`         | —       | Overrides the right column entirely. Falls back to `FeatureFlowHighlightCarousel` (gated on `item.highlightCards` being non-empty) when omitted. Always called when provided, regardless of `highlightCards` — the consumer decides what "no data" looks like. |
 
 Plus every other `BoxProps` attribute (`sx`, `className`, `data-*`, `aria-*`, etc.) via
 `...other`, forwarded to the inner per-item content `Box`.

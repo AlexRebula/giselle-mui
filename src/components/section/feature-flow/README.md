@@ -31,6 +31,7 @@ the component owns no app-specific asset paths or icon lookup tables.
 | `imageGridSize`       | `{ xs?; md?; lg? }`            | derived from `layoutDirection` | Image column grid size override.                              |
 | `decoration`          | `boolean`                      | `true`                          | Renders `BasicSection`'s standard decorative frame around the whole section. |
 | `renderRightPanel`    | `(item: FeatureFlowItem, isActiveExpanded: boolean) => ReactNode` | —   | Overrides the image column entirely — e.g. a non-image, documentation-style right panel. Falls back to the built-in `FeatureFlowImageColumn` (driven by `image`) when omitted. |
+| `renderHighlightPanel` | `(item: FeatureFlowItem) => ReactNode` | —                       | Overrides the expanded detail panel's right column entirely — e.g. one `Accordion` per highlight card instead of the built-in one-at-a-time carousel. Falls back to `FeatureFlowHighlightCarousel` (gated on `highlightCards` being non-empty) when omitted. |
 | `sx`                  | `SxProps<Theme>`               | —                              | MUI sx forwarded to root.                                     |
 
 `FeatureFlowItem` fields: `id`, `icon`, `title`, `description`, `subtitle?`, `imgUrl?`,
@@ -47,8 +48,11 @@ this is any documentation content presented as a carousel slide, not just a high
 - Tech icon resolution is the consumer's responsibility: each `technologies` entry
   carries its own `{ name, icon }` pair, so the component never owns an app-specific
   icon lookup map or asset directory.
-- No per-item full-section override slot: the detail panel always renders from the
-  item's own fields. This keeps the component's behaviour fully determined by props.
+- `renderHighlightPanel` is a render-prop, same rationale as `renderRightPanel`: a
+  documentation consumer's own right-column content (e.g. an `Accordion` list) isn't
+  tied to any particular data shape beyond `FeatureFlowItem` itself, so the consumer
+  builds it from `item.highlightCards` directly rather than the component prescribing
+  one fixed presentation for every consumer.
 - The hover-step crossfade timing and the scroll-idle timeout are fixed internal
   constants, not configurable props — they are implementation details of the
   crossfade behaviour, not something a consumer should need to tune.

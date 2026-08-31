@@ -665,3 +665,47 @@ describe('FeatureFlowSection — renderRightPanel', () => {
     cleanup();
   });
 });
+
+// ----------------------------------------------------------------------
+
+describe('FeatureFlowSection — renderHighlightPanel', () => {
+  function expandFullItem(div: HTMLElement) {
+    const button = div.querySelector('button[aria-pressed]');
+    act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+  }
+
+  it('renders the default FeatureFlowHighlightCarousel when renderHighlightPanel is omitted', () => {
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    expandFullItem(div);
+
+    expect(div.textContent).toContain('Shipped fast');
+    cleanup();
+  });
+
+  it('renders renderHighlightPanel output instead of the default carousel when provided', () => {
+    const renderHighlightPanel = vi.fn(() => createElement('span', null, 'Custom highlight panel'));
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage, renderHighlightPanel });
+    expandFullItem(div);
+
+    expect(div.textContent).toContain('Custom highlight panel');
+    expect(div.textContent).not.toContain('Shipped fast');
+    cleanup();
+  });
+
+  it('calls renderHighlightPanel with the expanded item', () => {
+    const renderHighlightPanel = vi.fn(() => null);
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage, renderHighlightPanel });
+    expandFullItem(div);
+
+    expect(renderHighlightPanel).toHaveBeenCalledWith(fullItem);
+    cleanup();
+  });
+
+  it('is not called while no item is expanded', () => {
+    const renderHighlightPanel = vi.fn(() => null);
+    const { cleanup } = mount({ items: [fullItem], image: baseImage, renderHighlightPanel });
+
+    expect(renderHighlightPanel).not.toHaveBeenCalled();
+    cleanup();
+  });
+});
