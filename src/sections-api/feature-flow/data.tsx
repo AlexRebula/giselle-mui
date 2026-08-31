@@ -90,22 +90,22 @@ const performanceUi: FeatureFlowItem = {
   ],
   highlightCards: [
     {
-      headline: '2015-2017: WCAG AA at SeamlessCMS',
-      detail:
+      title: '2015-2017: WCAG AA at SeamlessCMS',
+      description:
         'Spent two years building WCAG AA-compliant government intranets, public sites, and microsites using older JavaScript libraries and Google Maps API. Heavy focus on accessibility, client liaison, and strict code reviews.',
-      src: canonicalImagePaths.highlight.performanceUi[0],
+      media: canonicalImagePaths.highlight.performanceUi[0],
     },
     {
-      headline: '2017-2023: React, Angular, Vue and Next.js at Avanade',
-      detail:
+      title: '2017-2023: React, Angular, Vue and Next.js at Avanade',
+      description:
         'For the last 6 years at Avanade in Melbourne, delivered UI components to major Australian clients including NBN, ART, Funlab, Vanguard, Homefirst and others using React, Angular, Vue, and more recently Next.js.',
-      src: canonicalImagePaths.highlight.performanceUi[1],
+      media: canonicalImagePaths.highlight.performanceUi[1],
     },
     {
-      headline: 'Next.js 16 + React 19 Portfolio',
-      detail:
+      title: 'Next.js 16 + React 19 Portfolio',
+      description:
         'Built with my current stack — Next.js 16, React 19, TypeScript strict mode, MUI v7, Framer Motion, Vitest 3 and Jest — clean architecture and fully tested.',
-      src: canonicalImagePaths.highlight.performanceUi[2],
+      media: canonicalImagePaths.highlight.performanceUi[2],
     },
   ],
 };
@@ -171,34 +171,34 @@ const techDebt: FeatureFlowItem = {
   ],
   highlightCards: [
     {
-      headline: 'Real-world experience',
-      detail:
+      title: 'Real-world experience',
+      description:
         "I've spent years working in large enterprise codebases where things had quietly grown out of control — near-zero test coverage, weak conventions, and technical debt accumulating in the background. I know exactly how that feels.",
-      src: canonicalImagePaths.highlight.techDebt[0],
+      media: canonicalImagePaths.highlight.techDebt[0],
     },
     {
-      headline: 'My practical approach',
-      detail:
+      title: 'My practical approach',
+      description:
         "That's why my approach is always practical: I introduce TypeScript strict mode to surface hidden assumptions, focus test suites on the highest-risk paths first, and set up clear ESLint rules so the same problems don't quietly creep back in.",
-      src: canonicalImagePaths.highlight.techDebt[1],
+      media: canonicalImagePaths.highlight.techDebt[1],
     },
     {
-      headline: 'TypeScript as a first pass',
-      detail:
+      title: 'TypeScript as a first pass',
+      description:
         'Enabling strict mode does not fix a codebase — it reveals what is actually there. Hidden assumptions, unhandled nulls, and implicit any casts become explicit errors. It is the fastest way to understand the true state of a codebase before touching anything.',
-      src: canonicalImagePaths.highlight.techDebt[2],
+      media: canonicalImagePaths.highlight.techDebt[2],
     },
     {
-      headline: 'Testing the hard paths first',
-      detail:
+      title: 'Testing the hard paths first',
+      description:
         'I have hit 80% test coverage on complex codebases by focusing on the paths that actually break — async flows, third-party API calls, and state transitions. Coverage numbers mean nothing if the wrong code is covered.',
-      src: canonicalImagePaths.highlight.techDebt[3],
+      media: canonicalImagePaths.highlight.techDebt[3],
     },
     {
-      headline: 'Rules that outlast the cleanup',
-      detail:
+      title: 'Rules that outlast the cleanup',
+      description:
         'A cleanup without enforcement is just a delay. ESLint rules encode the decisions made during a refactor — naming, imports, banned patterns — so they do not have to be re-argued in every PR.',
-      src: canonicalImagePaths.highlight.techDebt[4],
+      media: canonicalImagePaths.highlight.techDebt[4],
     },
   ],
 };
@@ -241,28 +241,28 @@ const pragmaticConsulting: FeatureFlowItem = {
   ],
   highlightCards: [
     {
-      headline: 'Home loan calculator, Bankfirst',
-      detail:
+      title: 'Home loan calculator, Bankfirst',
+      description:
         'Home loan calculator with precise financial logic — owned end-to-end including the maths, the test coverage, and the technical conversation with the client in the room.',
-      src: canonicalImagePaths.highlight.pragmaticConsulting[0],
+      media: canonicalImagePaths.highlight.pragmaticConsulting[0],
     },
     {
-      headline: 'React + Sitecore integration',
-      detail:
+      title: 'React + Sitecore integration',
+      description:
         'At multiple Avanade engagements I served as the integration developer bridging React front-ends with Sitecore and ASP.NET MVC back-ends — experienced enough on both sides to make the integration work without breaking either one.',
-      src: canonicalImagePaths.highlight.pragmaticConsulting[1],
+      media: canonicalImagePaths.highlight.pragmaticConsulting[1],
     },
     {
-      headline: 'Front-end architecture setup',
-      detail:
+      title: 'Front-end architecture setup',
+      description:
         'At several Avanade engagements I established the front-end architecture from scratch — component structure, shared patterns, state management conventions, and tooling decisions. The goal was always an architecture the team could extend independently after the engagement ended.',
-      src: canonicalImagePaths.highlight.pragmaticConsulting[2],
+      media: canonicalImagePaths.highlight.pragmaticConsulting[2],
     },
     {
-      headline: 'Delivery transparency with clients',
-      detail:
+      title: 'Delivery transparency with clients',
+      description:
         'At Avanade the technical conversation with clients was part of the job, not a handoff to someone else. I managed delivery expectations directly — explaining trade-offs clearly and being the person who could defend a technical decision in the room when it mattered.',
-      src: canonicalImagePaths.highlight.pragmaticConsulting[3],
+      media: canonicalImagePaths.highlight.pragmaticConsulting[3],
     },
   ],
 };
@@ -305,22 +305,22 @@ const trainingAndMentoring: FeatureFlowItem = {
   ],
   highlightCards: [
     {
-      headline: 'Avanade React workshops',
-      detail:
+      title: 'Avanade React workshops',
+      description:
         'Khoi Le, my manager at Avanade, noted the workshops "brought great benefit to everyone who attended." Multiple cohorts across multiple engagements — from junior starters to experienced consultants switching from Angular.',
-      src: canonicalImagePaths.highlight.trainingAndMentoring[0],
+      media: canonicalImagePaths.highlight.trainingAndMentoring[0],
     },
     {
-      headline: 'Juniors shipping solo',
-      detail:
+      title: 'Juniors shipping solo',
+      description:
         'The measure of a mentoring session is not whether the junior understood it in the moment — it is whether they can do it alone two weeks later. Every pairing session was designed for that outcome, not for the session itself.',
-      src: canonicalImagePaths.highlight.trainingAndMentoring[1],
+      media: canonicalImagePaths.highlight.trainingAndMentoring[1],
     },
     {
-      headline: 'TypeScript adoption',
-      detail:
+      title: 'TypeScript adoption',
+      description:
         'The goal was never to create dependency on my presence. After the initial uplift, teams adopted TypeScript and testing practices independently — no follow-up sessions required, no regression back to old patterns.',
-      src: canonicalImagePaths.highlight.trainingAndMentoring[2],
+      media: canonicalImagePaths.highlight.trainingAndMentoring[2],
     },
   ],
 };
@@ -363,22 +363,22 @@ const codeQualityImprovements: FeatureFlowItem = {
   ],
   highlightCards: [
     {
-      headline: 'Redux race condition fix',
-      detail:
+      title: 'Redux race condition fix',
+      description:
         'Stale UI that only surfaced under real load — two async actions competing over the same slice. Custom DevTools middleware to surface the conflict, then a refactor to a single source of truth. Diagnosed and resolved in two days.',
-      src: canonicalImagePaths.highlight.codeQualityImprovements[0],
+      media: canonicalImagePaths.highlight.codeQualityImprovements[0],
     },
     {
-      headline: 'Code reviewer at Avanade',
-      detail:
+      title: 'Code reviewer at Avanade',
+      description:
         'Code quality reviewer across multiple enterprise engagements — unit tests, documentation, and keeping standards intact through the full delivery cycle, not just at kick-off.',
-      src: canonicalImagePaths.highlight.codeQualityImprovements[1],
+      media: canonicalImagePaths.highlight.codeQualityImprovements[1],
     },
     {
-      headline: 'Risk under control',
-      detail:
+      title: 'Risk under control',
+      description:
         'Risk is always present in a codebase — the question is whether it is visible and manageable or invisible and accumulating. ESLint rules and typed boundaries make risk visible; automated tests make it manageable without adding manual overhead.',
-      src: canonicalImagePaths.highlight.codeQualityImprovements[2],
+      media: canonicalImagePaths.highlight.codeQualityImprovements[2],
     },
   ],
 };
@@ -425,34 +425,34 @@ const bestPracticesAndDocumentation: FeatureFlowItem = {
   ],
   highlightCards: [
     {
-      headline: 'Open-source MUI component library',
-      detail:
+      title: 'Open-source MUI component library',
+      description:
         'A typed MUI v7 component library with eight shipped exports — GiselleIcon, MetricCard, QuoteCard, SelectableCard, TimelineTwoColumn, and more. Every component is unit-tested with Vitest, documented in Storybook 8 autodoc, and built with CSS Variables mode.',
-      src: canonicalImagePaths.highlight.bestPracticesAndDocumentation[0],
+      media: canonicalImagePaths.highlight.bestPracticesAndDocumentation[0],
     },
     {
-      headline: 'Framework-agnostic React library',
-      detail:
+      title: 'Framework-agnostic React library',
+      description:
         'A framework-agnostic React component library with zero MUI dependency. React 19, TypeScript strict mode, asChild composition via @radix-ui/react-slot, and CSS Custom Properties for theming. Clean ESM + CJS build via tsup.',
-      src: canonicalImagePaths.highlight.bestPracticesAndDocumentation[1],
+      media: canonicalImagePaths.highlight.bestPracticesAndDocumentation[1],
     },
     {
-      headline: 'Typed sections data SDK',
-      detail:
+      title: 'Typed sections data SDK',
+      description:
         'The sections-api pattern extracted as a standalone npm package. Typed interfaces, pure utility helpers, and generic sample data. Any consuming app installs it, wires up a data provider, and becomes a pure renderer with no hardcoded content.',
-      src: canonicalImagePaths.highlight.bestPracticesAndDocumentation[2],
+      media: canonicalImagePaths.highlight.bestPracticesAndDocumentation[2],
     },
     {
-      headline: 'Quality gate before every push',
-      detail:
+      title: 'Quality gate before every push',
+      description:
         'A six-step automated quality gate runs before every push and in GitHub Actions CI: Prettier formatting, ESLint, TypeScript strict-mode type check, Vitest unit tests, tsup production build, and a full Storybook build. Broken code does not reach main.',
-      src: canonicalImagePaths.highlight.bestPracticesAndDocumentation[3],
+      media: canonicalImagePaths.highlight.bestPracticesAndDocumentation[3],
     },
     {
-      headline: 'MIT licensed from scratch',
-      detail:
+      title: 'MIT licensed from scratch',
+      description:
         'Every component across all three packages is written from scratch under the MIT licence — no extracted theme code, no proprietary dependencies. The copyright boundary is intentional: these libraries are safe for anyone to install and use.',
-      src: canonicalImagePaths.highlight.bestPracticesAndDocumentation[4],
+      media: canonicalImagePaths.highlight.bestPracticesAndDocumentation[4],
     },
   ],
 };
@@ -482,7 +482,7 @@ const itemWithNoImage: FeatureFlowItem = {
     { value: '99%', label: 'Test coverage' },
   ],
   highlightCards: [
-    { headline: 'Adopted across 6 teams', detail: 'Rolled out with zero breaking changes.' },
+    { title: 'Adopted across 6 teams', description: 'Rolled out with zero breaking changes.' },
   ],
 };
 
@@ -500,7 +500,7 @@ const itemWithNoTechnologies: FeatureFlowItem = {
     { value: '4', label: 'Incidents resolved' },
   ],
   highlightCards: [
-    { headline: 'Zero-downtime deploys', detail: 'Rolling deploys with automatic rollback.' },
+    { title: 'Zero-downtime deploys', description: 'Rolling deploys with automatic rollback.' },
   ],
 };
 
@@ -515,7 +515,7 @@ const itemWithNoMetrics: FeatureFlowItem = {
     'chips and highlight cards without a metrics grid above the description.',
   technologies: [{ name: 'Storybook', icon: 'logos:storybook-icon' }],
   highlightCards: [
-    { headline: 'One visual language', detail: 'A single token set drives every surface.' },
+    { title: 'One visual language', description: 'A single token set drives every surface.' },
   ],
 };
 
@@ -550,7 +550,7 @@ const itemWithVeryLongDescription: FeatureFlowItem = {
   technologies: [{ name: 'TypeScript', icon: 'logos:typescript-icon' }],
   metrics: [{ value: '6', label: 'Paragraphs' }],
   highlightCards: [
-    { headline: 'Still readable', detail: 'Long-form prose should never break the layout.' },
+    { title: 'Still readable', description: 'Long-form prose should never break the layout.' },
   ],
 };
 

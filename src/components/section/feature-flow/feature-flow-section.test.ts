@@ -107,7 +107,7 @@ const fullItem: FeatureFlowItem = {
   imgUrl: ['/design-1.png', '/design-2.png'],
   metrics: [{ value: '20+', label: 'Components' }],
   technologies: [{ name: 'React', icon: 'logos:react' }],
-  highlightCards: [{ headline: 'Shipped fast', detail: 'Under a month.' }],
+  highlightCards: [{ title: 'Shipped fast', description: 'Under a month.' }],
 };
 
 const secondItem: FeatureFlowItem = {
@@ -311,6 +311,53 @@ describe('FeatureFlowSection — click-to-expand', () => {
     expect(div.querySelector('[aria-label="Section navigation"]')).toBeNull();
     cleanup();
   });
+
+  // Regression: without this, the main grid's last row sits flush against
+  // the detail panel's border-top — detailPanelSx's own `py` only pushes the
+  // panel's *content* down from that border, never the border away from
+  // whatever precedes it.
+  it('adds bottom padding to the main grid only once a detail panel is expanded', () => {
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    const grid = () =>
+      div.querySelector('button[aria-pressed]')?.closest('.MuiGrid-container') as HTMLElement;
+
+    expect(getComputedStyle(grid()).paddingBottom).toBe('0px');
+
+    act(() =>
+      div
+        .querySelector('button[aria-pressed]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    );
+
+    expect(getComputedStyle(grid()).paddingBottom).not.toBe('0px');
+    cleanup();
+  });
+
+  // Regression: featureFlowRootSx's own pb gives the section breathing room
+  // after the row list/image when nothing is expanded. Once a detail panel
+  // renders below that, detailPanelSx's own py already provides equivalent
+  // space after it — without zeroing featureFlowRootSx's pb for that state,
+  // the section would double up on bottom space past the panel/sub-nav.
+  it("reduces the outer section's own bottom padding to a fixed value once a detail panel is expanded", () => {
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    const section = () => div.querySelector('section') as HTMLElement;
+    const before = getComputedStyle(section()).paddingBottom;
+
+    act(() =>
+      div
+        .querySelector('button[aria-pressed]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    );
+
+    const after = getComputedStyle(section()).paddingBottom;
+    // Flat (non-responsive) once expanded, unlike the responsive resting
+    // value — theme.spacing(10) regardless of viewport breakpoint. jsdom
+    // doesn't resolve calc()/custom-property values, so this checks the
+    // unresolved expression rather than a pixel value.
+    expect(after).toBe('calc(10 * var(--mui-spacing))');
+    expect(after).not.toBe(before);
+    cleanup();
+  });
 });
 
 // ----------------------------------------------------------------------
@@ -435,8 +482,14 @@ describe('FeatureFlowSection — floating sub-nav', () => {
     // restoring 3 children — but `layout` stays on the div that actually
     // changes height, so #177's smooth-transition behavior is unaffected;
     // FloatingSubNav's own zero-height sticky wrapper never contributed to
-    // that measured height either way.
-    expect(section?.children.length).toBe(3);
+    // that measured height either way. `<section>` also carries
+    // `BasicSection`'s own decorative elements as additional direct
+    // children (all `aria-hidden="true"`) since #193/#198's follow-up —
+    // filter those out to count only real content children.
+    const contentChildren = Array.from(section?.children ?? []).filter(
+      (child) => child.getAttribute('aria-hidden') !== 'true'
+    );
+    expect(contentChildren.length).toBe(3);
 
     cleanup();
   });
@@ -553,6 +606,62 @@ describe('FeatureFlowSection — image preloading', () => {
     expect(preloadHrefs).toEqual(
       expect.arrayContaining(['/design-1.png', '/design-2.png', '/perf-1.png', '/base.png'])
     );
+    cleanup();
+  });
+});
+
+// ----------------------------------------------------------------------
+
+describe('FeatureFlowSection — renderRightPanel', () => {
+  it('renders the default FeatureFlowImageColumn when renderRightPanel is omitted', () => {
+    const { div, cleanup } = mount({ items: [fullItem], image: baseImage });
+    expect(div.querySelector('img')).not.toBeNull();
+    cleanup();
+  });
+
+  it('renders renderRightPanel output instead of the default image column when provided', () => {
+    const renderRightPanel = vi.fn(() => createElement('span', null, 'Custom panel'));
+    const { div, cleanup } = mount({
+      items: [fullItem, secondItem],
+      image: baseImage,
+      renderRightPanel,
+    });
+
+    expect(div.textContent).toContain('Custom panel');
+    expect(div.querySelector('img[fetchpriority]')).toBeNull();
+    cleanup();
+  });
+
+  it('calls renderRightPanel with the active item and whether it is expanded', () => {
+    const renderRightPanel = vi.fn(() => null);
+    const { div, cleanup } = mount({
+      items: [fullItem, secondItem],
+      image: baseImage,
+      renderRightPanel,
+    });
+
+    expect(renderRightPanel).toHaveBeenCalledWith(fullItem, false);
+
+    const button = div.querySelector('button[aria-pressed]');
+    act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+
+    expect(renderRightPanel).toHaveBeenLastCalledWith(fullItem, true);
+    cleanup();
+  });
+
+  it('reflects hover in the active item passed to renderRightPanel', () => {
+    const renderRightPanel = vi.fn(() => null);
+    const { div, cleanup } = mount({
+      items: [fullItem, secondItem],
+      image: baseImage,
+      renderRightPanel,
+    });
+
+    const buttons = Array.from(div.querySelectorAll('button[aria-pressed]'));
+    const secondButton = buttons.find((el) => el.textContent?.includes('Performance'));
+    act(() => secondButton?.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })));
+
+    expect(renderRightPanel).toHaveBeenLastCalledWith(secondItem, false);
     cleanup();
   });
 });

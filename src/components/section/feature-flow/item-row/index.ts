@@ -1,2 +1,2 @@
-export * from './feature-flow-item-row';
-export * from './types';
+export { FeatureFlowItemRow } from './feature-flow-item-row';
+export type { FeatureFlowItemRowProps } from './types';

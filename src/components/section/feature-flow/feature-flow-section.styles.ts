@@ -23,12 +23,23 @@ const selectedActiveShadow = (channel: string, innerAlpha: number, outerAlpha: n
 
 // ----------------------------------------------------------------------
 
-/** Root `<section>` — clips horizontal overflow without creating a scroll container. */
-export const featureFlowRootSx: SxProps<Theme> = {
-  overflowX: 'clip',
-  position: 'relative',
-  py: { xs: 10, md: 20 },
-};
+/**
+ * Root `<section>` additions on top of `BasicSection`'s own base
+ * (`position: relative`, `overflowX: clip` — no need to repeat those here).
+ *
+ * `pb` drops to a fixed, smaller value while a detail panel is expanded:
+ * `detailPanelSx`'s own `py` already gives space after the panel/sub-nav
+ * that renders below the main grid in that state, so the section's own
+ * full (responsive) bottom padding would just double up past it. Computed
+ * directly here (one set of rules) rather than layered on as a separate
+ * `sx` array entry meant to out-cascade this — that relies on
+ * array/insertion order beating a same-specificity responsive rule, which
+ * isn't guaranteed.
+ */
+export const featureFlowRootSx = (isExpanded: boolean): SxProps<Theme> => ({
+  pt: { xs: 10, md: 20 },
+  pb: isExpanded ? 10 : { xs: 10, md: 20 },
+});
 
 /**
  * The sticky image column's card — palette-tinted drop shadow, softened for dark mode.
@@ -59,22 +70,24 @@ export const detailPanelSx: SxProps<Theme> = {
 };
 
 /**
- * One item row in the description column.
+ * One item row in the description column. Every row is a real, focusable
+ * `ButtonBase` regardless of `expandable` (see #198) — this only gates the
+ * *visual* treatment:
  *
- * - `interactive: false` (no expansion data): quiet, no hover/press feedback, no cursor pointer.
- * - Non-selected, interactive: fades on hover; brightens fully when it's the hovered/active item.
+ * - `expandable: false` (no expansion data): quiet, no hover/press feedback, no cursor pointer.
+ * - Non-selected, expandable: fades on hover; brightens fully when it's the hovered/active item.
  * - Selected (last-clicked) item: persistent elevated card, regardless of hover.
  * - Expanded item: a left inset accent shows its detail panel is open.
  */
 export const featureFlowItemSx =
-  ({ isSelected, isActive, isExpanded, interactive }: FeatureFlowItemButtonState): SxProps<Theme> =>
+  ({ isSelected, isActive, isExpanded, expandable }: FeatureFlowItemButtonState): SxProps<Theme> =>
   (theme) => ({
     gap: 2,
     display: 'flex',
     alignItems: 'flex-start',
     textAlign: 'left',
     width: '100%',
-    cursor: interactive ? 'pointer' : 'default',
+    cursor: expandable ? 'pointer' : 'default',
     borderRadius: 1.5,
     py: 3,
     px: 2.5,
@@ -89,7 +102,7 @@ export const featureFlowItemSx =
       outline: `2px dashed ${theme.vars!.palette.primary.main}`,
       outlineOffset: 2,
     },
-    ...(interactive &&
+    ...(expandable &&
       !isSelected && {
         // `!important` is required here: this row renders as `component={m.button}`
         // with `variants={fade('inUp', …)}` for its entrance animation, and once
@@ -106,12 +119,12 @@ export const featureFlowItemSx =
           bgcolor: channelAlpha(GREY_500_CHANNEL, 0.12),
         },
       }),
-    ...(interactive &&
+    ...(expandable &&
       !isSelected &&
       isActive && {
         opacity: 1,
       }),
-    ...(interactive &&
+    ...(expandable &&
       isSelected && {
         color: 'text.primary',
         bgcolor: 'background.paper',
@@ -134,7 +147,7 @@ export const featureFlowItemSx =
           },
         }),
       }),
-    ...(interactive &&
+    ...(expandable &&
       isExpanded && {
         borderColor: channelAlpha('var(--mui-palette-primary-mainChannel)', 0.24),
         boxShadow: isSelected
@@ -270,7 +283,7 @@ export const highlightControlsRowSx: SxProps<Theme> = {
   gap: 1,
 };
 
-/** Detail text under the headline — slightly translucent white, matches the scrim's dark backdrop. */
+/** Description text under the title — slightly translucent white, matches the scrim's dark backdrop. */
 export const highlightDetailTextSx: SxProps<Theme> = {
   color: channelAlpha(COMMON_WHITE_CHANNEL, 0.9),
   lineHeight: 1.7,

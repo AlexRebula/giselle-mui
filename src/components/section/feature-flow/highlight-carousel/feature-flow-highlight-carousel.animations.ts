@@ -2,11 +2,11 @@ import type { Variants } from 'framer-motion';
 
 // ----------------------------------------------------------------------
 
-/** Default slide distance (px) for the headline/detail text's directional enter/exit. */
+/** Default slide distance (px) for the title/description text's directional enter/exit. */
 export const HIGHLIGHT_TEXT_SLIDE_DISTANCE = 24;
 
 /**
- * Directional slide-in variants for the headline/detail text. `custom` is
+ * Directional slide-in variants for the title/description text. `custom` is
  * the navigation step (`1` next, `-1` previous): text enters from the side
  * matching that step and exits toward the opposite side. `AnimatePresence`'s
  * own `custom` prop (set where this is used) forwards the latest step to the

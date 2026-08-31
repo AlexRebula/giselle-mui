@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
@@ -33,7 +34,7 @@ export type { FeatureFlowHighlightCarouselProps } from './types';
  * item's `highlightCards`. Not exported from the package barrel: it is an
  * implementation detail of `FeatureFlowSection`'s detail panel.
  *
- * Images crossfade only (never slide); the headline/detail text below slides
+ * Images crossfade only (never slide); the title/description text below slides
  * in directionally with the selected slide. A fixed gradient scrim sits
  * above the images so text stays legible regardless of slide content.
  */
@@ -57,16 +58,16 @@ export const FeatureFlowHighlightCarousel = React.forwardRef<
   return (
     <Box ref={ref} sx={[highlightCarouselRootSx, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
       {/* Images: absolutely stacked, crossfade only — never slide.
-          Purely decorative backdrop: the headline/detail below already
+          Purely decorative backdrop: the title/description below already
           convey the same content as real text, so every frame (including
           the active one) is aria-hidden to avoid a duplicate announcement. */}
       {cards.map((card, index) => (
         <Box
-          key={card.headline}
+          key={card.title}
           component="img"
           alt=""
           aria-hidden="true"
-          src={card.src ?? ''}
+          src={card.media ?? ''}
           loading={index === selectedIndex ? 'eager' : 'lazy'}
           sx={highlightSlideImageSx(index === selectedIndex)}
         />
@@ -89,11 +90,20 @@ export const FeatureFlowHighlightCarousel = React.forwardRef<
             transition={{ duration: 0.28, ease: 'easeOut' }}
           >
             <Typography variant="h4" sx={{ mb: 1 }}>
-              {selectedCard?.headline}
+              {selectedCard?.title}
             </Typography>
             <Typography variant="body1" sx={highlightDetailTextSx}>
-              {selectedCard?.detail}
+              {selectedCard?.description}
             </Typography>
+            {selectedCard?.href && (
+              <Link
+                href={selectedCard.href}
+                variant="body2"
+                sx={{ mt: 1, display: 'inline-block', color: 'inherit' }}
+              >
+                Learn more
+              </Link>
+            )}
           </m.div>
         </AnimatePresence>
       </Box>
