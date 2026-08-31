@@ -45,7 +45,6 @@ export const FeatureFlowItemRow = React.forwardRef<HTMLButtonElement, FeatureFlo
         ref={ref}
         disableRipple
         type="button"
-        nativeButton
         aria-pressed={expandable ? isSelected : undefined}
         component={m.button}
         variants={fade('inUp', { distance: 24 })}
