@@ -7,6 +7,7 @@ import { act } from 'react';
 import { GiselleThemeProvider } from '../../../theming/theme-provider/giselle/giselle';
 import { renderWithTheme } from '../../../../test-utils';
 import { BasicSection } from './basic-section';
+import type { DecorationElement } from './types';
 
 // ----------------------------------------------------------------------
 
@@ -50,15 +51,52 @@ describe('BasicSection', () => {
     div.remove();
   });
 
-  it('renders decoration by default', () => {
+  it('renders the canonical frame by default', () => {
     const html = renderWithTheme(createElement(BasicSection, null, 'content'));
     expect(html).toContain('<svg');
   });
 
-  it('omits decoration when decorated is false', () => {
+  it('omits all decoration when decoration is false', () => {
     const html = renderWithTheme(
-      createElement(BasicSection, { decorated: false, children: 'content' })
+      createElement(BasicSection, { decoration: false, children: 'content' })
     );
     expect(html).not.toContain('<svg');
+    expect(html).not.toContain('aria-hidden');
+  });
+
+  it('renders exactly the custom set of decoration elements passed as an array', () => {
+    const decoration: DecorationElement[] = [
+      { kind: 'corner-x', sx: { top: -8, left: -8 } },
+      { kind: 'dot', sx: { top: 20, left: 20 } },
+    ];
+    const html = renderWithTheme(createElement(BasicSection, { decoration, children: 'content' }));
+
+    // 1 <svg> for the corner-x, plus a non-svg dot: exactly one svg element.
+    expect(html.match(/<svg/g)).toHaveLength(1);
+  });
+
+  it('renders no decoration for an empty array, distinct from the false shorthand', () => {
+    const html = renderWithTheme(
+      createElement(BasicSection, { decoration: [], children: 'content' })
+    );
+    expect(html).not.toContain('<svg');
+  });
+
+  it('renders a triangle-left and triangle-down accent with their own sx', () => {
+    const decoration: DecorationElement[] = [
+      { kind: 'triangle-left', sx: { top: 10, left: 10 } },
+      { kind: 'triangle-down', sx: { top: 30, left: 30 } },
+    ];
+    const html = renderWithTheme(createElement(BasicSection, { decoration, children: 'content' }));
+    expect(html.match(/<svg/g)).toHaveLength(2);
+  });
+
+  it('renders a vertical border-line distinctly from a horizontal one', () => {
+    const decoration: DecorationElement[] = [
+      { kind: 'border-line', sx: { top: 0, left: 0 } },
+      { kind: 'border-line', vertical: true, sx: { top: 0, left: 40 } },
+    ];
+    const html = renderWithTheme(createElement(BasicSection, { decoration, children: 'content' }));
+    expect(html).toContain('aria-hidden="true"');
   });
 });
