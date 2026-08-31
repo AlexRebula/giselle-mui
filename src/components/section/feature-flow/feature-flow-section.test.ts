@@ -709,3 +709,24 @@ describe('FeatureFlowSection — renderHighlightPanel', () => {
     cleanup();
   });
 });
+
+// ----------------------------------------------------------------------
+
+describe('FeatureFlowSection — itemDetailSx', () => {
+  it("merges onto the expanded detail panel's own background, overriding detailPanelSx's default tint", () => {
+    const { div, cleanup } = mount({
+      items: [fullItem],
+      image: baseImage,
+      itemDetailSx: { bgcolor: 'rgb(1, 2, 3)' },
+    });
+    const button = div.querySelector('button[aria-pressed]');
+    act(() => button?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+
+    const candidates = [...div.querySelectorAll<HTMLElement>('[class*="MuiBox-root"]')];
+    const matched = candidates.some(
+      (el) => getComputedStyle(el).backgroundColor === 'rgb(1, 2, 3)'
+    );
+    expect(matched).toBe(true);
+    cleanup();
+  });
+});

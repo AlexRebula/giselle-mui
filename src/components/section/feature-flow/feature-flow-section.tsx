@@ -69,6 +69,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
       decoration = true,
       renderRightPanel,
       renderHighlightPanel,
+      itemDetailSx,
       sx,
       ...other
     },
@@ -320,6 +321,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
                 }
               }}
               renderHighlightPanel={renderHighlightPanel}
+              sx={itemDetailSx}
             />
 
             {/* FloatingSubNav is deliberately a sibling of FeatureFlowItemDetail,
