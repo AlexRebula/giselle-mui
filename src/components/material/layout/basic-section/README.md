@@ -21,11 +21,15 @@ lines), not a port of that code.
 
 ## Planned API
 
-| Prop         | Type                             | Default | Description                                                             |
-| ------------ | -------------------------------- | ------- | ------------------------------------------------------------------------ |
-| `children`   | `React.ReactNode`                | —       | Required. Section content.                                              |
-| `decoration` | `boolean \| DecorationElement[]` | `true`  | `true`: the canonical frame. `false`: none. Array: a fully custom set.  |
-| `sx`         | `SxProps<Theme>`                 | —       | Forwarded to the root `<section>`.                                      |
+| Prop                    | Type                             | Default                       | Description                                                             |
+| ----------------------- | -------------------------------- | ------------------------------ | ------------------------------------------------------------------------ |
+| `children`              | `React.ReactNode`                | —                               | Required. Wrapped in `SectionContainer` — see Design decisions.        |
+| `decoration`             | `boolean \| DecorationElement[]` | `true`                          | `true`: the canonical frame. `false`: none. Array: a fully custom set.  |
+| `containerMaxWidth`      | `ContainerProps['maxWidth']`     | `SectionContainer`'s own `'lg'` | Forwarded to the inner `SectionContainer`.                              |
+| `containerPy`            | `SectionContainerProps['py']`    | `SectionContainer`'s own `{xs:8,md:12}` | Forwarded to the inner `SectionContainer`.                      |
+| `containerSx`            | `SxProps<Theme>`                 | —                               | Forwarded to the inner `SectionContainer`.                              |
+| `unconstrainedChildren`  | `React.ReactNode`                | —                               | Rendered as a sibling of `SectionContainer`, inside `<section>` but outside the width-constrained container — for content with its own internal `Container` (would double up on padding otherwise) or that needs the full section width. |
+| `sx`                    | `SxProps<Theme>`                 | —                               | Forwarded to the root `<section>`.                                      |
 
 `DecorationElement` is `{ kind, vertical?, sx? }`, where `kind` is one of
 `'corner-plus' | 'corner-x' | 'border-line' | 'triangle-left' | 'triangle-down' | 'dot'`.

@@ -99,4 +99,78 @@ describe('BasicSection', () => {
     const html = renderWithTheme(createElement(BasicSection, { decoration, children: 'content' }));
     expect(html).toContain('aria-hidden="true"');
   });
+
+  it('wraps children in a SectionContainer', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+
+    act(() => {
+      root.render(
+        createElement(
+          GiselleThemeProvider,
+          null,
+          createElement(BasicSection, { children: createElement('span', null, 'content') })
+        )
+      );
+    });
+
+    const container = div.querySelector('.MuiContainer-root');
+    expect(container?.textContent).toBe('content');
+
+    act(() => root.unmount());
+    div.remove();
+  });
+
+  it('forwards containerMaxWidth to the inner SectionContainer', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+
+    act(() => {
+      root.render(
+        createElement(
+          GiselleThemeProvider,
+          null,
+          createElement(BasicSection, { containerMaxWidth: 'sm', children: 'content' })
+        )
+      );
+    });
+
+    expect(div.querySelector('.MuiContainer-maxWidthSm')).not.toBeNull();
+
+    act(() => root.unmount());
+    div.remove();
+  });
+
+  it('renders unconstrainedChildren as a sibling of the SectionContainer, not nested inside it', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+
+    act(() => {
+      root.render(
+        createElement(
+          GiselleThemeProvider,
+          null,
+          createElement(BasicSection, {
+            children: 'content',
+            unconstrainedChildren: createElement(
+              'div',
+              { 'data-testid': 'unconstrained' },
+              'outside'
+            ),
+          })
+        )
+      );
+    });
+
+    const unconstrained = div.querySelector('[data-testid="unconstrained"]');
+    const container = div.querySelector('.MuiContainer-root');
+    expect(unconstrained).not.toBeNull();
+    expect(container?.contains(unconstrained)).toBe(false);
+
+    act(() => root.unmount());
+    div.remove();
+  });
 });

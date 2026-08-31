@@ -9,8 +9,11 @@ with a `decoration` prop (`boolean | DecorationElement[]`, default `true`) that 
 renders the canonical frame (two corner plus-marks, three border lines), nothing, or a
 fully custom array of decorative elements (`corner-plus`, `corner-x`, `border-line`,
 `triangle-left`, `triangle-down`, `dot`) — each positioned via its own `sx`. All
-decoration is visible only at >=1440px viewport width. `FeatureFlowSection` composes
-this as its own root section.
+decoration is visible only at >=1440px viewport width. `children` is always wrapped in
+`SectionContainer` (`containerMaxWidth`/`containerPy`/`containerSx` forward to it);
+`unconstrainedChildren` renders as a sibling of that container for content that must not
+be nested inside another `Container`. `FeatureFlowSection` composes this as its own root
+section.
 
 ## Open improvements
 
@@ -40,3 +43,5 @@ this as its own root section.
 | Ported `corner-x`, `triangle-left`, `triangle-down`, `dot` kinds (in addition to the original `corner-plus`/`border-line`)   | 31 Aug 2026 |
 | Atomic stories (one per `DecorationElement` kind) and composed stories reproducing the FAQ, pricing, and hugepack real-world patterns | 31 Aug 2026 |
 | `FeatureFlowSection` composes `BasicSection` as its own root, replacing its local `<Box component="section">`               | 31 Aug 2026 |
+| Enforced `SectionContainer` internally (`containerMaxWidth`/`containerPy`/`containerSx` pass-through) — the component `SectionContainer` was built to solve had zero real consumers before this | 31 Aug 2026 |
+| Added `unconstrainedChildren`, after discovering `FeatureFlowItemDetail`'s own internal `Container` would otherwise double-nest inside the newly-enforced `SectionContainer` | 31 Aug 2026 |

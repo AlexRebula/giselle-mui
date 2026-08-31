@@ -52,4 +52,5 @@ section-container/
 
 - `SectionTitle` — heading group (caption + h2 + gradient + description) typically rendered
   as the first child of a `SectionContainer`.
-- `TwoColumnShowcaseRow` — uses `SectionContainer` for its outer wrapper.
+- `BasicSection` — wraps its `children` in this unconditionally, giving every section
+  built on it the same content width and vertical rhythm for free.

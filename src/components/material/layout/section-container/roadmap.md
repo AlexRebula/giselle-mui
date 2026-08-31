@@ -1,12 +1,17 @@
 # SectionContainer — Roadmap
 
-> Last updated: 14 May 2026
+> Last updated: 31 Aug 2026
 
 ## Status
 
 `stable`
 
 Fully audited. MUI `Container` with consistent vertical padding and optional title/subtitle slot.
+As of 31 Aug 2026, actually consumed: `BasicSection` wraps its `children` in this
+unconditionally (`containerMaxWidth`/`containerPy`/`containerSx` forward to it) — before
+that, this component had zero real consumers despite being marked stable and fully
+audited (its own README's claim that `TwoColumnShowcaseRow` used it was stale; that
+component doesn't import `Container` at all).
 
 ## Open improvements
 

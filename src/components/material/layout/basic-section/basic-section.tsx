@@ -2,6 +2,7 @@ import React from 'react';
 
 import Box from '@mui/material/Box';
 
+import { SectionContainer } from '../section-container';
 import {
   CANONICAL_FRAME,
   basicSectionRootSx,
@@ -93,28 +94,41 @@ function resolveDecoration(decoration: boolean | DecorationElement[]): Decoratio
 // ----------------------------------------------------------------------
 
 /**
- * `BasicSection` — a section wrapper providing a consistent decorative frame
- * (corner marks, border lines, and other subtle accents), configurable via
- * `decoration`. `true` (the default) renders the canonical frame every
- * section used before this component existed; `false` renders none; an
- * array of `DecorationElement`s renders a fully custom set — real usage
- * across the sections this was extracted from never shares fixed offsets,
- * so each element positions itself via its own `sx`.
+ * `BasicSection` — the canonical section wrapper: a consistent decorative
+ * frame (corner marks, border lines, and other subtle accents, configurable
+ * via `decoration`) around a `SectionContainer`, giving every section built
+ * on it the same content width and vertical rhythm for free. `decoration`:
+ * `true` (the default) renders the canonical frame every section used
+ * before this component existed; `false` renders none; an array of
+ * `DecorationElement`s renders a fully custom set — real usage across the
+ * sections this was extracted from never shares fixed offsets, so each
+ * element positions itself via its own `sx`.
  *
- * Composes with, rather than replaces, `SectionContainer` (the spacing-only
- * shell) — nest a `SectionContainer` (or a component with its own internal
- * `Container`, like `FeatureFlowSection`) inside `BasicSection` for the full
- * standard treatment.
+ * `SectionContainer` is not optional here — every section previously
+ * hand-rolled its own `Container` + padding (see `SectionContainer`'s own
+ * README), which is precisely the inconsistency this component exists to
+ * remove. Use `containerMaxWidth`/`containerPy`/`containerSx` for the rare
+ * section that needs different container behaviour, rather than reaching
+ * around `BasicSection` to add a second `Container` inside it.
  *
  * @example
  * ```tsx
  * <BasicSection>
- *   <FeatureFlowSection {...expertiseAreas} />
+ *   <Typography variant="h2">Section heading</Typography>
  * </BasicSection>
  * ```
  */
 export const BasicSection = React.forwardRef<HTMLElement, BasicSectionProps>(function BasicSection(
-  { children, decoration = true, sx, ...other },
+  {
+    children,
+    decoration = true,
+    containerMaxWidth,
+    containerPy,
+    containerSx,
+    unconstrainedChildren,
+    sx,
+    ...other
+  },
   ref
 ) {
   const elements = resolveDecoration(decoration);
@@ -129,7 +143,10 @@ export const BasicSection = React.forwardRef<HTMLElement, BasicSectionProps>(fun
       {elements.map((element, index) => (
         <Decoration key={index} {...element} />
       ))}
-      {children}
+      <SectionContainer maxWidth={containerMaxWidth} py={containerPy} sx={containerSx}>
+        {children}
+      </SectionContainer>
+      {unconstrainedChildren}
     </Box>
   );
 });
