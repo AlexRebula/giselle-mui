@@ -1,2 +1,2 @@
-export * from './feature-flow-item-detail';
-export * from './types';
+export { FeatureFlowItemDetail } from './feature-flow-item-detail';
+export type { FeatureFlowItemDetailProps } from './types';

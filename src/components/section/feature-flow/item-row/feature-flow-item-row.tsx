@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { m } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -37,21 +37,29 @@ export const FeatureFlowItemRow = React.forwardRef<HTMLButtonElement, FeatureFlo
       onHover,
       onFocus,
       onSelect,
+      sx,
+      ...other
     },
     ref
   ) {
+    const reducedMotion = useReducedMotion();
+
     return (
       <ButtonBase
+        {...other}
         ref={ref}
         disableRipple
         type="button"
         aria-pressed={expandable ? isSelected : undefined}
         component={m.button}
-        variants={fade('inUp', { distance: 24 })}
+        variants={fade('inUp', { distance: reducedMotion ? 0 : 24 })}
         onMouseEnter={onHover}
         onFocus={onFocus}
         onClick={expandable ? onSelect : undefined}
-        sx={featureFlowItemSx({ isSelected, isActive, isExpanded, expandable })}
+        sx={[
+          featureFlowItemSx({ isSelected, isActive, isExpanded, expandable }),
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
       >
         <GiselleIcon icon={icon} width={48} aria-hidden="true" />
         <Stack spacing={1} sx={{ flex: 1, minWidth: 0 }}>

@@ -1,12 +1,22 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
-import { createElement, act } from 'react';
+import { createElement, createRef, act } from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { renderWithTheme } from '../../../../test-utils';
 import { GiselleThemeProvider } from '../../../theming/theme-provider/giselle/giselle';
 import { FeatureFlowItemDetail } from './feature-flow-item-detail';
 import type { FeatureFlowItem } from '../types';
+import type * as FramerMotionModule from 'framer-motion';
+
+// `useReducedMotion` (framer-motion, an external module boundary — not this
+// package's own code) is spied on with its real implementation preserved, so
+// every other test in this file still exercises real motion behaviour. Only
+// the reduced-motion test below overrides its return value.
+vi.mock('framer-motion', async (importOriginal) => {
+  const actual = await importOriginal<typeof FramerMotionModule>();
+  return { ...actual, useReducedMotion: vi.fn(actual.useReducedMotion) };
+});
 
 const baseItem: FeatureFlowItem = {
   id: 'a',
@@ -210,6 +220,52 @@ describe('FeatureFlowItemDetail', () => {
     });
 
     expect(onNodeRef).toHaveBeenCalledWith('a', null);
+
+    act(() => root.unmount());
+    div.remove();
+  });
+
+  it('forwards ref to the outer, always-mounted wrapper', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+    const ref = createRef<HTMLDivElement>();
+
+    act(() => {
+      root.render(
+        createElement(GiselleThemeProvider, {
+          defaultMode: 'light',
+          children: createElement(FeatureFlowItemDetail, { item: baseItem, ref }),
+        })
+      );
+    });
+
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+
+    act(() => root.unmount());
+    div.remove();
+  });
+
+  it('reads the reduced-motion preference (used to zero the enter/exit slide distance)', async () => {
+    const { useReducedMotion } = await import('framer-motion');
+    const spy = useReducedMotion as unknown as ReturnType<typeof vi.fn>;
+    spy.mockClear();
+    spy.mockReturnValueOnce(true);
+
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const root = ReactDOM.createRoot(div);
+
+    act(() => {
+      root.render(
+        createElement(GiselleThemeProvider, {
+          defaultMode: 'light',
+          children: createElement(FeatureFlowItemDetail, { item: baseItem }),
+        })
+      );
+    });
+
+    expect(useReducedMotion).toHaveBeenCalled();
 
     act(() => root.unmount());
     div.remove();

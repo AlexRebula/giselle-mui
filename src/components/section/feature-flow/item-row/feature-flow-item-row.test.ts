@@ -7,6 +7,21 @@ import { renderWithTheme } from '../../../../test-utils';
 import { GiselleThemeProvider } from '../../../theming/theme-provider/giselle/giselle';
 import { FeatureFlowItemRow } from './feature-flow-item-row';
 import type { FeatureFlowItemRowProps } from './types';
+import type * as FramerMotionModule from 'framer-motion';
+
+// `useReducedMotion` (framer-motion, an external module boundary — not this
+// package's own code) is spied on with its real implementation preserved,
+// so every other test in this file still exercises real motion behaviour.
+// Only the reduced-motion test below overrides its return value. A DOM-level
+// check of the resulting inline transform isn't reliable here: rendering
+// `FeatureFlowItemRow` in isolation (without the `MotionViewport`/LazyMotion
+// context it normally sits under) never produces an inline transform style
+// either way — confirmed by probing a bare mount directly — so this checks
+// that the hook is actually read instead.
+vi.mock('framer-motion', async (importOriginal) => {
+  const actual = await importOriginal<typeof FramerMotionModule>();
+  return { ...actual, useReducedMotion: vi.fn(actual.useReducedMotion) };
+});
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +75,25 @@ describe('FeatureFlowItemRow', () => {
     );
     expect(expandableHtml).toContain('<button');
     expect(quietHtml).toContain('<button');
+  });
+
+  it('forwards arbitrary props to the root element', () => {
+    const html = renderWithTheme(
+      createElement(FeatureFlowItemRow, { ...baseProps, 'data-testid': 'item-row' } as never)
+    );
+    expect(html).toContain('data-testid="item-row"');
+  });
+
+  it('reads the reduced-motion preference (used to zero the entrance slide distance)', async () => {
+    const { useReducedMotion } = await import('framer-motion');
+    const spy = useReducedMotion as unknown as ReturnType<typeof vi.fn>;
+    spy.mockClear();
+    spy.mockReturnValueOnce(true);
+
+    const { cleanup } = mount(baseProps);
+
+    expect(useReducedMotion).toHaveBeenCalled();
+    cleanup();
   });
 
   describe('expandable rows', () => {

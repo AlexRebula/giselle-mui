@@ -1,4 +1,6 @@
-import { m, AnimatePresence } from 'framer-motion';
+import React from 'react';
+
+import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -41,109 +43,114 @@ export type { FeatureFlowItemDetailProps } from './types';
  *
  * Left column: icon + title, metrics grid, long description, technology
  * chips. Right column: the highlight-card carousel (when present).
+ *
+ * `ref` is forwarded to the outer `m.div layout` wrapper: the one node that
+ * stays mounted regardless of which item (or none) is currently showing.
+ * This is distinct from `onNodeRef`, which targets the inner, per-item
+ * content `Box` for scroll-into-view purposes — both coexist.
  */
-export function FeatureFlowItemDetail({
-  item,
-  onNodeRef,
-  sx,
-  ...other
-}: FeatureFlowItemDetailProps) {
-  return (
-    <m.div layout transition={DETAIL_PANEL_LAYOUT_TRANSITION}>
-      <AnimatePresence mode="wait">
-        {item && (
-          <m.div
-            key={item.id}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-          >
-            <Box
-              ref={(node: HTMLDivElement | null) => onNodeRef?.(item.id, node)}
-              sx={[detailPanelSx, ...(Array.isArray(sx) ? sx : [sx])]}
-              {...other}
+export const FeatureFlowItemDetail = React.forwardRef<HTMLDivElement, FeatureFlowItemDetailProps>(
+  function FeatureFlowItemDetail({ item, onNodeRef, sx, ...other }, ref) {
+    const reducedMotion = useReducedMotion();
+    const slideDistance = reducedMotion ? 0 : 8;
+
+    return (
+      <m.div ref={ref} layout transition={DETAIL_PANEL_LAYOUT_TRANSITION}>
+        <AnimatePresence mode="wait">
+          {item && (
+            <m.div
+              key={item.id}
+              initial={{ opacity: 0, y: slideDistance }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -slideDistance }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
             >
-              <Container>
-                <Grid container spacing={{ xs: 4, md: 8 }}>
-                  <Grid size={{ xs: 12, md: 6 }}>
-                    <Stack spacing={4}>
-                      <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-                        <GiselleIcon
-                          icon={item.icon}
-                          width={44}
-                          sx={{ color: 'primary.main' }}
-                          aria-hidden="true"
-                        />
-                        <Typography variant="h3">{item.title}</Typography>
-                      </Stack>
-
-                      {item.metrics?.length ? (
-                        <Box
-                          sx={{
-                            display: 'grid',
-                            gap: 2,
-                            gridTemplateColumns: {
-                              xs: 'repeat(1, 1fr)',
-                              sm: `repeat(${Math.min(item.metrics.length, 3)}, 1fr)`,
-                            },
-                          }}
-                        >
-                          {item.metrics.map(({ value, label, sublabel, icon }) => (
-                            <MetricCard
-                              key={label}
-                              value={value}
-                              label={label}
-                              sublabel={sublabel}
-                              icon={
-                                icon ? (
-                                  <GiselleIcon icon={icon} width={36} aria-hidden="true" />
-                                ) : undefined
-                              }
-                              color="primary"
-                              decoration={<MetricCardDecoration color="primary" />}
-                            />
-                          ))}
-                        </Box>
-                      ) : null}
-
-                      {isRichLongDescription(item) ? (
-                        item.longDescription
-                      ) : (
-                        <Typography
-                          variant="body1"
-                          sx={{ color: 'text.secondary', lineHeight: 1.8 }}
-                        >
-                          {item.longDescription ?? item.description}
-                        </Typography>
-                      )}
-
-                      {item.technologies?.length ? (
-                        <TechIconStrip
-                          heading="Technologies"
-                          centeredWrap={false}
-                          items={item.technologies.map((tech) => ({
-                            label: tech.name,
-                            icon: <GiselleIcon icon={tech.icon} width={32} aria-hidden="true" />,
-                          }))}
-                        />
-                      ) : null}
-                    </Stack>
-                  </Grid>
-
-                  {(item.highlightCards ?? []).length > 0 && (
+              <Box
+                ref={(node: HTMLDivElement | null) => onNodeRef?.(item.id, node)}
+                sx={[detailPanelSx, ...(Array.isArray(sx) ? sx : [sx])]}
+                {...other}
+              >
+                <Container>
+                  <Grid container spacing={{ xs: 4, md: 8 }}>
                     <Grid size={{ xs: 12, md: 6 }}>
-                      <FeatureFlowHighlightCarousel cards={item.highlightCards ?? []} />
+                      <Stack spacing={4}>
+                        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                          <GiselleIcon
+                            icon={item.icon}
+                            width={44}
+                            sx={{ color: 'primary.main' }}
+                            aria-hidden="true"
+                          />
+                          <Typography variant="h3">{item.title}</Typography>
+                        </Stack>
+
+                        {item.metrics?.length ? (
+                          <Box
+                            sx={{
+                              display: 'grid',
+                              gap: 2,
+                              gridTemplateColumns: {
+                                xs: 'repeat(1, 1fr)',
+                                sm: `repeat(${Math.min(item.metrics.length, 3)}, 1fr)`,
+                              },
+                            }}
+                          >
+                            {item.metrics.map(({ value, label, sublabel, icon }) => (
+                              <MetricCard
+                                key={label}
+                                value={value}
+                                label={label}
+                                sublabel={sublabel}
+                                icon={
+                                  icon ? (
+                                    <GiselleIcon icon={icon} width={36} aria-hidden="true" />
+                                  ) : undefined
+                                }
+                                color="primary"
+                                decoration={<MetricCardDecoration color="primary" />}
+                              />
+                            ))}
+                          </Box>
+                        ) : null}
+
+                        {isRichLongDescription(item) ? (
+                          item.longDescription
+                        ) : (
+                          <Typography
+                            variant="body1"
+                            sx={{ color: 'text.secondary', lineHeight: 1.8 }}
+                          >
+                            {item.longDescription ?? item.description}
+                          </Typography>
+                        )}
+
+                        {item.technologies?.length ? (
+                          <TechIconStrip
+                            heading="Technologies"
+                            centeredWrap={false}
+                            items={item.technologies.map((tech) => ({
+                              label: tech.name,
+                              icon: <GiselleIcon icon={tech.icon} width={32} aria-hidden="true" />,
+                            }))}
+                          />
+                        ) : null}
+                      </Stack>
                     </Grid>
-                  )}
-                </Grid>
-              </Container>
-            </Box>
-          </m.div>
-        )}
-      </AnimatePresence>
-    </m.div>
-  );
-}
+
+                    {(item.highlightCards ?? []).length > 0 && (
+                      <Grid size={{ xs: 12, md: 6 }}>
+                        <FeatureFlowHighlightCarousel cards={item.highlightCards ?? []} />
+                      </Grid>
+                    )}
+                  </Grid>
+                </Container>
+              </Box>
+            </m.div>
+          )}
+        </AnimatePresence>
+      </m.div>
+    );
+  }
+);
 
 FeatureFlowItemDetail.displayName = 'FeatureFlowItemDetail';

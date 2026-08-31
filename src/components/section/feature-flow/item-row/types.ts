@@ -1,4 +1,27 @@
-export interface FeatureFlowItemRowProps {
+import type { ComponentPropsWithoutRef } from 'react';
+
+import type { SxProps, Theme } from '@mui/material/styles';
+
+/**
+ * Native button attributes this component's root can safely forward as-is —
+ * everything except event handlers and `title`/`children`. Event handlers
+ * are excluded wholesale, not case-by-case: `component={m.button}` gives the
+ * root framer-motion's own gesture/lifecycle signatures for several
+ * same-named handlers (`onDrag*`, `onAnimationStart`, and more), which
+ * conflict with the native DOM event of the same name. `onFocus`/`onClick`/
+ * `onMouseEnter` are also fully owned already, driven by `onHover`/
+ * `onSelect` instead. `title` is repurposed as this row's own heading text.
+ */
+type SafeButtonProps = Omit<
+  {
+    [
+      K in keyof ComponentPropsWithoutRef<'button'> as K extends `on${string}` ? never : K
+    ]: ComponentPropsWithoutRef<'button'>[K];
+  },
+  'title' | 'children'
+>;
+
+export interface FeatureFlowItemRowProps extends SafeButtonProps {
   /** Solar icon name, rendered at the row's leading edge. */
   icon: string;
   title: string;
@@ -22,4 +45,6 @@ export interface FeatureFlowItemRowProps {
   onFocus: () => void;
   /** Fires on click. Only wired when `expandable` — never called otherwise. */
   onSelect: () => void;
+  /** MUI sx prop: merged with the row's own computed styles. */
+  sx?: SxProps<Theme>;
 }
