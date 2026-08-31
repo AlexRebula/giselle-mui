@@ -340,6 +340,27 @@ Use `DoD (Scenario A)` and `n/12` for sub-components.
 > Scores reflect the state at the cleanup date. Update the date and re-run SonarQube
 > whenever the component is significantly changed.
 
+### Step 14b — Update the repo-wide compliance table (required, added 2026-08-31)
+
+Step 14 records quality status _inside_ the component's own files. It does not, by
+itself, keep `docs/component-compliance.md` (the repo-wide README/JSDoc/Story JSDoc/
+Roadmap compliance table, linked from `docs/README.md` and `AGENTS.md` §2) in sync —
+that required a separate manual step which had never been written down, so the table
+went unmaintained: it was last regenerated 2026-06-14 and had no row at all for
+`FeatureFlowSection` or any of its sub-components, despite them shipping weeks later.
+
+Whenever a component is created, or an existing component's README/roadmap/stories/
+`ref`-forwarding compliance changes:
+
+- [ ] Add or update that component's row in `docs/component-compliance.md` (same layer
+      grouping as its folder; sub-components get their own row, noted as a sub-component
+      of their parent in the Notes column).
+- [ ] If the component doesn't yet have README/roadmap/stories at all (a known,
+      deliberately-deferred gap — e.g. a sub-component scoped out of the current PR),
+      record that honestly with ❌ in the relevant columns and a Notes entry explaining
+      why, rather than omitting the row. A missing row reads as "doesn't exist yet," not
+      "exists and is non-compliant" — the two need different follow-up.
+
 ---
 
 ## Quick reference — files per component folder
