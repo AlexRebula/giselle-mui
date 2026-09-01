@@ -25,6 +25,7 @@ Every component in this library exists because it solves a recurring problem tha
 - **[Naming conventions](./naming-conventions.md)** — Component naming rules; active standard applied to every component.
 - **[PR review workflow](./pr-review-workflow.md)** — PR review process and checklist.
 - **[Component cleanup workflow](./components/cleanup-workflow.md)** — The definition of done checklist, API consistency contract, and Storybook prop-surface guidance.
+- **[Testing](./testing.md)** — jsdom vs real-browser (Playwright) Vitest projects, when each applies, and how to tag a story for real-browser paint-order testing.
 
 ### Development
 
