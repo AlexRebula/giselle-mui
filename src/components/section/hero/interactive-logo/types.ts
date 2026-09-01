@@ -70,37 +70,12 @@ export type InteractiveHeroLogoProps = Omit<
 
 // ----------------------------------------------------------------------
 // Sub-component props
-
-export type OriginalLogoLayerProps = {
-  hoverPhase: HoverPhase;
-  logoFadeTransition: FadeTransition;
-  activeFrame?: string;
-  /** Alt text for the frame `<img>` element. @default 'Logo' */
-  logoAlt?: string;
-  children?: ReactNode;
-  /**
-   * Pass `true` when an artistic logo src is supplied. When `false`, the original logo
-   * layer stays visible at full opacity in the idle phase (no artistic content to show
-   * in its place).
-   * @default false
-   */
-  hasArtisticContent?: boolean;
-};
-
-export type ArtisticLogoLayerProps = {
-  artisticLogoSrc?: string;
-  showArtisticLogo: boolean;
-  logoFadeTransition: FadeTransition;
-  /** Alt text for the artistic logo `<img>` element. @default 'Logo' */
-  logoAlt?: string;
-};
-
-export type PortraitLayerProps = {
-  portraitSrc?: string;
-  portraitAlt: string;
-  showPortrait: boolean;
-  portraitFadeTransition: FadeTransition;
-};
+//
+// `OriginalLogoLayerProps`, `ArtisticLogoLayerProps`, and `PortraitLayerProps` now
+// live in their own subfolder's `types.ts` (see `original-logo-layer/`,
+// `artistic-logo-layer/`, `portrait-layer/`) — each is used by exactly one
+// sub-component. `HoverPhase` and `FadeTransition` above stay here because they
+// are genuinely shared across sub-components and re-exported from the package barrel.
 
 // ----------------------------------------------------------------------
 // Hook

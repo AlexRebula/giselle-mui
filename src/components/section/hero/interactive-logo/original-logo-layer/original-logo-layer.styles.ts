@@ -3,9 +3,16 @@ import type { SxProps, Theme } from '@mui/material/styles';
 // ----------------------------------------------------------------------
 // OriginalLogoLayer sx constants
 //
-// Specific to this layer only — `ArtisticLogoLayer` and `PortraitLayer` each
-// have their own single-image sx already defined in `interactive-logo.styles.ts`
-// (`artisticLogoSx`, `portraitImageSx`); this one has no sibling counterpart.
+// Used only by this layer — not shared with `ArtisticLogoLayer` or `PortraitLayer`.
+
+/** Layer 1 — original logo / animated frame. */
+export const originalLayerSx: SxProps<Theme> = {
+  position: 'relative',
+  zIndex: 1,
+  width: 1,
+  height: 1,
+  willChange: 'transform',
+};
 
 /** The `activeFrame` `<img>` — fills its parent layer box exactly. */
 export const activeFrameImageSx: SxProps<Theme> = {

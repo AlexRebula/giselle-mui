@@ -3,15 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import type { Theme } from '@mui/material/styles';
 
-import {
-  rootBoxSx,
-  artisticLogoSx,
-  originalLayerSx,
-  portraitWrapperSx,
-  portraitImageSx,
-  innerContainerSx,
-  logoStack3dWrapperSx,
-} from './interactive-logo.styles';
+import { rootBoxSx, innerContainerSx, logoStack3dWrapperSx } from './interactive-logo.styles';
 
 // ----------------------------------------------------------------------
 
@@ -42,51 +34,6 @@ describe('rootBoxSx', () => {
 
   it('sets overflow to visible', () => {
     expect(callSx(rootBoxSx('grab')).overflow).toBe('visible');
-  });
-});
-
-describe('artisticLogoSx', () => {
-  it('is positioned absolute', () => {
-    expect(callSx(artisticLogoSx).position).toBe('absolute');
-  });
-
-  it('has zIndex 2', () => {
-    expect(callSx(artisticLogoSx).zIndex).toBe(2);
-  });
-
-  it('has pointerEvents none', () => {
-    expect(callSx(artisticLogoSx).pointerEvents).toBe('none');
-  });
-});
-
-describe('originalLayerSx', () => {
-  it('has zIndex 1', () => {
-    expect(callSx(originalLayerSx).zIndex).toBe(1);
-  });
-
-  it('occupies full width and height', () => {
-    expect(callSx(originalLayerSx).width).toBe(1);
-    expect(callSx(originalLayerSx).height).toBe(1);
-  });
-});
-
-describe('portraitWrapperSx', () => {
-  it('is positioned absolute', () => {
-    expect(callSx(portraitWrapperSx).position).toBe('absolute');
-  });
-
-  it('has zIndex 3 (highest layer)', () => {
-    expect(callSx(portraitWrapperSx).zIndex).toBe(3);
-  });
-
-  it('has pointerEvents none', () => {
-    expect(callSx(portraitWrapperSx).pointerEvents).toBe('none');
-  });
-});
-
-describe('portraitImageSx', () => {
-  it('uses objectFit contain', () => {
-    expect(callSx(portraitImageSx).objectFit).toBe('contain');
   });
 });
 
