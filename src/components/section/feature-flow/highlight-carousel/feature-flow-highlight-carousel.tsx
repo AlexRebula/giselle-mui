@@ -13,10 +13,12 @@ import {
   highlightControlsRowSx,
   highlightDetailTextSx,
   highlightIndexLabelSx,
+  highlightLearnMoreLinkSx,
   highlightScrimSx,
   highlightSlideImageSx,
   highlightTextSlotSx,
-} from '../feature-flow-section.styles';
+  highlightTitleSx,
+} from './feature-flow-highlight-carousel.styles';
 import {
   HIGHLIGHT_TEXT_SLIDE_DISTANCE,
   highlightTextVariants,
@@ -89,18 +91,14 @@ export const FeatureFlowHighlightCarousel = React.forwardRef<
             exit="exit"
             transition={{ duration: 0.28, ease: 'easeOut' }}
           >
-            <Typography variant="h4" sx={{ mb: 1 }}>
+            <Typography variant="h4" sx={highlightTitleSx}>
               {selectedCard?.title}
             </Typography>
             <Typography variant="body1" sx={highlightDetailTextSx}>
               {selectedCard?.description}
             </Typography>
             {selectedCard?.href && (
-              <Link
-                href={selectedCard.href}
-                variant="body2"
-                sx={{ mt: 1, display: 'inline-block', color: 'inherit' }}
-              >
+              <Link href={selectedCard.href} variant="body2" sx={highlightLearnMoreLinkSx}>
                 Learn more
               </Link>
             )}

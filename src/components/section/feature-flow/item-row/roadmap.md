@@ -22,3 +22,4 @@ _None currently._
 | `...other` passthrough (native button attributes, minus repurposed/owned ones) and array-safe `sx` merge                      | 31 Aug 2026 |
 | Entrance slide distance zeroes under `prefers-reduced-motion`, matching `FeatureFlowHighlightCarousel`'s own pattern          | 31 Aug 2026 |
 | Inline `sx` extracted to `feature-flow-item-row.styles.ts` per the zero-tolerance sx policy (`cleanup-workflow.md`)           | 31 Aug 2026 |
+| Entrance fade moved off `ButtonBase` onto an outer `m.div`; hover/active dim no longer needs `!important` (#192)              | 1 Sep 2026  |

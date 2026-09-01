@@ -10,8 +10,9 @@ import {
   imageColumnFrameSx,
   imageColumnInnerGhostSx,
   imageColumnOuterGhostSx,
+  imageColumnRevealWrapperSx,
   imageColumnStickyStackSx,
-} from '../feature-flow-section.styles';
+} from './feature-flow-image-column.styles';
 import type { FeatureFlowImageColumnProps, FeatureFlowImageRevealStyle } from './types';
 
 // Re-export — keeps `import { FeatureFlowImageColumnProps } from
@@ -73,7 +74,7 @@ export const FeatureFlowImageColumn = React.forwardRef<HTMLDivElement, FeatureFl
               above — that outer `Box` owns `imageColumnCardSx`'s own `transform`
               (translateX(-50%), for horizontal centering), and an inline motion
               `transform` would silently replace it if applied to the same node. */}
-          <Box component={m.div} style={revealStyle} sx={{ width: 1, position: 'relative' }}>
+          <Box component={m.div} style={revealStyle} sx={imageColumnRevealWrapperSx}>
             <Box component="img" alt="" aria-hidden src={ghostSrc} sx={imageColumnInnerGhostSx} />
             {allSrcs.map((src) => (
               <Box

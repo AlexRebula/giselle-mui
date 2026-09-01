@@ -7,9 +7,6 @@ import type { FeatureFlowDetailColorKey, FeatureFlowItemButtonState } from './ty
 
 const GREY_500_CHANNEL = 'var(--mui-palette-grey-500Channel)';
 const COMMON_BLACK_CHANNEL = 'var(--mui-palette-common-blackChannel)';
-const COMMON_WHITE_CHANNEL = 'var(--mui-palette-common-whiteChannel)';
-
-export const HIGHLIGHT_CAROUSEL_HEIGHT = 570;
 
 // ----------------------------------------------------------------------
 
@@ -39,25 +36,6 @@ const selectedActiveShadow = (channel: string, innerAlpha: number, outerAlpha: n
 export const featureFlowRootSx = (isExpanded: boolean): SxProps<Theme> => ({
   pt: { xs: 10, md: 20 },
   pb: isExpanded ? 10 : { xs: 10, md: 20 },
-});
-
-/**
- * The sticky image column's card — palette-tinted drop shadow, softened for dark mode.
- */
-export const imageColumnCardSx: SxProps<Theme> = (theme) => ({
-  top: 0,
-  left: '50%',
-  width: 720,
-  maxWidth: '100%',
-  borderRadius: 2,
-  overflow: 'hidden',
-  position: 'absolute',
-  transform: 'translateX(-50%)',
-  bgcolor: 'background.default',
-  boxShadow: `-40px 40px 80px 0px ${channelAlpha(GREY_500_CHANNEL, 0.16)}`,
-  ...theme.applyStyles('dark', {
-    boxShadow: `-40px 40px 80px 0px ${channelAlpha(COMMON_BLACK_CHANNEL, 0.16)}`,
-  }),
 });
 
 /**
@@ -174,146 +152,17 @@ export const featureFlowItemSx =
   });
 
 // ----------------------------------------------------------------------
-// Image column
+// Shared across sub-components
 // ----------------------------------------------------------------------
 
 /**
- * Sticky within the tall grid track next to it (md+); static on mobile.
- *
- * `zIndex: 1` is required for the sticky photo to paint over
- * `FeatureFlowItemDetail` once they scroll into overlap (see #193). The true
- * DOM sibling pair at `<section>`'s level is `MotionViewport` (wraps this
- * image column, several levels down) and the `m.div layout` wrapping the
- * detail panel (see `DETAIL_PANEL_LAYOUT_TRANSITION`) — not this stack and
- * the detail panel directly. Neither `MotionViewport`'s rendered root nor
- * any ancestor between it and this stack sets an explicit `zIndex` or ends
- * up with a non-`none` transform (confirmed live, and guarded by the
- * regression test in `feature-flow-section.transition.test.ts` that renders
- * real framer-motion, not a mock) — so both `MotionViewport` and this stack
- * stay at the default `z-index: auto` level until this `zIndex: 1`, where
- * paint order otherwise falls back to DOM order, putting the later,
- * non-sticky detail panel on top instead of the sticky image. `1` is enough
- * to win against any `z-index: auto` sibling; it stays well under
- * `FloatingSubNav`'s `theme.zIndex.speedDial` so that still wins over both
- * (`FloatingSubNav` renders outside that same `m.div layout` for exactly
- * this reason — see the comment at its call site in `feature-flow-section.tsx`).
+ * Shared shape behind every permanently-mounted crossfade frame: only the
+ * active one is opaque. Used by both `image-column/` (crossfading resolved
+ * image sources) and `highlight-carousel/` (crossfading slide images) — stays
+ * here rather than in either sub-component's own styles file since it's
+ * genuinely shared between the two, not owned by either.
  */
-export const imageColumnStickyStackSx: SxProps<Theme> = {
-  position: { xs: 'relative', md: 'sticky' },
-  top: { md: 80 },
-  width: 1,
-  alignItems: 'center',
-  justifyContent: 'center',
-  zIndex: 1,
-};
-
-/**
- * The outer, in-flow ghost image: invisible, purely gives the sticky Stack
- * its natural height so `position: sticky` has room to travel.
- */
-export const imageColumnOuterGhostSx: SxProps<Theme> = {
-  width: 720,
-  maxWidth: '100%',
-  display: 'block',
-  visibility: 'hidden',
-  pointerEvents: 'none',
-  userSelect: 'none',
-};
-
-/**
- * The inner ghost image: gives the crossfade layer a reference box height so
- * it doesn't collapse (all the crossfaded images are `position: absolute`).
- */
-export const imageColumnInnerGhostSx: SxProps<Theme> = {
-  width: '100%',
-  display: 'block',
-  visibility: 'hidden',
-  pointerEvents: 'none',
-  userSelect: 'none',
-};
-
-/** Shared shape behind every permanently-mounted crossfade frame: only the active one is opaque. */
-const crossfadeOpacitySx = (isActive: boolean, durationSeconds: number): SxProps<Theme> => ({
+export const crossfadeOpacitySx = (isActive: boolean, durationSeconds: number): SxProps<Theme> => ({
   opacity: isActive ? 1 : 0,
   transition: `opacity ${durationSeconds}s ease`,
 });
-
-/** One permanently-mounted image-column crossfade frame; only the active one is opaque. */
-export const imageColumnFrameSx = (isActive: boolean): SxProps<Theme> => ({
-  width: '100%',
-  display: 'block',
-  pointerEvents: 'none',
-  userSelect: 'none',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  ...crossfadeOpacitySx(isActive, 0.4),
-});
-
-// ----------------------------------------------------------------------
-// Highlight carousel
-// ----------------------------------------------------------------------
-
-export const highlightCarouselRootSx: SxProps<Theme> = {
-  position: 'relative',
-  height: HIGHLIGHT_CAROUSEL_HEIGHT,
-  borderRadius: 2,
-  overflow: 'hidden',
-};
-
-/** Absolutely-stacked slide image: crossfades via opacity, never slides. */
-export const highlightSlideImageSx = (isActive: boolean): SxProps<Theme> => ({
-  position: 'absolute',
-  inset: 0,
-  width: 1,
-  height: 1,
-  objectFit: 'cover',
-  objectPosition: 'center top',
-  ...crossfadeOpacitySx(isActive, 0.5),
-});
-
-/** Fixed gradient scrim — sits above the images, never slides. */
-export const highlightScrimSx: SxProps<Theme> = {
-  position: 'absolute',
-  inset: 0,
-  pointerEvents: 'none',
-  background: `linear-gradient(to top, ${channelAlpha(COMMON_BLACK_CHANNEL, 1)} 0%, ${channelAlpha(COMMON_BLACK_CHANNEL, 0.5)} 40%, transparent 69%)`,
-};
-
-export const highlightTextSlotSx: SxProps<Theme> = {
-  position: 'relative',
-  height: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'flex-end',
-  px: { xs: 3, md: 4 },
-  pb: { xs: 3, md: 4 },
-  color: 'common.white',
-};
-
-export const highlightControlsRowSx: SxProps<Theme> = {
-  position: 'absolute',
-  top: 16,
-  right: 16,
-  display: 'flex',
-  alignItems: 'center',
-  gap: 1,
-};
-
-/** Description text under the title — slightly translucent white, matches the scrim's dark backdrop. */
-export const highlightDetailTextSx: SxProps<Theme> = {
-  color: channelAlpha(COMMON_WHITE_CHANNEL, 0.9),
-  lineHeight: 1.7,
-};
-
-export const highlightIndexLabelSx: SxProps<Theme> = {
-  color: 'common.white',
-  minWidth: 32,
-  textAlign: 'center',
-};
-
-/** Prev/next arrow buttons — translucent white pill over the dark scrim. */
-export const highlightArrowButtonSx: SxProps<Theme> = {
-  color: 'common.white',
-  bgcolor: channelAlpha(COMMON_WHITE_CHANNEL, 0.12),
-};
