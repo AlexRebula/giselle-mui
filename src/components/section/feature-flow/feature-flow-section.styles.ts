@@ -39,6 +39,35 @@ export const featureFlowRootSx = (isExpanded: boolean): SxProps<Theme> => ({
 });
 
 /**
+ * The main two-column `Grid` container.
+ *
+ * `pb` drops to a fixed, smaller value while a detail panel is showing —
+ * without this, the last row's card sits flush against the detail panel's
+ * border (`detailPanelSx`'s own `py` pushes its *content* down from that
+ * border, not the border away from what's above it).
+ */
+export const featureFlowGridContainerSx =
+  (isExpanded: boolean): SxProps<Theme> =>
+  (theme) => ({
+    position: 'relative',
+    pb: isExpanded ? { xs: 5, md: 8 } : 0,
+    transition: theme.transitions.create('padding-bottom', {
+      duration: theme.transitions.duration.short,
+    }),
+  });
+
+/** The description column's `Grid` item — swaps side and inner padding with `isLeft`. */
+export const featureFlowDescriptionGridSx = (isLeft: boolean): SxProps<Theme> => ({
+  order: { xs: 1, md: isLeft ? 1 : 2 },
+  pl: { md: isLeft ? 0 : 4 },
+});
+
+/** The image column's `Grid` item — swaps side with `isLeft`, mirroring the description column. */
+export const featureFlowImageGridSx = (isLeft: boolean): SxProps<Theme> => ({
+  order: { xs: 2, md: isLeft ? 2 : 1 },
+});
+
+/**
  * Resolves a `FeatureFlowDetailColorKey` to its CSS-variable channel string.
  * `'grey'` is the one key with no `.main`/`.mainChannel` shape (it isn't a
  * standard MUI `PaletteColor`), so it maps to the already-defined

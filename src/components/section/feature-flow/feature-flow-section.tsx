@@ -10,7 +10,12 @@ import { BasicSection } from '../../material/layout/basic-section';
 import { FloatingSubNav } from '../../material/navigation/floating-sub-nav';
 import { MotionViewport } from '../../motion/viewport';
 import { HOVER_STEP_DELAY_MS } from './feature-flow-section.const';
-import { featureFlowRootSx } from './feature-flow-section.styles';
+import {
+  featureFlowDescriptionGridSx,
+  featureFlowGridContainerSx,
+  featureFlowImageGridSx,
+  featureFlowRootSx,
+} from './feature-flow-section.styles';
 import {
   hasExpansionData,
   useClientImagePrewarm,
@@ -349,22 +354,9 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
             container
             columnSpacing={columnSpacing}
             rowSpacing={{ xs: 5, md: 0 }}
-            sx={(theme) => ({
-              position: 'relative',
-              // Only when a detail panel is showing: without this, the last
-              // row's card sits flush against the detail panel's border —
-              // detailPanelSx's own py pushes its *content* down from that
-              // border, not the border away from what's above it.
-              pb: expandedItemId ? { xs: 5, md: 8 } : 0,
-              transition: theme.transitions.create('padding-bottom', {
-                duration: theme.transitions.duration.short,
-              }),
-            })}
+            sx={featureFlowGridContainerSx(Boolean(expandedItemId))}
           >
-            <Grid
-              size={resolvedDescriptionGridSize}
-              sx={{ order: { xs: 1, md: isLeft ? 1 : 2 }, pl: { md: isLeft ? 0 : 4 } }}
-            >
+            <Grid size={resolvedDescriptionGridSize} sx={featureFlowDescriptionGridSx(isLeft)}>
               <FeatureFlowDescriptionColumn
                 caption={caption}
                 title={title}
@@ -380,7 +372,7 @@ export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSecti
               />
             </Grid>
 
-            <Grid size={resolvedImageGridSize} sx={{ order: { xs: 2, md: isLeft ? 2 : 1 } }}>
+            <Grid size={resolvedImageGridSize} sx={featureFlowImageGridSx(isLeft)}>
               {rightPanel}
             </Grid>
           </Grid>

@@ -5,6 +5,9 @@ import { channelAlpha } from '../../../utils/theme/theme-utils/theme-utils';
 import {
   crossfadeOpacitySx,
   detailPanelSx,
+  featureFlowDescriptionGridSx,
+  featureFlowGridContainerSx,
+  featureFlowImageGridSx,
   featureFlowItemSx,
   featureFlowRootSx,
 } from './feature-flow-section.styles';
@@ -70,6 +73,44 @@ describe('featureFlowRootSx', () => {
   it("does not duplicate BasicSection's own position/overflowX base", () => {
     expect(featureFlowRootSx(false)).not.toHaveProperty('position');
     expect(featureFlowRootSx(false)).not.toHaveProperty('overflowX');
+  });
+});
+
+describe('featureFlowGridContainerSx', () => {
+  it('has no bottom padding when nothing is expanded', () => {
+    expect(resolve(featureFlowGridContainerSx(false))).toMatchObject({ pb: 0 });
+  });
+
+  it('adds fixed bottom padding once a detail panel is expanded', () => {
+    expect(resolve(featureFlowGridContainerSx(true))).toMatchObject({
+      pb: { xs: 5, md: 8 },
+    });
+  });
+});
+
+describe('featureFlowDescriptionGridSx', () => {
+  it('sits first, flush left, when isLeft is true', () => {
+    expect(featureFlowDescriptionGridSx(true)).toMatchObject({
+      order: { xs: 1, md: 1 },
+      pl: { md: 0 },
+    });
+  });
+
+  it('sits second, with left padding, when isLeft is false', () => {
+    expect(featureFlowDescriptionGridSx(false)).toMatchObject({
+      order: { xs: 1, md: 2 },
+      pl: { md: 4 },
+    });
+  });
+});
+
+describe('featureFlowImageGridSx', () => {
+  it('mirrors the description column: second when isLeft is true', () => {
+    expect(featureFlowImageGridSx(true)).toMatchObject({ order: { xs: 2, md: 2 } });
+  });
+
+  it('mirrors the description column: first when isLeft is false', () => {
+    expect(featureFlowImageGridSx(false)).toMatchObject({ order: { xs: 2, md: 1 } });
   });
 });
 

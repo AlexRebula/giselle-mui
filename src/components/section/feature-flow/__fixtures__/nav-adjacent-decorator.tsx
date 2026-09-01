@@ -7,7 +7,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { demoNavBarSx } from './nav-adjacent-decorator.styles';
+import { demoNavBarRowSx, demoNavBarSx, navSentinelSx } from './nav-adjacent-decorator.styles';
 
 // ----------------------------------------------------------------------
 //
@@ -79,7 +79,7 @@ function NavSentinel({
   }, [onVisibilityChange]);
 
   return (
-    <Box ref={ref} data-testid="nav-adjacent-sentinel" aria-hidden="true" sx={{ height: 1 }} />
+    <Box ref={ref} data-testid="nav-adjacent-sentinel" aria-hidden="true" sx={navSentinelSx} />
   );
 }
 NavSentinel.displayName = 'NavSentinel';
@@ -97,7 +97,7 @@ function DemoFloatingNav() {
 
   return (
     <Box data-testid="nav-adjacent-bar" sx={demoNavBarSx}>
-      <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+      <Stack direction="row" spacing={1.5} sx={demoNavBarRowSx}>
         <Typography variant="overline" color="text.disabled">
           Demo nav (giselle-mui story harness)
         </Typography>

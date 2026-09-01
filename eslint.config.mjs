@@ -58,7 +58,7 @@ export default eslintTs.config(
       // SonarQube S3358 — no nested ternaries
       'no-nested-ternary': 'error',
       // MUI Store quality bar — ban React.FC / React.FunctionComponent
-      // sx extraction rule — inline sx objects with >3 properties must go to *.styles.ts
+      // sx extraction rule — inline sx objects, any property count, must go to *.styles.ts (zero-tolerance)
       // Copyright boundary — banned identifier names. These names signal proprietary lineage
       // and must never appear in this MIT-licensed public package. Use descriptive names instead:
       //   varAlpha → channelAlpha   varFade → fadeVariants   varBlur → blurVariants
@@ -105,21 +105,21 @@ export default eslintTs.config(
         },
         {
           selector:
-            'JSXAttribute[name.name="sx"] > JSXExpressionContainer > ObjectExpression[properties.length>3]',
+            'JSXAttribute[name.name="sx"] > JSXExpressionContainer > ObjectExpression[properties.length>0]',
           message:
-            'Inline `sx` object has more than 3 properties. Extract to a *.styles.ts file (see copilot-instructions.md).',
+            'Inline `sx` object — extract to a *.styles.ts file, regardless of property count (zero-tolerance policy, see docs/components/cleanup-workflow.md Step 3).',
         },
         {
           selector:
-            'JSXAttribute[name.name="sx"] > JSXExpressionContainer > ArrayExpression > ObjectExpression[properties.length>3]',
+            'JSXAttribute[name.name="sx"] > JSXExpressionContainer > ArrayExpression > ObjectExpression[properties.length>0]',
           message:
-            'Inline `sx` array item has more than 3 properties. Extract to a *.styles.ts file (see copilot-instructions.md).',
+            'Inline `sx` array item — extract to a *.styles.ts file, regardless of property count (zero-tolerance policy, see docs/components/cleanup-workflow.md Step 3).',
         },
         {
           selector:
-            'JSXAttribute[name.name="sx"] > JSXExpressionContainer > ArrowFunctionExpression > ObjectExpression[properties.length>3]',
+            'JSXAttribute[name.name="sx"] > JSXExpressionContainer > ArrowFunctionExpression > ObjectExpression[properties.length>0]',
           message:
-            'Inline `sx` theme callback has more than 3 properties. Extract to a *.styles.ts file (see copilot-instructions.md).',
+            'Inline `sx` theme callback — extract to a *.styles.ts file, regardless of property count (zero-tolerance policy, see docs/components/cleanup-workflow.md Step 3).',
         },
       ],
     },
