@@ -78,6 +78,6 @@ interactive-logo/
 
 ## Related
 
-- `HeroButtonsRow` — `src/components/hero/buttons-row/` — animated button row for hero sections
+- `HeroButtonsRow` — `src/components/section/hero/buttons-row/` — animated button row for hero sections
 - `MotionViewport` — `src/components/motion/viewport/` — scroll-triggered entrance for sections
 - Motion variant families — `src/components/motion/variants/` — fade, slide, bounce, etc.

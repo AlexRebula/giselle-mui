@@ -39,5 +39,5 @@ buttons-row/
 
 ## Related
 
-- `InteractiveHeroLogo` — `src/components/hero/interactive-logo/` — 3-phase interactive logo
+- `InteractiveHeroLogo` — `src/components/section/hero/interactive-logo/` — 3-phase interactive logo
 - Motion variant families — `src/components/motion/variants/` — fade, slide, etc.
