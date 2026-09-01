@@ -156,6 +156,7 @@ For any standalone component exported from `src/index.ts`, verify its public pro
 - [ ] Root passthrough props are forwarded with `...other`
 - [ ] Any intentional exception (opinionated/non-wrapper API) is documented in both `types.ts` JSDoc and component `README.md`
 - [ ] Existing README claims about API behavior are accurate for this component (no global claims copied without verification)
+- [ ] **If this component lives in the `inputs/` layer, or accepts user-typed or URL content**, it also satisfies `oss-quality-standards` §6.11 (no `dangerouslySetInnerHTML`, ever) and §6.12 (block the `javascript:` URL scheme, never expose password values in DOM attributes, allowlist any user-derived `sx` value) — load the full org standard (see `AGENTS.md` §6) before writing the component, not at review time.
 
 ### Step 7 — Tests
 
