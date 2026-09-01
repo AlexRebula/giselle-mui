@@ -14,6 +14,8 @@ import { TaskDetailsModal } from './milestone-modal';
 import {
   accordionDetailsSx,
   accordionRootSx,
+  accordionSummaryOverrideSx,
+  checkHoverIconSx,
   dateSx,
   descriptionSx,
   milestoneDateSx,
@@ -58,7 +60,7 @@ const CHECK_DONE_DOT = (
 );
 // Hover state: outlined green check-circle, same 32 px footprint, no fill background.
 const CHECK_HOVER_DOT = (
-  <SvgIcon sx={{ color: 'success.main', fontSize: COMPACT_PHASE_DOT_SIZE }} viewBox="0 0 24 24">
+  <SvgIcon sx={checkHoverIconSx(COMPACT_PHASE_DOT_SIZE)} viewBox="0 0 24 24">
     {/* Material Design 'check_circle_outline' path */}
     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8-1.41-1.42z" />
   </SvgIcon>
@@ -84,25 +86,10 @@ const MS_CHECK_DONE_DOT = (
 
 // Milestone hover state: outlined green check-circle, 24 px footprint.
 const MS_CHECK_HOVER_DOT = (
-  <SvgIcon sx={{ color: 'success.main', fontSize: COMPACT_MILESTONE_DOT_SIZE }} viewBox="0 0 24 24">
+  <SvgIcon sx={checkHoverIconSx(COMPACT_MILESTONE_DOT_SIZE)} viewBox="0 0 24 24">
     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8-1.41-1.42z" />
   </SvgIcon>
 );
-
-// ----------------------------------------------------------------------
-
-/** Override MUI AccordionSummary internals to match the compact timeline row height. */
-const accordionSummaryOverrideSx = {
-  '& .MuiAccordionSummary-root': { minHeight: 56 },
-  '& .MuiAccordionSummary-root.Mui-expanded': { minHeight: 56 },
-  '& .MuiAccordionSummary-content': { display: 'flex', alignItems: 'center', gap: 1.5 },
-  '& .MuiAccordionSummary-expandIconWrapper': {
-    color: 'text.secondary',
-    display: 'flex',
-    alignItems: 'center',
-    alignSelf: 'center',
-  },
-};
 
 // ----------------------------------------------------------------------
 

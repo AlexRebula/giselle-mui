@@ -66,11 +66,15 @@ compact/
   types.ts              — TimelineCompactProps
   utils.ts              — resolveCompactColor pure helper
   compact.const.ts      — dot sizes and minimums
-  compact.styles.ts     — sx constants and factories
+  compact.styles.ts     — sx constants and factories (also covers phase-accordion-row.tsx — no dedicated styles file of its own)
   compact.styles.test.ts — mock-theme assertions for sx factories
   compact.test.ts       — Vitest rendering + interaction tests
   compact.stories.tsx   — Storybook stories (Default, AllColors, NoDetails, Responsive)
   chevron-down-icon.tsx — inline SVG chevron for accordion expand indicator
+  phase-accordion-row.tsx      — one accordion row sub-component (flat, no own subfolder)
+  milestone-modal.tsx          — TaskDetailsModal sub-component (flat, no own subfolder)
+  milestone-modal.styles.ts      — sx constants for TaskDetailsModal
+  milestone-modal.styles.test.ts — mock-theme assertions for TaskDetailsModal styles
   index.ts              — barrel
   README.md             — this file
 ```
