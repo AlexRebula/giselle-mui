@@ -34,7 +34,7 @@ It does not belong in a single page's `view.tsx` because:
 
 `react-apexcharts` does DOM operations at import time. Loading it synchronously
 causes SSR failures. Since `giselle-mui` must not import `next/dynamic`, the
-component uses `React.lazy` with a `Suspense` fallback (`<Box sx={{ height: chartHeight }} />`)
+component uses `React.lazy` with a `Suspense` fallback (`<Box sx={chartFallbackSx(chartHeight)} />`)
 to defer the import until the browser is ready.
 
 ### Solid colours — no gradient
@@ -77,7 +77,7 @@ is shared with `StatCard`. Consumers already know this type — no new vocabular
 radial-progress/
   types.ts                          — exported TypeScript types
   radial-progress-card.tsx          — pure JSX composition
-  radial-progress-card.styles.ts    — buildRadialProgressOptions factory + all sx constants
+  radial-progress-card.styles.ts    — buildRadialProgressOptions factory + all sx constants/factories
   radial-progress-card.styles.test.ts — regression tests for the factory
   radial-progress-card.test.ts      — component render tests (mocked MUI)
   index.ts                          — barrel

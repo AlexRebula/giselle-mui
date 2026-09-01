@@ -84,6 +84,11 @@ export const chartWrapSx: SxProps<Theme> = {
   overflow: 'hidden',
 };
 
+/** Divider between the chart and the legend row. */
+export const legendDividerSx: SxProps<Theme> = {
+  my: 2,
+};
+
 export const legendRowSx: SxProps<Theme> = {
   display: 'flex',
   flexWrap: 'wrap',
@@ -126,4 +131,12 @@ export const legendDotSx = (color: string): SxProps<Theme> => ({
   borderRadius: '50%',
   bgcolor: color,
   flexShrink: 0,
+});
+
+/**
+ * Height-matched placeholder shown by `Suspense` while the ApexCharts bundle
+ * loads, so the card doesn't jump once the chart mounts.
+ */
+export const chartFallbackSx = (chartHeight: number): SxProps<Theme> => ({
+  height: chartHeight,
 });

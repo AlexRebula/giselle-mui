@@ -1,6 +1,6 @@
 # RadialProgressCard — Roadmap
 
-> Last updated: 14 May 2026
+> Last updated: 01 Sep 2026
 
 ## Status
 
@@ -25,3 +25,4 @@ None.
 | -------------------------- | ----------- |
 | Initial component shipped  | 5 May 2026  |
 | Full cleanup audit (21/21) | 13 May 2026 |
+| Extracted remaining inline sx (Suspense fallback height, legend divider) to radial-progress-card.styles.ts (giselle-mui#201) | 01 Sep 2026 |

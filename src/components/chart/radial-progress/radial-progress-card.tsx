@@ -11,7 +11,9 @@ import { useTheme } from '@mui/material/styles';
 import type { RadialProgressCardProps } from './types';
 import {
   buildRadialProgressOptions,
+  chartFallbackSx,
   chartWrapSx,
+  legendDividerSx,
   legendDotSx,
   legendItemSx,
   legendRowSx,
@@ -84,7 +86,7 @@ export function RadialProgressCard({
       )}
       <CardContent>
         <Box sx={chartWrapSx}>
-          <Suspense fallback={<Box sx={{ height: chartHeight }} />}>
+          <Suspense fallback={<Box sx={chartFallbackSx(chartHeight)} />}>
             <ReactApexChart
               type="radialBar"
               series={chartSeries}
@@ -94,7 +96,7 @@ export function RadialProgressCard({
             />
           </Suspense>
         </Box>
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={legendDividerSx} />
         <Box sx={legendRowSx}>
           {series.map((item, i) => (
             <Box key={item.label} sx={legendItemSx}>

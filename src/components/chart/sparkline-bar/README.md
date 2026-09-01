@@ -12,6 +12,21 @@ Mini sparkline charts are a standard embeddable primitive used in any analytics 
 
 TBD — filled in during implementation.
 
+## File structure
+
+```
+sparkline-bar/
+  sparkline-bar-chart.tsx           — pure JSX composition (lazy-loaded ApexCharts)
+  sparkline-bar-chart.styles.ts     — sx factories (root sizing, Suspense fallback)
+  sparkline-bar-chart.styles.test.ts — mock-theme-free assertions for the factories above
+  sparkline-bar-chart.test.ts       — component render tests
+  sparkline-bar-chart.stories.tsx   — Storybook stories
+  types.ts                          — SparklineBarChartProps, SparklineType
+  index.ts                          — barrel export
+  README.md                         — this file
+  roadmap.md                        — open improvements and completed tasks
+```
+
 ## Related
 
 - [ChartCardBase](../chart-card-base/README.md) — full card wrapper for larger charts
