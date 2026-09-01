@@ -81,8 +81,6 @@ describe('iconSlotSx', () => {
 
 describe('itemLabelSx', () => {
   it('uses TECH_ICON_STRIP_LABEL_FONT_SIZE for the label under each icon', () => {
-    expect((itemLabelSx as Record<string, unknown>).fontSize).toBe(
-      TECH_ICON_STRIP_LABEL_FONT_SIZE
-    );
+    expect((itemLabelSx as Record<string, unknown>).fontSize).toBe(TECH_ICON_STRIP_LABEL_FONT_SIZE);
   });
 });

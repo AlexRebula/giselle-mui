@@ -1,6 +1,9 @@
 import type { SxProps, Theme } from '@mui/material/styles';
 
-import { TECH_ICON_STRIP_ICON_SIZE, TECH_ICON_STRIP_LABEL_FONT_SIZE } from './tech-icon-strip.const';
+import {
+  TECH_ICON_STRIP_ICON_SIZE,
+  TECH_ICON_STRIP_LABEL_FONT_SIZE,
+} from './tech-icon-strip.const';
 
 // ----------------------------------------------------------------------
 
