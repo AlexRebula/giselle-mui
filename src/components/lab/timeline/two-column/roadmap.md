@@ -1,6 +1,6 @@
 # TimelineTwoColumn — Roadmap
 
-> Last updated: 14 May 2026
+> Last updated: 01 Sep 2026
 
 ## Status
 
@@ -29,3 +29,4 @@ None.
 | Eye button WCAG accessibility (aria-pressed, min 20px icon)       | 13 May 2026 |
 | MilestoneBadge column alignment rule (left-column right-aligns)   | 13 May 2026 |
 | Full cleanup audit (21/21)                                        | 13 May 2026 |
+| Extracted remaining inline `sx` on the root compact/full view wrappers to a unified `timelineViewSlotSx` factory in `two-column.styles.ts` (#201) | 01 Sep 2026 |

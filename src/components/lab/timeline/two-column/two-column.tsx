@@ -30,7 +30,7 @@ import {
   computeSlotHeights,
   resolveTaskChildren,
 } from './utils';
-import { phaseLiSx, timelineRootSx } from './two-column.styles';
+import { phaseLiSx, timelineRootSx, timelineViewSlotSx } from './two-column.styles';
 
 // SSR-safe layout effect — runs as useLayoutEffect on the client (synchronous, before
 // first paint) and falls back to useEffect on the server (no-op in SSR environments).
@@ -348,7 +348,7 @@ export function TimelineTwoColumn({
   // immediately via CSS — no JS media-query round-trip, no hydration flash.
   return (
     <>
-      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+      <Box sx={timelineViewSlotSx('compact')}>
         <TimelineCompact
           phases={phases}
           sx={sx}
@@ -362,13 +362,7 @@ export function TimelineTwoColumn({
           {...other}
         />
       </Box>
-      <Box
-        sx={[
-          { display: { xs: 'none', md: 'block' }, position: 'relative' },
-          ...(Array.isArray(sx) ? sx : [sx]),
-        ]}
-        {...other}
-      >
+      <Box sx={[timelineViewSlotSx('full'), ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
         <Timeline sx={timelineRootSx}>
           {sorted.map((phase, i) => {
             const { isDone, isOverdue, dotColor, yearLabelValue, phaseMilestones, isLastPhase } =
