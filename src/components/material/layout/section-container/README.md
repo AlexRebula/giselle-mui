@@ -33,6 +33,8 @@ page end up with slightly different horizontal constraints and vertical rhythm.
 ```
 section-container/
   section-container.tsx         — SectionContainer component
+  section-container.styles.ts   — sectionContainerSx (py factory)
+  section-container.styles.test.ts — assertions for the factory above
   section-container.stories.tsx — Default, MediumWidth, TightSpacing, Responsive
   section-container.test.ts     — renderToStaticMarkup tests
   types.ts                      — SectionContainerProps

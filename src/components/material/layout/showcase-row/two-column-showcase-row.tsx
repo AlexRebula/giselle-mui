@@ -7,6 +7,15 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import {
+  controlsGridItemSx,
+  controlsSlotSx,
+  controlsStackSx,
+  overlineSx,
+  showcaseRowRootSx,
+  textColumnSx,
+} from './two-column-showcase-row.styles';
+
 // Re-exports — keeps `import { TwoColumnShowcaseRowProps } from './two-column-showcase-row'` working.
 export type {
   ShowcaseRowOrientation,
@@ -58,20 +67,14 @@ export function TwoColumnShowcaseRow({
       container
       columnSpacing={isVertical ? 0 : { xs: 0, md: 6 }}
       rowSpacing={{ xs: 4, md: isVertical ? 4 : 0 }}
-      sx={[
-        { flexDirection: { xs: 'column', md: orientation } },
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
+      sx={[showcaseRowRootSx(orientation), ...(Array.isArray(sx) ? sx : [sx])]}
       {...other}
     >
       {text && (
         <Grid size={itemSize}>
-          <Stack
-            spacing={2}
-            sx={[{ maxWidth: 520 }, ...(Array.isArray(textSx) ? textSx : [textSx])]}
-          >
+          <Stack spacing={2} sx={[textColumnSx, ...(Array.isArray(textSx) ? textSx : [textSx])]}>
             {text.overline && (
-              <Typography variant="overline" sx={{ color: 'text.secondary' }}>
+              <Typography variant="overline" sx={overlineSx}>
                 {text.overline}
               </Typography>
             )}
@@ -84,15 +87,15 @@ export function TwoColumnShowcaseRow({
           </Stack>
         </Grid>
       )}
-      <Grid size={itemSize} sx={{ minWidth: 0 }}>
+      <Grid size={itemSize} sx={controlsGridItemSx}>
         <Stack
           spacing={2}
           sx={[
-            { alignItems: controlsAlign, width: 1, minWidth: 0 },
+            controlsStackSx(controlsAlign),
             ...(Array.isArray(controlsSx) ? controlsSx : [controlsSx]),
           ]}
         >
-          <Box sx={{ width: 1, minWidth: 0 }}>{controls}</Box>
+          <Box sx={controlsSlotSx}>{controls}</Box>
         </Stack>
       </Grid>
     </Grid>
