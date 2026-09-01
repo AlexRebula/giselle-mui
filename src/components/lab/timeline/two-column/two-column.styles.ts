@@ -8,6 +8,25 @@ import type { SxProps, Theme } from '@mui/material/styles';
  * if the component re-renders frequently with stable props.
  */
 
+// ── Root layout switch ─────────────────────────────────────────────────────────
+
+/**
+ * CSS-only responsive layout switch between the compact accordion and the full
+ * two-column spine — both trees are always mounted so the browser applies the
+ * correct layout immediately via CSS, with no JS media-query round-trip.
+ *
+ * **Unified into a factory:** the two views are mutually-exclusive opposites of the
+ * same `display` breakpoint toggle (mirrors `timelineColumnSx` / `msColumnBoxSx` in
+ * this file); only the full view additionally needs `position: relative` as the
+ * positioning context for its absolutely-positioned milestone cards.
+ *
+ * @param view - `'compact'` hides on md+, shows on xs. `'full'` is the inverse, plus `position: relative`.
+ */
+export const timelineViewSlotSx = (view: 'compact' | 'full'): SxProps<Theme> => ({
+  display: view === 'compact' ? { xs: 'block', md: 'none' } : { xs: 'none', md: 'block' },
+  ...(view === 'full' && { position: 'relative' as const }),
+});
+
 // ── TimelineColumn helper ─────────────────────────────────────────────────────
 
 /**

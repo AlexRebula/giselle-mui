@@ -4,6 +4,7 @@ import { describe, it, expect } from 'vitest';
 
 import {
   timelineColumnSx,
+  timelineViewSlotSx,
   msRowSx,
   msColumnBoxSx,
   msDotWrapperSx,
@@ -19,6 +20,33 @@ import {
   centerColumnSx,
   timelineRootSx,
 } from './two-column.styles';
+
+// ---------------------------------------------------------------------------
+// timelineViewSlotSx (unified factory — replaces the two separate compact/full
+// wrapper Box literals previously inlined in two-column.tsx)
+// ---------------------------------------------------------------------------
+
+describe('timelineViewSlotSx("compact") — compact accordion wrapper', () => {
+  it('shows on xs, hides on md+', () => {
+    expect(timelineViewSlotSx('compact')).toMatchObject({
+      display: { xs: 'block', md: 'none' },
+    });
+  });
+
+  it('does not set position (only the full view needs a positioning context)', () => {
+    const sx = timelineViewSlotSx('compact') as Record<string, unknown>;
+    expect(sx['position']).toBeUndefined();
+  });
+});
+
+describe('timelineViewSlotSx("full") — full two-column spine wrapper', () => {
+  it('hides on xs, shows on md+, and is relatively positioned', () => {
+    expect(timelineViewSlotSx('full')).toMatchObject({
+      display: { xs: 'none', md: 'block' },
+      position: 'relative',
+    });
+  });
+});
 
 // ---------------------------------------------------------------------------
 // timelineColumnSx

@@ -3,7 +3,7 @@ import type { LabeledIconStripProps } from './types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { labeledIconStripLabelSx } from './phase-card.styles';
+import { labeledIconStripLabelSx, labeledIconStripWrapperSx } from './phase-card.styles';
 
 /**
  * A labelled group: an optional overline label above any icon/logo strip.
@@ -11,7 +11,7 @@ import { labeledIconStripLabelSx } from './phase-card.styles';
  */
 export function LabeledIconStrip({ label, children }: LabeledIconStripProps) {
   return (
-    <Box sx={{ mt: 2.5 }}>
+    <Box sx={labeledIconStripWrapperSx}>
       {label && (
         <Typography variant="overline" sx={labeledIconStripLabelSx}>
           {label}

@@ -9,7 +9,12 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import type { TaskDetailsModalProps } from './types';
-import { dialogDateSx, dialogTitleSx } from './milestone-modal.styles';
+import {
+  dialogCloseButtonSx,
+  dialogContentSx,
+  dialogDateSx,
+  dialogTitleSx,
+} from './milestone-modal.styles';
 import { TaskDetailsRenderer } from './task-details-renderer';
 
 // ----------------------------------------------------------------------
@@ -62,7 +67,7 @@ export function TaskDetailsModal({
             </Typography>
           )}
         </div>
-        <IconButton aria-label="Close details" onClick={onClose} sx={{ mt: 0.5, flexShrink: 0 }}>
+        <IconButton aria-label="Close details" onClick={onClose} sx={dialogCloseButtonSx}>
           {/* × close icon — inline SVG, zero external dep */}
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
@@ -70,7 +75,7 @@ export function TaskDetailsModal({
         </IconButton>
       </DialogTitle>
       <Divider />
-      <DialogContent sx={{ pt: 2 }}>
+      <DialogContent sx={dialogContentSx}>
         <TaskDetailsRenderer
           task={task}
           checklist={checklist}

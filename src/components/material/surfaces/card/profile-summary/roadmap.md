@@ -22,5 +22,6 @@ Not started.
 
 ## Completed
 
-| Task | Completed |
-| ---- | --------- |
+| Task                                                                                                        | Completed  |
+| ------------------------------------------------------------------------------------------------------------- | ---------- |
+| Remaining inline `sx` extracted to `profile-summary-card.styles.ts`; added the missing `.styles.test.ts` per the zero-tolerance sx policy (`cleanup-workflow.md`) | 1 Sep 2026 |

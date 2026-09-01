@@ -2,7 +2,8 @@ import type { SxProps, Theme } from '@mui/material/styles';
 
 import { pulseDot } from '../animations';
 import type { HighlightedPaletteKey } from '../types';
-import type { PaperSxParams, DateTypographySxParams } from './types';
+import type { PaperSxParams, DateTypographySxParams, PhaseTitleSxParams } from './types';
+import { PHASE_PILL_TEXT_FONT_SIZE } from './phase-card.const';
 
 /**
  * Styles for the `PhaseCard` component.
@@ -23,6 +24,11 @@ export const labeledIconStripLabelSx: SxProps<Theme> = {
   mb: 1,
   fontSize: '0.75rem',
   color: 'text.disabled',
+};
+
+/** Root Box wrapper for `LabeledIconStrip` — top margin separates it from the previous section. */
+export const labeledIconStripWrapperSx: SxProps<Theme> = {
+  mt: 2.5,
 };
 
 // ── CardDetailBullets ─────────────────────────────────────────────────────────
@@ -55,6 +61,20 @@ export const tooltipAlertListSx: SxProps<Theme> = {
   gap: 1.25,
   py: 0.5,
   px: 0.25,
+};
+
+/** One alert row inside the tooltip content column — icon + message side by side. */
+export const tooltipAlertRowSx: SxProps<Theme> = {
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: 1,
+};
+
+/** Alert message Typography inside a tooltip alert row. */
+export const tooltipAlertMessageSx: SxProps<Theme> = {
+  lineHeight: 1.55,
+  fontSize: '0.8rem',
+  fontWeight: 500,
 };
 
 /**
@@ -170,6 +190,39 @@ export const scenarioBadgeSx = (color: string): SxProps<Theme> => ({
 
 // ── Main PhaseCard render ─────────────────────────────────────────────────────
 
+/** Root Box wrapper — establishes the positioning context for the corner alert badge and eye button. */
+export const phaseCardRootSx: SxProps<Theme> = {
+  position: 'relative',
+};
+
+/** Row that holds the title column next to (implicitly reserved space for) the decoration/icon. */
+export const phaseContentRowSx: SxProps<Theme> = {
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: 1,
+};
+
+/** Column that takes the remaining width in `phaseContentRowSx` and stacks all title-area content. */
+export const phaseContentColumnSx: SxProps<Theme> = {
+  flex: 1,
+};
+
+/**
+ * Phase title Typography.
+ *
+ * @param isHighlighted - When true (and decoration isn't hidden), no right padding is reserved for the corner icon.
+ * @param hideDecoration - When true, no right padding is reserved for the corner icon.
+ * @param hasDetails - Controls bottom margin: tighter when a details pill follows.
+ */
+export const phaseTitleSx = ({
+  isHighlighted,
+  hideDecoration,
+  hasDetails,
+}: PhaseTitleSxParams): SxProps<Theme> => ({
+  pr: !isHighlighted && !hideDecoration ? 6 : 0,
+  mb: hasDetails ? 0.5 : 1,
+});
+
 /** Collapsed details-count pill — shows item count before expansion. */
 export const detailCountPillSx: SxProps<Theme> = {
   display: 'inline-flex',
@@ -181,6 +234,24 @@ export const detailCountPillSx: SxProps<Theme> = {
   borderRadius: 1,
   bgcolor: 'action.hover',
   color: 'text.secondary',
+};
+
+/** Count label Typography inside the details-count pill. */
+export const phasePillTextSx: SxProps<Theme> = {
+  fontWeight: 600,
+  lineHeight: 1,
+  fontSize: PHASE_PILL_TEXT_FONT_SIZE,
+};
+
+/** Phase description Typography — shown only in the expanded state. */
+export const phaseDescriptionSx: SxProps<Theme> = {
+  color: 'text.secondary',
+  mt: 0.5,
+};
+
+/** Footer slot Box — wraps the optional consumer-provided footer content. */
+export const phaseFooterSlotSx: SxProps<Theme> = {
+  mt: 1,
 };
 
 /** Logo/icon strip container — used for clients and projects strips (gap: 2.5). */
@@ -209,6 +280,19 @@ export const platformStripSx: SxProps<Theme> = {
   flexWrap: 'wrap',
   alignItems: 'center',
   gap: 1,
+};
+
+/** One tooltip-wrapped item slot inside the platform strip — centres its icon or fallback label. */
+export const platformStripItemSlotSx: SxProps<Theme> = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+/** Fallback text label rendered when a platform item has no icon. */
+export const platformStripItemLabelSx: SxProps<Theme> = {
+  fontSize: 11,
+  px: 0.5,
 };
 
 /** Project logo `<img>` — smaller than client logos, subtle hover opacity. */

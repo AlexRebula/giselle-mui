@@ -1,6 +1,6 @@
 # PhaseCard — Roadmap
 
-> Last updated: 17 Jun 2026
+> Last updated: 01 Sep 2026
 
 ## Status
 
@@ -21,6 +21,7 @@ None.
 
 ## Completed
 
-| Task                      | Completed    |
-| ------------------------- | ------------ |
-| Initial component shipped | 19 May 2026  |
+| Task                                                                                      | Completed   |
+| ------------------------------------------------------------------------------------------ | ----------- |
+| Initial component shipped                                                                  | 19 May 2026 |
+| Extracted remaining inline `sx` in `phase-card.tsx`, `platform-strip.tsx`, `card-corner-alert-badge.tsx`, and `labeled-icon-strip.tsx` to `phase-card.styles.ts` (#201) | 01 Sep 2026 |

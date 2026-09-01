@@ -31,6 +31,40 @@ export const quoteTextSx: SxProps<Theme> = {
   lineHeight: 1.85,
 };
 
+/** Root row: decorative quote-mark column beside the text+attribution column. */
+export const quoteCardRowSlotSx: SxProps<Theme> = {
+  display: 'flex',
+  gap: 2,
+};
+
+/** Right-hand column: takes remaining width next to the quote mark. */
+export const quoteCardTextSlotSx: SxProps<Theme> = {
+  flex: 1,
+  minWidth: 0,
+};
+
+/** Author + separator + source row beneath the quote text. */
+export const quoteAttributionRowSlotSx: SxProps<Theme> = {
+  mt: 2,
+  color: 'text.disabled',
+  alignItems: 'center',
+};
+
+/** Author name — the more prominent half of the attribution line. */
+export const quoteAuthorSx: SxProps<Theme> = {
+  fontWeight: 'fontWeightMedium',
+};
+
+/** Decorative "·" divider between author and source — purely visual, carries `aria-hidden`. */
+export const quoteSeparatorSx: SxProps<Theme> = {
+  opacity: 0.6,
+};
+
+/** Source label — the less prominent half of the attribution line. */
+export const quoteSourceSx: SxProps<Theme> = {
+  opacity: 0.72,
+};
+
 // ----------------------------------------------------------------------
 
 /**

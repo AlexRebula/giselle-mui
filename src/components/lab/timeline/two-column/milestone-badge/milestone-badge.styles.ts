@@ -1,5 +1,6 @@
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { HighlightedPaletteKey } from '../types';
+import { MILESTONE_PILL_TEXT_FONT_SIZE } from './milestone-badge.const';
 
 // ----------------------------------------------------------------------
 
@@ -87,6 +88,12 @@ export const milestoneTitleRowSx = (rightAlign: boolean): SxProps<Theme> => ({
   justifyContent: rightAlign ? 'flex-end' : 'flex-start',
 });
 
+/** Milestone title Typography inside the title row. */
+export const milestoneTitleSx: SxProps<Theme> = {
+  fontWeight: 700,
+  lineHeight: 1.3,
+};
+
 // ── Eye button ────────────────────────────────────────────────────────────────
 
 /**
@@ -120,6 +127,14 @@ export const milestoneEyeButtonSx = (opts: {
   },
 });
 
+// ── Description ───────────────────────────────────────────────────────────────
+
+/** Milestone description Typography — shown only while hovered or expanded. */
+export const milestoneDescriptionSx: SxProps<Theme> = {
+  color: 'text.secondary',
+  mt: 0.5,
+};
+
 // ── Expandable details pill ───────────────────────────────────────────────────
 
 /** Collapsed detail-count pill — shows item count before expansion. */
@@ -134,6 +149,13 @@ export const milestoneDetailPillSx: SxProps<Theme> = {
   borderRadius: 0.75,
   bgcolor: 'action.hover',
   color: 'text.secondary',
+};
+
+/** Count label Typography inside the details-count pill. */
+export const milestonePillTextSx: SxProps<Theme> = {
+  fontWeight: 600,
+  lineHeight: 1,
+  fontSize: MILESTONE_PILL_TEXT_FONT_SIZE,
 };
 
 // ── Detail bullet list ────────────────────────────────────────────────────────

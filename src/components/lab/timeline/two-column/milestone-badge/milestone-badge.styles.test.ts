@@ -9,8 +9,11 @@ import {
   milestoneNewLabelSx,
   milestoneDateSx,
   milestoneTitleRowSx,
+  milestoneTitleSx,
   milestoneEyeButtonSx,
+  milestoneDescriptionSx,
   milestoneDetailRowSx,
+  milestonePillTextSx,
   milestonePaperSx,
 } from './milestone-badge.styles';
 
@@ -127,6 +130,19 @@ describe('milestoneTitleRowSx — title row container', () => {
 });
 
 // ---------------------------------------------------------------------------
+// milestoneTitleSx
+// ---------------------------------------------------------------------------
+
+describe('milestoneTitleSx — milestone title typography', () => {
+  it('is bold with a tight line height', () => {
+    expect(milestoneTitleSx).toMatchObject({
+      fontWeight: 700,
+      lineHeight: 1.3,
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
 // milestoneEyeButtonSx
 // ---------------------------------------------------------------------------
 
@@ -166,6 +182,33 @@ describe('milestoneDetailRowSx — individual bullet row', () => {
     expect(sx['display']).toBe('flex');
     expect(sx['alignItems']).toBe('flex-start');
     expect(sx['textAlign']).toBe('left');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// milestoneDescriptionSx
+// ---------------------------------------------------------------------------
+
+describe('milestoneDescriptionSx — expanded description text', () => {
+  it('uses secondary text color with top margin', () => {
+    expect(milestoneDescriptionSx).toMatchObject({
+      color: 'text.secondary',
+      mt: 0.5,
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// milestonePillTextSx
+// ---------------------------------------------------------------------------
+
+describe('milestonePillTextSx — details-count pill label', () => {
+  it('[regression] font size meets badge-label minimum of 0.75rem', () => {
+    expect(milestonePillTextSx).toMatchObject({
+      fontWeight: 600,
+      lineHeight: 1,
+      fontSize: '0.75rem',
+    });
   });
 });
 

@@ -1,6 +1,6 @@
 # MilestoneBadge — Roadmap
 
-> Last updated: 17 Jun 2026
+> Last updated: 01 Sep 2026
 
 ## Status
 
@@ -21,6 +21,7 @@ None.
 
 ## Completed
 
-| Task                      | Completed    |
-| ------------------------- | ------------ |
-| Initial component shipped | 19 May 2026  |
+| Task                                                                                    | Completed   |
+| ---------------------------------------------------------------------------------------- | ----------- |
+| Initial component shipped                                                                | 19 May 2026 |
+| Extracted remaining inline `sx` (title, description, details-pill label) to `milestone-badge.styles.ts` (#201) | 01 Sep 2026 |

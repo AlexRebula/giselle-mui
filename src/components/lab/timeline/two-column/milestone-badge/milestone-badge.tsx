@@ -19,8 +19,11 @@ import {
   milestoneNewLabelSx,
   milestoneDateSx,
   milestoneTitleRowSx,
+  milestoneTitleSx,
   milestoneEyeButtonSx,
+  milestoneDescriptionSx,
   milestoneDetailPillSx,
+  milestonePillTextSx,
   milestoneDetailListSx,
   taskRowSx,
   taskToggleButtonSx,
@@ -33,7 +36,6 @@ import {
 import {
   MILESTONE_DATE_FONT_SIZE,
   MILESTONE_PILL_ICON_SIZE,
-  MILESTONE_PILL_TEXT_FONT_SIZE,
   MILESTONE_EYE_ICON_SIZE,
   MILESTONE_EYE_BUTTON_MIN_SIZE,
   MILESTONE_TASK_ICON_SIZE,
@@ -182,13 +184,13 @@ export function MilestoneBadge({
           </Tooltip>
         )}
 
-        <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
+        <Typography variant="subtitle2" sx={milestoneTitleSx}>
           {displayTitle}
         </Typography>
       </Box>
 
       {(isExpanded || isHovered) && m.description && (
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+        <Typography variant="body2" sx={milestoneDescriptionSx}>
           {m.description}
         </Typography>
       )}
@@ -201,11 +203,7 @@ export function MilestoneBadge({
           <Box component="span" sx={pillIconBoxSx(MILESTONE_PILL_ICON_SIZE)}>
             {expandableIcon ?? DEFAULT_EXPANDABLE_ICON}
           </Box>
-          <Typography
-            component="span"
-            variant="caption"
-            sx={{ fontWeight: 600, lineHeight: 1, fontSize: MILESTONE_PILL_TEXT_FONT_SIZE }}
-          >
+          <Typography component="span" variant="caption" sx={milestonePillTextSx}>
             {taskChildren.length}
           </Typography>
         </Box>

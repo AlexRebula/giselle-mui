@@ -1,5 +1,5 @@
 import { FaqFloatLine, FaqFloatPlusIcon } from '../accordion-svg';
-import { FAQ_PLUS_ICON_LEFT } from './faq-bottom-lines.const';
+import { floatLineEdgeSx, floatPlusIconEdgeSx } from './faq-bottom-lines.styles';
 
 // ----------------------------------------------------------------------
 
@@ -14,10 +14,10 @@ import { FAQ_PLUS_ICON_LEFT } from './faq-bottom-lines.const';
 export function FaqBottomLines() {
   return (
     <>
-      <FaqFloatLine sx={{ top: 0, left: 0 }} />
-      <FaqFloatLine sx={{ bottom: 0, left: 0 }} />
-      <FaqFloatPlusIcon sx={{ top: -8, left: FAQ_PLUS_ICON_LEFT }} />
-      <FaqFloatPlusIcon sx={{ bottom: -8, left: FAQ_PLUS_ICON_LEFT }} />
+      <FaqFloatLine sx={floatLineEdgeSx('top')} />
+      <FaqFloatLine sx={floatLineEdgeSx('bottom')} />
+      <FaqFloatPlusIcon sx={floatPlusIconEdgeSx('top')} />
+      <FaqFloatPlusIcon sx={floatPlusIconEdgeSx('bottom')} />
     </>
   );
 }

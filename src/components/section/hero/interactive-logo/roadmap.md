@@ -1,6 +1,6 @@
 # InteractiveLogo — Roadmap
 
-> Last updated: 17 Jun 2026
+> Last updated: 01 Sep 2026
 
 ## Status
 
@@ -24,3 +24,4 @@ None.
 | Task                      | Completed    |
 | ------------------------- | ------------ |
 | Initial component shipped | 16 May 2026  |
+| Extracted `original-logo-layer.tsx`'s remaining inline sx (active-frame image) into a new `original-logo-layer.styles.ts`, since it has no counterpart in the other two layers (giselle-mui#201) | 01 Sep 2026 |

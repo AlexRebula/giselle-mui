@@ -8,6 +8,9 @@ import {
   metricCardContentSx,
   metricCardIconBoxSx,
   metricCardDecorationSx,
+  metricCardValueSx,
+  metricCardLabelSx,
+  metricCardSublabelSx,
 } from './metric-card.styles';
 
 // ----------------------------------------------------------------------
@@ -59,6 +62,24 @@ describe('metricCardContentSx', () => {
       zIndex: 1,
       flexGrow: 1,
     });
+  });
+});
+
+describe('metricCardValueSx', () => {
+  it('uses the h3 typography variant for the headline value', () => {
+    expect(metricCardValueSx).toMatchObject({ typography: 'h3' });
+  });
+});
+
+describe('metricCardLabelSx', () => {
+  it('uses secondary text color', () => {
+    expect(metricCardLabelSx).toMatchObject({ color: 'text.secondary' });
+  });
+});
+
+describe('metricCardSublabelSx', () => {
+  it('is the most muted text tier, spaced below the label', () => {
+    expect(metricCardSublabelSx).toMatchObject({ color: 'text.disabled', mt: 0.25 });
   });
 });
 

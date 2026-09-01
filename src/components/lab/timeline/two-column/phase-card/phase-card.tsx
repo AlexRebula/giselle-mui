@@ -31,13 +31,15 @@ import {
   buildPaperSx,
   buildDateTypographySx,
   pillIconBoxSx,
+  phaseCardRootSx,
+  phaseContentRowSx,
+  phaseContentColumnSx,
+  phaseTitleSx,
+  phasePillTextSx,
+  phaseDescriptionSx,
+  phaseFooterSlotSx,
 } from './phase-card.styles';
-import {
-  PHASE_EYE_ICON_SIZE,
-  EYE_BUTTON_MIN_SIZE,
-  PHASE_PILL_ICON_SIZE,
-  PHASE_PILL_TEXT_FONT_SIZE,
-} from './phase-card.const';
+import { PHASE_EYE_ICON_SIZE, EYE_BUTTON_MIN_SIZE, PHASE_PILL_ICON_SIZE } from './phase-card.const';
 import { LabeledIconStrip } from './labeled-icon-strip';
 import { CardDetailBullets } from './card-detail-bullets';
 import { CardCornerAlertBadge } from './card-corner-alert-badge';
@@ -132,7 +134,7 @@ export function PhaseCard({
   }
 
   return (
-    <Box sx={[{ position: 'relative' }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
+    <Box sx={[phaseCardRootSx, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
       {/* Corner alert badge — tooltip-only in read-only mode; clickable in popover mode */}
       <CardCornerAlertBadge
         alerts={cornerAlerts}
@@ -205,22 +207,15 @@ export function PhaseCard({
           </Typography>
         )}
 
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-          <Box sx={{ flex: 1 }}>
+        <Box sx={phaseContentRowSx}>
+          <Box sx={phaseContentColumnSx}>
             <Typography
               variant={isScenario ? 'h6' : 'subtitle1'}
-              sx={[
-                {
-                  pr: !isHighlighted && !phase.hideDecoration ? 6 : 0,
-                },
-                hasDetails
-                  ? {
-                      mb: 0.5,
-                    }
-                  : {
-                      mb: 1,
-                    },
-              ]}
+              sx={phaseTitleSx({
+                isHighlighted,
+                hideDecoration: phase.hideDecoration,
+                hasDetails,
+              })}
             >
               {displayTitle}
             </Typography>
@@ -233,17 +228,13 @@ export function PhaseCard({
                 <Box component="span" sx={pillIconBoxSx(PHASE_PILL_ICON_SIZE)}>
                   {expandableIcon ?? DEFAULT_EXPANDABLE_ICON}
                 </Box>
-                <Typography
-                  component="span"
-                  variant="caption"
-                  sx={{ fontWeight: 600, lineHeight: 1, fontSize: PHASE_PILL_TEXT_FONT_SIZE }}
-                >
+                <Typography component="span" variant="caption" sx={phasePillTextSx}>
                   {taskChildren.length}
                 </Typography>
               </Box>
             )}
             {expanded && phase.description && (
-              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+              <Typography variant="body2" sx={phaseDescriptionSx}>
                 {phase.description}
               </Typography>
             )}
@@ -282,7 +273,7 @@ export function PhaseCard({
             )}
             {/* Optional footer slot — shown only in expanded state (level 3) */}
             {expanded && phase.footer != null && (
-              <Box sx={{ mt: 1 }} onClick={(e: MouseEvent) => e.stopPropagation()}>
+              <Box sx={phaseFooterSlotSx} onClick={(e: MouseEvent) => e.stopPropagation()}>
                 {phase.footer}
               </Box>
             )}

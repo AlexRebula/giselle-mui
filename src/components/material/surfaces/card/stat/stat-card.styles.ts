@@ -56,6 +56,18 @@ export const labelsBoxSx: SxProps<Theme> = {
   minWidth: STAT_CARD_LABELS_MIN_WIDTH,
 };
 
+/** Label text above the value, inside `labelsBoxSx`. */
+export const statCardLabelSx: SxProps<Theme> = {
+  mb: 0.5,
+};
+
+/** Trailing "this month"-style qualifier next to the trend percentage. */
+export const trendLabelSx: SxProps<Theme> = {
+  opacity: 0.72,
+  ml: 0.5,
+  fontWeight: 400,
+};
+
 /**
  * Absolutely-positioned decoration layer — bottom-right corner, clipped by the
  * card's `overflow: hidden`. Must be rendered as the first child so it sits

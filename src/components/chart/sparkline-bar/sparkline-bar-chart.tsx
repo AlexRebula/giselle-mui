@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import type { ApexOptions } from 'apexcharts';
 
 import type { SparklineBarChartProps } from './types';
+import { sparklineFallbackSx, sparklineRootSx } from './sparkline-bar-chart.styles';
 
 // ---------------------------------------------------------------------------
 // Lazy-load ApexCharts — avoids SSR issues without requiring Next.js or
@@ -87,8 +88,8 @@ export function SparklineBarChart({
   const chartSeries = useMemo(() => (type === 'bar' ? [{ data }] : [{ data }]), [type, data]);
 
   return (
-    <Box sx={[{ width, height, overflow: 'hidden' }, ...(Array.isArray(sx) ? sx : [sx])]}>
-      <Suspense fallback={<Box sx={{ width, height }} />}>
+    <Box sx={[sparklineRootSx(width, height), ...(Array.isArray(sx) ? sx : [sx])]}>
+      <Suspense fallback={<Box sx={sparklineFallbackSx(width, height)} />}>
         <ReactApexChart
           type={type}
           series={chartSeries}

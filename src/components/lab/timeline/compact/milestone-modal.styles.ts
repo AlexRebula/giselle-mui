@@ -23,3 +23,14 @@ export const dialogSummarySx = (hasTasks: boolean): SxProps<Theme> => ({
 export const dialogEmptyStateSx: SxProps<Theme> = {
   color: 'text.disabled',
 };
+
+/** Close button in the top-right of the title row — nudged down to align with the title text. */
+export const dialogCloseButtonSx: SxProps<Theme> = {
+  mt: 0.5,
+  flexShrink: 0,
+};
+
+/** `DialogContent` top padding — gives the divider below the title breathing room. */
+export const dialogContentSx: SxProps<Theme> = {
+  pt: 2,
+};

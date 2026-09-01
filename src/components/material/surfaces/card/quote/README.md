@@ -41,7 +41,7 @@ and dark-mode adaptation belongs in the shared library — not reinvented per co
 ```
 card/quote/
   quote-card.tsx            — QuoteCard component
-  quote-card.styles.ts      — quoteMarkSx, quoteTextSx, quoteCardPaperSx
+  quote-card.styles.ts      — quoteMarkSx, quoteTextSx, quoteCardPaperSx, layout slot + attribution sx
   quote-card.styles.test.ts — mock-theme assertions for every exported sx function
   quote-card.test.ts        — Vitest unit tests (structure, ARIA, attribution variants)
   quote-card.stories.tsx    — Default, AllColors, NoAttribution, AuthorOnly, Responsive
