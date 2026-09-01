@@ -82,6 +82,13 @@ export type DateTypographySxParams = {
   color: string | undefined;
 };
 
+/** Parameters for the `phaseTitleSx` sx factory in `phase-card.styles.ts`. */
+export type PhaseTitleSxParams = {
+  isHighlighted: boolean;
+  hideDecoration: boolean | undefined;
+  hasDetails: boolean;
+};
+
 // ----------------------------------------------------------------------
 
 export type PhaseCardProps = Omit<BoxProps, 'children'> & {

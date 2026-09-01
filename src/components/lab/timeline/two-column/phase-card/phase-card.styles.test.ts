@@ -6,9 +6,12 @@ import type { Theme } from '@mui/material/styles';
 import {
   photoImgSx,
   labeledIconStripLabelSx,
+  labeledIconStripWrapperSx,
   detailBulletsContainerSx,
   detailBulletsRowSx,
   tooltipAlertListSx,
+  tooltipAlertRowSx,
+  tooltipAlertMessageSx,
   cornerBadgeCircleSx,
   statusBadgeWrapperSx,
   newStatusDotSx,
@@ -20,9 +23,18 @@ import {
   logoStripSx,
   clientLogoSx,
   platformStripSx,
+  platformStripItemSlotSx,
+  platformStripItemLabelSx,
   projectLogoSx,
   eyeButtonSx,
   buildPaperSx,
+  phaseCardRootSx,
+  phaseContentRowSx,
+  phaseContentColumnSx,
+  phaseTitleSx,
+  phasePillTextSx,
+  phaseDescriptionSx,
+  phaseFooterSlotSx,
 } from './phase-card.styles';
 
 const mockTheme = {
@@ -88,6 +100,14 @@ describe('labeledIconStripLabelSx — section overline label', () => {
   });
 });
 
+describe('labeledIconStripWrapperSx — root wrapper', () => {
+  it('separates the strip from the previous section with top margin', () => {
+    expect(labeledIconStripWrapperSx).toMatchObject({
+      mt: 2.5,
+    });
+  });
+});
+
 // ---------------------------------------------------------------------------
 // detailBulletsContainerSx / detailBulletsRowSx
 // ---------------------------------------------------------------------------
@@ -127,6 +147,26 @@ describe('tooltipAlertListSx — tooltip alert list', () => {
     expect(sx['display']).toBe('flex');
     expect(sx['flexDirection']).toBe('column');
     expect(sx['gap']).toBe(1.25);
+  });
+});
+
+describe('tooltipAlertRowSx — one alert row', () => {
+  it('is a flex row with top-aligned icon and message', () => {
+    expect(tooltipAlertRowSx).toMatchObject({
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: 1,
+    });
+  });
+});
+
+describe('tooltipAlertMessageSx — alert message text', () => {
+  it('uses a compact readable line height and weight', () => {
+    expect(tooltipAlertMessageSx).toMatchObject({
+      lineHeight: 1.55,
+      fontSize: '0.8rem',
+      fontWeight: 500,
+    });
   });
 });
 
@@ -331,6 +371,25 @@ describe('platformStripSx — tech platform strip', () => {
   });
 });
 
+describe('platformStripItemSlotSx — one platform item slot', () => {
+  it('centers its icon or fallback label', () => {
+    expect(platformStripItemSlotSx).toMatchObject({
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    });
+  });
+});
+
+describe('platformStripItemLabelSx — fallback text label', () => {
+  it('uses a small, tightly-padded label style', () => {
+    expect(platformStripItemLabelSx).toMatchObject({
+      fontSize: 11,
+      px: 0.5,
+    });
+  });
+});
+
 // ---------------------------------------------------------------------------
 // clientLogoSx / projectLogoSx — logo images
 // ---------------------------------------------------------------------------
@@ -448,5 +507,117 @@ describe('[regression] done phase card hover styles from buildPaperSx', () => {
 
     const sx = sxFactory(mockTheme);
     expect(sx['pointerEvents']).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// phaseCardRootSx / phaseContentRowSx / phaseContentColumnSx
+// ---------------------------------------------------------------------------
+
+describe('phaseCardRootSx — root Box wrapper', () => {
+  it('establishes a positioning context for absolutely-positioned badges', () => {
+    expect(phaseCardRootSx).toMatchObject({
+      position: 'relative',
+    });
+  });
+});
+
+describe('phaseContentRowSx — title content row', () => {
+  it('is a flex row with top-aligned content', () => {
+    expect(phaseContentRowSx).toMatchObject({
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: 1,
+    });
+  });
+});
+
+describe('phaseContentColumnSx — title content column', () => {
+  it('takes the remaining width in the content row', () => {
+    expect(phaseContentColumnSx).toMatchObject({
+      flex: 1,
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// phaseTitleSx — dynamic title sx (padding + margin depend on card state)
+// ---------------------------------------------------------------------------
+
+describe('phaseTitleSx — phase title typography', () => {
+  it('reserves right padding for the corner icon unless highlighted or decoration is hidden', () => {
+    const styles = phaseTitleSx({
+      isHighlighted: false,
+      hideDecoration: false,
+      hasDetails: false,
+    }) as Record<string, unknown>;
+    expect(styles['pr']).toBe(6);
+  });
+
+  it('omits right padding when highlighted', () => {
+    const styles = phaseTitleSx({
+      isHighlighted: true,
+      hideDecoration: false,
+      hasDetails: false,
+    }) as Record<string, unknown>;
+    expect(styles['pr']).toBe(0);
+  });
+
+  it('omits right padding when decoration is hidden', () => {
+    const styles = phaseTitleSx({
+      isHighlighted: false,
+      hideDecoration: true,
+      hasDetails: false,
+    }) as Record<string, unknown>;
+    expect(styles['pr']).toBe(0);
+  });
+
+  it('uses a tighter bottom margin when a details pill follows', () => {
+    const styles = phaseTitleSx({
+      isHighlighted: false,
+      hideDecoration: false,
+      hasDetails: true,
+    }) as Record<string, unknown>;
+    expect(styles['mb']).toBe(0.5);
+  });
+
+  it('uses a larger bottom margin with no details pill', () => {
+    const styles = phaseTitleSx({
+      isHighlighted: false,
+      hideDecoration: false,
+      hasDetails: false,
+    }) as Record<string, unknown>;
+    expect(styles['mb']).toBe(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// phasePillTextSx / phaseDescriptionSx / phaseFooterSlotSx
+// ---------------------------------------------------------------------------
+
+describe('phasePillTextSx — details-count pill label', () => {
+  it('[regression] font size meets badge-label minimum of 0.75rem', () => {
+    expect(phasePillTextSx).toMatchObject({
+      fontWeight: 600,
+      lineHeight: 1,
+      fontSize: '0.75rem',
+    });
+  });
+});
+
+describe('phaseDescriptionSx — expanded description text', () => {
+  it('uses secondary text color with top margin', () => {
+    expect(phaseDescriptionSx).toMatchObject({
+      color: 'text.secondary',
+      mt: 0.5,
+    });
+  });
+});
+
+describe('phaseFooterSlotSx — optional footer slot', () => {
+  it('adds top margin above the footer content', () => {
+    expect(phaseFooterSlotSx).toMatchObject({
+      mt: 1,
+    });
   });
 });
