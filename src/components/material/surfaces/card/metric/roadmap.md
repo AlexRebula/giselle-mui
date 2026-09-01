@@ -21,7 +21,8 @@ None.
 
 ## Completed
 
-| Task                       | Completed   |
-| -------------------------- | ----------- |
-| Initial component shipped  | 13 May 2026 |
-| Full cleanup audit (21/21) | 13 May 2026 |
+| Task                                                                                                 | Completed   |
+| ----------------------------------------------------------------------------------------------------- | ----------- |
+| Initial component shipped                                                                             | 13 May 2026 |
+| Full cleanup audit (21/21)                                                                             | 13 May 2026 |
+| Remaining inline `sx` extracted to `metric-card.styles.ts` per the zero-tolerance sx policy (`cleanup-workflow.md`) | 1 Sep 2026  |
