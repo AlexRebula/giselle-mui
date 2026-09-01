@@ -1,5 +1,13 @@
 # @littlebranches/giselle-mui — Copilot Instructions
 
+> **This repo's actual AI entry point is [`AGENTS.md`](../AGENTS.md).** This file predates that
+> switch and was written for GitHub Copilot, which the team no longer uses (giselle-mui#142) — it
+> is not read automatically by Claude Code or other current AI tooling. It is kept because it
+> holds detailed rules `AGENTS.md` only points at rather than restates, but if anything here ever
+> disagrees with `AGENTS.md` or the docs it references (`docs/components/cleanup-workflow.md`,
+> `docs/components/api-design-rules.md`, `docs/naming-conventions.md`), those win — this file has
+> a documented history of silently drifting out of sync (giselle-mui#142, #161, #162, #165).
+
 This is an open-source React component library built on top of `@mui/material` v7.
 It is authored by Alex Rebula and licensed MIT.
 
@@ -130,7 +138,7 @@ src/components/<name>/
   utils.ts            — pure logic functions (no JSX)
   index.ts            — barrel: re-exports component and types
   README.md           — why it exists, why it belongs here, design decisions, library safety
-  <sub-component>.tsx — internal sub-components (one file each, flat in folder — NOT in subfolders)
+  <sub-component>/     — internal sub-components, each in its own named subfolder (superseded 2026-09, giselle-mui#161/#162 — previously flat, "NOT in subfolders"; see Sub-component extraction rule below)
 ```
 
 **Separation rule — non-negotiable for every component:**
@@ -138,8 +146,8 @@ src/components/<name>/
 - **TypeScript `type` aliases AND `interface` declarations → `types.ts`** (never inside `.tsx`). This applies to every exported and internal type without exception — `Props`, `Item`, `Config`, helper union types, internal-only types. If it is a type, it does not live in a `.tsx` file.
 - **Named constants → `<name>.const.ts`** (never inside `.tsx`). Every exported `const` that represents a size, font size, badge size, minimum touch target, or spacing value belongs in the const file. **Primitive values only — no JSX.** If a constant contains JSX (e.g. a default actions array with `<GiselleIcon />` elements), it belongs in `<name>.defaults.tsx` instead. See `*.const.ts companion files` section below.
 - Pure logic / helper functions (no JSX) → separate `utils.ts` file (not inside `.tsx`)
-- Any `sx={}` with more than ~3 properties → `<name>.styles.ts` (enforced by ESLint)
-- **Internal sub-components → own `.tsx` files** (flat in the parent folder). See `Sub-component extraction rule` section below.
+- Any `sx={}`, any property count → `<name>.styles.ts` (zero-tolerance, enforced by ESLint)
+- **Internal sub-components → own subfolder**, not flat in the parent folder (superseded 2026-09, giselle-mui#161/#162). See `Sub-component extraction rule` section below.
 - The `.tsx` file is the **composition layer only**: it imports from all of the above and renders JSX.
 
 **Domain/feature grouping — mirrors the "Components" nav:**
@@ -201,7 +209,7 @@ src/components/section/timeline/two-column/
 
 - TypeScript types → `types.ts`
 - Pure logic/helper functions (nothing that returns JSX) → `utils.ts`
-- Any `sx={}` with more than ~3 properties → `styles.ts`
+- Any `sx={}`, any property count → `styles.ts` (zero-tolerance)
 
 ## Test conventions
 
@@ -712,9 +720,21 @@ For suffix vocabulary, see [`docs/naming-conventions.md`](../docs/naming-convent
 
 ### Component folder structure rule
 
-A component gets its own subfolder (`src/components/<name>/`) **only when it is exported from `src/index.ts`** (independently usable by consumers).
+**⚠️ Superseded 2026-09 (giselle-mui#161/#162) — see below.** This section previously said a
+component only needs its own subfolder when barrel-exported, with internal sub-components
+staying flat in the parent's folder. That was wrong even at the time it was written — PR #20
+had already established nested subfolders for `TimelineTwoColumn`'s internal sub-components
+four days earlier, and `oss-quality-standards` §5.1 ("one component per folder") never made the
+barrel-export distinction either. The contradiction went undetected for 3.5 months until
+`check-structure.js` was extended to check recursively (#161) and found ~8 more components
+following the stale rule (#162, now fixed). See `docs/components/cleanup-workflow.md` Scenario A
+for the actual current rule:
 
-Internal sub-components — helpers, local wrappers, private building blocks that only make sense inside their parent — stay flat in the parent's folder. Creating a subfolder for an internal component implies it is independently usable; that false signal causes confusion during refactors.
+Every component — standalone or an internal sub-component — gets its own named subfolder,
+unconditionally, regardless of barrel-export status, size, or complexity. `<parent-folder>/<name>/`
+for a sub-component; `src/components/<layer>/<category>/<name>/` for a standalone one. There is no
+"stays flat" case. This is enforced by `scripts/check-structure.js`, which recurses one level
+into every component folder and fails the gate on any additional flat `.tsx` sibling.
 
 ### Storybook title convention (enforce always — no exceptions)
 
@@ -747,7 +767,7 @@ Every exported component must have a `Responsive` story that renders the compone
 
 **No hardcoded hex, rgb, or rgba literals in any story file — non-negotiable.** Story scaffold chrome (breakpoint labels, dashed borders, dividers) must use MUI theme tokens via `sx` on MUI components. Never use `style={{ color: '#666' }}` or `style={{ border: '1px dashed #ccc' }}`; use `sx={{ color: 'text.secondary' }}` and `sx={{ border: '1px dashed', borderColor: 'divider' }}` instead. This ensures story chrome respects dark mode automatically. Enforce this on every story file touched — not just new ones.
 
-**Zero inline `sx={{}}` in story files — non-negotiable.** Every `sx` object in a story file — regardless of property count — must be extracted to a module-level named constant before the first story export. Reasoning: (1) consistent discoverability — all styles are grep-findable at file top, (2) no per-render object allocations for static styles, (3) uniform enforcement avoids "is 2 properties ok?" debates. The `~3 properties` threshold does not apply to story files. There are **no exceptions** — not even single-property objects or `{ width }` loop variables.
+**Zero inline `sx={{}}` in story files — non-negotiable.** Every `sx` object in a story file — regardless of property count — must be extracted to a module-level named constant before the first story export. Reasoning: (1) consistent discoverability — all styles are grep-findable at file top, (2) no per-render object allocations for static styles, (3) uniform enforcement avoids "is 2 properties ok?" debates. Component `.tsx` files carry this exact same zero-tolerance rule as of 2026-08-31 (see below) — story files were simply first. There are **no exceptions** — not even single-property objects or `{ width }` loop variables.
 
 **Use shared story scaffold constants from `src/stories-defaults.ts`** — never re-define equivalent patterns inline. Import the relevant constant instead:
 
@@ -766,7 +786,7 @@ Every exported component must have a `Responsive` story that renders the compone
 
 ### `*.styles.ts` companion files for sx extraction (enforce always)
 
-Inline `sx` objects that span more than ~3 properties must be extracted to a co-located `<component-name>.styles.ts` file. This makes components scannable and the style logic independently testable.
+**Zero-tolerance since 2026-08-31 (see `docs/components/cleanup-workflow.md` Step 3).** Every inline `sx` object must be extracted to a co-located `<component-name>.styles.ts` file, regardless of property count — the previous "~3 properties" threshold is retired; there is no size below which staying inline is acceptable. This makes components scannable and the style logic independently testable.
 
 **`style={{}}` on `motion.*` elements — no inline object literals, ever.** Every `style` prop on a `motion.*` component must reference a named export from `<component-name>.styles.ts`, regardless of property count. `MotionValue`-based styles use a factory function defined in `*.styles.ts`; the call happens in JSX:
 
@@ -843,7 +863,7 @@ describe('paperSx', () => {
 
 **Enforcement checklist — run whenever a component file is edited:**
 
-1. Any new `sx={}` with more than ~3 properties → move to the styles file immediately
+1. Any new `sx={}`, any property count → move to the styles file immediately (zero-tolerance)
 2. Any `style={{...}}` on a `motion.*` element (any property count) → move to the styles file immediately; use a factory if the values are `MotionValue` instances
 3. Any existing inline `sx={}` or `style={{}}` touched during the edit → extract it at the same time (no mixed state)
 4. After extraction → run the styles test file to confirm the mock-theme assertions still pass
@@ -917,15 +937,26 @@ describe('readability — minimum size constants', () => {
 
 ### Sub-component extraction rule (enforce always)
 
-Internal sub-components — functions that start with a capital letter and return JSX — must **never** be defined inline inside a parent `.tsx` file. Each sub-component gets its own `.tsx` file, flat in the same folder.
+Internal sub-components — functions that start with a capital letter and return JSX — must **never** be defined inline inside a parent `.tsx` file.
+
+**⚠️ "Flat in the same folder" below is superseded 2026-09 (giselle-mui#161/#162) — see the
+Component folder structure rule above.** Each sub-component gets its own named subfolder now,
+not a flat `.tsx` sibling. The rest of this section (types/const/utils ownership, barrel export,
+tests) still applies, just one level deeper: inside the sub-component's own subfolder rather than
+flat in the parent's.
 
 **Rule:**
 
-- One `.tsx` file per component, including internal helpers.
+- One subfolder per sub-component (`<parent-folder>/<sub-component-name>/`), including internal
+  helpers — never a flat `.tsx` file.
 - The parent `.tsx` imports and uses them — never defines them.
-- Types for each sub-component remain in the folder's `types.ts` (not inside the sub-component file).
-- If the sub-component has constants, they go in the folder's `*.const.ts`.
-- If the sub-component has non-trivial logic, it calls helpers from the folder's `utils.ts`.
+- Types for each sub-component live in that sub-component's own `types.ts`, importing anything
+  genuinely shared back from the parent's `../types.ts` — not defined inside the `.tsx` file, and
+  not left in the parent's `types.ts` alongside every sibling's.
+- If the sub-component has constants, they go in its own `*.const.ts` (parent's `*.const.ts` only
+  for what's genuinely shared across siblings).
+- If the sub-component has non-trivial logic, it calls helpers from its own `utils.ts` (same
+  shared-vs-own split as constants).
 
 **Why:**
 
@@ -934,27 +965,29 @@ Internal sub-components — functions that start with a capital letter and retur
 - Even if a sub-component looks "internal today", it almost always becomes reusable later. Extracting now costs 2 minutes; extracting during a refactor costs much more.
 - The fact that a function is only _used_ by one parent does not mean it should _live inside_ that parent.
 
-**What belongs in its own file:**
+**What belongs in its own subfolder:**
 
 Any function that:
 
 - starts with a capital letter (React component convention), OR
 - returns JSX (`ReactNode`), OR
-- has its own prop type in `types.ts`
+- has its own prop type
 
-...gets its own `.tsx` file.
+...gets its own subfolder, unconditionally.
 
 **What can stay inline:**
 
 - Anonymous function expressions inside `Array.map()` that return 1–2 JSX elements with no logic.
 - Helper render variables (e.g. `const badge = <GiselleIcon ... />`) that do not have their own props.
 
-**File naming:** Use kebab-case matching the component's PascalCase name:
+**Folder/file naming:** Use kebab-case matching the component's PascalCase name, for both the
+subfolder and the `.tsx` file inside it:
 
-- `CardCornerAlertBadge` → `card-corner-alert-badge.tsx`
-- `LabeledIconStrip` → `labeled-icon-strip.tsx`
+- `CardCornerAlertBadge` → `card-corner-alert-badge/card-corner-alert-badge.tsx`
+- `LabeledIconStrip` → `labeled-icon-strip/labeled-icon-strip.tsx`
 
-**Barrel export:** Every sub-component file must be added to the folder's `index.ts`:
+**Barrel export:** Every sub-component gets its own `index.ts`, and the parent folder's own
+`index.ts` re-exports from each sub-component's folder:
 
 ```ts
 export * from './card-corner-alert-badge';
@@ -1119,16 +1152,19 @@ All `isViewed` / `onMarkViewed` eye buttons in this component family must meet W
 
 Use `cleanup component <Name>` to trigger the full workflow (`docs/components/cleanup-workflow.md`). The checklists below are the acceptance criteria — every PR that touches a component file is reviewed against these.
 
-**Scenario A — Sub-component (flat inside a parent folder):**
+**Scenario A — Sub-component (own named subfolder inside a parent folder — superseded 2026-09,
+giselle-mui#161/#162: no longer flat):**
 
-- [ ] No `type`/`interface` in `.tsx` — all in parent `types.ts`
-- [ ] No sx with more than ~3 properties inline — all in parent `*.styles.ts`
-- [ ] No `style={{}}` on `motion.*` elements — all in parent `*.styles.ts` (factory pattern for MotionValues)
+- [ ] Own named subfolder created inside the parent folder
+- [ ] No `type`/`interface` in `.tsx` — all in this sub-component's own `types.ts` (shared types imported from parent's `../types.ts`)
+- [ ] No inline sx, any property count — all in this sub-component's own `*.styles.ts` (or the parent's, only if genuinely shared across siblings)
+- [ ] No `style={{}}` on `motion.*` elements — same file/ownership split as sx (factory pattern for MotionValues)
 - [ ] No duplicated JSX blocks — extracted to helper or util
 - [ ] All inline conditional logic that produces a derived value is in `utils.ts`
+- [ ] `displayName` set; `React.forwardRef` used if it wraps a DOM element or MUI component
 - [ ] JSDoc covers all props including behaviour flags
-- [ ] At least one test `describe` block exists for this sub-component
-- [ ] Exported from parent `index.ts`
+- [ ] At least one test file exists, co-located in this sub-component's own subfolder
+- [ ] Own `index.ts` barrel; re-exported from the parent's own `index.ts`
 - [ ] SonarQube: zero violations
 - [ ] `npm run check:verify` exits 0
 - [ ] Quality status added to JSDoc (one line) — Step 14
@@ -1137,13 +1173,13 @@ Use `cleanup component <Name>` to trigger the full workflow (`docs/components/cl
 
 - [ ] Own subfolder created with all companion files present
 - [ ] No `type`/`interface` in `.tsx` — all in `types.ts`
-- [ ] No sx with more than ~3 properties inline — all in `<name>.styles.ts`
+- [ ] No inline sx, any property count — all in `<name>.styles.ts` (zero-tolerance)
 - [ ] No `style={{}}` on `motion.*` elements — all in `<name>.styles.ts` (factory pattern for MotionValues)
 - [ ] `<name>.styles.test.ts` covers every exported factory
 - [ ] No named constants for sizes inline — all in `<name>.const.ts`
 - [ ] Regression tests for every size constant with a safety minimum
 - [ ] No pure logic functions in `.tsx` — all in `utils.ts`
-- [ ] No capital-letter helper components inside `.tsx` — each in its own flat `.tsx`
+- [ ] No capital-letter helper components inside `.tsx` — each in its own named subfolder (Scenario A rules apply)
 - [ ] No `React.FC`, no `any`, no bare `<Box>` without props
 - [ ] `sx` array spread on root element
 - [ ] `...other` spread on root element
