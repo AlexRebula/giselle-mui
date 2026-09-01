@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import type { BoxProps } from '@mui/material/Box';
 import type { PaperProps } from '@mui/material/Paper';
 
 // ----------------------------------------------------------------------
@@ -36,12 +35,4 @@ export interface MetricCardProps extends PaperProps {
    * <MetricCard decoration={<MetricCardDecoration color="primary" />} ... />
    */
   decoration?: ReactNode;
-}
-
-export interface MetricCardDecorationProps extends BoxProps {
-  /**
-   * Palette color used for the gradient fill.
-   * @default 'primary'
-   */
-  color?: MetricCardColor;
 }

@@ -44,14 +44,14 @@ means every consumer rediscovers the gradient-clip CSS trick and the correct `th
 ```
 section-title/
   section-title.tsx          — SectionTitle composition + re-exports SectionCaption
-  section-caption.tsx        — SectionCaption sub-component
-  types.ts                   — SectionTitleProps, SectionCaptionProps
+  types.ts                   — SectionTitleProps
   section-title.styles.ts    — txtGradientSpanSx factory
   section-title.styles.test.ts — mock-theme assertions for txtGradientSpanSx
-  section-title.test.ts      — renderToStaticMarkup tests for both components
-  section-title.stories.tsx  — Full, TitleOnly, CaptionAndGradient, Centred, AsPageH1, NestedSubsection, CaptionStandalone, Responsive
+  section-title.test.ts      — renderToStaticMarkup tests for SectionTitle
+  section-title.stories.tsx  — Full, TitleOnly, CaptionAndGradient, Centred, AsPageH1, NestedSubsection, Responsive
   index.ts                   — barrel: SectionTitle, SectionCaption, types
   README.md                  — this file
+  section-caption/           — SectionCaption sub-component (own subfolder — see its README)
 ```
 
 ## Quality status — 13 May 2026

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /**
- * Unit tests for MetricCard and MetricCardDecoration.
+ * Unit tests for MetricCard.
  *
  * MUI components render with GiselleThemeProvider — no MUI mocks needed.
  *
@@ -17,6 +17,9 @@
  * - decoration wrapper carries aria-hidden
  * - additional props are forwarded to the root element
  *
+ * `MetricCardDecoration` has its own co-located test file at
+ * `metric-card-decoration/metric-card-decoration.test.ts`.
+ *
  * ## What is NOT tested here
  * - sx / CSS styles (design-system level)
  * - Responsive layout
@@ -26,18 +29,14 @@ import React from 'react';
 import { it, expect, describe } from 'vitest';
 
 import { renderWithTheme } from '../../../../../test-utils';
-import { MetricCard, MetricCardDecoration } from './metric-card';
-import { METRIC_CARD_ICON_BOX_SIZE, METRIC_CARD_DECORATION_SIZE } from './metric-card.const';
+import { MetricCard } from './metric-card';
+import { METRIC_CARD_ICON_BOX_SIZE } from './metric-card.const';
 
 // ---------------------------------------------------------------------------
 
 describe('readability — minimum size constants', () => {
   it('[regression] METRIC_CARD_ICON_BOX_SIZE >= 24px', () => {
     expect(METRIC_CARD_ICON_BOX_SIZE).toBeGreaterThanOrEqual(24);
-  });
-
-  it('[regression] METRIC_CARD_DECORATION_SIZE >= 80px', () => {
-    expect(METRIC_CARD_DECORATION_SIZE).toBeGreaterThanOrEqual(80);
   });
 });
 
@@ -168,22 +167,5 @@ describe('MetricCard — Paper props', () => {
       } as React.ComponentProps<typeof MetricCard> & { 'data-testid': string })
     );
     expect(html).toContain('data-testid="my-card"');
-  });
-});
-
-// ---------------------------------------------------------------------------
-
-describe('MetricCardDecoration', () => {
-  it('renders without throwing', () => {
-    expect(() => renderWithTheme(React.createElement(MetricCardDecoration, {}))).not.toThrow();
-  });
-
-  it('renders without throwing for each supported color', () => {
-    const colors = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
-    for (const color of colors) {
-      expect(() =>
-        renderWithTheme(React.createElement(MetricCardDecoration, { color }))
-      ).not.toThrow();
-    }
   });
 });

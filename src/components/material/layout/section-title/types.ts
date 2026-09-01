@@ -60,8 +60,3 @@ export type SectionTitleProps = Omit<BoxProps, 'title'> & {
     description?: TextSlotProps;
   };
 };
-
-export type SectionCaptionProps = {
-  title: ReactNode;
-  sx?: SxProps<Theme>;
-};

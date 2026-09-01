@@ -42,7 +42,7 @@ the implementation ensures a consistent visual language and prevents silent drif
 ```
 card/stat/
   stat-card.tsx              — StatCard component
-  stat-card-shape.tsx        — StatCardShape decorative background sub-component
+  stat-card-shape/           — StatCardShape decorative background sub-component (own subfolder)
   stat-card.const.ts         — STAT_CARD_ICON_BOX_SIZE, STAT_CARD_LABELS_MIN_WIDTH
   stat-card.styles.ts        — all sx constants + STAT_CARD_SPARKLINE_OPTIONS
   stat-card.styles.test.ts   — mock-theme assertions + regression tests

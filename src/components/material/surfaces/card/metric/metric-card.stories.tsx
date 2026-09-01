@@ -140,32 +140,12 @@ export const Responsive: Story = {
   ),
 };
 
-/** MetricCardDecoration rendered standalone — all six color variants. */
-export const DecorationVariants: Story = {
-  render: () => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-      {ALL_COLORS.map((color) => (
-        <Box
-          key={color}
-          sx={{
-            position: 'relative',
-            width: 120,
-            height: 120,
-            bgcolor: 'background.paper',
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: 2,
-            overflow: 'hidden',
-          }}
-        >
-          <MetricCardDecoration color={color} />
-        </Box>
-      ))}
-    </Box>
-  ),
-};
-
-/** Custom `sx` overrides: larger decoration moved to bottom-left. */
+/**
+ * Custom `sx` overrides: larger decoration moved to bottom-left.
+ *
+ * `MetricCardDecoration` rendered standalone (all six colour variants) has its own
+ * dedicated story: see `metric-card-decoration/metric-card-decoration.stories.tsx`.
+ */
 export const DecorationCustomSx: Story = {
   render: () => (
     <MetricCard

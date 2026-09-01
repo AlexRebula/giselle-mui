@@ -62,18 +62,34 @@ When `prefers-reduced-motion` is active:
 interactive-logo/
   interactive-logo.tsx           — main component (pure JSX composition)
   interactive-logo.const.ts      — DEFAULT_PORTRAIT_DIRECTION, PORTRAIT_ACTIVATION_DELAY_MS
-  interactive-logo.styles.ts     — all sx constants and factories
-  interactive-logo.styles.test.ts — mock-theme assertions
+  interactive-logo.styles.ts     — sx shared across layers or used by InteractiveHeroLogo itself
+  interactive-logo.styles.test.ts — mock-theme assertions for the above
   interactive-logo.utils.ts      — getRandomPortraitSrc, getPortraitDirectionFromAngle, buildPortraitSourceMap, getCursorStyle
-  interactive-logo.test.ts       — Vitest tests for utils + sub-components
+  interactive-logo.test.ts       — Vitest tests for utils
   interactive-logo.stories.tsx   — Storybook stories (all three phases)
-  types.ts                       — all TypeScript types
+  types.ts                       — shared TypeScript types (HoverPhase, PortraitDirection, FadeTransition, InteractiveHeroLogoProps, ...)
   use-hover-phase-transition.ts  — phase state machine hook
-  portrait-layer.tsx             — Layer 3: directional portrait
-  artistic-logo-layer.tsx        — Layer 2: artistic logo overlay
-  original-logo-layer.tsx        — Layer 1: original logo / frame animation
-  original-logo-layer.styles.ts  — sx specific to Layer 1's active-frame image (not shared with the other two layers)
-  original-logo-layer.styles.test.ts — mock-theme assertions for the above
+  portrait-layer/                — Layer 3: directional portrait (own subfolder — Scenario A)
+    portrait-layer.tsx
+    portrait-layer.styles.ts
+    portrait-layer.styles.test.ts
+    portrait-layer.test.ts
+    types.ts
+    index.ts
+  artistic-logo-layer/           — Layer 2: artistic logo overlay (own subfolder — Scenario A)
+    artistic-logo-layer.tsx
+    artistic-logo-layer.styles.ts
+    artistic-logo-layer.styles.test.ts
+    artistic-logo-layer.test.ts
+    types.ts
+    index.ts
+  original-logo-layer/           — Layer 1: original logo / frame animation (own subfolder — Scenario A)
+    original-logo-layer.tsx
+    original-logo-layer.styles.ts  — includes the active-frame image sx (not shared with the other two layers)
+    original-logo-layer.styles.test.ts
+    original-logo-layer.test.ts
+    types.ts
+    index.ts
   index.ts                       — barrel export
   README.md                      — this file
 ```

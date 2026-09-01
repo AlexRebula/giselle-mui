@@ -7,7 +7,6 @@ import {
   metricCardPaperSx,
   metricCardContentSx,
   metricCardIconBoxSx,
-  metricCardDecorationSx,
   metricCardValueSx,
   metricCardLabelSx,
   metricCardSublabelSx,
@@ -94,19 +93,5 @@ describe('metricCardIconBoxSx', () => {
     expect(styles.position).toBe('absolute');
     expect(styles.top).toBe(24);
     expect(styles.right).toBe(20);
-  });
-});
-
-describe('metricCardDecorationSx', () => {
-  it('returns a gradient using the palette color main channel', () => {
-    const styles = resolveFactory(metricCardDecorationSx('info'), mockTheme);
-    expect(styles.background).toContain('var(--palette-info-main)');
-  });
-
-  it('positions decoration absolutely with opacity and rotation', () => {
-    const styles = resolveFactory(metricCardDecorationSx('primary'), mockTheme);
-    expect(styles.position).toBe('absolute');
-    expect(styles.opacity).toBe(0.1);
-    expect(styles.transform).toBe('rotate(40deg)');
   });
 });

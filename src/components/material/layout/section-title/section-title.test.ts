@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import { SectionTitle, SectionCaption } from './section-title';
+import { SectionTitle } from './section-title';
 
 // ----------------------------------------------------------------------
 
@@ -104,14 +104,5 @@ describe('SectionTitle', () => {
     expect(html).toContain('MuiTypography-h3');
     expect(html).not.toContain('<h2');
     expect(html).not.toContain('MuiTypography-h2');
-  });
-});
-
-describe('SectionCaption', () => {
-  it('renders caption text', () => {
-    const html = renderToStaticMarkup(
-      React.createElement(SectionCaption, { title: 'Overline label' })
-    );
-    expect(html).toContain('Overline label');
   });
 });
