@@ -10,6 +10,8 @@ import {
   contentRowSx,
   labelsBoxSx,
   decorationSx,
+  statCardLabelSx,
+  trendLabelSx,
   STAT_CARD_SPARKLINE_OPTIONS,
 } from './stat-card.styles';
 import { STAT_CARD_ICON_BOX_SIZE, STAT_CARD_LABELS_MIN_WIDTH } from './stat-card.const';
@@ -78,6 +80,18 @@ describe('contentRowSx', () => {
 describe('labelsBoxSx', () => {
   it('[regression] labels block has a minimum width to prevent layout collapse', () => {
     expect((labelsBoxSx as Record<string, unknown>).minWidth).toBe(112);
+  });
+});
+
+describe('statCardLabelSx', () => {
+  it('adds spacing below the label, above the value', () => {
+    expect(statCardLabelSx).toMatchObject({ mb: 0.5 });
+  });
+});
+
+describe('trendLabelSx', () => {
+  it('is visually reduced and normal-weight next to the bold trend percentage', () => {
+    expect(trendLabelSx).toMatchObject({ opacity: 0.72, ml: 0.5, fontWeight: 400 });
   });
 });
 

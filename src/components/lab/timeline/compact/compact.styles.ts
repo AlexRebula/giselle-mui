@@ -174,6 +174,35 @@ export const milestoneConnectorLineSx: SxProps<Theme> = {
   mt: 0.5,
 };
 
+/**
+ * Overrides MUI `AccordionSummary` internals from the outside — used on the
+ * wrapping `Accordion` component's own `sx` (which cannot pass `sx` down to
+ * the `AccordionSummary` it renders internally), unlike `accordionSummarySx`
+ * above which is applied directly to a standalone `AccordionSummary`.
+ * Matches the compact timeline row height (56px).
+ */
+export const accordionSummaryOverrideSx = {
+  '& .MuiAccordionSummary-root': { minHeight: 56 },
+  '& .MuiAccordionSummary-root.Mui-expanded': { minHeight: 56 },
+  '& .MuiAccordionSummary-content': { display: 'flex', alignItems: 'center', gap: 1.5 },
+  '& .MuiAccordionSummary-expandIconWrapper': {
+    color: 'text.secondary',
+    display: 'flex',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+};
+
+/**
+ * Outlined check-circle icon shown on hover, before a done-toggle commits.
+ * Shared shape for the phase dot (32px) and milestone dot (24px) hover
+ * states — same color and glyph, differing only by the icon's footprint.
+ */
+export const checkHoverIconSx = (size: number): SxProps<Theme> => ({
+  color: 'success.main',
+  fontSize: size,
+});
+
 export const accordionRootSx =
   (done: boolean, active = false, expanded = false, color: HighlightedPaletteKey = 'primary') =>
   (theme: Theme) => {

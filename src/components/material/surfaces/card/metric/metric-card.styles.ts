@@ -31,6 +31,22 @@ export const metricCardContentSx: SxProps<Theme> = {
   flexGrow: 1,
 };
 
+/** The large headline value — reuses the theme's `h3` typography variant without a Typography element. */
+export const metricCardValueSx: SxProps<Theme> = {
+  typography: 'h3',
+};
+
+/** Label beneath the value. */
+export const metricCardLabelSx: SxProps<Theme> = {
+  color: 'text.secondary',
+};
+
+/** Sublabel beneath the label — most muted of the three text tiers. */
+export const metricCardSublabelSx: SxProps<Theme> = {
+  color: 'text.disabled',
+  mt: 0.25,
+};
+
 /**
  * Absolutely-positioned icon Box in the top-right corner of `MetricCard`.
  *

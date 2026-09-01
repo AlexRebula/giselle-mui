@@ -9,6 +9,9 @@ import {
   metricCardPaperSx,
   metricCardIconBoxSx,
   metricCardContentSx,
+  metricCardValueSx,
+  metricCardLabelSx,
+  metricCardSublabelSx,
 } from './metric-card.styles';
 
 // Re-exports — keeps existing imports from './metric-card' working.
@@ -60,17 +63,12 @@ export function MetricCard({
         </Box>
       )}
       <Box sx={metricCardContentSx}>
-        <Box sx={{ typography: 'h3' }}>{value}</Box>
-        <Typography noWrap variant="subtitle2" component="div" sx={{ color: 'text.secondary' }}>
+        <Box sx={metricCardValueSx}>{value}</Box>
+        <Typography noWrap variant="subtitle2" component="div" sx={metricCardLabelSx}>
           {label}
         </Typography>
         {sublabel && (
-          <Typography
-            noWrap
-            variant="caption"
-            component="div"
-            sx={{ color: 'text.disabled', mt: 0.25 }}
-          >
+          <Typography noWrap variant="caption" component="div" sx={metricCardSublabelSx}>
             {sublabel}
           </Typography>
         )}

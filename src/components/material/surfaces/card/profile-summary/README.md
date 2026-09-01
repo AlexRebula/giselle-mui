@@ -12,6 +12,20 @@ The profile summary card pattern — avatar, name, role, stat row — is a horiz
 
 TBD — filled in during implementation.
 
+## File structure
+
+```
+card/profile-summary/
+  profile-summary-card.tsx            — ProfileSummaryCard component
+  profile-summary-card.styles.ts      — sx constants (root Paper, avatar, role, stats row/cell)
+  profile-summary-card.styles.test.ts — mock-theme assertions for every exported sx constant
+  profile-summary-card.test.ts        — Vitest unit tests
+  profile-summary-card.stories.tsx    — Storybook stories
+  types.ts                            — ProfileSummaryCardProps, ProfileStat
+  index.ts                            — barrel
+  README.md                           — this file
+```
+
 ## Related
 
 - [BalanceSummaryCard](../balance-summary/README.md) — summary card for financial data rather than user identity

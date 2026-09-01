@@ -11,6 +11,8 @@ import {
   contentRowSx,
   labelsBoxSx,
   decorationSx,
+  statCardLabelSx,
+  trendLabelSx,
 } from './stat-card.styles';
 import { StatCardShape } from './stat-card-shape';
 
@@ -85,11 +87,7 @@ export function StatCard({
             {trend}%
           </Typography>
           {trendLabel && (
-            <Typography
-              component="span"
-              variant="caption"
-              sx={{ opacity: 0.72, ml: 0.5, fontWeight: 400 }}
-            >
+            <Typography component="span" variant="caption" sx={trendLabelSx}>
               {trendLabel}
             </Typography>
           )}
@@ -98,7 +96,7 @@ export function StatCard({
       {/* Value + chart row */}
       <Box sx={contentRowSx}>
         <Box sx={labelsBoxSx}>
-          <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+          <Typography variant="subtitle2" sx={statCardLabelSx}>
             {label}
           </Typography>
           <Typography variant="h4">{value}</Typography>
