@@ -1,16 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { createTheme } from '@mui/material/styles';
 import type { Theme } from '@mui/material/styles';
 
 import { channelAlpha } from '../../../utils/theme/theme-utils/theme-utils';
 import {
+  crossfadeOpacitySx,
   detailPanelSx,
   featureFlowItemSx,
   featureFlowRootSx,
-  highlightSlideImageSx,
-  imageColumnCardSx,
-  imageColumnFrameSx,
-  imageColumnStickyStackSx,
 } from './feature-flow-section.styles';
 
 // ----------------------------------------------------------------------
@@ -57,13 +53,6 @@ function getZIndex(sx: unknown): unknown {
   return (sx as Record<string, unknown>)['zIndex'];
 }
 
-// The real MUI default theme's `zIndex.speedDial` — the value
-// `FloatingSubNav`'s sticky wrapper actually uses via `theme.zIndex.speedDial`
-// (see `floating-sub-nav.styles.ts`), unmodified by this repo's theme preset
-// (confirmed: it doesn't touch `zIndex`). Read from a real theme instance
-// rather than hardcoded, so this stays correct if MUI's default ever changes.
-const REAL_SPEED_DIAL_Z_INDEX = createTheme().zIndex.speedDial;
-
 // ----------------------------------------------------------------------
 
 describe('featureFlowRootSx', () => {
@@ -84,11 +73,16 @@ describe('featureFlowRootSx', () => {
   });
 });
 
-describe('imageColumnCardSx', () => {
-  it('applies a palette-tinted drop shadow using channelAlpha', () => {
-    const styles = resolve(imageColumnCardSx);
-    expect(String(styles['boxShadow'])).toContain('rgba(');
-    expect(String(styles['boxShadow'])).toContain('0.16');
+describe('crossfadeOpacitySx', () => {
+  it('gives the active frame full opacity and the given transition duration', () => {
+    expect(crossfadeOpacitySx(true, 0.4)).toMatchObject({
+      opacity: 1,
+      transition: 'opacity 0.4s ease',
+    });
+  });
+
+  it('gives an inactive frame zero opacity', () => {
+    expect(crossfadeOpacitySx(false, 0.4)).toMatchObject({ opacity: 0 });
   });
 });
 
@@ -117,7 +111,8 @@ describe('detailPanelSx', () => {
   // `z-index: auto` stacking level. If it ever gains an explicit `zIndex`,
   // it could re-create a stacking context that outranks
   // `imageColumnStickyStackSx` again, regardless of DOM order — see that
-  // sx's own regression test below for the mechanism.
+  // sx's own regression test in `image-column/feature-flow-image-column.styles.test.ts`
+  // for the mechanism.
   it("[regression] does not set an explicit zIndex, so it can't out-stack the sticky image column", () => {
     expect(getZIndex(detailPanelSx())).toBeUndefined();
   });
@@ -232,63 +227,8 @@ describe('featureFlowItemSx', () => {
   });
 });
 
-describe('imageColumnStickyStackSx', () => {
-  it('is sticky on md+, static on mobile', () => {
-    expect(imageColumnStickyStackSx).toMatchObject({
-      position: { xs: 'relative', md: 'sticky' },
-    });
-  });
-
-  // Regression test for issue #193: the sticky image column's true DOM
-  // sibling at `<section>`'s level (`MotionViewport`, several levels up from
-  // this sx) and `FeatureFlowItemDetail`'s wrapping `m.div layout` have no
-  // stacking-context-establishing ancestor between them and their nearest
-  // shared one — see `imageColumnStickyStackSx`'s own JSDoc for the verified
-  // mechanism. Neither previously set `zIndex`, so both stacked at the
-  // default `z-index: auto` level — where paint order falls back to DOM
-  // order, and the later element (the detail panel/highlight carousel)
-  // painted over the sticky photo once they scrolled into overlap. An
-  // explicit positive `zIndex` here lifts the image column's stacking
-  // context above any `z-index: auto` sibling, independent of DOM order.
-  it('[regression] sets an explicit positive zIndex so it paints above the (DOM-later) detail panel', () => {
-    const zIndex = getZIndex(imageColumnStickyStackSx);
-    expect(typeof zIndex).toBe('number');
-    expect(zIndex as number).toBeGreaterThan(0);
-  });
-
-  // Regression test for issue #193's acceptance criterion "Verify the
-  // floating sub-nav still wins for its own chrome": `FloatingSubNav`'s
-  // sticky wrapper (`floating-sub-nav.styles.ts`) sets
-  // `zIndex: theme.zIndex.speedDial`. This image column's zIndex must stay
-  // below the real value MUI resolves for that token — not a hardcoded
-  // copy of it — so this keeps catching a regression even if MUI's default
-  // ever changes.
-  it("[regression] stays below FloatingSubNav's real zIndex.speedDial so the sub-nav still wins", () => {
-    const zIndex = getZIndex(imageColumnStickyStackSx) as number;
-    expect(zIndex).toBeLessThan(REAL_SPEED_DIAL_Z_INDEX);
-  });
-});
-
-describe('imageColumnFrameSx', () => {
-  it('gives the active frame full opacity and a 0.4s transition', () => {
-    expect(imageColumnFrameSx(true)).toMatchObject({ opacity: 1, transition: 'opacity 0.4s ease' });
-  });
-
-  it('gives an inactive frame zero opacity', () => {
-    expect(imageColumnFrameSx(false)).toMatchObject({ opacity: 0 });
-  });
-});
-
-describe('highlightSlideImageSx', () => {
-  it('gives the active slide full opacity and a 0.5s transition', () => {
-    expect(highlightSlideImageSx(true)).toMatchObject({
-      opacity: 1,
-      transition: 'opacity 0.5s ease',
-      objectFit: 'cover',
-    });
-  });
-
-  it('gives an inactive slide zero opacity', () => {
-    expect(highlightSlideImageSx(false)).toMatchObject({ opacity: 0 });
-  });
-});
+// `imageColumnStickyStackSx`/`imageColumnFrameSx` and `highlightSlideImageSx`
+// moved to their own sub-components' `.styles.test.ts` files (see
+// `image-column/feature-flow-image-column.styles.test.ts` and
+// `highlight-carousel/feature-flow-highlight-carousel.styles.test.ts`) — the
+// #193 zIndex-stacking regression coverage moved with `imageColumnStickyStackSx`.
