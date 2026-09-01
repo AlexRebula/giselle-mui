@@ -63,6 +63,35 @@ export const Centred: Story = {
   },
 };
 
+/**
+ * `titleComponent="h1"` renders the page's actual `<h1>` tag while keeping
+ * `titleVariant`'s default `h2` sizing - use for the one section (e.g. a
+ * homepage hero) that should carry the page's real H1, so it still looks
+ * identical to every other `SectionTitle` on the same page.
+ */
+export const AsPageH1: Story = {
+  args: {
+    ...Full.args,
+    titleComponent: 'h1',
+  },
+};
+
+/**
+ * `titleComponent` and `titleVariant` are independent - the same way MUI's
+ * own `Typography` separates `component` from `variant`. A nested heading
+ * hierarchy sets both together: this section's own subsection renders as a
+ * real `<h3>` at a visibly smaller `h3`-sized `titleVariant`, distinct from
+ * its parent's `h2`.
+ */
+export const NestedSubsection: Story = {
+  render: () => (
+    <Stack spacing={4}>
+      <SectionTitle caption="Parent section" title="Everything you need" titleVariant="h2" />
+      <SectionTitle title="A nested subsection" titleComponent="h3" titleVariant="h3" />
+    </Stack>
+  ),
+};
+
 /** `SectionCaption` used standalone — for when you need just the overline label. */
 export const CaptionStandalone: Story = {
   render: () => (

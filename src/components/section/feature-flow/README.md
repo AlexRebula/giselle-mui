@@ -17,21 +17,24 @@ the component owns no app-specific asset paths or icon lookup tables.
 
 ## Planned API
 
-| Prop                  | Type                           | Default                        | Description                                                   |
-| --------------------- | ------------------------------ | ------------------------------ | ------------------------------------------------------------- |
-| `items`               | `FeatureFlowItem[]`            | —                              | The list of feature items rendered in the description column. |
-| `image`               | `FeatureFlowImage`             | —                              | The sticky image column's source(s).                          |
-| `caption`             | `string`                       | —                              | Small label above the title.                                  |
-| `title`               | `string`                       | —                              | Section heading.                                              |
-| `txtGradient`         | `string`                       | —                              | Gradient-accent word appended after `title`.                  |
-| `description`         | `ReactNode`                    | —                              | Supporting copy below the title.                              |
-| `layoutDirection`     | `'left' \| 'right'`            | `'left'`                       | Which side the description column renders on.                 |
-| `columnSpacing`       | `{ xs?: number; md?: number }` | —                              | Grid column spacing override.                                 |
-| `descriptionGridSize` | `{ xs?; md?; lg? }`            | derived from `layoutDirection` | Description column grid size override.                        |
-| `imageGridSize`       | `{ xs?; md?; lg? }`            | derived from `layoutDirection` | Image column grid size override.                              |
-| `decoration`          | `boolean`                      | `true`                          | Renders `BasicSection`'s standard decorative frame around the whole section. |
-| `renderRightPanel`    | `(item: FeatureFlowItem, isActiveExpanded: boolean) => ReactNode` | —   | Overrides the image column entirely — e.g. a non-image, documentation-style right panel. Falls back to the built-in `FeatureFlowImageColumn` (driven by `image`) when omitted. |
-| `sx`                  | `SxProps<Theme>`               | —                              | MUI sx forwarded to root.                                     |
+| Prop                   | Type                                                              | Default                        | Description                                                                                                                                                                                                                                                  |
+| ---------------------- | ----------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `items`                | `FeatureFlowItem[]`                                               | —                              | The list of feature items rendered in the description column.                                                                                                                                                                                                |
+| `image`                | `FeatureFlowImage`                                                | —                              | The sticky image column's source(s).                                                                                                                                                                                                                         |
+| `caption`              | `string`                                                          | —                              | Small label above the title.                                                                                                                                                                                                                                 |
+| `title`                | `string`                                                          | —                              | Section heading.                                                                                                                                                                                                                                             |
+| `txtGradient`          | `string`                                                          | —                              | Gradient-accent word appended after `title`.                                                                                                                                                                                                                 |
+| `description`          | `ReactNode`                                                       | —                              | Supporting copy below the title.                                                                                                                                                                                                                             |
+| `layoutDirection`      | `'left' \| 'right'`                                               | `'left'`                       | Which side the description column renders on.                                                                                                                                                                                                                |
+| `columnSpacing`        | `{ xs?: number; md?: number }`                                    | —                              | Grid column spacing override.                                                                                                                                                                                                                                |
+| `descriptionGridSize`  | `{ xs?; md?; lg? }`                                               | derived from `layoutDirection` | Description column grid size override.                                                                                                                                                                                                                       |
+| `imageGridSize`        | `{ xs?; md?; lg? }`                                               | derived from `layoutDirection` | Image column grid size override.                                                                                                                                                                                                                             |
+| `decoration`           | `boolean`                                                         | `true`                         | Renders `BasicSection`'s standard decorative frame around the whole section.                                                                                                                                                                                 |
+| `renderRightPanel`     | `(item: FeatureFlowItem, isActiveExpanded: boolean) => ReactNode` | —                              | Overrides the image column entirely — e.g. a non-image, documentation-style right panel. Falls back to the built-in `FeatureFlowImageColumn` (driven by `image`) when omitted.                                                                               |
+| `renderHighlightPanel` | `(item: FeatureFlowItem) => ReactNode`                            | —                              | Overrides the expanded detail panel's right column entirely — e.g. one `Accordion` per highlight card instead of the built-in one-at-a-time carousel. Falls back to `FeatureFlowHighlightCarousel` (gated on `highlightCards` being non-empty) when omitted. |
+| `detailPanelColor`     | `'primary' \| 'secondary' \| 'info' \| 'success' \| 'warning' \| 'error' \| 'grey'` | `'primary'` | Palette colour the expanded detail panel's background/border-top are tinted with (`channelAlpha(mainChannel, …)`, same technique as `HeroSection`'s `color` prop) — `'grey'` gives a neutral tint that reads as part of the page instead of the brand colour. |
+| `itemDetailSx`         | `SxProps<Theme>`                                                  | —                              | Merged onto the expanded detail panel's own root, after `detailPanelSx` — overrides anything `detailPanelColor` sets, or any other built-in style, without needing a full `renderHighlightPanel` override just to change the panel's own chrome.               |
+| `sx`                   | `SxProps<Theme>`                                                  | —                              | MUI sx forwarded to root.                                                                                                                                                                                                                                    |
 
 `FeatureFlowItem` fields: `id`, `icon`, `title`, `description`, `subtitle?`, `imgUrl?`,
 `longDescription?`, `technologies?: { name: string; icon: string }[]`, `metrics?`,
@@ -47,8 +50,11 @@ this is any documentation content presented as a carousel slide, not just a high
 - Tech icon resolution is the consumer's responsibility: each `technologies` entry
   carries its own `{ name, icon }` pair, so the component never owns an app-specific
   icon lookup map or asset directory.
-- No per-item full-section override slot: the detail panel always renders from the
-  item's own fields. This keeps the component's behaviour fully determined by props.
+- `renderHighlightPanel` is a render-prop, same rationale as `renderRightPanel`: a
+  documentation consumer's own right-column content (e.g. an `Accordion` list) isn't
+  tied to any particular data shape beyond `FeatureFlowItem` itself, so the consumer
+  builds it from `item.highlightCards` directly rather than the component prescribing
+  one fixed presentation for every consumer.
 - The hover-step crossfade timing and the scroll-idle timeout are fixed internal
   constants, not configurable props — they are implementation details of the
   crossfade behaviour, not something a consumer should need to tune.
@@ -71,9 +77,9 @@ this is any documentation content presented as a carousel slide, not just a high
 
 ## Quality status — 28 Aug 2026
 
-| Dimension        | Score | Open items                                                                                                    |
-| ---------------- | ----- | --------------------------------------------------------------------------------------------------------------- |
-| DoD (Scenario B) | 19/20 | `feature-flow-section.const.ts`'s timing constants are intentionally not re-exported (fixed, not configurable) |
+| Dimension        | Score | Open items                                                                                                                                                                      |
+| ---------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DoD (Scenario B) | 19/20 | `feature-flow-section.const.ts`'s timing constants are intentionally not re-exported (fixed, not configurable)                                                                  |
 | Best practices   | 10/13 | No `Responsive` story · crossfade transitions don't respect `prefers-reduced-motion` · default story doesn't demonstrate the scroll-direction image swap (`scrollImages` unset) |
 
 ## Phase
