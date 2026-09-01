@@ -23,7 +23,10 @@ import { artisticLogoSx } from './artistic-logo-layer.styles';
  * @internal — used by `InteractiveHeroLogo` only.
  */
 export const ArtisticLogoLayer = React.forwardRef<HTMLImageElement, ArtisticLogoLayerProps>(
-  function ArtisticLogoLayer({ artisticLogoSrc, showArtisticLogo, logoFadeTransition, logoAlt }, ref) {
+  function ArtisticLogoLayer(
+    { artisticLogoSrc, showArtisticLogo, logoFadeTransition, logoAlt },
+    ref
+  ) {
     if (!artisticLogoSrc) {
       return null;
     }
