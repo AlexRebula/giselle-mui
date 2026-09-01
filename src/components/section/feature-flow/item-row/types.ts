@@ -4,21 +4,16 @@ import type { SxProps, Theme } from '@mui/material/styles';
 
 /**
  * Native button attributes this component's root can safely forward as-is —
- * everything except event handlers and `title`/`children`. Event handlers
- * are excluded wholesale, not case-by-case: `component={m.button}` gives the
- * root framer-motion's own gesture/lifecycle signatures for several
- * same-named handlers (`onDrag*`, `onAnimationStart`, and more), which
- * conflict with the native DOM event of the same name. `onFocus`/`onClick`/
- * `onMouseEnter` are also fully owned already, driven by `onHover`/
- * `onSelect` instead. `title` is repurposed as this row's own heading text.
+ * everything except `onFocus`/`onClick`/`onMouseEnter` (fully owned already,
+ * driven by `onHover`/`onSelect` instead) and `title`/`children` (`title` is
+ * repurposed as this row's own heading text). `ButtonBase` renders as a
+ * plain native button here (see #192 — the entrance animation moved to an
+ * outer `m.div`), so there's no framer-motion handler-signature conflict to
+ * account for.
  */
 type SafeButtonProps = Omit<
-  {
-    [
-      K in keyof ComponentPropsWithoutRef<'button'> as K extends `on${string}` ? never : K
-    ]: ComponentPropsWithoutRef<'button'>[K];
-  },
-  'title' | 'children'
+  ComponentPropsWithoutRef<'button'>,
+  'onFocus' | 'onClick' | 'onMouseEnter' | 'title' | 'children'
 >;
 
 export interface FeatureFlowItemRowProps extends SafeButtonProps {

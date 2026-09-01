@@ -24,6 +24,13 @@ import type { FeatureFlowItemRowProps } from './types';
  * (see #198). `expandable` only gates the *visual* hover/press/selected/
  * expanded treatment in `featureFlowItemSx`. Not exported from the package
  * barrel: an implementation detail of `FeatureFlowSection`.
+ *
+ * The entrance fade lives on an outer `m.div`, not on `ButtonBase` itself
+ * (see #192). Framer-motion leaves a permanent inline `style="opacity: 1"`
+ * on whatever element plays a `variants` animation, and an inline style
+ * always beats a class-based `:hover`/`:active` rule — animating a separate
+ * wrapper keeps that residual style off the interactive element entirely,
+ * so `featureFlowItemSx`'s hover/active opacity works with a plain rule.
  */
 export const FeatureFlowItemRow = React.forwardRef<HTMLButtonElement, FeatureFlowItemRowProps>(
   function FeatureFlowItemRow(
@@ -46,30 +53,30 @@ export const FeatureFlowItemRow = React.forwardRef<HTMLButtonElement, FeatureFlo
     const reducedMotion = useReducedMotion();
 
     return (
-      <ButtonBase
-        {...other}
-        ref={ref}
-        disableRipple
-        type="button"
-        aria-pressed={expandable ? isSelected : undefined}
-        component={m.button}
-        variants={fade('inUp', { distance: reducedMotion ? 0 : 24 })}
-        onMouseEnter={onHover}
-        onFocus={onFocus}
-        onClick={expandable ? onSelect : undefined}
-        sx={[
-          featureFlowItemSx({ isSelected, isActive, isExpanded, expandable }),
-          ...(Array.isArray(sx) ? sx : [sx]),
-        ]}
-      >
-        <GiselleIcon icon={icon} width={48} aria-hidden="true" />
-        <Stack spacing={1} sx={itemRowTextSlotSx}>
-          <Typography variant="h4" component="h6" color="inherit">
-            {title}
-          </Typography>
-          <Typography color="inherit">{description}</Typography>
-        </Stack>
-      </ButtonBase>
+      <m.div variants={fade('inUp', { distance: reducedMotion ? 0 : 24 })}>
+        <ButtonBase
+          {...other}
+          ref={ref}
+          disableRipple
+          type="button"
+          aria-pressed={expandable ? isSelected : undefined}
+          onMouseEnter={onHover}
+          onFocus={onFocus}
+          onClick={expandable ? onSelect : undefined}
+          sx={[
+            featureFlowItemSx({ isSelected, isActive, isExpanded, expandable }),
+            ...(Array.isArray(sx) ? sx : [sx]),
+          ]}
+        >
+          <GiselleIcon icon={icon} width={48} aria-hidden="true" />
+          <Stack spacing={1} sx={itemRowTextSlotSx}>
+            <Typography variant="h4" component="h6" color="inherit">
+              {title}
+            </Typography>
+            <Typography color="inherit">{description}</Typography>
+          </Stack>
+        </ButtonBase>
+      </m.div>
     );
   }
 );

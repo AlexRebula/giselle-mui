@@ -150,17 +150,18 @@ describe('featureFlowItemSx', () => {
     expect(styles['&:hover']).toBeDefined();
   });
 
-  // Regression test for issue #185: the row is rendered as `component={m.button}`
-  // with `variants={fade('inUp', …)}` for its entrance animation. Once that
-  // animation settles, framer-motion leaves a permanent inline
-  // `style="opacity: 1"` on the element — and inline styles always win over a
-  // class-based `:hover`/`:active` rule, no matter how specific, unless that
-  // rule carries `!important`. Confirmed live in Storybook: hovering a
-  // non-selected item's `getComputedStyle().opacity` stayed `1` even though
-  // the `:hover` rule (with `opacity: 0.72`) was present and matched — the
-  // rule lost to framer-motion's inline style. Without `!important` here, the
-  // dimming half of the hover tint can never actually render.
-  it("expandable, non-selected items' hover/active opacity beats framer-motion's persistent inline opacity style with !important", () => {
+  // Regression test for #185/#192: the row used to render as
+  // `component={m.button}` with `variants={fade('inUp', …)}` directly on this
+  // element, so framer-motion's permanent inline `style="opacity: 1"` (left
+  // behind once the entrance animation settles) beat these `:hover`/`:active`
+  // rules unless they carried `!important`. #192 moved the entrance fade to
+  // an outer `m.div` wrapping the row instead (`FeatureFlowItemRow`), so the
+  // interactive element itself never gets that inline style — a plain
+  // opacity value is enough. This asserts the values are plain numbers, not
+  // `!important` strings, so a future regression re-adding the inline style
+  // conflict here would be caught by a real dimming failure, not silently
+  // patched over by re-adding `!important`.
+  it('expandable, non-selected items get a plain (non-!important) hover/active opacity', () => {
     const styles = resolve(
       featureFlowItemSx({
         isSelected: false,
@@ -172,8 +173,8 @@ describe('featureFlowItemSx', () => {
     const hover = styles['&:hover'] as Record<string, unknown>;
     const active = styles['&:active'] as Record<string, unknown>;
 
-    expect(String(hover['opacity'])).toContain('!important');
-    expect(String(active['opacity'])).toContain('!important');
+    expect(hover['opacity']).toBe(0.72);
+    expect(active['opacity']).toBe(0.56);
   });
 
   it('selected items get a persistent elevated background', () => {
