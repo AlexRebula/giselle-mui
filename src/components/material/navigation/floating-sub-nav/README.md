@@ -34,7 +34,7 @@ is reusable and would otherwise be rediscovered — incorrectly — in every con
 
 Button sizes (`SUB_NAV_BUTTON_SIZE`) are exported as named constants and exceed the WCAG 2.2 AA
 minimum touch target (24 px) at all breakpoints (xs: 36 px → lg: 44 px). Regression tests in
-`floating-sub-nav.styles.test.ts` verify this.
+`sub-nav-button/sub-nav-button.styles.test.ts` verify this.
 
 ## Library safety
 
@@ -47,17 +47,15 @@ minimum touch target (24 px) at all breakpoints (xs: 36 px → lg: 44 px). Regre
 ```
 floating-sub-nav/
   floating-sub-nav.tsx              — composition
-  floating-sub-nav.const.ts         — SUB_NAV_BUTTON_SIZE, SUB_NAV_BUTTON_MIN_SIZE, PILL_BUTTON_ROW_SPACING
-  floating-sub-nav.animations.ts    — pillVariants, pillTransition, PILL_EASING, PILL_TRANSITION_DURATION
-  floating-sub-nav.styles.ts        — all sx constants and factories
-  floating-sub-nav.styles.test.ts   — styles + regression tests (touch-target)
+  floating-sub-nav.styles.ts        — stickyWrapperSx, stickyInnerSx, fixedWrapperSx
+  floating-sub-nav.styles.test.ts   — styles tests for the wrapper sx above
   floating-sub-nav.test.ts          — Vitest unit tests
   floating-sub-nav.stories.tsx      — Fixed, Sticky, Hidden, Responsive
-  nav-pill.tsx                      — internal NavPill sub-component
-  sub-nav-button.tsx                — internal SubNavButton sub-component
-  types.ts                          — FloatingSubNavProps, FloatingSubNavItem, sub-component props
+  types.ts                          — FloatingSubNavProps, FloatingSubNavItem
   index.ts                          — barrel
   README.md                         — this file
+  nav-pill/                         — internal NavPill sub-component (own subfolder)
+  sub-nav-button/                   — internal SubNavButton sub-component (own subfolder)
 ```
 
 ## Breaking change — PR #67 (21 May 2026)

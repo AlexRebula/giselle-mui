@@ -1,13 +1,14 @@
+import React from 'react';
 import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
-import { pillVariants, pillTransition } from './floating-sub-nav.animations';
-import { PILL_BUTTON_ROW_SPACING } from './floating-sub-nav.const';
-import { pillSx } from './floating-sub-nav.styles';
+import { pillVariants, pillTransition } from './nav-pill.animations';
+import { PILL_BUTTON_ROW_SPACING } from './nav-pill.const';
+import { pillSx } from './nav-pill.styles';
 import type { NavPillProps } from './types';
-import { SubNavButton } from './sub-nav-button';
+import { SubNavButton } from '../sub-nav-button';
 
 // ----------------------------------------------------------------------
 
@@ -21,9 +22,13 @@ import { SubNavButton } from './sub-nav-button';
  *
  * **Quality status (13 May 2026):** DoD 9/9 · Best practices 13/13
  */
-export function NavPill({ items, activeId, onPress }: NavPillProps) {
+export const NavPill = React.forwardRef<HTMLDivElement, NavPillProps>(function NavPill(
+  { items, activeId, onPress },
+  ref
+) {
   return (
     <m.div
+      ref={ref}
       variants={pillVariants}
       initial="initial"
       animate="animate"
@@ -44,4 +49,6 @@ export function NavPill({ items, activeId, onPress }: NavPillProps) {
       </Box>
     </m.div>
   );
-}
+});
+
+NavPill.displayName = 'NavPill';
