@@ -122,18 +122,17 @@ export const featureFlowItemSx =
     },
     ...(expandable &&
       !isSelected && {
-        // `!important` is required here: this row renders as `component={m.button}`
-        // with `variants={fade('inUp', …)}` for its entrance animation, and once
-        // that animation settles framer-motion leaves a permanent inline
-        // `style="opacity: 1"` on the element. Inline styles beat any class-based
-        // rule regardless of specificity — without `!important`, `:hover`/`:active`
-        // can change the background but can never actually dim the row (see #185).
+        // No `!important` needed (see #192): the entrance fade now lives on
+        // an outer `m.div` wrapping this row (`FeatureFlowItemRow`), not on
+        // this element itself, so framer-motion's persistent inline
+        // `style="opacity: 1"` never lands here to out-specificity these
+        // rules (previously required as a truce — see #185).
         '&:hover': {
-          opacity: '0.72 !important',
+          opacity: 0.72,
           bgcolor: channelAlpha(GREY_500_CHANNEL, 0.08),
         },
         '&:active': {
-          opacity: '0.56 !important',
+          opacity: 0.56,
           bgcolor: channelAlpha(GREY_500_CHANNEL, 0.12),
         },
       }),
