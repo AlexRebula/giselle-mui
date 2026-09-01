@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import Box from '@mui/material/Box';
 
 import { originalLayerSx } from './interactive-logo.styles';
+import { activeFrameImageSx } from './original-logo-layer.styles';
 
 // ----------------------------------------------------------------------
 
@@ -51,12 +52,7 @@ export function OriginalLogoLayer({
       sx={originalLayerSx}
     >
       {activeFrame ? (
-        <Box
-          component="img"
-          alt={logoAlt ?? 'Logo'}
-          src={activeFrame}
-          sx={{ width: 1, height: 1 }}
-        />
+        <Box component="img" alt={logoAlt ?? 'Logo'} src={activeFrame} sx={activeFrameImageSx} />
       ) : (
         children
       )}
