@@ -178,11 +178,17 @@ the card boundary, creating the soft corner effect without any additional DOM el
 ## File structure
 
 ```
-src/components/metric-card/
-  metric-card.tsx     — MetricCard + MetricCardDecoration + exported Props interfaces
-  index.ts            — barrel: re-exports all
-  README.md           — this file
-  metric-card.test.ts — Vitest unit tests
+src/components/material/surfaces/card/metric/
+  metric-card.tsx             — MetricCard composition
+  metric-card.styles.ts       — MetricCard sx constants and factories
+  metric-card.styles.test.ts  — mock-theme assertions for MetricCard's own factories
+  metric-card.const.ts        — METRIC_CARD_ICON_BOX_SIZE
+  metric-card.test.ts         — Vitest unit tests for MetricCard
+  metric-card.stories.tsx     — Default, AllColors, NoIconNoDecoration, Responsive, DecorationCustomSx
+  types.ts                    — MetricCardProps, MetricCardColor
+  index.ts                    — barrel: re-exports all, including MetricCardDecoration
+  README.md                   — this file
+  metric-card-decoration/     — MetricCardDecoration sub-component (own subfolder — see its README)
 ```
 
 ---

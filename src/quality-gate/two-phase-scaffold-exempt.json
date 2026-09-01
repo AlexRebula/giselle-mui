@@ -90,6 +90,8 @@
     "src/components/material/surfaces/card/credit-card-display/credit-card-display.test.ts",
     "src/components/material/surfaces/card/featured-item/featured-item-card.test.ts",
     "src/components/material/surfaces/card/hero-banner/hero-banner-card.test.ts",
+    "src/components/material/surfaces/card/metric/metric-card-decoration/metric-card-decoration.styles.test.ts",
+    "src/components/material/surfaces/card/metric/metric-card-decoration/metric-card-decoration.test.ts",
     "src/components/material/surfaces/card/metric/metric-card.styles.test.ts",
     "src/components/material/surfaces/card/metric/metric-card.test.ts",
     "src/components/material/surfaces/card/period-summary/period-summary-card.test.ts",

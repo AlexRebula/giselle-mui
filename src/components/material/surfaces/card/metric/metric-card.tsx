@@ -15,7 +15,8 @@ import {
 } from './metric-card.styles';
 
 // Re-exports — keeps existing imports from './metric-card' working.
-export type { MetricCardColor, MetricCardProps, MetricCardDecorationProps } from './types';
+export type { MetricCardColor, MetricCardProps } from './types';
+export type { MetricCardDecorationProps } from './metric-card-decoration';
 export { MetricCardDecoration } from './metric-card-decoration';
 
 // ----------------------------------------------------------------------
