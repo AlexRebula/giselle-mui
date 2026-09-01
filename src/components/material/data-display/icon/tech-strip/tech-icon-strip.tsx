@@ -1,8 +1,14 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { TECH_ICON_STRIP_LABEL_FONT_SIZE } from './tech-icon-strip.const';
-import { iconSlotSx, itemSx, stripRootSx, stripWrapperSx, titleSx } from './tech-icon-strip.styles';
+import {
+  iconSlotSx,
+  itemLabelSx,
+  itemSx,
+  stripRootSx,
+  stripWrapperSx,
+  titleSx,
+} from './tech-icon-strip.styles';
 import type { TechIconStripProps } from './types';
 
 // ----------------------------------------------------------------------
@@ -44,7 +50,7 @@ export function TechIconStrip({
             <Box aria-hidden sx={iconSlotSx}>
               {item.icon}
             </Box>
-            <Typography sx={{ fontSize: TECH_ICON_STRIP_LABEL_FONT_SIZE }} variant="caption">
+            <Typography sx={itemLabelSx} variant="caption">
               {item.label}
             </Typography>
           </Box>

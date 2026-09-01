@@ -5,7 +5,13 @@ import {
   TECH_ICON_STRIP_ICON_SIZE,
   TECH_ICON_STRIP_LABEL_FONT_SIZE,
 } from './tech-icon-strip.const';
-import { stripRootSx, stripWrapperSx, itemSx, iconSlotSx } from './tech-icon-strip.styles';
+import {
+  stripRootSx,
+  stripWrapperSx,
+  itemSx,
+  iconSlotSx,
+  itemLabelSx,
+} from './tech-icon-strip.styles';
 
 // ----------------------------------------------------------------------
 
@@ -70,5 +76,13 @@ describe('iconSlotSx', () => {
       unknown
     >;
     expect(childStyles.height).toBe(TECH_ICON_STRIP_ICON_SIZE);
+  });
+});
+
+describe('itemLabelSx', () => {
+  it('uses TECH_ICON_STRIP_LABEL_FONT_SIZE for the label under each icon', () => {
+    expect((itemLabelSx as Record<string, unknown>).fontSize).toBe(
+      TECH_ICON_STRIP_LABEL_FONT_SIZE
+    );
   });
 });

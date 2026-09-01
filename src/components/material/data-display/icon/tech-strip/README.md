@@ -38,7 +38,7 @@ A full alignment API (`'left' | 'center' | 'right'`) adds complexity for a patte
 tech-icon-strip/
   tech-icon-strip.tsx        — component
   tech-icon-strip.const.ts   — TECH_ICON_STRIP_ICON_SIZE, TECH_ICON_STRIP_LABEL_FONT_SIZE
-  tech-icon-strip.styles.ts  — titleSx, stripWrapperSx, itemSx, iconSlotSx
+  tech-icon-strip.styles.ts  — titleSx, stripWrapperSx, itemSx, iconSlotSx, itemLabelSx
   tech-icon-strip.styles.test.ts
   tech-icon-strip.test.ts
   tech-icon-strip.stories.tsx

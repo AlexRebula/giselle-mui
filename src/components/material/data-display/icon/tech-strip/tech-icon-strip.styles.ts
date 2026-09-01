@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from '@mui/material/styles';
 
-import { TECH_ICON_STRIP_ICON_SIZE } from './tech-icon-strip.const';
+import { TECH_ICON_STRIP_ICON_SIZE, TECH_ICON_STRIP_LABEL_FONT_SIZE } from './tech-icon-strip.const';
 
 // ----------------------------------------------------------------------
 
@@ -56,4 +56,9 @@ export const iconSlotSx: SxProps<Theme> = {
     width: TECH_ICON_STRIP_ICON_SIZE,
     height: TECH_ICON_STRIP_ICON_SIZE,
   },
+};
+
+/** Styles for the label under each icon. */
+export const itemLabelSx: SxProps<Theme> = {
+  fontSize: TECH_ICON_STRIP_LABEL_FONT_SIZE,
 };
