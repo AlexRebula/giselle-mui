@@ -6,9 +6,10 @@ import Typography from '@mui/material/Typography';
 import { txtGradientSpanSx } from './section-title.styles';
 import { SectionCaption } from './section-caption';
 
-// Re-exports — keeps existing `import { SectionCaptionProps } from './section-title'` working.
-export type { SectionTitleProps, SectionCaptionProps } from './types';
-// Re-export SectionCaption — keeps `import { SectionCaption } from './section-title'` working.
+// Re-exports — keeps existing `import { SectionTitleProps } from './section-title'` working.
+export type { SectionTitleProps } from './types';
+// Re-exports — keeps existing `import { SectionCaption, SectionCaptionProps } from './section-title'` working.
+export type { SectionCaptionProps } from './section-caption';
 export { SectionCaption } from './section-caption';
 
 /**

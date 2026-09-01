@@ -123,7 +123,10 @@ export type {
 } from './components/material/layout/showcase-row';
 
 export { SectionTitle, SectionCaption } from './components/material/layout/section-title';
-export type { SectionTitleProps } from './components/material/layout/section-title';
+export type {
+  SectionTitleProps,
+  SectionCaptionProps,
+} from './components/material/layout/section-title';
 
 export { SectionContainer } from './components/material/layout/section-container';
 export type { SectionContainerProps } from './components/material/layout/section-container';

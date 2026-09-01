@@ -72,6 +72,8 @@
     "src/components/material/layout/page-header/page-header.test.ts",
     "src/components/material/layout/section-container/section-container.styles.test.ts",
     "src/components/material/layout/section-container/section-container.test.ts",
+    "src/components/material/layout/section-title/section-caption/section-caption.styles.test.ts",
+    "src/components/material/layout/section-title/section-caption/section-caption.test.ts",
     "src/components/material/layout/section-title/section-title.styles.test.ts",
     "src/components/material/layout/section-title/section-title.test.ts",
     "src/components/material/layout/showcase-row/two-column-showcase-row.styles.test.ts",

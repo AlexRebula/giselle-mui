@@ -9,7 +9,7 @@ import {
   breakpointLabelSx,
   BREAKPOINTS,
 } from '../../../../stories-defaults';
-import { SectionTitle, SectionCaption } from './section-title';
+import { SectionTitle } from './section-title';
 
 // ----------------------------------------------------------------------
 
@@ -92,17 +92,12 @@ export const NestedSubsection: Story = {
   ),
 };
 
-/** `SectionCaption` used standalone — for when you need just the overline label. */
-export const CaptionStandalone: Story = {
-  render: () => (
-    <Stack spacing={2}>
-      <SectionCaption title="Section label" />
-      <Typography variant="h3">Heading rendered separately</Typography>
-    </Stack>
-  ),
-};
-
-/** Responsive: verify layout at each standard breakpoint. */
+/**
+ * Responsive: verify layout at each standard breakpoint.
+ *
+ * `SectionCaption` used standalone has its own dedicated story: see
+ * `section-caption/section-caption.stories.tsx`.
+ */
 export const Responsive: Story = {
   parameters: { layout: 'padded' },
   render: () => (
