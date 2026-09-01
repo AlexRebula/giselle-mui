@@ -5,6 +5,6 @@ export type {
   BaseSettingsState,
   GiselleSettingsContextValue,
   GiselleSettingsProviderProps,
-  GiselleThemeAndSettingsProviderProps,
   StorageAdapter,
 } from './settings-types';
+export type { GiselleThemeAndSettingsProviderProps } from './theme-and-settings-provider';

@@ -44,10 +44,10 @@ or hide the reset button when no changes are pending.
 context value. This prevents a separate `useState` at the layout level for the common settings-
 panel-drawer pattern.
 
-**`GiselleThemeAndSettingsProvider` convenience wrapper.** A sibling component
-(`theme-and-settings-provider.tsx`) composes `GiselleThemeProvider` and
-`GiselleSettingsProvider` in one element and bridges settings state to the MUI color scheme via
-an optional `getMode` prop. Not documented here — see its own file.
+**`GiselleThemeAndSettingsProvider` convenience wrapper.** A sibling component, in its own
+[`theme-and-settings-provider/`](./theme-and-settings-provider/README.md) subfolder, composes
+`GiselleThemeProvider` and `GiselleSettingsProvider` in one element and bridges settings state to
+the MUI color scheme via an optional `getMode` prop. Not documented here — see its own README.
 
 ## Related
 

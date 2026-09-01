@@ -2,10 +2,11 @@
 
 import { Fragment } from 'react';
 
-import { GiselleThemeProvider } from '../theme-provider/giselle/giselle';
-import { GiselleSettingsProvider } from './settings-provider';
+import { GiselleThemeProvider } from '../../theme-provider/giselle/giselle';
+import { GiselleSettingsProvider } from '../settings-provider';
 import { SettingsThemeBridge } from './settings-theme-bridge';
-import type { BaseSettingsState, GiselleThemeAndSettingsProviderProps } from './settings-types';
+import type { BaseSettingsState } from '../settings-types';
+import type { GiselleThemeAndSettingsProviderProps } from './types';
 
 // ----------------------------------------------------------------------
 

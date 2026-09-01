@@ -16,8 +16,9 @@ vi.mock('@mui/material/styles', async (importOriginal) => {
   };
 });
 
-import { GiselleThemeAndSettingsProvider } from './theme-and-settings-provider';
-import { useGiselleSettings } from '../settings-context';
+import { SettingsThemeBridge } from './settings-theme-bridge';
+import { GiselleSettingsProvider } from '../../settings-provider';
+import { useGiselleSettings } from '../../settings-context';
 
 // ----------------------------------------------------------------------
 
@@ -34,55 +35,24 @@ function Harness() {
 
 // ----------------------------------------------------------------------
 
-describe('GiselleThemeAndSettingsProvider', () => {
+describe('SettingsThemeBridge', () => {
   beforeEach(() => {
     captured = null;
     mockSetMode.mockClear();
     window.localStorage.clear();
   });
 
-  it('renders children', () => {
+  it('calls setMode with initial mode value', () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
     act(() => {
       ReactDOM.createRoot(container).render(
         React.createElement(
-          GiselleThemeAndSettingsProvider<TestSettings>,
+          GiselleSettingsProvider<TestSettings>,
           { defaultSettings: DEFAULTS },
-          React.createElement('span', { 'data-testid': 'child' }, 'ok')
-        )
-      );
-    });
-    expect(container.querySelector('[data-testid="child"]')).not.toBeNull();
-    document.body.removeChild(container);
-  });
-
-  it('exposes settings state via useGiselleSettings', () => {
-    const container = document.createElement('div');
-    document.body.appendChild(container);
-    act(() => {
-      ReactDOM.createRoot(container).render(
-        React.createElement(
-          GiselleThemeAndSettingsProvider<TestSettings>,
-          { defaultSettings: DEFAULTS },
-          React.createElement(Harness)
-        )
-      );
-    });
-    expect(captured).not.toBeNull();
-    expect(captured!.state).toEqual(DEFAULTS);
-    document.body.removeChild(container);
-  });
-
-  it('syncs mode to MUI color scheme via getMode', () => {
-    const container = document.createElement('div');
-    document.body.appendChild(container);
-    act(() => {
-      ReactDOM.createRoot(container).render(
-        React.createElement(
-          GiselleThemeAndSettingsProvider<TestSettings>,
-          { defaultSettings: DEFAULTS, getMode: (s) => s.mode },
-          React.createElement(Harness)
+          React.createElement(SettingsThemeBridge<TestSettings>, {
+            getMode: (s) => s.mode,
+          })
         )
       );
     });
@@ -90,33 +60,37 @@ describe('GiselleThemeAndSettingsProvider', () => {
     document.body.removeChild(container);
   });
 
-  it('does not call setMode when getMode is omitted', () => {
+  it('does not call setMode when getMode is not provided', () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
     act(() => {
       ReactDOM.createRoot(container).render(
-        React.createElement(GiselleThemeAndSettingsProvider<TestSettings>, {
-          defaultSettings: DEFAULTS,
-        })
+        React.createElement(
+          GiselleSettingsProvider<TestSettings>,
+          { defaultSettings: DEFAULTS },
+          React.createElement(SettingsThemeBridge<TestSettings>, {})
+        )
       );
     });
     expect(mockSetMode).not.toHaveBeenCalled();
     document.body.removeChild(container);
   });
 
-  it('syncs updated mode after setField call', () => {
+  it('calls setMode with new value when settings mode changes', () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
     act(() => {
       ReactDOM.createRoot(container).render(
         React.createElement(
-          GiselleThemeAndSettingsProvider<TestSettings>,
-          { defaultSettings: DEFAULTS, getMode: (s) => s.mode },
+          GiselleSettingsProvider<TestSettings>,
+          { defaultSettings: DEFAULTS },
+          React.createElement(SettingsThemeBridge<TestSettings>, { getMode: (s) => s.mode }),
           React.createElement(Harness)
         )
       );
     });
 
+    expect(mockSetMode).toHaveBeenCalledWith('light');
     mockSetMode.mockClear();
 
     act(() => {
@@ -124,6 +98,24 @@ describe('GiselleThemeAndSettingsProvider', () => {
     });
 
     expect(mockSetMode).toHaveBeenCalledWith('dark');
+    document.body.removeChild(container);
+  });
+
+  it('does not call setMode when getMode returns undefined', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    act(() => {
+      ReactDOM.createRoot(container).render(
+        React.createElement(
+          GiselleSettingsProvider<TestSettings>,
+          { defaultSettings: DEFAULTS },
+          React.createElement(SettingsThemeBridge<TestSettings>, {
+            getMode: () => undefined,
+          })
+        )
+      );
+    });
+    expect(mockSetMode).not.toHaveBeenCalled();
     document.body.removeChild(container);
   });
 });
