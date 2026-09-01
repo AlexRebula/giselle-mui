@@ -168,7 +168,7 @@ Full integration guides:
 | `TwoColumnShowcaseRow`                                    | Responsive two-column row (text + visual) for showcase/feature layouts — MUI v7 Grid v2 with configurable column widths.                                                                                              |
 
 
-**Full API documentation, prop tables, and live examples → [Storybook](./storybook-static/index.html)** (build locally with `npm run build-storybook`, then open the generated file)
+**Full API documentation, prop tables, and live examples → [Storybook](https://giselle-mui-storybook.vercel.app)** (or build locally with `npm run build-storybook` to preview unreleased changes before they reach `main`)
 
 **Design decisions and architecture per component → [Docusaurus docs](https://giselle-docs.vercel.app/giselle-mui)**
 
@@ -332,12 +332,11 @@ Full workflow, publishing steps, and the reasoning behind yalc:
 | Phase                    | Status     | Description                                                                                                                           |
 | ------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | Core components          | ✅ Done    | `GiselleIcon`, `MetricCard`, `SelectableCard`, `QuoteCard`, `TimelineTwoColumn` — all with unit tests + READMEs                       |
-| Storybook stories        | ✅ Done    | Stories shipped for all components. Deployed locally; public hosting planned.                                                         |
+| Storybook stories        | ✅ Done    | Stories shipped for all components. Publicly hosted at [giselle-mui-storybook.vercel.app](https://giselle-mui-storybook.vercel.app), redeployed on every merge to `main`. |
 | Phase A theme utilities  | ✅ Done    | `channelAlpha`, `hexToChannel`, `pxToRem`/`remToPx` — see [`docs/roadmap.md`](./docs/roadmap.mdx)                                     |
 | Phase B brand theme      | ✅ Done    | `giselleTheme` preset + palette constants — import from `@littlebranches/giselle-mui/utils` — see [`docs/roadmap.md`](./docs/roadmap.mdx) |
 | npm publish              | ⬜ Planned | Alongside portfolio launch, May/June 2026                                                                                             |
 | Additional components    | ⬜ Planned | Components extracted from portfolio patterns as they meet the extraction checklist                                                    |
-| Storybook public hosting | ⬜ Planned | Chromatic or self-hosted, cross-linked from Docusaurus                                                                                |
 
 Full detail: [`docs/roadmap.md`](./docs/roadmap.mdx)
 
