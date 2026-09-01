@@ -15,7 +15,15 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import { GiselleIcon } from '../../../material/data-display/icon/giselle';
 import { SectionTitle } from '../../../material/layout/section-title';
 import { fade } from '../../../motion/variants/fade';
-import { contentBoxSx, accordionItemSx, contactSectionSx } from './faq-accordion.styles';
+import {
+  contentBoxSx,
+  accordionItemSx,
+  contactSectionSx,
+  motionViewportSx,
+  sectionTitleSx,
+  footerWrapperSx,
+  contactDescriptionSx,
+} from './faq-accordion.styles';
 import { FaqMotionViewport } from './motion-viewport';
 import { FaqTopLines } from './top-lines';
 import { FaqBottomLines } from './bottom-lines';
@@ -85,14 +93,14 @@ export function FaqSection({
 
   return (
     <Box component="section" sx={[...(Array.isArray(sx) ? sx : [sx])]} {...other}>
-      <FaqMotionViewport sx={{ pt: 10, position: 'relative' }}>
+      <FaqMotionViewport sx={motionViewportSx}>
         <FaqTopLines />
         <Container>
           <SectionTitle
             caption={caption}
             title={title}
             txtGradient={txtGradient}
-            sx={{ textAlign: 'center' }}
+            sx={sectionTitleSx}
           />
           <Box sx={contentBoxSx}>
             {faqs.map((item: FaqItem, index: number) => (
@@ -117,7 +125,7 @@ export function FaqSection({
             ))}
           </Box>
         </Container>
-        <Stack sx={{ position: 'relative' }}>
+        <Stack sx={footerWrapperSx}>
           <FaqBottomLines />
           {contactHref && (
             <Box sx={contactSectionSx}>
@@ -125,9 +133,7 @@ export function FaqSection({
                 <Typography variant="h4">{contactTitle}</Typography>
               </motion.div>
               <motion.div variants={fade('in')}>
-                <Typography sx={{ mt: 2, mb: 3, color: 'text.secondary' }}>
-                  {contactDescription}
-                </Typography>
+                <Typography sx={contactDescriptionSx}>{contactDescription}</Typography>
               </motion.div>
               <motion.div variants={fade('in')}>
                 <Button

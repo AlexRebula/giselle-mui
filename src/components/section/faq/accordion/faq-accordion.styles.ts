@@ -48,3 +48,32 @@ export const contactSectionSx: SxProps<Theme> = {
   textAlign: 'center',
   background: `linear-gradient(to left, ${channelAlpha('var(--mui-palette-grey-500Channel)', 0.08)}, transparent)`,
 };
+
+/**
+ * `FaqMotionViewport` root: gives the scroll-triggered viewport its own
+ * positioning context for the decorative top/bottom-edge SVG elements.
+ */
+export const motionViewportSx: SxProps<Theme> = {
+  pt: 10,
+  position: 'relative',
+};
+
+/** Centres the section heading block above the accordion list. */
+export const sectionTitleSx: SxProps<Theme> = {
+  textAlign: 'center',
+};
+
+/**
+ * Wraps the bottom decorative lines and the optional contact footer —
+ * positioning context for `FaqBottomLines`' absolutely-positioned SVGs.
+ */
+export const footerWrapperSx: SxProps<Theme> = {
+  position: 'relative',
+};
+
+/** Contact footer's supporting description text, under the heading. */
+export const contactDescriptionSx: SxProps<Theme> = {
+  mt: 2,
+  mb: 3,
+  color: 'text.secondary',
+};

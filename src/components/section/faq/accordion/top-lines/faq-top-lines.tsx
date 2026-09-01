@@ -1,8 +1,12 @@
 import Stack from '@mui/material/Stack';
 
 import { FaqFloatTriangleDownIcon, FaqFloatLine } from '../accordion-svg';
-import { topTriangleStackSx, smallTriangleSx } from './faq-top-lines.styles';
-import { FAQ_FLOAT_LINE_LEFT } from './faq-top-lines.const';
+import {
+  topTriangleStackSx,
+  smallTriangleSx,
+  primaryTriangleSx,
+  verticalFloatLineSx,
+} from './faq-top-lines.styles';
 
 // ----------------------------------------------------------------------
 
@@ -18,10 +22,10 @@ export function FaqTopLines() {
   return (
     <>
       <Stack spacing={8} sx={topTriangleStackSx}>
-        <FaqFloatTriangleDownIcon sx={{ position: 'static', opacity: 0.12 }} />
+        <FaqFloatTriangleDownIcon sx={primaryTriangleSx} />
         <FaqFloatTriangleDownIcon sx={smallTriangleSx} />
       </Stack>
-      <FaqFloatLine vertical sx={{ top: 0, left: FAQ_FLOAT_LINE_LEFT }} />
+      <FaqFloatLine vertical sx={verticalFloatLineSx} />
     </>
   );
 }
