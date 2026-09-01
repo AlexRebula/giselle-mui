@@ -4,7 +4,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
 import path from 'path';
 
-import { findViolations, isKnownViolation } from './check-structure.js';
+import { findViolations, isKnownViolation, KNOWN_VIOLATIONS } from './check-structure.js';
 
 // ----------------------------------------------------------------------
 
@@ -150,10 +150,16 @@ describe('findViolations — nested sub-components (recursive check)', () => {
 });
 
 describe('isKnownViolation — ratchet baseline', () => {
-  it('recognises a real pre-existing baseline entry', () => {
-    expect(
-      isKnownViolation('src/components/theming/settings-provider/settings-theme-bridge.tsx')
-    ).toBe(true);
+  // `KNOWN_VIOLATIONS` is read live rather than hardcoding one of its paths —
+  // the baseline is meant to shrink to zero as giselle-mui#162 migrates each
+  // entry (see that issue), so a hardcoded path here would go stale and start
+  // failing this test the moment its own file stopped being a violation.
+  it('recognises a real pre-existing baseline entry, if any remain', () => {
+    const [anyBaselineEntry] = KNOWN_VIOLATIONS;
+    if (anyBaselineEntry === undefined) {
+      return; // Baseline fully migrated — nothing left to assert here.
+    }
+    expect(isKnownViolation(anyBaselineEntry)).toBe(true);
   });
 
   it('does not grandfather a path that was never in the baseline', () => {

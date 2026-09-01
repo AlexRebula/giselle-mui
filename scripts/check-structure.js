@@ -67,10 +67,7 @@ const PARENT_DIRS_TO_CHECK = [
 
 // Ratchet baseline — see the module doc comment above. Tracked by giselle-mui#162
 // (and, separately, the FaqSection follow-up issue for src/components/section/faq/accordion/).
-const KNOWN_VIOLATIONS = new Set([
-  'src/components/theming/settings-provider/settings-theme-bridge.tsx',
-  'src/components/theming/settings-provider/theme-and-settings-provider.tsx',
-]);
+export const KNOWN_VIOLATIONS = new Set([]);
 
 // Files that are legitimate at any layer level (not component files).
 const ALLOWED_FLAT_FILES = new Set(['index.ts', 'index.tsx', 'types.ts']);

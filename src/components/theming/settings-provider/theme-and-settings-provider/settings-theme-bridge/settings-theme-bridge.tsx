@@ -3,8 +3,9 @@
 import { useEffect } from 'react';
 import { useColorScheme } from '@mui/material/styles';
 
-import { useGiselleSettings } from './settings-context';
-import type { BaseSettingsState, SettingsThemeBridgeProps } from './settings-types';
+import { useGiselleSettings } from '../../settings-context';
+import type { BaseSettingsState } from '../../settings-types';
+import type { SettingsThemeBridgeProps } from './types';
 
 // ----------------------------------------------------------------------
 
