@@ -1,6 +1,7 @@
 import Container from '@mui/material/Container';
 
 import type { SectionContainerProps } from './types';
+import { sectionContainerSx } from './section-container.styles';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +34,11 @@ export function SectionContainer({
   ...other
 }: SectionContainerProps) {
   return (
-    <Container maxWidth={maxWidth} sx={[{ py }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
+    <Container
+      maxWidth={maxWidth}
+      sx={[sectionContainerSx(py), ...(Array.isArray(sx) ? sx : [sx])]}
+      {...other}
+    >
       {children}
     </Container>
   );

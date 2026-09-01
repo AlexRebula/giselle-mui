@@ -2,7 +2,14 @@
 import { describe, it, expect } from 'vitest';
 import type { Theme } from '@mui/material/styles';
 
-import { accordionItemSx, contactSectionSx } from './faq-accordion.styles';
+import {
+  accordionItemSx,
+  contactSectionSx,
+  motionViewportSx,
+  sectionTitleSx,
+  footerWrapperSx,
+  contactDescriptionSx,
+} from './faq-accordion.styles';
 
 // ----------------------------------------------------------------------
 
@@ -51,5 +58,42 @@ describe('contactSectionSx', () => {
   it('uses left-to-right gradient direction', () => {
     const styles = contactSectionSx as Record<string, unknown>;
     expect(String(styles['background'])).toContain('to left');
+  });
+});
+
+// ----------------------------------------------------------------------
+
+describe('motionViewportSx', () => {
+  it('gives the viewport a relative positioning context with top padding', () => {
+    expect(motionViewportSx).toMatchObject({
+      pt: 10,
+      position: 'relative',
+    });
+  });
+});
+
+describe('sectionTitleSx', () => {
+  it('centres the section title', () => {
+    expect(sectionTitleSx).toMatchObject({
+      textAlign: 'center',
+    });
+  });
+});
+
+describe('footerWrapperSx', () => {
+  it('gives the footer wrapper a relative positioning context', () => {
+    expect(footerWrapperSx).toMatchObject({
+      position: 'relative',
+    });
+  });
+});
+
+describe('contactDescriptionSx', () => {
+  it('spaces and mutes the contact description text', () => {
+    expect(contactDescriptionSx).toMatchObject({
+      mt: 2,
+      mb: 3,
+      color: 'text.secondary',
+    });
   });
 });

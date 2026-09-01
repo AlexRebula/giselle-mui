@@ -34,11 +34,14 @@ Zero personal data. No proprietary identifier names. No hardcoded hex or rgba li
 ```
 layout/two-column-showcase-row/
   two-column-showcase-row.tsx    — TwoColumnShowcaseRow component
+  two-column-showcase-row.styles.ts — sx constants and factories (root, text/controls columns)
+  two-column-showcase-row.styles.test.ts — assertions for the styles above
   two-column-showcase-row.stories.tsx — TextLeft, TextRight, ColumnOnly, Responsive
   two-column-showcase-row.test.ts — Vitest unit tests
   types.ts                       — TwoColumnShowcaseRowProps, TwoColumnShowcaseRowText
   index.ts                       — barrel
   README.md                      — this file
+  roadmap.md                     — open improvements and completed tasks
 ```
 
 ## Quality status — 13 May 2026

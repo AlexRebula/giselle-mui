@@ -1,6 +1,6 @@
 # SparklineBarChart — Roadmap
 
-> Last updated: 16 May 2026
+> Last updated: 01 Sep 2026
 
 ## Status
 
@@ -22,5 +22,6 @@ Not started.
 
 ## Completed
 
-| Task | Completed |
-| ---- | --------- |
+| Task                                                                            | Completed   |
+| -------------------------------------------------------------------------------- | ----------- |
+| Extracted inline sx (root sizing, Suspense fallback) to new sparkline-bar-chart.styles.ts (giselle-mui#201) | 01 Sep 2026 |

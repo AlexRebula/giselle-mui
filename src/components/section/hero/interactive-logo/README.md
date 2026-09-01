@@ -72,6 +72,8 @@ interactive-logo/
   portrait-layer.tsx             — Layer 3: directional portrait
   artistic-logo-layer.tsx        — Layer 2: artistic logo overlay
   original-logo-layer.tsx        — Layer 1: original logo / frame animation
+  original-logo-layer.styles.ts  — sx specific to Layer 1's active-frame image (not shared with the other two layers)
+  original-logo-layer.styles.test.ts — mock-theme assertions for the above
   index.ts                       — barrel export
   README.md                      — this file
 ```

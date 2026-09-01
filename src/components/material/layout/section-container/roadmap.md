@@ -1,6 +1,6 @@
 # SectionContainer — Roadmap
 
-> Last updated: 31 Aug 2026
+> Last updated: 01 Sep 2026
 
 ## Status
 
@@ -30,3 +30,4 @@ None.
 | -------------------------- | ----------- |
 | Initial component shipped  | 13 May 2026 |
 | Full cleanup audit (21/21) | 13 May 2026 |
+| Extracted the root `py` sx to new section-container.styles.ts (giselle-mui#201) | 01 Sep 2026 |

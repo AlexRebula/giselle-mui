@@ -75,6 +75,8 @@ src/components/section/faq/accordion/
 
   bottom-lines/                : internal sub-component — decorative bottom-edge lines/plus icons
     faq-bottom-lines.tsx
+    faq-bottom-lines.styles.ts
+    faq-bottom-lines.styles.test.ts
     faq-bottom-lines.const.ts
     faq-bottom-lines.test.ts
     index.ts

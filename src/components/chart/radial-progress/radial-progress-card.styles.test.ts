@@ -5,6 +5,8 @@ import type { Theme } from '@mui/material/styles';
 
 import {
   buildRadialProgressOptions,
+  chartFallbackSx,
+  legendDividerSx,
   legendDotSx,
   LEGEND_DOT_SIZE,
 } from './radial-progress-card.styles';
@@ -132,5 +134,20 @@ describe('legendDotSx', () => {
     const cssVar = 'var(--mui-palette-success-main)';
     const sx = legendDotSx(cssVar) as Record<string, unknown>;
     expect(sx.bgcolor).toBe(cssVar);
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+describe('legendDividerSx', () => {
+  it('adds vertical margin between the chart and legend row', () => {
+    expect(legendDividerSx).toMatchObject({ my: 2 });
+  });
+});
+
+describe('chartFallbackSx', () => {
+  it('matches the fallback height to the requested chart height', () => {
+    expect(chartFallbackSx(280)).toMatchObject({ height: 280 });
+    expect(chartFallbackSx(360)).toMatchObject({ height: 360 });
   });
 });

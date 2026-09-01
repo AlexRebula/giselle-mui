@@ -1,6 +1,6 @@
 # FaqSection — Roadmap
 
-> Last updated: 28 Aug 2026
+> Last updated: 01 Sep 2026
 
 ## Status
 
@@ -27,3 +27,4 @@ Fully audited. FAQ accordion section with animated expand/collapse; exported fro
 | Renamed `FaqAccordion` → `FaqSection` (alias kept for backward compat) | 13 May 2026 |
 | Full cleanup audit (21/21) | 13 May 2026 |
 | Nested `bottom-lines`, `top-lines`, `motion-viewport`, `accordion-svg` sub-components into their own subfolders per the Scenario A policy reversal; added `displayName` to all four, `forwardRef` to the two (`motion-viewport`, `accordion-svg`) with a single ref-bearing root (giselle-mui#164) | 28 Aug 2026 |
+| Extracted remaining inline `sx` in `faq-accordion.tsx`, `top-lines/faq-top-lines.tsx`, and `bottom-lines/faq-bottom-lines.tsx` to their `.styles.ts` files under the zero-tolerance policy; created `bottom-lines/faq-bottom-lines.styles.ts` (new) and merged the top/bottom edge variants in it into single factories (giselle-mui#201) | 01 Sep 2026 |
