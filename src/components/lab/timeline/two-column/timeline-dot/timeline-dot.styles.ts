@@ -21,6 +21,20 @@ export const doneCheckmarkSx = (iconSize: number): SxProps<Theme> => ({
 });
 
 /**
+ * The not-done icon slot — centers whatever icon is passed in.
+ *
+ * Deliberately untyped as `SxProps<Theme>`: this constant sits alongside a
+ * `boolean`-conditional sx object in a fixed-length `sx={[...]}` array in
+ * `dot-inner.tsx`, not spread from a `sx` prop — `SxProps<Theme>`'s own
+ * array alternative makes TypeScript treat that array as potentially
+ * nested, which MUI's `Box` sx typing rejects. The plain inferred object
+ * literal type has no such alternative.
+ */
+export const dotInnerIconSlotSx = {
+  display: 'flex',
+} as const;
+
+/**
  * Inner clip Box that rounds the dot content to a circle and applies the fill colour.
  *
  * Separate from the outer Box so the `::after` pulsing halo ring is not clipped.

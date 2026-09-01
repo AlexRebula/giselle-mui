@@ -3,7 +3,11 @@ import type { SectionTitleProps } from './types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { txtGradientSpanSx } from './section-title.styles';
+import {
+  sectionTitleDescriptionSx,
+  sectionTitleRootSx,
+  txtGradientSpanSx,
+} from './section-title.styles';
 import { SectionCaption } from './section-caption';
 
 // Re-exports — keeps existing `import { SectionTitleProps } from './section-title'` working.
@@ -61,17 +65,7 @@ export function SectionTitle({
   ...other
 }: SectionTitleProps) {
   return (
-    <Box
-      sx={[
-        {
-          gap: 3,
-          display: 'flex',
-          flexDirection: 'column',
-        },
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
-      {...other}
-    >
+    <Box sx={[sectionTitleRootSx, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
       {caption && <SectionCaption title={caption} sx={slotProps?.caption?.sx} />}
       <Typography component={titleComponent} variant={titleVariant} sx={slotProps?.title?.sx}>
         {title}{' '}
@@ -84,7 +78,7 @@ export function SectionTitle({
       {description && (
         <Box
           sx={[
-            { color: 'text.secondary', typography: 'body1' },
+            sectionTitleDescriptionSx,
             ...(Array.isArray(slotProps?.description?.sx)
               ? slotProps.description.sx
               : [slotProps?.description?.sx]),

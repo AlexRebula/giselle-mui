@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
-import { doneCheckmarkSx, pulseRingAfterSx } from './timeline-dot.styles';
+import { doneCheckmarkSx, dotInnerIconSlotSx, pulseRingAfterSx } from './timeline-dot.styles';
 import { getDotSize } from './utils';
 
 // ----------------------------------------------------------------------
@@ -21,6 +21,14 @@ describe('doneCheckmarkSx', () => {
     const sx = doneCheckmarkSx(23) as Record<string, unknown>;
     expect(String(sx.animation)).toContain('0.36s');
     expect(String(sx.animation)).toContain('cubic-bezier');
+  });
+});
+
+// ----------------------------------------------------------------------
+
+describe('dotInnerIconSlotSx', () => {
+  it('centers the not-done icon via flex', () => {
+    expect(dotInnerIconSlotSx).toMatchObject({ display: 'flex' });
   });
 });
 

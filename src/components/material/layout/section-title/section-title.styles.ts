@@ -17,3 +17,16 @@ export const txtGradientSpanSx: SxProps<Theme> = (theme) => ({
   backgroundClip: 'text',
   color: 'transparent',
 });
+
+/** Root `Box`: stacks the caption/title/description vertically. */
+export const sectionTitleRootSx: SxProps<Theme> = {
+  gap: 3,
+  display: 'flex',
+  flexDirection: 'column',
+};
+
+/** The optional description slot below the title. */
+export const sectionTitleDescriptionSx: SxProps<Theme> = {
+  color: 'text.secondary',
+  typography: 'body1',
+};

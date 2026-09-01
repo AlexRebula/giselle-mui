@@ -13,3 +13,13 @@ export const demoNavBarSx: SxProps<Theme> = {
   borderBottom: '1px solid',
   borderColor: 'divider',
 };
+
+/** Full-height, invisible intersection-observer target (`NavSentinel`) — story-only harness. */
+export const navSentinelSx: SxProps<Theme> = {
+  height: 1,
+};
+
+/** Centers the demo nav bar's label + chip row (`DemoFloatingNav`) — story-only harness. */
+export const demoNavBarRowSx: SxProps<Theme> = {
+  alignItems: 'center',
+};

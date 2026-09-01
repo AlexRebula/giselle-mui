@@ -2,7 +2,11 @@
 import { describe, it, expect } from 'vitest';
 import type { Theme } from '@mui/material/styles';
 
-import { txtGradientSpanSx } from './section-title.styles';
+import {
+  sectionTitleDescriptionSx,
+  sectionTitleRootSx,
+  txtGradientSpanSx,
+} from './section-title.styles';
 
 // ----------------------------------------------------------------------
 
@@ -37,5 +41,20 @@ describe('txtGradientSpanSx', () => {
     const styles = (txtGradientSpanSx as unknown as StyleFn)(mockTheme);
     expect(styles.background).toContain('linear-gradient(to right');
     expect(styles.background).toContain('rgb(33 43 54)');
+  });
+});
+
+describe('sectionTitleRootSx', () => {
+  it('stacks children vertically with a consistent gap', () => {
+    expect(sectionTitleRootSx).toMatchObject({ display: 'flex', flexDirection: 'column', gap: 3 });
+  });
+});
+
+describe('sectionTitleDescriptionSx', () => {
+  it('uses secondary text colour and body1 typography', () => {
+    expect(sectionTitleDescriptionSx).toMatchObject({
+      color: 'text.secondary',
+      typography: 'body1',
+    });
   });
 });
