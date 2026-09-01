@@ -70,11 +70,40 @@ describe('SectionTitle', () => {
     expect(html).not.toContain('<h2');
   });
 
-  it('keeps h2 visual sizing (MuiTypography-h2 class) even when rendered as an h1 tag', () => {
+  it('keeps h2 visual sizing (MuiTypography-h2 class) by default even when rendered as an h1 tag', () => {
     const html = renderToStaticMarkup(
       React.createElement(SectionTitle, { title: 'Heading', titleComponent: 'h1' })
     );
     expect(html).toContain('MuiTypography-h2');
+  });
+
+  it('renders as h3 when titleComponent="h3" (any heading level, not just h1/h2)', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(SectionTitle, { title: 'Heading', titleComponent: 'h3' })
+    );
+    expect(html).toContain('<h3');
+  });
+
+  it('renders h3 visual sizing when titleVariant="h3", independent of titleComponent', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(SectionTitle, { title: 'Heading', titleVariant: 'h3' })
+    );
+    expect(html).toContain('MuiTypography-h3');
+    expect(html).not.toContain('MuiTypography-h2');
+  });
+
+  it('decouples tag from size: titleComponent="h1" with titleVariant="h3" renders an <h1> tag sized like an h3', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(SectionTitle, {
+        title: 'Heading',
+        titleComponent: 'h1',
+        titleVariant: 'h3',
+      })
+    );
+    expect(html).toContain('<h1');
+    expect(html).toContain('MuiTypography-h3');
+    expect(html).not.toContain('<h2');
+    expect(html).not.toContain('MuiTypography-h2');
   });
 });
 

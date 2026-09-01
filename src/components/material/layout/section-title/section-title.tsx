@@ -36,8 +36,15 @@ export { SectionCaption } from './section-caption';
  * ## Page H1
  * Pass `titleComponent="h1"` for the one section that should carry the
  * page's actual `<h1>` (e.g. a homepage's hero) - the rendered tag changes,
- * `variant="h2"` sizing does not, so it still looks identical to every
- * other `SectionTitle` on the page.
+ * `titleVariant` sizing does not (still `h2` by default), so it still looks
+ * identical to every other `SectionTitle` on the page.
+ *
+ * ## Nested heading hierarchy
+ * `titleComponent` and `titleVariant` are independent, the same way MUI's
+ * own `Typography` separates `component` from `variant` - set both together
+ * for a genuine nested hierarchy (a subsection's `SectionTitle` at
+ * `titleComponent="h3"`, `titleVariant="h3"`, visibly smaller than its
+ * parent's `h2`).
  *
  * **Quality status (13 May 2026):** DoD 20/20 · Best practices 13/13
  */
@@ -49,6 +56,7 @@ export function SectionTitle({
   txtGradient,
   description,
   titleComponent = 'h2',
+  titleVariant = 'h2',
   ...other
 }: SectionTitleProps) {
   return (
@@ -64,7 +72,7 @@ export function SectionTitle({
       {...other}
     >
       {caption && <SectionCaption title={caption} sx={slotProps?.caption?.sx} />}
-      <Typography component={titleComponent} variant="h2" sx={slotProps?.title?.sx}>
+      <Typography component={titleComponent} variant={titleVariant} sx={slotProps?.title?.sx}>
         {title}{' '}
         {txtGradient && (
           <Box component="span" sx={txtGradientSpanSx}>

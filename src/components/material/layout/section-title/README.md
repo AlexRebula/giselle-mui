@@ -24,10 +24,14 @@ means every consumer rediscovers the gradient-clip CSS trick and the correct `th
   forking the component. This avoids prop explosion (no `titleSx`, `captionSx`, etc.).
 - **No `color` prop** — `SectionTitle` is purely structural/typographic. Consumers use `sx` to
   apply colour overrides at the slot level if needed.
-- **`titleComponent` changes the tag, never the size** — `variant="h2"` stays fixed regardless of
-  `titleComponent`, so a page's one real `<h1>` (rendered via `titleComponent="h1"`) still looks
-  identical to every other `SectionTitle` on the page. A separate `variant` prop wasn't added:
-  nothing asked for a genuinely different _size_, only correct heading semantics for one section.
+- **`titleComponent` and `titleVariant` are independent** — mirrors MUI's own `Typography`
+  separation of `component` (tag) from `variant` (size). Both default to `'h2'`, so setting only
+  `titleComponent="h1"` (a page's one real H1) still looks identical to every other `SectionTitle`
+  on the page; setting both together supports a genuine nested heading hierarchy (a subsection at
+  `titleComponent="h3"`/`titleVariant="h3"`, visibly smaller than its parent's `h2`). An earlier
+  version of this component hardcoded `variant="h2"` and only exposed the tag — flagged in review
+  as not actually reusable for a nested hierarchy, since MUI's own component/variant split exists
+  for exactly that reason.
 
 ## Library safety
 
@@ -45,7 +49,7 @@ section-title/
   section-title.styles.ts    — txtGradientSpanSx factory
   section-title.styles.test.ts — mock-theme assertions for txtGradientSpanSx
   section-title.test.ts      — renderToStaticMarkup tests for both components
-  section-title.stories.tsx  — Full, TitleOnly, CaptionAndGradient, Centred, AsPageH1, CaptionStandalone, Responsive
+  section-title.stories.tsx  — Full, TitleOnly, CaptionAndGradient, Centred, AsPageH1, NestedSubsection, CaptionStandalone, Responsive
   index.ts                   — barrel: SectionTitle, SectionCaption, types
   README.md                  — this file
 ```
