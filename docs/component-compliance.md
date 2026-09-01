@@ -1,7 +1,7 @@
 # Component Compliance Report
 
-_Generated: 2026-06-14 — `feature-flow` rows added 2026-08-31._
-_Not regenerated repo-wide since 2026-06-14 — stale elsewhere too (e.g. the `hero`/`section` duplication, see giselle-mui#202)._
+_Generated: 2026-06-14 — `feature-flow` rows added 2026-08-31; `hero`-layer duplicate rows removed 2026-09-01 (giselle-mui#202)._
+_Not regenerated repo-wide since 2026-06-14 — likely stale elsewhere too._
 
 | Component                    | Layer    | Built | README | JSDoc | Story JSDoc | Roadmap | Roadmap done | Timeline | Notes               |
 | ---------------------------- | -------- | ----- | ------ | ----- | ----------- | ------- | ------------ | -------- | ------------------- |
@@ -15,9 +15,6 @@ _Not regenerated repo-wide since 2026-06-14 — stale elsewhere too (e.g. the `h
 | ChartCardBase                | chart    | ❌    | ❌     | ✅    | ❌          | ✅      | ❌           | ❌       | unbuilt stub        |
 | BudgetVsActualCard           | chart    | ❌    | ❌     | ✅    | ❌          | ✅      | ❌           | ❌       | unbuilt stub        |
 | AreaLineChartCard            | chart    | ❌    | ❌     | ✅    | ❌          | ✅      | ❌           | ❌       | unbuilt stub        |
-| ScrollParallax               | hero     | ✅    | ✅     | ✅    | ✅          | ✅      | ✅           | ❌       |                     |
-| InteractiveLogo              | hero     | ✅    | ✅     | ✅    | ✅          | ✅      | ✅           | ❌       |                     |
-| ButtonsRow                   | hero     | ✅    | ✅     | ✅    | ✅          | ✅      | ✅           | ❌       |                     |
 | Hero                         | hero     | ❌    | ❌     | ✅    | ❌          | ❌      | ❌           | ❌       | unbuilt stub        |
 | TwoColumn                    | lab      | ✅    | ✅     | ✅    | ✅          | ✅      | ✅           | ❌       |                     |
 | TaskList                     | lab      | ✅    | ✅     | ✅    | ✅          | ✅      | ✅           | ❌       |                     |
