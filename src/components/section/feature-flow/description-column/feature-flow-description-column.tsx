@@ -3,6 +3,10 @@ import Stack from '@mui/material/Stack';
 import { SectionTitle } from '../../../material/layout/section-title';
 import { hasExpansionData } from '../feature-flow-section.utils';
 import { FeatureFlowItemRow } from '../item-row';
+import {
+  descriptionColumnRowListSx,
+  descriptionColumnTitleSx,
+} from './feature-flow-description-column.styles';
 import type { FeatureFlowDescriptionColumnProps } from './types';
 
 // Re-export — keeps `import { FeatureFlowDescriptionColumnProps } from
@@ -16,6 +20,15 @@ export type { FeatureFlowDescriptionColumnProps } from './types';
  * `FeatureFlowSection`'s left (by default) column. Not exported from the
  * package barrel: an implementation detail of `FeatureFlowSection`, mirroring
  * `FeatureFlowImageColumn`'s own sub-component split for the opposite column.
+ *
+ * **Deliberately fragment-rooted, no `forwardRef`/`sx`/`...other`.** Unlike
+ * its siblings (`item-row`, `item-detail`, `highlight-carousel`,
+ * `image-column`), each a single positionable/stylable unit, this component
+ * has exactly one call site (`feature-flow-section.tsx`) with a fixed prop
+ * list — no `ref`, no `sx`, no passthrough anywhere. Its `SectionTitle` and
+ * row-list `Stack` flow directly into the parent's own `Grid` item as
+ * siblings; wrapping them in a single root would add API surface nothing
+ * uses and change how they sit in that grid cell for no benefit.
  */
 export function FeatureFlowDescriptionColumn({
   caption,
@@ -38,13 +51,13 @@ export function FeatureFlowDescriptionColumn({
           title={title}
           txtGradient={txtGradient}
           description={description}
-          sx={{ mb: { xs: 5, md: 8 }, textAlign: { xs: 'center', md: 'left' } }}
+          sx={descriptionColumnTitleSx}
         />
       )}
 
       <Stack
         spacing={1.5}
-        sx={{ maxWidth: { sm: 560, md: 400 }, mx: { xs: 'auto', md: 'unset' } }}
+        sx={descriptionColumnRowListSx}
         onMouseLeave={onLeave}
         onBlur={(event) => {
           // Only reset once focus actually leaves this whole row group, not
