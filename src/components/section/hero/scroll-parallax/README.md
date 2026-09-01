@@ -71,15 +71,24 @@ here. Apply them via the `sx` prop:
 ```
 scroll-parallax/
   scroll-parallax-hero.tsx            — pure JSX composition (slots + parallax wiring)
-  animated-hero-heading.tsx           — sub-component: animated h1 with gradient highlight span
   use-scroll-percent.ts               — hook: tracks scroll position as 0–100 percent
   use-transform-y.ts                  — hook: spring-physics y-offset from scroll MotionValue
-  scroll-parallax-hero.animations.ts  — framer-motion Variants and Transition constants
-  scroll-parallax-hero.styles.ts      — all sx constants and factories
+  scroll-parallax-hero.styles.ts      — sx shared or used by ScrollParallaxHero itself
   scroll-parallax-hero.styles.test.ts — mock-theme assertions for every factory
-  scroll-parallax-hero.test.ts        — Vitest unit tests (slots, AnimatedHeroHeading, useScrollPercent)
+  scroll-parallax-hero.test.ts        — Vitest unit tests (slots, useScrollPercent)
   scroll-parallax-hero.stories.tsx    — Storybook: Default, HeadingOnly, LogoSlot, CustomParallax, NoParallax
-  types.ts                            — ScrollParallaxHeroProps, AnimatedHeroHeadingProps, UseScrollPercentResult, ParallaxMultipliers
+  types.ts                            — ScrollParallaxHeroProps, UseScrollPercentResult, ParallaxMultipliers
+  animated-hero-heading/              — sub-component: animated h1 with gradient highlight span
+                                         (own subfolder — Scenario A, independently barrel-exported)
+    animated-hero-heading.tsx
+    animated-hero-heading.animations.ts
+    animated-hero-heading.styles.ts
+    animated-hero-heading.styles.test.ts
+    animated-hero-heading.test.ts
+    animated-hero-heading.stories.tsx
+    types.ts
+    index.ts
+    README.md
   index.ts                            — barrel export
   README.md                           — this file
 ```
@@ -99,16 +108,17 @@ framer-motion.
 
 ## Quality status
 
-**May 2026** — shipped and tested.
+**01 Sep 2026** — shipped and tested; `animated-hero-heading/` nested into its own subfolder
+per the Scenario A sub-component policy (giselle-mui#162).
 
 - `npm run check:verify` ✅
-- Vitest unit tests: slots, `AnimatedHeroHeading`, `useScrollPercent` ✅
+- Vitest unit tests: slots, `useScrollPercent` ✅ (see `animated-hero-heading/` for its own tests)
 - `*.styles.test.ts` covers every exported sx factory ✅
 - SonarQube: zero violations ✅
 - Storybook: Default, HeadingOnly, LogoSlot, CustomParallax, NoParallax ✅
 
 ## Related
 
+- [`animated-hero-heading/`](./animated-hero-heading/README.md) — `AnimatedHeroHeading`: the animated gradient-highlight `<h1>` sub-component for the `heading` slot
 - [`interactive-logo/`](../interactive-logo/README.md) — `InteractiveHeroLogo`: hover-phase portrait reveal for the `logo` slot
 - [`buttons-row/`](../buttons-row/README.md) — `HeroButtonsRow`: animated button row for the `actions` slot
-- [`motion/variants/fade/`](../../motion/variants/fade/) — `fade()` factory used by `AnimatedHeroHeading`

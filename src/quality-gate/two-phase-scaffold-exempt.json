@@ -166,6 +166,8 @@
     "src/components/section/hero/interactive-logo/original-logo-layer/original-logo-layer.test.ts",
     "src/components/section/hero/interactive-logo/portrait-layer/portrait-layer.styles.test.ts",
     "src/components/section/hero/interactive-logo/portrait-layer/portrait-layer.test.ts",
+    "src/components/section/hero/scroll-parallax/animated-hero-heading/animated-hero-heading.styles.test.ts",
+    "src/components/section/hero/scroll-parallax/animated-hero-heading/animated-hero-heading.test.ts",
     "src/components/section/hero/scroll-parallax/scroll-parallax-hero.styles.test.ts",
     "src/components/section/hero/scroll-parallax/scroll-parallax-hero.test.ts",
     "src/components/section/hero/section/hero-section.styles.test.ts",
