@@ -5,7 +5,17 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { quoteMarkSx, quoteTextSx, quoteCardPaperSx } from './quote-card.styles';
+import {
+  quoteMarkSx,
+  quoteTextSx,
+  quoteCardPaperSx,
+  quoteCardRowSlotSx,
+  quoteCardTextSlotSx,
+  quoteAttributionRowSlotSx,
+  quoteAuthorSx,
+  quoteSeparatorSx,
+  quoteSourceSx,
+} from './quote-card.styles';
 
 // Re-exports — keeps `import { QuoteCardProps } from './quote-card'` working.
 export type { QuoteCardProps } from './types';
@@ -58,34 +68,30 @@ export function QuoteCard({
       sx={[quoteCardPaperSx(color), ...(Array.isArray(sx) ? sx : [sx])]}
       {...other}
     >
-      <Box sx={{ display: 'flex', gap: 2 }}>
+      <Box sx={quoteCardRowSlotSx}>
         {/* Left column — decorative opening quote mark */}
         <Typography aria-hidden sx={quoteMarkSx(color)}>
           {'\u201C'}
         </Typography>
         {/* Right column — quote text + attribution */}
-        <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Box sx={quoteCardTextSlotSx}>
           <Typography variant="body1" sx={quoteTextSx}>
             {quote}
           </Typography>
           {(author || source) && (
-            <Stack
-              direction="row"
-              spacing={0.75}
-              sx={{ mt: 2, color: 'text.disabled', alignItems: 'center' }}
-            >
+            <Stack direction="row" spacing={0.75} sx={quoteAttributionRowSlotSx}>
               {author && (
-                <Typography variant="caption" sx={{ fontWeight: 'fontWeightMedium' }}>
+                <Typography variant="caption" sx={quoteAuthorSx}>
                   {author}
                 </Typography>
               )}
               {author && source && (
-                <Typography variant="caption" aria-hidden sx={{ opacity: 0.6 }}>
+                <Typography variant="caption" aria-hidden sx={quoteSeparatorSx}>
                   {'·'}
                 </Typography>
               )}
               {source && (
-                <Typography variant="caption" sx={{ opacity: 0.72 }}>
+                <Typography variant="caption" sx={quoteSourceSx}>
                   {source}
                 </Typography>
               )}
