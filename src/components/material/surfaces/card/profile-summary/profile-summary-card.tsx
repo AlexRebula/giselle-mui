@@ -5,7 +5,13 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 
 import type { ProfileSummaryCardProps } from './types';
-import { avatarSx } from './profile-summary-card.styles';
+import {
+  avatarSx,
+  profileSummaryCardPaperSx,
+  roleSx,
+  statCellSlotSx,
+  statsRowSlotSx,
+} from './profile-summary-card.styles';
 
 // ----------------------------------------------------------------------
 
@@ -18,21 +24,21 @@ export function ProfileSummaryCard({
   ...other
 }: ProfileSummaryCardProps) {
   return (
-    <Paper sx={[{ p: 3, textAlign: 'center' }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
+    <Paper sx={[profileSummaryCardPaperSx, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
       <Avatar src={avatarSrc} alt={name} sx={avatarSx}>
         {name[0]}
       </Avatar>
       <Typography variant="h6">{name}</Typography>
       {role && (
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography variant="body2" color="text.secondary" sx={roleSx}>
           {role}
         </Typography>
       )}
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Box sx={statsRowSlotSx}>
         {stats.map((stat, index) => (
           <Box key={stat.label}>
             {index > 0 && <Divider orientation="vertical" flexItem />}
-            <Box sx={{ px: 2 }}>
+            <Box sx={statCellSlotSx}>
               <Typography variant="subtitle1">{stat.value}</Typography>
               <Typography variant="caption" color="text.secondary">
                 {stat.label}
