@@ -11,7 +11,20 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 import type { PhaseRange, PhaseWarningPopoverProps } from './types';
 import { monthIndexToDate, resolveOverlaps } from '../utils';
-import { popoverPaperSx, sliderRowHeaderSx, actionsRowSx } from './phase-warning-popover.styles';
+import {
+  popoverPaperSx,
+  sliderRowHeaderSx,
+  actionsRowSx,
+  overlapPopperSx,
+  warningHeaderRowSx,
+  warningTitleSx,
+  closeButtonSx,
+  overlapSummarySx,
+  overlapHintSx,
+  slidersColumnSx,
+  sliderPhaseLabelSx,
+  applyCancelRowSx,
+} from './phase-warning-popover.styles';
 import { MiniGanttRuler } from './mini-gantt-ruler';
 import {
   parsePhaseRange,
@@ -145,25 +158,20 @@ export function PhaseWarningPopover({
       anchorEl={anchorEl}
       placement="bottom-start"
       modifiers={[{ name: 'offset', options: { offset: [0, 8] } }]}
-      sx={(theme) => ({
-        zIndex: theme.zIndex.tooltip + 1,
-      })}
+      sx={overlapPopperSx}
     >
       <ClickAwayListener onClickAway={onClose}>
         <Paper elevation={8} sx={popoverPaperSx}>
           {/* Header */}
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Typography
-              variant="subtitle2"
-              sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
-            >
+          <Box sx={warningHeaderRowSx}>
+            <Typography variant="subtitle2" sx={warningTitleSx}>
               ⚠ {warningCount} date overlap{warningCount !== 1 ? 's' : ''}
             </Typography>
             <IconButton
               size="small"
               onClick={onClose}
               aria-label="Close warning panel"
-              sx={{ ml: 'auto' }}
+              sx={closeButtonSx}
             >
               ×
             </IconButton>
@@ -171,17 +179,17 @@ export function PhaseWarningPopover({
           <Divider />
           {/* Warning list */}
           <Box>
-            <Typography variant="body2" color="warning.main" sx={{ fontWeight: 500 }}>
+            <Typography variant="body2" color="warning.main" sx={overlapSummarySx}>
               {`Overlap: ${conflictingPhases.map((p) => p.shortTitle ?? p.title).join(' ↔ ')}`}
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+            <Typography variant="caption" color="text.secondary" sx={overlapHintSx}>
               {currentPhase.shortTitle ?? currentPhase.title} — adjust sliders or use Make
               sequential.
             </Typography>
           </Box>
           <Divider />
           {/* Range sliders — one per conflicting phase */}
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Box sx={slidersColumnSx}>
             {conflictingPhases.map((phase) => {
               const override = overrides.get(phase.key);
               if (!override) return null;
@@ -189,7 +197,7 @@ export function PhaseWarningPopover({
               return (
                 <Box key={phase.key}>
                   <Box sx={sliderRowHeaderSx}>
-                    <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                    <Typography variant="caption" sx={sliderPhaseLabelSx}>
                       {phase.shortTitle ?? phase.title}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
@@ -226,7 +234,7 @@ export function PhaseWarningPopover({
               Make sequential
             </Button>
             {pendingApply && (
-              <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={applyCancelRowSx}>
                 <Button
                   size="small"
                   variant="contained"
