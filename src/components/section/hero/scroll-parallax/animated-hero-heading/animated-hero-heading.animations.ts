@@ -1,6 +1,6 @@
 import type { MotionProps, Transition } from 'framer-motion';
 
-import { fade } from '../../../motion/variants/fade';
+import { fade } from '../../../../motion/variants/fade';
 
 // ----------------------------------------------------------------------
 

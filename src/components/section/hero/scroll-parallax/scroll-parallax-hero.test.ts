@@ -22,7 +22,6 @@ vi.mock('@mui/material/useMediaQuery', () => ({ default: vi.fn(() => false) }));
 
 import { renderWithTheme } from '../../../../test-utils';
 import { ScrollParallaxHero } from './scroll-parallax-hero';
-import { AnimatedHeroHeading } from './animated-hero-heading';
 import { useScrollPercent } from './use-scroll-percent';
 import { DEFAULT_PARALLAX_MULTIPLIERS } from './scroll-parallax-hero.const';
 
@@ -125,41 +124,6 @@ describe('ScrollParallaxHero — slot rendering', () => {
     );
     expect(html).toContain('data-testid="hero-root"');
     expect(html).toContain('aria-label="Hero section"');
-  });
-});
-
-// ----------------------------------------------------------------------
-
-describe('AnimatedHeroHeading', () => {
-  it('renders the subheading text', () => {
-    const html = renderWithTheme(
-      React.createElement(AnimatedHeroHeading, {
-        subheading: 'The work of',
-        highlight: 'Platform Team',
-      })
-    );
-    expect(html).toContain('The work of');
-  });
-
-  it('renders the highlight text', () => {
-    const html = renderWithTheme(
-      React.createElement(AnimatedHeroHeading, {
-        subheading: 'The work of',
-        highlight: 'Platform Team',
-      })
-    );
-    expect(html).toContain('Platform Team');
-  });
-
-  it('renders subheading and highlight in the same element', () => {
-    const html = renderWithTheme(
-      React.createElement(AnimatedHeroHeading, {
-        subheading: 'Hello',
-        highlight: 'World',
-      })
-    );
-    expect(html).toContain('Hello');
-    expect(html).toContain('World');
   });
 });
 

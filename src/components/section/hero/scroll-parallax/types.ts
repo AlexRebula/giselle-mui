@@ -1,5 +1,5 @@
 import type { ReactNode, RefObject } from 'react';
-import type { MotionProps, MotionValue } from 'framer-motion';
+import type { MotionValue } from 'framer-motion';
 import type { BoxProps } from '@mui/material/Box';
 
 import type { HeroSlotProps } from '../types';
@@ -46,30 +46,9 @@ export type ScrollParallaxHeroProps = Omit<BoxProps, 'children'> &
     parallax?: ParallaxMultipliers;
   };
 
-/** Props for `AnimatedHeroHeading`. */
-export type AnimatedHeroHeadingProps = {
-  /**
-   * The plain-text portion before the animated highlight span.
-   * Rendered as a text node inside the `<h1>`.
-   */
-  subheading: string;
-  /**
-   * The highlighted word(s). Rendered with an infinitely cycling linear gradient
-   * animation using `theme.vars.palette.primary.main` and `theme.vars.palette.warning.main`.
-   */
-  highlight: string;
-  /**
-   * Motion props for the fade-in wrapper `motion.div`.
-   * Defaults to `fade('inUp', { distance: 24 })`.
-   */
-  motionProps?: MotionProps;
-  /**
-   * Additional sx overrides applied to the `<h1>` Box element.
-   *
-   * Use to override `fontFamily`, `maxWidth`, `textAlign`, etc.
-   */
-  sx?: BoxProps['sx'];
-};
+// `AnimatedHeroHeadingProps` now lives in `animated-hero-heading/types.ts` — it is
+// used by exactly one sub-component and is independently barrel-exported, so it
+// gets the full standalone-adjacent treatment (own types.ts, README, stories).
 
 /** Return value of `useScrollPercent`. */
 export type UseScrollPercentResult = {

@@ -1,32 +1,12 @@
 // @vitest-environment jsdom
-import type { FadeTransition } from './types';
+import { it, expect, describe } from 'vitest';
 
-import React from 'react';
-import { it, vi, expect, describe } from 'vitest';
-
-import { renderWithTheme } from '../../../../test-utils';
-
-// ----------------------------------------------------------------------
-// Mocks — hoisted before any imports below.
-
-vi.mock('framer-motion', () => ({
-  motion: { div: 'div', img: 'img' },
-  m: { div: 'div', img: 'img' },
-}));
-
-import { PortraitLayer } from './portrait-layer';
-import { ArtisticLogoLayer } from './artistic-logo-layer';
-import { OriginalLogoLayer } from './original-logo-layer';
 import {
   getCursorStyle,
   getRandomPortraitSrc,
   buildPortraitSourceMap,
   getPortraitDirectionFromAngle,
 } from './interactive-logo.utils';
-
-// ----------------------------------------------------------------------
-
-const FADE: FadeTransition = { duration: 0.3 };
 
 // ----------------------------------------------------------------------
 // getRandomPortraitSrc
@@ -159,100 +139,5 @@ describe('getCursorStyle', () => {
 
   it('returns grabbing when reducedMotion is null and pointer is down', () => {
     expect(getCursorStyle(null, true)).toBe('grabbing');
-  });
-});
-
-// ----------------------------------------------------------------------
-// ArtisticLogoLayer
-
-describe('ArtisticLogoLayer', () => {
-  it('returns null when artisticLogoSrc is not provided', () => {
-    expect(ArtisticLogoLayer({ showArtisticLogo: false, logoFadeTransition: FADE })).toBeNull();
-  });
-
-  it('uses logoAlt as the alt text when provided', () => {
-    const html = renderWithTheme(
-      React.createElement(ArtisticLogoLayer, {
-        artisticLogoSrc: '/artistic.png',
-        showArtisticLogo: true,
-        logoFadeTransition: FADE,
-        logoAlt: 'Custom artistic logo',
-      })
-    );
-    expect(html).toContain('Custom artistic logo');
-  });
-
-  it('falls back to Logo as the alt text when logoAlt is not provided', () => {
-    const html = renderWithTheme(
-      React.createElement(ArtisticLogoLayer, {
-        artisticLogoSrc: '/artistic.png',
-        showArtisticLogo: true,
-        logoFadeTransition: FADE,
-      })
-    );
-    expect(html).toContain('Logo');
-  });
-});
-
-// ----------------------------------------------------------------------
-// PortraitLayer
-
-describe('PortraitLayer', () => {
-  it('returns null when portraitSrc is not provided', () => {
-    expect(
-      PortraitLayer({ portraitAlt: 'portrait', showPortrait: false, portraitFadeTransition: FADE })
-    ).toBeNull();
-  });
-
-  it('includes the portrait alt text in rendered HTML when a src is provided', () => {
-    const html = renderWithTheme(
-      React.createElement(PortraitLayer, {
-        portraitSrc: '/portrait.jpg',
-        portraitAlt: 'Person facing left',
-        showPortrait: true,
-        portraitFadeTransition: FADE,
-      })
-    );
-    expect(html).toContain('Person facing left');
-  });
-});
-
-// ----------------------------------------------------------------------
-// OriginalLogoLayer
-
-describe('OriginalLogoLayer', () => {
-  it('renders slotted children when no activeFrame is provided', () => {
-    const html = renderWithTheme(
-      React.createElement(
-        OriginalLogoLayer,
-        { hoverPhase: 'idle', logoFadeTransition: FADE },
-        React.createElement('span', { 'data-testid': 'slot' }, 'logo-child')
-      )
-    );
-    expect(html).toContain('logo-child');
-  });
-
-  it('renders the frame image when activeFrame is provided', () => {
-    const html = renderWithTheme(
-      React.createElement(OriginalLogoLayer, {
-        hoverPhase: 'artistic',
-        logoFadeTransition: FADE,
-        activeFrame: '/frame-01.png',
-        logoAlt: 'Frame logo',
-      })
-    );
-    expect(html).toContain('/frame-01.png');
-    expect(html).toContain('Frame logo');
-  });
-
-  it('uses Logo as alt fallback when no logoAlt provided', () => {
-    const html = renderWithTheme(
-      React.createElement(OriginalLogoLayer, {
-        hoverPhase: 'artistic',
-        logoFadeTransition: FADE,
-        activeFrame: '/frame-01.png',
-      })
-    );
-    expect(html).toContain('Logo');
   });
 });

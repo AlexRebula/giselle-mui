@@ -68,10 +68,6 @@ const PARENT_DIRS_TO_CHECK = [
 // Ratchet baseline — see the module doc comment above. Tracked by giselle-mui#162
 // (and, separately, the FaqSection follow-up issue for src/components/section/faq/accordion/).
 const KNOWN_VIOLATIONS = new Set([
-  'src/components/section/hero/interactive-logo/artistic-logo-layer.tsx',
-  'src/components/section/hero/interactive-logo/original-logo-layer.tsx',
-  'src/components/section/hero/interactive-logo/portrait-layer.tsx',
-  'src/components/section/hero/scroll-parallax/animated-hero-heading.tsx',
   'src/components/theming/settings-provider/settings-theme-bridge.tsx',
   'src/components/theming/settings-provider/theme-and-settings-provider.tsx',
 ]);
