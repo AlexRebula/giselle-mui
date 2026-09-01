@@ -44,14 +44,21 @@ Plus every other native `<button>` attribute (`className`, `disabled`, `data-*`,
   row already has a real effect (it drives what the image column shows) — a
   non-interactive element type never matched the actual behaviour. `expandable` only
   gates the _visual_ treatment and whether `onClick`/`aria-pressed` are wired (see #198).
-- **Event handlers excluded wholesale from the passthrough type, not case-by-case.**
-  `component={m.button}` gives the root framer-motion's own gesture/lifecycle
-  signatures for several natively-named handlers (`onDrag*`, `onAnimationStart`, and
-  more), which conflict with the native DOM event of the same name if a consumer's
-  handler type flows through unfiltered. Rather than list conflicts as they're
-  discovered, every `on*`-prefixed key is dropped from the extended native button
-  props, then reintroduced explicitly only for the three this component actually needs
-  (`onHover`, `onFocus`, `onSelect`) under different, non-colliding names.
+- **Only the three handlers this component actually owns are excluded from the
+  passthrough type** (`onFocus`, `onClick`, `onMouseEnter` — driven by
+  `onHover`/`onSelect` instead), not event handlers wholesale (see #192). The entrance
+  fade used to live directly on `ButtonBase` via `component={m.button}`, which gave the
+  root framer-motion's own gesture/lifecycle signatures for several natively-named
+  handlers (`onDrag*`, `onAnimationStart`, and more) — conflicting with the native DOM
+  event of the same name, which was the reason every `on*`-prefixed key used to be
+  dropped wholesale. #192 moved the entrance fade to an outer `m.div` instead, so
+  `ButtonBase` is a plain button again and that conflict no longer exists.
+- **The entrance fade lives on an outer `m.div`, not on `ButtonBase` itself** (#192).
+  Framer-motion leaves a permanent inline `style="opacity: 1"` on whatever element
+  plays a `variants` animation, and an inline style always beats a class-based
+  `:hover`/`:active` rule — animating a separate wrapper keeps that residual style off
+  the interactive element, so the row's hover/active dim works with a plain CSS rule
+  (previously required a `!important` truce — see #185/#192).
 - **The entrance slide distance collapses to `0` under `prefers-reduced-motion`**,
   mirroring the pattern already used by `FeatureFlowHighlightCarousel`'s own text
   slide — `useReducedMotion()` gates the `distance` option passed to `fade()`, rather
