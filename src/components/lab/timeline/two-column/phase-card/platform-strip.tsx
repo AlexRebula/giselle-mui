@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 
 import { derivePlatformEntry } from './utils';
+import { platformStripItemSlotSx, platformStripItemLabelSx } from './phase-card.styles';
 
 // ----------------------------------------------------------------------
 
@@ -18,9 +19,9 @@ export function buildPlatformStripItems(platforms: TimelinePlatformItem[]): Reac
     const { label, icon } = derivePlatformEntry(p);
     return (
       <Tooltip key={`platform-${i}`} title={label} arrow placement="top">
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box sx={platformStripItemSlotSx}>
           {icon ?? (
-            <Box component="span" sx={{ fontSize: 11, px: 0.5 }}>
+            <Box component="span" sx={platformStripItemLabelSx}>
               {label}
             </Box>
           )}

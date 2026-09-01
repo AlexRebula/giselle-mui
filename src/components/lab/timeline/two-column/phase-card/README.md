@@ -49,6 +49,37 @@ language.
 
 **Storybook:** `Lab/Timeline/Two Column/Phase Card`
 
+## File structure
+
+```
+phase-card/
+  phase-card.tsx                  — composition root (exported)
+  phase-card.styles.ts            — sx constants/factories for PhaseCard and its flat sub-components
+  phase-card.styles.test.ts       — mock-theme assertions for every exported sx factory
+  phase-card.const.ts             — size, font-size, and touch-target constants
+  types.ts                        — Props types for PhaseCard and its internal sub-components
+  utils.ts                        — pure logic (expansion resolution, corner-badge alignment, platform mapping)
+  index.ts                        — barrel: re-exports PhaseCard, its sub-components, types, const, utils
+  index.test.ts                   — logic tests for PhaseCard helper functions
+  card-decoration.tsx             — decorative corner shape + icon (internal, flat)
+  card-status-badge.tsx           — "New"/"Now"/scenario status badge (internal, flat)
+  card-detail-bullets.tsx         — collapsible sub-task bullet list (internal, flat)
+  scenario-badge.tsx              — scenario pill badge (internal, flat)
+  card-corner-alert-badge.tsx     — overdue/date-overlap corner badge + tooltip (internal, flat)
+  platform-strip.tsx              — tech-stack icon strip items (internal, flat)
+  labeled-icon-strip.tsx          — overline label + icon/logo strip wrapper (internal, flat)
+  README.md                       — this file
+  roadmap.md                      — planned work, known gaps, completed work
+```
+
+`card-corner-alert-badge.tsx`, `platform-strip.tsx`, and `labeled-icon-strip.tsx` are flat
+sub-components (not yet nested in their own subfolder — pending #162). Following the
+established convention in this folder (`card-decoration.tsx`, `card-status-badge.tsx`, etc.
+already do the same), their `sx` styles live in the parent's `phase-card.styles.ts` rather than
+a separate per-file styles module, since each is a single-caller internal detail of `PhaseCard`.
+They have no own `README.md`/`roadmap.md`; their file-structure entry and roadmap history are
+tracked here instead.
+
 ## Related
 
 - [MilestoneBadge](../milestone-badge/README.md) — companion badge rendered below each phase

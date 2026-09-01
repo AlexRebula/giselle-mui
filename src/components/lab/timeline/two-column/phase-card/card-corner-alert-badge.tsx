@@ -5,7 +5,13 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { GiselleIcon } from '../../../../material/data-display/icon/giselle/giselle-icon';
-import { tooltipAlertListSx, cornerBadgeCircleSx, cornerAlertTooltipSx } from './phase-card.styles';
+import {
+  tooltipAlertListSx,
+  cornerBadgeCircleSx,
+  cornerAlertTooltipSx,
+  tooltipAlertRowSx,
+  tooltipAlertMessageSx,
+} from './phase-card.styles';
 import {
   CORNER_ALERT_BADGE_SIZE,
   CORNER_ALERT_ICON_SIZE,
@@ -37,17 +43,14 @@ export function CardCornerAlertBadge({
   const tooltipContent = (
     <Box sx={tooltipAlertListSx}>
       {alerts.map((a, i) => (
-        <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+        <Box key={i} sx={tooltipAlertRowSx}>
           <GiselleIcon
             icon="solar:danger-triangle-bold"
             width={CORNER_ALERT_LIST_ICON_SIZE}
             aria-hidden
             style={{ flexShrink: 0, marginTop: 2 }}
           />
-          <Typography
-            variant="body2"
-            sx={{ lineHeight: 1.55, fontSize: '0.8rem', fontWeight: 500 }}
-          >
+          <Typography variant="body2" sx={tooltipAlertMessageSx}>
             {a.message}
           </Typography>
         </Box>
