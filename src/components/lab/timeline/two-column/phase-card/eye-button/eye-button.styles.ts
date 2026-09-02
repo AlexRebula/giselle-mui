@@ -6,7 +6,9 @@ import type { SxProps, Theme } from '@mui/material/styles';
  * Floats the viewed-state toggle button outside the card, at the bottom on
  * the outer edge (mirrors `CardCornerAlertBadge`'s outer-edge placement).
  *
- * @param minSize - Minimum tap target size in px. Defaults to 28 (`EYE_BUTTON_MIN_SIZE`).
+ * @param opts.columnSide - `'left'` pins the button to the left outer edge; `'right'` to the right.
+ * @param opts.isViewed - Controls color and hover state.
+ * @param opts.minSize - Minimum tap target size in px. Defaults to 28 (`EYE_BUTTON_MIN_SIZE`).
  */
 export const eyeButtonSx = (opts: {
   columnSide: 'left' | 'right';
