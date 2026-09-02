@@ -11,7 +11,7 @@ import { ScenarioBadge } from './scenario-badge';
  * removed to stabilise card height and may be reinstated in a future iteration.
  * Returns `null` when the phase has no active status badge.
  *
- * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 10/12 · Best practices 13/13 — SonarQube not verified · JSDoc prop coverage incomplete
  */
 export function CardStatusBadge({ color, isScenario, scenarioLabel }: CardStatusBadgeProps) {
   if (!isScenario || !scenarioLabel) return null;

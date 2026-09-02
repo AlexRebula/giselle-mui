@@ -21,7 +21,7 @@ import type { StatusLabelProps } from './types';
  * <StatusLabel status="pending" label="Awaiting approval" />
  * ```
  *
- * **Quality status (23 May 2026):** DoD 20/20 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 19/22 · Best practices 13/13 — SonarQube not verified · size-constant regression tests missing · not all six palette keys in stories
  */
 export const StatusLabel = React.forwardRef<HTMLDivElement, StatusLabelProps>(function StatusLabel(
   { status, label, size = 'small', sx, ...other },

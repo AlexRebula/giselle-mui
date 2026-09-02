@@ -16,7 +16,7 @@ import {
  *
  * @internal — used by `FaqSection` only.
  *
- * **Quality status (28 Aug 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not yet run
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export function FaqTopLines() {
   return (

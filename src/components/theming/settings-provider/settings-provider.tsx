@@ -116,6 +116,8 @@ function resolveAdapter<TState>(
  * ## Schema migration
  * Increment `version` in `defaultSettings` whenever the settings shape changes.
  * The provider resets all stored state automatically when a version mismatch is detected.
+ *
+ * **Quality status (02 Sep 2026):** DoD 18/22 · Best practices not re-audited — SonarQube not verified · companion files incomplete · named size constant still inline · no Responsive story
  */
 export function GiselleSettingsProvider<TState extends BaseSettingsState>({
   children,

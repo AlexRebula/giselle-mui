@@ -24,7 +24,7 @@ import { sectionContainerSx } from './section-container.styles';
  * </SectionContainer>
  * ```
  *
- * **Quality status (14 May 2026):** DoD 21/21 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 21/22 · Best practices 13/13 — SonarQube not verified
  */
 export function SectionContainer({
   children,

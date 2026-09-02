@@ -31,6 +31,8 @@ import type { FeatureFlowItemRowProps } from './types';
  * always beats a class-based `:hover`/`:active` rule — animating a separate
  * wrapper keeps that residual style off the interactive element entirely,
  * so `featureFlowItemSx`'s hover/active opacity works with a plain rule.
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export const FeatureFlowItemRow = React.forwardRef<HTMLButtonElement, FeatureFlowItemRowProps>(
   function FeatureFlowItemRow(

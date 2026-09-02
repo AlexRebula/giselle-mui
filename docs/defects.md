@@ -81,7 +81,7 @@ Three classes of banned content reached a pushed commit on a public-facing branc
 1. **Personal name** (`Žiga`) — in `docs/components/dashboard-components-plan.md`, inside an "Immediate consumer" description.
 2. **Internal project codename** (`first-branch`) — same file, multiple occurrences in component consumer bullets.
 3. **Private internal path reference** (`case-001`) — in `docs/components/dashboard-components-plan.md`, `docs/standalone-gap-analysis.md`, `docs/components/timeline/two-column/timeline-plan.md`, and `src/components/timeline/two-column/types.ts` JSDoc.
-4. **Banned identifier names in docs** (`varFade`, `varContainer` etc.) — in `docs/roadmap.mdx` and `docs/components/home-components-extraction-plan.md`. ESLint bans these in `src/**`; it does not run on `docs/**`.
+4. **Banned identifier names in docs** (`varFade`, `varContainer` etc.) — in `docs/roadmap.mdx` and `docs/components/home-components-extraction-plan.md`. ESLint bans these in `src/**`; it does not run on `docs/**`. _(`docs/roadmap.mdx` was deleted 2026-09-02 as a stale duplicate of `docs/roadmap.md` — giselle-mui#224.)_
 
 **Root cause:**
 

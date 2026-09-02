@@ -54,6 +54,8 @@ export * from './milestone-badge.const';
  * Milestone card — spine-adjacent badge that expands/collapses on click.
  * Expansion is controlled externally (accordion: at most one open per phase).
  * The parent wrapper in TimelineTwoColumn owns z-index and blur animations.
+ *
+ * **Quality status (02 Sep 2026):** DoD 19/22 · Best practices not re-audited — SonarQube not verified · styles test misses a factory · size-constant regression tests missing
  */
 export function MilestoneBadge({
   milestone: m,

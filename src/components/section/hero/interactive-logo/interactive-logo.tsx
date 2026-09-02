@@ -41,6 +41,8 @@ import {
  *
  * Supports frame-scrub animation via `frameSources`, directional portraits via
  * `portraitSources`, and respects `prefers-reduced-motion` throughout.
+ *
+ * **Quality status (02 Sep 2026):** DoD 19/22 · Best practices not re-audited — SonarQube not verified · size-constant regression tests missing · JSDoc prop coverage incomplete
  */
 export function InteractiveHeroLogo({
   sx,

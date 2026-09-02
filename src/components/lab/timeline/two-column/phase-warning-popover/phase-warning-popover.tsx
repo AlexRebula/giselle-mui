@@ -72,6 +72,8 @@ export {
  *
  * This component lives in `timeline-two-column/` as an internal sub-component and is
  * not exported from the package barrel.
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export function PhaseWarningPopover({
   open,

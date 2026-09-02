@@ -10,7 +10,7 @@ import type { DotInnerProps } from './types';
  * Inner content of a `TimelineDot` — either the animated done checkmark or the
  * passed-in icon, with a spring-pop animation on toggle.
  *
- * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 10/12 · Best practices 13/13 — SonarQube not verified · JSDoc prop coverage incomplete
  */
 export function DotInner({ done, icon, animationKey, iconSize }: DotInnerProps) {
   if (done) {

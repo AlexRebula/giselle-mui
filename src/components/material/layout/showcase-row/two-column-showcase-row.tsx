@@ -46,7 +46,7 @@ export type {
  * <TwoColumnShowcaseRow controls={<DashboardPreview />} orientation="column" />
  * ```
  *
- * **Quality status (13 May 2026):** DoD 20/20 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 21/22 · Best practices 13/13 — SonarQube not verified
  */
 export function TwoColumnShowcaseRow({
   text,

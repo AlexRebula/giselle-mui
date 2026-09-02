@@ -14,6 +14,8 @@ export type { SpineConnectorProps } from './types';
  * Renders as a thin coloured bar that grows to fill the available height between dots.
  * When a year boundary falls between two phases, a floating year-chip label is
  * overlaid at the bottom of the line.
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export function SpineConnector({
   dotColor,

@@ -13,18 +13,20 @@ Every component in this library exists because it solves a recurring problem tha
 
 ### Planning and inventory
 
-- **[Component inventory](./component-inventory.md)** — Master list of all components across every phase: build status, location, and subpath.
-- **[Component compliance](./component-compliance.md)** — 3-tier README / JSDoc / Story JSDoc compliance report.
-- **[Roadmap](./roadmap.mdx)** — Phase A → H milestone timeline with detail.
-- **[Scaffold plan](./scaffold-plan.md)** — Library skeleton structure and strategy. *(see also [Archive](#archive))*
-- **[Standalone gap analysis](./standalone-gap-analysis.md)** — What a blank Next.js project needs from this library. *(see also [Archive](#archive))*
+- **[Component inventory](./component-inventory.md)** — One canonical table of every component folder on disk: layer, location, phase/status, DoD score, best-practices score, audit date.
+- **[Component compliance](./component-compliance.md)** — Per-folder README / JSDoc / Story JSDoc / roadmap presence report.
+- **[Roadmap](./roadmap.md)** — Phase A → H milestone timeline with detail.
+- **[Scaffold plan](./scaffold-plan.md)** — Library skeleton structure and strategy. _(see also [Archive](#archive))_
+- **[Migration source gap analysis](./standalone-gap-analysis.md)** — What still lives in the private consuming apps and has not been ported here yet.
 
 ### Standards and conventions
 
 - **[Documentation strategy](./documentation-strategy.md)** — The three-tier docs model: when to use JSDoc vs story JSDoc vs Docusaurus.
 - **[Naming conventions](./naming-conventions.md)** — Component naming rules; active standard applied to every component.
 - **[PR review workflow](./pr-review-workflow.md)** — PR review process and checklist.
-- **[Component cleanup workflow](./components/cleanup-workflow.md)** — The definition of done checklist, API consistency contract, and Storybook prop-surface guidance.
+- **[Component cleanup workflow](./components/cleanup-workflow.md)** — The definition of done checklists (Scenario A and B), API consistency contract, and Storybook prop-surface guidance.
+- **[Component API contract](./component-api-contract.md)** — Where a shared style constant lives: the parent's `*.styles.ts` vs the sub-component's own.
+- **[API design rules](./components/api-design-rules.md)** — Prop interfaces, the component tier system, and public API rules.
 - **[Testing](./testing.md)** — jsdom vs real-browser (Playwright) Vitest projects, when each applies, and how to tag a story for real-browser paint-order testing.
 - **[ADR 0001: sections-api pattern for story content](./adr/0001-sections-api-pattern-for-story-content.md)** — why large fixture/demo content belongs in a dedicated data module, not inline in a component or story file.
 
@@ -55,7 +57,6 @@ Every component in this library exists because it solves a recurring problem tha
 These are historical planning documents — not current constraints.
 
 - **[Scaffold plan](./scaffold-plan.md)** — Library skeleton structure and strategy.
-- **[Standalone gap analysis](./standalone-gap-analysis.md)** — What a blank Next.js project needs from this library.
 - **[PR messages](./pr-messages/README.md)** — Historical PR descriptions and review checklists, grouped by PR number.
 - **[PR audits](./pr-audits/)** — Historical PR comment audits (also linked in Tracking for discoverability).
   - [pr-25-comment-audit.md](./pr-audits/pr-25-comment-audit.md)

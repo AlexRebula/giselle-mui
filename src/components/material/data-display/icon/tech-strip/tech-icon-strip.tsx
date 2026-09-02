@@ -29,6 +29,8 @@ import type { TechIconStripProps } from './types';
  *   ]}
  * />
  * ```
+ *
+ * **Quality status (02 Sep 2026):** DoD 20/22 · Best practices not re-audited — SonarQube not verified · size-constant regression tests missing
  */
 export function TechIconStrip({
   items,

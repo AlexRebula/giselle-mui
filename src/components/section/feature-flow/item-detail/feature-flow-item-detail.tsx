@@ -55,6 +55,8 @@ export type { FeatureFlowItemDetailProps } from './types';
  * stays mounted regardless of which item (or none) is currently showing.
  * This is distinct from `onNodeRef`, which targets the inner, per-item
  * content `Box` for scroll-into-view purposes — both coexist.
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export const FeatureFlowItemDetail = React.forwardRef<HTMLDivElement, FeatureFlowItemDetailProps>(
   function FeatureFlowItemDetail(

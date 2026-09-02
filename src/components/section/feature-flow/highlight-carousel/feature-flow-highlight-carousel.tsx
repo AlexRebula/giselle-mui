@@ -39,6 +39,8 @@ export type { FeatureFlowHighlightCarouselProps } from './types';
  * Images crossfade only (never slide); the title/description text below slides
  * in directionally with the selected slide. A fixed gradient scrim sits
  * above the images so text stays legible regardless of slide content.
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export const FeatureFlowHighlightCarousel = React.forwardRef<
   HTMLDivElement,

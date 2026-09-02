@@ -14,7 +14,7 @@ import type { StatCardShapeProps } from './types';
  *
  * @internal — used by `StatCard` only.
  *
- * **Quality status (13 May 2026):** DoD 9/9 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export const StatCardShape = React.forwardRef<SVGSVGElement, StatCardShapeProps>(
   function StatCardShape(props, ref) {

@@ -32,6 +32,8 @@ export { resolveEffectiveColor } from './timeline-dot.utils';
  * The outer Box has `overflow: visible` so the `::after` ring (which extends 5 px
  * outside via `inset: -5`) is not clipped. An inner clip Box with `overflow: hidden`
  * and `border-radius: 50%` keeps the icon inside the circle shape.
+ *
+ * **Quality status (02 Sep 2026):** DoD 17/22 · Best practices not re-audited — SonarQube not verified · styles test misses a factory · root sx not array-spread · JSDoc prop coverage incomplete · no Responsive story
  */
 export function TimelineDot({
   icon,

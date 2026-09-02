@@ -36,6 +36,8 @@ import type { MotionViewportProps } from './types';
  *   <m.div variants={fade('inUp')}>Body</m.div>
  * </MotionViewport>
  * ```
+ *
+ * **Quality status (02 Sep 2026):** DoD 20/22 · Best practices not re-audited — SonarQube not verified · root sx not array-spread
  */
 export function MotionViewport({
   children,

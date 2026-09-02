@@ -29,6 +29,8 @@ export type { FeatureFlowDescriptionColumnProps } from './types';
  * row-list `Stack` flow directly into the parent's own `Grid` item as
  * siblings; wrapping them in a single root would add API surface nothing
  * uses and change how they sit in that grid cell for no benefit.
+ *
+ * **Quality status (02 Sep 2026):** DoD 10/12 · Best practices not re-audited — SonarQube not verified · JSDoc prop coverage incomplete
  */
 export function FeatureFlowDescriptionColumn({
   caption,

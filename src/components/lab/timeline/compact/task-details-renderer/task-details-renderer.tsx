@@ -36,7 +36,7 @@ function renderDetailsNode(node: ReactNode | undefined) {
  *
  * Falls back to `emptyState` text when no content is present.
  *
- * **Quality status (13 May 2026):** DoD 9/9 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 17/22 · Best practices 13/13 — SonarQube not verified · companion files incomplete · README missing · JSDoc prop coverage incomplete · no Responsive story
  * @internal — used by `TaskDetailsModal` and `PhaseAccordionRow`.
  */
 export function TaskDetailsRenderer({

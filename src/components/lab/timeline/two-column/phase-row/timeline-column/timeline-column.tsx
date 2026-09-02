@@ -22,7 +22,7 @@ import type { TimelineColumnProps } from './types';
  * Do NOT inline these Boxes back into the render. If you need to change column
  * behaviour, change it here once.
  *
- * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export function TimelineColumn({
   columnSide,

@@ -67,6 +67,8 @@ export { buildPlatformStripItems } from './platform-strip';
  * internal toggle state otherwise.
  *
  * Status badge (overdue / active / scenario) is resolved automatically from props.
+ *
+ * **Quality status (02 Sep 2026):** DoD 20/22 · Best practices not re-audited — SonarQube not verified · styles test misses a factory
  */
 export function PhaseCard({
   phase,

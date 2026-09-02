@@ -24,7 +24,7 @@ const MotionSvg = styled(motion.svg, {
  * Only rendered at ≥1440 px via base decoration styles.
  * @internal — used by `FaqSection` only.
  *
- * **Quality status (28 Aug 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not yet run
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export const FaqFloatLine = React.forwardRef<SVGSVGElement, SvgProps & { vertical?: boolean }>(
   function FaqFloatLine({ sx, vertical, ...other }, ref) {
@@ -81,7 +81,7 @@ FaqFloatLine.displayName = 'FaqFloatLine';
  * Only rendered at ≥1440 px.
  * @internal — used by `FaqSection` only.
  *
- * **Quality status (28 Aug 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not yet run
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export const FaqFloatPlusIcon = React.forwardRef<SVGSVGElement, SvgProps>(function FaqFloatPlusIcon(
   { sx, ...other },
@@ -123,7 +123,7 @@ FaqFloatPlusIcon.displayName = 'FaqFloatPlusIcon';
  * Only rendered at ≥1440 px.
  * @internal — used by `FaqSection` only.
  *
- * **Quality status (28 Aug 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not yet run
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export const FaqFloatTriangleDownIcon = React.forwardRef<SVGSVGElement, SvgProps>(
   function FaqFloatTriangleDownIcon({ sx, ...other }, ref) {

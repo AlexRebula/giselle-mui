@@ -22,7 +22,11 @@ const CHECK_ICON = (
   </SvgIcon>
 );
 
-/** A toggleable chip for multi-select filter groups, built on MUI `Chip` with `SelectableCard`'s selected-state styling. */
+/**
+ * A toggleable chip for multi-select filter groups, built on MUI `Chip` with `SelectableCard`'s selected-state styling.
+ *
+ * **Quality status (02 Sep 2026):** DoD 20/22 · Best practices not re-audited — SonarQube not verified · no Responsive story
+ */
 export const SelectableLabel = forwardRef<HTMLDivElement, SelectableLabelProps>(
   function SelectableLabel({ selected, onSelectedChange, disabled, sx, ...other }, ref) {
     const handleClick = useCallback(

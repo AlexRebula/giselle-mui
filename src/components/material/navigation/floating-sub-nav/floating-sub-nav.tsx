@@ -50,6 +50,8 @@ export type { FloatingSubNavItem, FloatingSubNavProps } from './types';
  * `FloatingSubNav` renders a compact pill of icon-only navigation buttons
  * that floats above the page content. Supports a **fixed** (viewport) variant
  * and a **sticky** (parent-contained) variant.
+ *
+ * **Quality status (02 Sep 2026):** DoD 20/22 · Best practices not re-audited — SonarQube not verified · no ...other spread on root
  */
 export function FloatingSubNav({ items, activeId, onSelect, sticky = false }: FloatingSubNavProps) {
   const handlePress = useCallback((id: string) => onSelect(id), [onSelect]);

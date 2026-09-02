@@ -56,7 +56,7 @@ import type { FeatureFlowItem, FeatureFlowSectionProps, FeatureFlowSubNavItem } 
  * />
  * ```
  *
- * **Quality status (28 Aug 2026):** DoD 19/20 · Best practices 10/13
+ * **Quality status (02 Sep 2026):** DoD 18/22 · Best practices 10/13 — SonarQube not verified · size-constant regression tests missing · not all six palette keys in stories · no Responsive story
  */
 export const FeatureFlowSection = React.forwardRef<HTMLElement, FeatureFlowSectionProps>(
   function FeatureFlowSection(

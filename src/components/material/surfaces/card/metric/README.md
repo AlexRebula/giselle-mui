@@ -193,12 +193,12 @@ src/components/material/surfaces/card/metric/
 
 ---
 
-## Quality status — 8 May 2026
+## Quality status — 02 Sep 2026
 
-| Dimension        | Score | Open items |
-| ---------------- | ----- | ---------- |
-| DoD (Scenario B) | 20/20 | —          |
-| Best practices   | 13/13 | —          |
+| Dimension              | Score | Open items |
+| ---------------------- | ----- | ---------- |
+| DoD (Scenario B)       | 20/22 | SonarQube not verified (no SonarQube tooling in this repo) · JSDoc prop coverage incomplete |
+| Best practices         | 13/13 | — |
 
 ## Related
 

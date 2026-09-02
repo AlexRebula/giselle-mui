@@ -104,7 +104,7 @@ const MS_CHECK_HOVER_DOT = (
  * - Unchecking any milestone → parent becomes undone.
  * - Toggling the phase dot → all milestones cascade to the same state.
  *
- * **Quality status (13 May 2026):** DoD 9/9 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 9/12 · Best practices 13/13 — SonarQube not verified · inline sx/style object remains · JSDoc prop coverage incomplete
  */
 export function PhaseAccordionRow({
   phase,

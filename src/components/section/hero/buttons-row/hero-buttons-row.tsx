@@ -29,6 +29,8 @@ import { rowSx, buttonSx } from './hero-buttons-row.styles';
  *   motionProps={{ variants: fade('inUp', { distance: 24 }) }}
  * />
  * ```
+ *
+ * **Quality status (02 Sep 2026):** DoD 21/22 · Best practices not re-audited — SonarQube not verified
  */
 export function HeroButtonsRow({ items, motionProps, sx, ...other }: HeroButtonsRowProps) {
   return (

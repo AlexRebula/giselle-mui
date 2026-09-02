@@ -22,6 +22,8 @@ import { portraitImageSx, portraitWrapperSx } from './portrait-layer.styles';
  * direction so the layer is absent from the DOM during idle and artistic phases.
  *
  * @internal — used by `InteractiveHeroLogo` only.
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export const PortraitLayer = React.forwardRef<HTMLDivElement, PortraitLayerProps>(
   function PortraitLayer({ portraitSrc, portraitAlt, showPortrait, portraitFadeTransition }, ref) {

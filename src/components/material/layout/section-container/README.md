@@ -43,12 +43,12 @@ section-container/
   roadmap.md                    — planned improvements and known gaps
 ```
 
-## Quality status — 14 May 2026
+## Quality status — 02 Sep 2026
 
-| Dimension        | Score | Open items |
-| ---------------- | ----- | ---------- | --- |
-| DoD (Scenario B) | 21/21 | —          |
-| Best practices   | 13/13 | —          | }   |
+| Dimension              | Score | Open items |
+| ---------------------- | ----- | ---------- |
+| DoD (Scenario B)       | 21/22 | SonarQube not verified (no SonarQube tooling in this repo) |
+| Best practices         | 13/13 | — |
 
 ## Related
 

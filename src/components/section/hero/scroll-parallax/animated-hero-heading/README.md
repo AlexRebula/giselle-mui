@@ -77,16 +77,12 @@ animated-hero-heading/
 - **Only allowed dependencies.** `framer-motion` and `@mui/material` — both declared as peer
   dependencies and marked external in `tsup.config.ts`.
 
-## Quality status
+## Quality status — 02 Sep 2026
 
-**01 Sep 2026** — nested into its own subfolder per the Scenario A sub-component policy
-(giselle-mui#162), given the "standalone-adjacent" treatment (own README, stories, API-surface
-pass) because it is independently barrel-exported.
-
-- `npm run check:verify` ✅
-- Vitest unit tests: render, forwardRef, `...other` passthrough ✅
-- `*.styles.test.ts` covers every exported sx factory ✅
-- Storybook: Default, CustomFont, NoMotion, Responsive ✅
+| Dimension              | Score | Open items |
+| ---------------------- | ----- | ---------- |
+| DoD (Scenario B)       | 21/22 | SonarQube not verified (no SonarQube tooling in this repo) |
+| Best practices         | not re-audited | private 13-item rubric not available in this repo |
 
 ## Related
 
