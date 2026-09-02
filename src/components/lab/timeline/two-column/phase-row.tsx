@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { SpineConnector } from './spine-connector';
 import { TimelineColumn } from './timeline-column';
 import { TimelineDot } from './timeline-dot';
-import { resolvePhaseTooltip, buildPhaseDotTsxProps } from './utils';
+import { resolvePhaseTooltip, buildPhaseDotTsxProps } from './two-column.utils';
 import {
   phaseRowSx,
   centerColumnSx,

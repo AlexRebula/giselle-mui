@@ -4,7 +4,11 @@ import { useCallback, useMemo, useState } from 'react';
 
 import Box from '@mui/material/Box';
 
-import { sortPhasesByDate, sortMilestonesAsc, sortMilestonesDesc } from '../two-column/utils';
+import {
+  sortPhasesByDate,
+  sortMilestonesAsc,
+  sortMilestonesDesc,
+} from '../two-column/two-column.utils';
 import { useTimelineDoneState } from '../use-timeline-done-state';
 import { accordionRootSx } from './compact.styles';
 import type { TimelineCompactProps } from './types';

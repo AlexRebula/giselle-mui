@@ -32,7 +32,7 @@
 import { it, expect, describe } from 'vitest';
 
 import type { TimelinePhase } from './types';
-import { computeSlotHeights } from './utils';
+import { computeSlotHeights } from './two-column.utils';
 
 // ---------------------------------------------------------------------------
 // Mirror functions

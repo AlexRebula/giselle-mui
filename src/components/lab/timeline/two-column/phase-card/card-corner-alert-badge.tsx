@@ -17,7 +17,7 @@ import {
   CORNER_ALERT_ICON_SIZE,
   CORNER_ALERT_LIST_ICON_SIZE,
 } from './phase-card.const';
-import { resolveCornerBadgeAlign } from './utils';
+import { resolveCornerBadgeAlign } from './phase-card.utils';
 
 /**
  * Floating corner badge that groups all warning/error alerts behind a single icon.

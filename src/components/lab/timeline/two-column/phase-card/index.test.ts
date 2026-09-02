@@ -44,7 +44,7 @@ import {
   buildCardClickHandler,
   buildCardKeyDownHandler,
   resolveCardExpansion,
-} from './utils';
+} from './phase-card.utils';
 import { CardStatusBadge } from './card-status-badge';
 import { buildDateTypographySx } from './phase-card.styles';
 

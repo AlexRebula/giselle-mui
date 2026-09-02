@@ -1,6 +1,6 @@
 import type { TimelinePhase } from '../types';
 import type { PhaseRange } from './types';
-import { dateToMonthIndex, monthIndexToDate } from '../utils';
+import { dateToMonthIndex, monthIndexToDate } from '../two-column.utils';
 
 // ----------------------------------------------------------------------
 

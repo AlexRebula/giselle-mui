@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { MarkerLabel } from './marker-label';
 import { SpineConnector } from './spine-connector';
 import { TimelineDot } from './timeline-dot';
-import { resolvePhaseTooltip } from './utils';
+import { resolvePhaseTooltip } from './two-column.utils';
 import {
   markerPhaseLiSx,
   markerRowInnerSx,

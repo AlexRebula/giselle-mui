@@ -18,7 +18,7 @@ import {
   buildCardClickHandler,
   buildCardKeyDownHandler,
   resolveCardExpansion,
-} from './utils';
+} from './phase-card.utils';
 import { buildPlatformStripItems } from './platform-strip';
 import {
   photoImgSx,
@@ -49,7 +49,11 @@ import { CardDecoration } from './card-decoration';
 // Re-exports — keeps `import { PhaseCardProps } from './phase-card'` working.
 export type { PhaseCardProps } from './types';
 // Re-exports — keeps test imports from './phase-card' working.
-export { resolveCornerBadgeAlign, resolvePhotoSources, derivePlatformEntry } from './utils';
+export {
+  resolveCornerBadgeAlign,
+  resolvePhotoSources,
+  derivePlatformEntry,
+} from './phase-card.utils';
 export { buildPlatformStripItems } from './platform-strip';
 
 // ----------------------------------------------------------------------

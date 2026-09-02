@@ -45,7 +45,7 @@ Answer these in order. Stop at the first yes.
 ## Phase 1 — Context gathering (read-only, parallelise freely)
 
 1. **Read session bootstrap files** — `docs/roadmap.md`, any component-specific plan under `docs/components/`, repo memory (`/memories/repo/notes.md`).
-2. **Read every file in the component folder** — `.tsx`, `types.ts`, `utils.ts`, `*.styles.ts`, `*.const.ts`, `*.test.ts`, `*.stories.tsx`, `index.ts`, `README.md`.
+2. **Read every file in the component folder** — `.tsx`, `types.ts`, `*.utils.ts`, `*.styles.ts`, `*.const.ts`, `*.test.ts`, `*.stories.tsx`, `index.ts`, `README.md`.
 3. **Read the package barrel** — `src/index.ts` to see what is currently exported and what is missing.
 4. **Run SonarQube** on the component file — catch cognitive complexity violations, DOM prop leaks, `.dataset` vs `getAttribute` issues before touching anything.
 5. **Run `get_errors`** — see the current TypeScript and ESLint state across all component files.
@@ -120,14 +120,14 @@ Applies to any component exported from `src/motion-index.ts` (compiled to `dist/
 
 ### Step 4 — Utils
 
-- Move every pure logic function (nothing that returns JSX) out of `.tsx` files and into `utils.ts`.
+- Move every pure logic function (nothing that returns JSX) out of `.tsx` files and into `<component-name>.utils.ts`.
 - Each function must be independently unit-testable with no React or MUI dependency.
 
 ### Step 5 — Sub-components
 
 - Any function that starts with a capital letter and returns JSX must not be defined inline in the parent `.tsx` file.
 - Extract each to its own named subfolder inside the parent folder — never a flat `.tsx` file. Every sub-component gets its own folder, unconditionally, with no size or complexity threshold (mirror `TimelineTwoColumn`'s `milestone-badge/`, `phase-card/`, `phase-warning-popover/`, `spine-connector/`, `timeline-dot/`).
-- Each sub-component folder gets its own `index.ts` barrel, its own `types.ts` if it has a props type (importing shared types from the parent's `types.ts` where needed), and its own co-located test file. Constants and shared logic that are genuinely parent-scoped stay in the parent's `*.const.ts` / `utils.ts`; anything specific to the sub-component moves with it.
+- Each sub-component folder gets its own `index.ts` barrel, its own `types.ts` if it has a props type (importing shared types from the parent's `types.ts` where needed), and its own co-located test file. Constants and shared logic that are genuinely parent-scoped stay in the parent's `*.const.ts` / `*.utils.ts`; anything specific to the sub-component moves with it.
 - Give every sub-component `displayName` and, where it wraps a DOM element or MUI component, `React.forwardRef` — see the Scenario A checklist below.
 - Add the sub-component to the parent folder's `index.ts` barrel (re-exporting from the sub-component's own folder).
 - Add at least one test for each sub-component, co-located in its own folder.
@@ -208,7 +208,7 @@ Review or create `<component-name>.stories.tsx`:
 - [ ] All sub-components exported
 - [ ] `types.ts` re-exported (`export * from './types'`)
 - [ ] `*.const.ts` re-exported (`export * from './<name>.const'`)
-- [ ] `utils.ts` re-exported if any utility is intended for consumers
+- [ ] `*.utils.ts` re-exported (`export * from './<name>.utils'`) if any utility is intended for consumers
 
 ### Step 10 — README
 
@@ -371,7 +371,7 @@ Whenever a component is created, or an existing component's README/roadmap/stori
 src/components/<name>/
   <name>.tsx              — pure JSX composition only
   types.ts                — all TypeScript types and interfaces
-  utils.ts                — pure logic functions (no JSX)
+  <name>.utils.ts         — pure logic functions (no JSX)
   <name>.styles.ts        — sx constants (static) and sx factories (dynamic)
   <name>.styles.test.ts   — mock-theme assertions for every exported sx function
   <name>.animations.ts    — framer-motion variants and transition configs (motion subpath components only)
@@ -396,7 +396,7 @@ Use this checklist when Phase 0 confirms the component belongs to a parent and n
 
 1. **Read `types.ts`** — verify the component's `Props` type is fully defined there. Flag any `type` or `interface` declared inside the `.tsx` itself.
 2. **Read the parent `*.styles.ts`** — verify every sx constant imported by this file actually exists in that styles file. Flag any that are missing, misnamed, or have a wrong shape.
-3. **Read `utils.ts`** — verify every utility imported by this file has the correct signature at the call site. A mismatched argument count is a silent runtime bug.
+3. **Read `*.utils.ts`** — verify every utility imported by this file has the correct signature at the call site. A mismatched argument count is a silent runtime bug.
 4. **Run SonarQube** on the `.tsx` file — note any cognitive complexity violations before making changes.
 5. **Search the parent's `*.test.ts`** — check whether this sub-component has a dedicated `describe` block. If not, add one in Phase 2 Step 7.
 6. **Search the parent's `*.stories.tsx`** — check whether this sub-component is exercised in any story, even indirectly. If it has a non-obvious variant or state, it needs a story.
@@ -420,7 +420,7 @@ Use this checklist when Phase 0 confirms the component belongs to a parent and n
 
    When a second caller does appear, that is the correct trigger to rename, generalise the sx props, promote up the tree, and re-export. Not before.
 
-8. **Flag inline conditional logic** — any `isMobile`-style boolean that changes rendering behaviour should be evaluated: does this logic belong in `utils.ts`? If the condition produces a derived value (not just a ternary in JSX), extract it.
+8. **Flag inline conditional logic** — any `isMobile`-style boolean that changes rendering behaviour should be evaluated: does this logic belong in `*.utils.ts`? If the condition produces a derived value (not just a ternary in JSX), extract it.
 9. **Check JSDoc** — verify the component JSDoc covers all props, including behaviour flags like `isMobile`, `isLastPhase`, `isDone`. Missing param documentation is a gap.
 10. **Check barrel** — verify the component is exported from the parent folder's `index.ts`. Sub-components are not exported from `src/index.ts` (the package barrel) unless they are independently useful.
 
@@ -428,7 +428,7 @@ Use this checklist when Phase 0 confirms the component belongs to a parent and n
 
 - **Own named subfolder — mandatory, unconditional.** `<parent-folder>/<sub-component-name>/`. There is no size or complexity threshold — every sub-component gets its own folder, always, because components grow and need to be portable. Drop the parent's name/scope from the sub-component's folder name (e.g. `milestone-badge/`, not `two-column-milestone-badge/`); the exported component name and internal file basename keep the sub-component's full descriptive name (e.g. `milestone-badge/milestone-badge.tsx` exporting `MilestoneBadge`). See the folder-naming convention in `docs/naming-conventions.md` for the general rule this follows.
 - **Own `types.ts`.** The sub-component's `Props` type lives here. Import any shared types the parent or siblings also use from the parent's `../types.ts` — do not duplicate them.
-- **Own `*.styles.ts` / `*.const.ts` / `utils.ts`** for anything genuinely specific to this sub-component. Only what is truly shared across siblings or the parent stays in the parent folder's files.
+- **Own `*.styles.ts` / `*.const.ts` / `*.utils.ts`** for anything genuinely specific to this sub-component. Only what is truly shared across siblings or the parent stays in the parent folder's files.
 - **Own `index.ts` barrel.** Re-exports the component (and its types) from this subfolder; the parent folder's `index.ts` re-exports from the sub-component's folder in turn.
 - **Own `README.md`** is optional for a sub-component (unlike a standalone component, where it's mandatory) — a short doc comment on the component is sufficient unless the sub-component encodes a non-obvious design decision worth writing up on its own.
 - **Own `*.stories.tsx`** unless it is independently useful to evaluate in isolation (apply the story decision rule: would a developer open this story to decide how to use it?).
@@ -441,7 +441,7 @@ Use this checklist when Phase 0 confirms the component belongs to a parent and n
 - [ ] No `type` or `interface` declarations in the `.tsx` — all in this sub-component's own `types.ts` (shared types imported from parent `../types`)
 - [ ] No inline sx — all extracted to a styles file, regardless of property count (own or parent's, whichever is genuinely shared)
 - [ ] No duplicated JSX blocks — extracted to a helper or util
-- [ ] All inline conditional logic that produces a derived value is in `utils.ts`
+- [ ] All inline conditional logic that produces a derived value is in `*.utils.ts`
 - [ ] JSDoc covers all props including behaviour flags
 - [ ] `displayName` set; `React.forwardRef` used if the sub-component wraps a DOM element or MUI component
 - [ ] At least one test file exists, co-located in this sub-component's own subfolder
@@ -483,7 +483,7 @@ Complete this before starting any implementation steps. The goal is a clean move
 2. **Move the `.tsx` file** into the subfolder and rename if needed to match the folder name.
 3. **Create all companion files** as empty stubs (fill them in during Phase 2):
    - `types.ts`
-   - `utils.ts`
+   - `<name>.utils.ts`
    - `<name>.styles.ts`
    - `<name>.styles.test.ts`
    - `<name>.const.ts`
@@ -499,7 +499,7 @@ Complete this before starting any implementation steps. The goal is a clean move
 
 - **Own subfolder — mandatory.** `src/components/<layer>/<category>/<name>/` (see Domain/feature grouping in copilot-instructions.md)
 - **Own `types.ts`** — all TypeScript types and interfaces for this component and all its internal sub-components.
-- **Own `utils.ts`** — all pure logic functions.
+- **Own `<name>.utils.ts`** — all pure logic functions.
 - **Own `<name>.styles.ts` + `<name>.styles.test.ts`** — all sx constants and factories, with mock-theme assertions.
 - **Own `<name>.const.ts`** — all size, font size, spacing, and touch-target constants, with regression tests.
 - **Own `<name>.test.ts`** — Vitest unit tests for component, sub-components, utils, and constants.
@@ -517,7 +517,7 @@ Complete this before starting any implementation steps. The goal is a clean move
 - [ ] `<name>.styles.test.ts` covers every exported factory
 - [ ] No named constants for sizes inline — all in `<name>.const.ts`
 - [ ] Regression tests for every size constant with a safety minimum
-- [ ] No pure logic functions in `.tsx` — all in `utils.ts`
+- [ ] No pure logic functions in `.tsx` — all in `<name>.utils.ts`
 - [ ] No capital-letter helper components defined inside `.tsx` — each extracted to its own named subfolder (Scenario A)
 - [ ] No `React.FC`, no `any`, no bare `<Box>` without props
 - [ ] `sx` array spread on root element

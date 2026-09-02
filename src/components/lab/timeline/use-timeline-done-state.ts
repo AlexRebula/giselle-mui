@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 
-import { resolveTaskChildren, sortMilestonesAsc, sortMilestonesDesc } from './two-column/utils';
+import {
+  resolveTaskChildren,
+  sortMilestonesAsc,
+  sortMilestonesDesc,
+} from './two-column/two-column.utils';
 import type { TimelinePhase } from './two-column/types';
 
 // ----------------------------------------------------------------------

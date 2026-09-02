@@ -14,7 +14,7 @@ import {
   dateToMonthIndex,
   monthIndexToDate,
   resolveOverlaps,
-} from './utils';
+} from './two-column.utils';
 
 // ----------------------------------------------------------------------
 

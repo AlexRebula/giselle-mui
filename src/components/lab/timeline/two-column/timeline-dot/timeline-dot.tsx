@@ -4,12 +4,12 @@ import type { TimelineDotComponentProps } from './types';
 import Box from '@mui/material/Box';
 
 import { timelineDotInnerSx, pulseRingAfterSx } from './timeline-dot.styles';
-import { getDotSize, getIconSize, normaliseSx, resolveEffectiveColor } from './utils';
+import { getDotSize, getIconSize, normaliseSx, resolveEffectiveColor } from './timeline-dot.utils';
 import { DotInner } from './dot-inner';
 
 // Re-exports — keeps existing imports from './timeline-dot' working.
 export type { TimelineDotComponentProps } from './types';
-export { resolveEffectiveColor } from './utils';
+export { resolveEffectiveColor } from './timeline-dot.utils';
 
 // ----------------------------------------------------------------------
 

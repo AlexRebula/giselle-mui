@@ -4,7 +4,7 @@ import type { TimelinePlatformItem } from '../types';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 
-import { derivePlatformEntry } from './utils';
+import { derivePlatformEntry } from './phase-card.utils';
 import { platformStripItemSlotSx, platformStripItemLabelSx } from './phase-card.styles';
 
 // ----------------------------------------------------------------------

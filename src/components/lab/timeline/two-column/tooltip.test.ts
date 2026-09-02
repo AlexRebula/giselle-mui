@@ -22,7 +22,11 @@
 import { it, expect, describe } from 'vitest';
 
 import type { TimelinePhase } from './types';
-import { truncateDescription, resolvePhaseTooltip, resolveMilestoneTooltip } from './utils';
+import {
+  truncateDescription,
+  resolvePhaseTooltip,
+  resolveMilestoneTooltip,
+} from './two-column.utils';
 
 // ---------------------------------------------------------------------------
 // Helpers

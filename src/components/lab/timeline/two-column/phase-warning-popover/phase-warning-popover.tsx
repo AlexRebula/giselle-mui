@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 import type { PhaseRange, PhaseWarningPopoverProps } from './types';
-import { monthIndexToDate, resolveOverlaps } from '../utils';
+import { monthIndexToDate, resolveOverlaps } from '../two-column.utils';
 import {
   popoverPaperSx,
   sliderRowHeaderSx,
@@ -34,7 +34,7 @@ import {
   applyOverrides,
   mergeIntoAll,
   resolveSliderColor,
-} from './utils';
+} from './phase-warning-popover.utils';
 
 // Re-exports — keeps existing imports from './phase-warning-popover' working.
 export type { PhaseRange, PhaseWarningPopoverProps } from './types';
@@ -45,7 +45,7 @@ export {
   hasRemainingOverlaps,
   applyOverrides,
   mergeIntoAll,
-} from './utils';
+} from './phase-warning-popover.utils';
 
 // ----------------------------------------------------------------------
 
