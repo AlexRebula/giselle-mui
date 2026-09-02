@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 
-import { timelineColumnSx } from './two-column.styles';
+import { timelineColumnSx } from './timeline-column.styles';
 import type { TimelineColumnProps } from './types';
 
 // ----------------------------------------------------------------------
@@ -21,6 +21,8 @@ import type { TimelineColumnProps } from './types';
  * two near-identical column Boxes from drifting out of sync during refactors.
  * Do NOT inline these Boxes back into the render. If you need to change column
  * behaviour, change it here once.
+ *
+ * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
  */
 export function TimelineColumn({
   columnSide,

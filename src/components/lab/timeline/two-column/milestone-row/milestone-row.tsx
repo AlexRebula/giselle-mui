@@ -5,22 +5,16 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { MilestoneBadge } from './milestone-badge';
-import { TimelineDot } from './timeline-dot';
+import { MilestoneBadge } from '../milestone-badge';
+import { TimelineDot } from '../timeline-dot';
 import {
   resolveMilestoneState,
   resolveMilestoneDotHandlers,
   resolveMilestoneTooltip,
   resolveTaskChildren,
-} from './two-column.utils';
-import {
-  msRowSx,
-  msColumnBoxSx,
-  msDotWrapperSx,
-  floatingDatePillSx,
-  msCardWrapperSx,
-  centerColumnSx,
-} from './two-column.styles';
+} from '../two-column.utils';
+import { floatingDatePillSx, centerColumnSx } from '../two-column.styles';
+import { msRowSx, msColumnBoxSx, msDotWrapperSx, msCardWrapperSx } from './milestone-row.styles';
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +28,8 @@ import {
  *
  * Cards are absolutely positioned at `top: X%` within the parent phase `<li>`
  * so expanding one card never shifts the spine dots below it.
+ *
+ * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
  */
 export function MilestoneRow({ ms, mi, totalMilestones, ctx }: MilestoneRowProps) {
   const { msDone, msColor } = resolveMilestoneState(

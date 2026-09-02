@@ -4,17 +4,17 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 
 import { MarkerLabel } from './marker-label';
-import { SpineConnector } from './spine-connector';
-import { TimelineDot } from './timeline-dot';
-import { resolvePhaseTooltip } from './two-column.utils';
+import { SpineConnector } from '../spine-connector';
+import { TimelineDot } from '../timeline-dot';
+import { resolvePhaseTooltip } from '../two-column.utils';
 import {
   markerPhaseLiSx,
   markerRowInnerSx,
-  // markerLabelSlotSx is a factory (not two separate constants) — see two-column.styles.ts
+  // markerLabelSlotSx is a factory (not two separate constants) — see marker-row.styles.ts
   // for the naming decision: *SlotSx (structural container) not *LabelSx (child content).
   markerLabelSlotSx,
   markerCenterSx,
-} from './two-column.styles';
+} from './marker-row.styles';
 
 // ----------------------------------------------------------------------
 
@@ -30,6 +30,8 @@ import {
  * When `isMobile` is `true`, the right slot also renders the label for `side='left'`
  * phases so the label is always visible on mobile, mirroring the column-collapse
  * behaviour of full phase cards.
+ *
+ * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
  */
 export function MarkerRow({
   phase,

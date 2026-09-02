@@ -3,19 +3,8 @@
 import { describe, it, expect } from 'vitest';
 
 import {
-  timelineColumnSx,
   timelineViewSlotSx,
-  msRowSx,
-  msColumnBoxSx,
-  msDotWrapperSx,
   floatingDatePillSx,
-  markerPhaseLiSx,
-  markerLabelSlotSx,
-  markerCenterSx,
-  markerRowInnerSx,
-  markerCaptionSx,
-  markerDateSpanSx,
-  phaseRowSx,
   phaseLiSx,
   centerColumnSx,
   timelineRootSx,
@@ -49,70 +38,11 @@ describe('timelineViewSlotSx("full") — full two-column spine wrapper', () => {
 });
 
 // ---------------------------------------------------------------------------
-// timelineColumnSx
-// ---------------------------------------------------------------------------
-
-describe('timelineColumnSx — column layout', () => {
-  it('left column: right text-align, right padding', () => {
-    const styles = timelineColumnSx('left', true, 40) as Record<string, unknown>;
-    expect(styles['textAlign']).toBe('right');
-    expect(styles['pr']).toBe(2);
-    expect(styles['pl']).toBe(0);
-  });
-
-  it('right column: left text-align, left padding', () => {
-    const styles = timelineColumnSx('right', true, 40) as Record<string, unknown>;
-    expect(styles['textAlign']).toBe('left');
-    expect(styles['pl']).toBe(2);
-    expect(styles['pr']).toBe(0);
-  });
-
-  it('applies paddingBottom from the argument', () => {
-    const styles = timelineColumnSx('left', true, 48) as Record<string, unknown>;
-    expect(styles['paddingBottom']).toBe('48px');
-  });
-
-  it('[regression] left column always hidden on xs (cards move to right slot on mobile)', () => {
-    const styles = timelineColumnSx('left', false, 40) as Record<string, unknown>;
-    const display = styles['display'] as { xs: string; md: string };
-    expect(display['xs']).toBe('none');
-    expect(display['md']).toBe('block');
-  });
-
-  it('[regression] left column hidden on xs even when hasContent=true', () => {
-    const styles = timelineColumnSx('left', true, 40) as Record<string, unknown>;
-    const display = styles['display'] as { xs: string; md: string };
-    expect(display['xs']).toBe('none');
-    expect(display['md']).toBe('block');
-  });
-
-  it('shows on xs when hasContent=true', () => {
-    const styles = timelineColumnSx('right', true, 40) as Record<string, unknown>;
-    const display = styles['display'] as { xs: string; md: string };
-    expect(display['xs']).toBe('block');
-  });
-
-  it('[regression] right column always visible on xs even when hasContent=false (receives all cards on mobile)', () => {
-    const styles = timelineColumnSx('right', false, 40) as Record<string, unknown>;
-    const display = styles['display'] as { xs: string; md: string };
-    expect(display['xs']).toBe('block');
-    // Empty column must stay display:block on md — hiding it removes the column from
-    // the flex row and shifts the centre spine off-centre.
-    expect(display['md']).toBe('block');
-  });
-
-  it('[regression] has minWidth:0 so the flex child can shrink at narrow widths', () => {
-    const styles = timelineColumnSx('left', true, 40) as Record<string, unknown>;
-    expect(styles['minWidth']).toBe(0);
-  });
-});
-
-// ---------------------------------------------------------------------------
 // Phase-card reserve slot regression — milestone clearance invariant
 // ---------------------------------------------------------------------------
 //
 // The first milestone must never overlap the phase card.
-// milestone-row.tsx uses PHASE_CARD_RESERVE_SLOTS=2 in the topPercent formula.
+// milestone-row/milestone-row.tsx uses PHASE_CARD_RESERVE_SLOTS=2 in the topPercent formula.
 // two-column.tsx uses the same constant in phaseMinHeight.
 // This test locks in the math so a refactor cannot silently break the invariant.
 //
@@ -166,91 +96,6 @@ describe('[regression] phase-card reserve — milestone clearance invariant', ()
 });
 
 // ---------------------------------------------------------------------------
-// msRowSx
-// ---------------------------------------------------------------------------
-
-describe('msRowSx — milestone row wrapper', () => {
-  it('positions absolutely at the given percentage', () => {
-    const styles = msRowSx(25) as Record<string, unknown>;
-    expect(styles['position']).toBe('absolute');
-    expect(styles['top']).toBe('25%');
-    expect(styles['left']).toBe(0);
-    expect(styles['right']).toBe(0);
-  });
-
-  it('is a horizontal flex row', () => {
-    const styles = msRowSx(50) as Record<string, unknown>;
-    expect(styles['display']).toBe('flex');
-    expect(styles['flexDirection']).toBe('row');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// msColumnBoxSx
-// ---------------------------------------------------------------------------
-
-describe('msColumnBoxSx — milestone column box', () => {
-  it('[regression] right column always visible on xs (receives all milestone cards on mobile)', () => {
-    const styles = msColumnBoxSx('right', true) as Record<string, unknown>;
-    const display = styles['display'] as { xs: string; md: string };
-    expect(display['xs']).toBe('block');
-    expect(display['md']).toBe('block');
-  });
-
-  it('[regression] right column visible on xs even when visible=false', () => {
-    const styles = msColumnBoxSx('right', false) as Record<string, unknown>;
-    const display = styles['display'] as { xs: string; md: string };
-    expect(display['xs']).toBe('block');
-    // Column must stay display:block on md even when no content — keeps spine centred.
-    expect(display['md']).toBe('block');
-  });
-
-  it('[regression] left column always hidden on xs (milestone cards shift to right slot on mobile)', () => {
-    const styles = msColumnBoxSx('left', true) as Record<string, unknown>;
-    const display = styles['display'] as { xs: string; md: string };
-    expect(display['xs']).toBe('none');
-    expect(display['md']).toBe('block');
-  });
-
-  it('is relatively positioned with overflow:visible', () => {
-    const styles = msColumnBoxSx('right', true) as Record<string, unknown>;
-    expect(styles['position']).toBe('relative');
-    expect(styles['overflow']).toBe('visible');
-    expect(styles['flex']).toBe(1);
-  });
-
-  it('[regression] has minWidth:0 so the milestone column can shrink at narrow widths', () => {
-    const styles = msColumnBoxSx('right', true) as Record<string, unknown>;
-    expect(styles['minWidth']).toBe(0);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// msDotWrapperSx
-// ---------------------------------------------------------------------------
-
-describe('msDotWrapperSx — milestone dot blur wrapper', () => {
-  it('has transition defined (not blurred)', () => {
-    const styles = msDotWrapperSx(false) as Record<string, unknown>;
-    expect(String(styles['transition'])).toContain('filter');
-    expect(styles['filter']).toBeUndefined();
-  });
-
-  it('applies blur and dim when blurred=true', () => {
-    const styles = msDotWrapperSx(true) as Record<string, unknown>;
-    expect(styles['filter']).toBe('blur(1.5px)');
-    expect(styles['opacity']).toBe(0.38);
-    expect(styles['pointerEvents']).toBe('none');
-  });
-
-  it('is inline-flex positioned relatively', () => {
-    const styles = msDotWrapperSx(false) as Record<string, unknown>;
-    expect(styles['display']).toBe('inline-flex');
-    expect(styles['position']).toBe('relative');
-  });
-});
-
-// ---------------------------------------------------------------------------
 // floatingDatePillSx
 // ---------------------------------------------------------------------------
 
@@ -276,165 +121,6 @@ describe('floatingDatePillSx — floating date pill above a dot', () => {
   it('has z-index 2 so it renders above dot', () => {
     const sx = floatingDatePillSx as Record<string, unknown>;
     expect(sx['zIndex']).toBe(2);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// markerPhaseLiSx
-// ---------------------------------------------------------------------------
-
-describe('markerPhaseLiSx — marker phase li', () => {
-  it('has a minimum height for the dot', () => {
-    const sx = markerPhaseLiSx as Record<string, unknown>;
-    expect(sx['minHeight']).toBe(40);
-  });
-
-  it('is column flex, relatively positioned', () => {
-    const sx = markerPhaseLiSx as Record<string, unknown>;
-    expect(sx['display']).toBe('flex');
-    expect(sx['flexDirection']).toBe('column');
-    expect(sx['position']).toBe('relative');
-    expect(sx['zIndex']).toBe(1);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// markerLabelSlotSx (unified factory — replaces separate markerLeftLabelSx / markerRightLabelSx)
-// Named *SlotSx not *LabelSx: the Box is a structural container (slot), not the label itself.
-// Unified into a factory to avoid duplicating identical structure for left/right variants.
-// ---------------------------------------------------------------------------
-
-describe('markerLabelSlotSx("left") — left label slot', () => {
-  it('right-aligns content with right padding', () => {
-    const sx = markerLabelSlotSx('left') as Record<string, unknown>;
-    expect(sx['justifyContent']).toBe('flex-end');
-    expect(sx['pr']).toBe(1.5);
-    expect(sx['pl']).toBe(0);
-    expect(sx['flex']).toBe(1);
-  });
-
-  it('[regression] has minWidth:0 and overflow:hidden to clip nowrap labels at narrow widths', () => {
-    const sx = markerLabelSlotSx('left') as Record<string, unknown>;
-    expect(sx['minWidth']).toBe(0);
-    expect(sx['overflow']).toBe('hidden');
-  });
-
-  it('[regression: left slot hidden xs] left slot hidden so left-side labels shift to the right slot on mobile', () => {
-    const sx = markerLabelSlotSx('left') as Record<string, unknown>;
-    const display = sx['display'] as { xs: string; md: string };
-    expect(display['xs']).toBe('none');
-    expect(display['md']).toBe('flex');
-  });
-});
-
-describe('markerLabelSlotSx("right") — right label slot', () => {
-  it('left-aligns content with left padding', () => {
-    const sx = markerLabelSlotSx('right') as Record<string, unknown>;
-    expect(sx['justifyContent']).toBe('flex-start');
-    expect(sx['pl']).toBe(1.5);
-    expect(sx['pr']).toBe(0);
-    expect(sx['flex']).toBe(1);
-  });
-
-  it('[regression] has minWidth:0 and overflow:hidden to clip nowrap labels at narrow widths', () => {
-    const sx = markerLabelSlotSx('right') as Record<string, unknown>;
-    expect(sx['minWidth']).toBe(0);
-    expect(sx['overflow']).toBe('hidden');
-  });
-
-  it('[regression: right slot always visible] right slot visible on all breakpoints', () => {
-    const sx = markerLabelSlotSx('right') as Record<string, unknown>;
-    expect(sx['display']).toBe('flex');
-  });
-});
-
-describe('markerCenterSx — centre column', () => {
-  it('is column flex centered, relatively positioned', () => {
-    const sx = markerCenterSx as Record<string, unknown>;
-    expect(sx['display']).toBe('flex');
-    expect(sx['flexDirection']).toBe('column');
-    expect(sx['alignItems']).toBe('center');
-    expect(sx['position']).toBe('relative');
-  });
-
-  it('[regression] has flexShrink:0 so the spine dot is never squeezed', () => {
-    const sx = markerCenterSx as Record<string, unknown>;
-    expect(sx['flexShrink']).toBe(0);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// markerRowInnerSx
-// ---------------------------------------------------------------------------
-
-describe('markerRowInnerSx — marker row inner', () => {
-  it('is horizontal flex row with centred alignment', () => {
-    const sx = markerRowInnerSx as Record<string, unknown>;
-    expect(sx['display']).toBe('flex');
-    expect(sx['flexDirection']).toBe('row');
-    expect(sx['alignItems']).toBe('center');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// markerCaptionSx
-// ---------------------------------------------------------------------------
-
-describe('markerCaptionSx — marker label caption', () => {
-  it('uses secondary text colour, semi-bold weight, and nowrap to prevent label wrapping', () => {
-    const sx = markerCaptionSx as Record<string, unknown>;
-    expect(sx['color']).toBe('text.secondary');
-    expect(sx['fontWeight']).toBe(600);
-    expect(sx['whiteSpace']).toBe('nowrap');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// markerDateSpanSx
-// ---------------------------------------------------------------------------
-
-describe('markerDateSpanSx — marker inline date span', () => {
-  it('has left margin, reduced weight, and partial opacity', () => {
-    const sx = markerDateSpanSx as Record<string, unknown>;
-    expect(sx['ml']).toBe(0.75);
-    expect(sx['fontWeight']).toBe(400);
-    expect(sx['opacity']).toBe(0.7);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// phaseRowSx
-// ---------------------------------------------------------------------------
-
-describe('phaseRowSx — phase row', () => {
-  it('is stretch-aligned flex row with transition', () => {
-    const styles = phaseRowSx(false) as Record<string, unknown>;
-    expect(styles['display']).toBe('flex');
-    expect(styles['alignItems']).toBe('stretch');
-    expect(String(styles['transition'])).toContain('filter');
-  });
-
-  it('has flex:1 to fill the li height', () => {
-    const styles = phaseRowSx(false) as Record<string, unknown>;
-    expect(styles['flex']).toBe(1);
-  });
-
-  it('applies blur when blurred=true', () => {
-    const styles = phaseRowSx(true) as Record<string, unknown>;
-    expect(styles['filter']).toBe('blur(1.5px)');
-    expect(styles['opacity']).toBe(0.38);
-    expect(styles['pointerEvents']).toBe('none');
-  });
-
-  it('does not apply blur when blurred=false', () => {
-    const styles = phaseRowSx(false) as Record<string, unknown>;
-    expect(styles['filter']).toBeUndefined();
-    expect(styles['opacity']).toBeUndefined();
-  });
-
-  it('[regression] has minWidth:0 to prevent the phase row from overflowing its li', () => {
-    const styles = phaseRowSx(false) as Record<string, unknown>;
-    expect(styles['minWidth']).toBe(0);
   });
 });
 

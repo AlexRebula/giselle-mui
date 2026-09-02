@@ -99,13 +99,12 @@ const NESTED_ONLY_DIRS_TO_CHECK = [
 // once "migrated" like every other entry here.
 export const KNOWN_VIOLATIONS = new Set([
   // compact/ — migrated (giselle-mui#222, group 1 of 3)
-  // two-column/ — 5 genuine + 1 permanent exclusion (icons.tsx, see comment above)
+  // two-column/ root sub-components — migrated (giselle-mui#222, group 2 of 3):
+  // marker-label.tsx -> marker-row/marker-label/, marker-row.tsx -> marker-row/,
+  // milestone-row.tsx -> milestone-row/, phase-row.tsx -> phase-row/,
+  // timeline-column.tsx -> phase-row/timeline-column/
+  // 1 permanent exclusion remains (icons.tsx, see comment above)
   'src/components/lab/timeline/two-column/icons.tsx',
-  'src/components/lab/timeline/two-column/marker-label.tsx',
-  'src/components/lab/timeline/two-column/marker-row.tsx',
-  'src/components/lab/timeline/two-column/milestone-row.tsx',
-  'src/components/lab/timeline/two-column/phase-row.tsx',
-  'src/components/lab/timeline/two-column/timeline-column.tsx',
   // two-column/phase-card/ — 7
   'src/components/lab/timeline/two-column/phase-card/card-corner-alert-badge.tsx',
   'src/components/lab/timeline/two-column/phase-card/card-decoration.tsx',
