@@ -210,5 +210,5 @@ None. All additions are backward-compatible.
 
 - [x] `npm run check:verify` exits 0
 - [x] `npm run build` exits 0 (all four subpath entries: `index`, `utils`, `charts`, `motion`)
-- [x] `yalc push` + consumer validation completed (alexrebula, giselle-docs, first-branch)
+- [x] `yalc push` + consumer validation completed ([consumer-app-a], giselle-docs, [consumer-app-b])
 - [x] SonarQube: zero violations on cleaned component set

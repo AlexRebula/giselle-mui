@@ -3,7 +3,7 @@
 > _Last updated: May 2026_
 
 This guide is for developers who work on `@littlebranches/giselle-mui` alongside a
-Next.js consumer app (e.g. the `alexrebula` portfolio) and want to see changes in
+Next.js consumer app (e.g. the alexrebula portfolio) and want to see changes in
 both places without a manual publish step every time.
 
 ---
@@ -25,7 +25,7 @@ fully, with tests passing. Then push to the consumer when it is ready.
 ## Prerequisites
 
 - `yalc` installed globally: `npm install -g yalc`
-- `giselle-mui` and `alexrebula` cloned to your machine (any layout — no relative path requirement)
+- `giselle-mui` and your consumer app cloned to your machine (any layout — no relative path requirement)
 
 ---
 
@@ -58,7 +58,7 @@ When a component is ready and you want to test it inside the real app:
 ### One-time consumer setup
 
 ```bash
-# in alexrebula (already done — no action needed if you cloned the repo)
+# in the consumer app (already done — no action needed if you cloned the repo)
 # @littlebranches/giselle-mui is already installed via yalc
 ```
 
@@ -80,8 +80,8 @@ restart if Turbopack does not pick up the module change automatically.
 cd giselle-mui
 npm run storybook
 
-# Terminal B — portfolio
-cd alexrebula
+# Terminal B — consumer app
+cd <consumer-app>
 npm run dev            # Turbopack on http://localhost:8082
 ```
 
@@ -137,7 +137,7 @@ npm publish                     # pushes to npmjs.com (public — publishConfig.
 After publishing, switch the consumer from yalc to the real package:
 
 ```bash
-# in alexrebula
+# in the consumer app
 yalc remove @littlebranches/giselle-mui
 npm install @littlebranches/giselle-mui
 ```
@@ -145,7 +145,7 @@ npm install @littlebranches/giselle-mui
 To go back to yalc for development after a release:
 
 ```bash
-# in alexrebula
+# in the consumer app
 npm uninstall @littlebranches/giselle-mui
 yalc add @littlebranches/giselle-mui
 ```

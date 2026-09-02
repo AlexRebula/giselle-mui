@@ -62,10 +62,10 @@ Rename to `icon-action-bar.defaults.tsx`. Restore clean JSX. This is a new file 
 
 ## Numbers
 
-| Metric                 | Value                                  |
-| ---------------------- | -------------------------------------- |
-| Tests passing          | 831 / 831                              |
-| check:verify exit code | 0                                      |
-| tsup build             | ✅ all 4 entry points                  |
-| yalc consumers updated | alexrebula, giselle-docs, first-branch |
-| SonarQube violations   | 0 across all three components          |
+| Metric                 | Value                                            |
+| ---------------------- | ------------------------------------------------ |
+| Tests passing          | 831 / 831                                        |
+| check:verify exit code | 0                                                |
+| tsup build             | ✅ all 4 entry points                            |
+| yalc consumers updated | [consumer-app-a], giselle-docs, [consumer-app-b] |
+| SonarQube violations   | 0 across all three components                    |

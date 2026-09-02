@@ -14,7 +14,7 @@ This plan defines how the workspace migrates to MUI 9 without breaking current M
 ## Current workspace snapshot (19 May 2026)
 
 - `giselle-mui`: **Phase 1 complete (PR #62).** Dev deps on MUI v9; peer deps support both v7 and v9. All 5 subpath entries build-verified. PR #62 open, pending PR #61 merge.
-- `alexrebula`: MUI 7 + MUI X v8. Phase 2a not yet started.
+- `[consumer-app-a]`: MUI 7 + MUI X v8. Phase 2a not yet started.
 - `[consumer-app-b]`: mixed majors (`@mui/material` v7 with `@mui/material-nextjs` v9) — prerequisite fix still pending.
 - `giselle-docs`: MUI 7. Phase 2c not yet started.
 - `giselle-ui` and `giselle-sections-sdk`: no MUI dependency (not part of this migration).
@@ -22,8 +22,8 @@ This plan defines how the workspace migrates to MUI 9 without breaking current M
 ### Previous snapshot (8 May 2026, for reference)
 
 - `giselle-mui`: MUI 7 in peers and dev deps.
-- `alexrebula`: MUI 7 + MUI X v8.
-- `first-branch`: mixed majors (`@mui/material` v7 with `@mui/material-nextjs` v9) — must be aligned immediately.
+- `[consumer-app-a]`: MUI 7 + MUI X v8.
+- `[consumer-app-b]`: mixed majors (`@mui/material` v7 with `@mui/material-nextjs` v9) — must be aligned immediately.
 - `giselle-docs`: MUI 7.
 
 ## Migration principles
@@ -41,8 +41,8 @@ Estimates include coding, verification, and visual QA.
 | -------------------------------------------- | ------------ | ---------------------------------------------------------------- |
 | Planning + compatibility matrix              | 0.5-1 day    | Pin compatible `@mui/*` versions per repo                        |
 | `giselle-mui` migration + dual-major support | 2-4 days     | Peer ranges, code fixes, tests, Storybook, dist verification     |
-| `alexrebula` migration                       | 2-5 days     | Largest surface area (Next 16 + MUI X pages + icons + timelines) |
-| `first-branch` migration                     | 0.5-1.5 days | Smaller app, but currently has a major-version mismatch          |
+| `[consumer-app-a]` migration                 | 2-5 days     | Largest surface area (Next 16 + MUI X pages + icons + timelines) |
+| `[consumer-app-b]` migration                 | 0.5-1.5 days | Smaller app, but currently has a major-version mismatch          |
 | `giselle-docs` migration                     | 0.5-1 day    | Docusaurus + MDX + component docs pages                          |
 | Stabilization and bug-fix window             | 2-4 days     | Cross-repo fixes after integrated testing                        |
 
@@ -50,7 +50,7 @@ Total expected effort: **7.5-16.5 working days**.
 
 ## Immediate prerequisite (before MUI 9 work)
 
-Fix version mismatch in `first-branch`:
+Fix version mismatch in `[consumer-app-b]`:
 
 - Align `@mui/material` and `@mui/material-nextjs` to the same major.
 - Run `npm run check` and a full app smoke test.
@@ -78,8 +78,8 @@ Exit criteria:
 
 Upgrade in this order:
 
-1. `alexrebula`
-2. `first-branch`
+1. `[consumer-app-a]`
+2. `[consumer-app-b]`
 3. `giselle-docs`
 
 For each app:
@@ -125,7 +125,7 @@ This gives enough runway without maintaining dual-support forever.
 
 ## Risk hotspots
 
-- MUI X compatibility in `alexrebula` (must align with chosen major strategy).
+- MUI X compatibility in `[consumer-app-a]` (must align with chosen major strategy).
 - Storybook docs/control behavior changes after major upgrade.
 - Styling token semantics if any MUI 9 CSS vars behavior changed.
 - Hidden dependency coupling via local yalc package updates.
@@ -133,8 +133,8 @@ This gives enough runway without maintaining dual-support forever.
 ## Verification checklist (workspace-wide)
 
 - `giselle-mui`: `npm run check:verify`
-- `alexrebula`: `npm run check:verify`
-- `first-branch`: `npm run check:verify`
+- `[consumer-app-a]`: `npm run check:verify`
+- `[consumer-app-b]`: `npm run check:verify`
 - `giselle-docs`: `npm run build`
 - Manual visual smoke checks on timeline, cards, nav, icon rendering, and chart cards.
 

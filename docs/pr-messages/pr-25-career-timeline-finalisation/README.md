@@ -19,7 +19,7 @@ This folder contains the message documents for PR 25.
 ## Summary
 
 Replaces every reference to the deprecated `CssVarsProvider` + `extendTheme()` API across
-all documentation, README files, test comments, and the companion `alexrebula` data files.
+all documentation, README files, test comments, and the companion consuming-app data files.
 `CssVarsProvider` was the early experimental approach from MUI v6/v7 pre-release. In MUI v7
 stable, `ThemeProvider` was unified to handle CSS variables natively via `createTheme({ cssVariables: true })`.
 Storybook was already migrated (see PR `pr-16-feature-phase-warning-popover.md` — May 2026). The
@@ -125,7 +125,7 @@ Three occurrences:
 
 ---
 
-## Companion alexrebula changes (same commit)
+## Companion consuming-app changes (same commit)
 
 Two milestone description strings in the portfolio data layer were also updated:
 
@@ -138,7 +138,7 @@ Two milestone description strings in the portfolio data layer were also updated:
 ## Dist rebuild
 
 `npm run build` and `yalc push` ran after all source edits. The `dist/*.map` source maps
-now embed the corrected JSDoc from `theme-preset.ts`. Both `alexrebula` and `giselle-docs`
+now embed the corrected JSDoc from `theme-preset.ts`. Both `[consumer-app-a]` and `giselle-docs`
 received the updated package via yalc.
 
 ---
@@ -357,7 +357,7 @@ None. All additions are backward-compatible.
 
 - [x] `npm run check:verify` exits 0
 - [x] `npm run build` exits 0 (all four subpath entries: `index`, `utils`, `charts`, `motion`)
-- [x] `yalc push` + consumer validation completed (alexrebula, giselle-docs, first-branch)
+- [x] `yalc push` + consumer validation completed ([consumer-app-a], giselle-docs, [consumer-app-b])
 - [x] SonarQube: zero violations on cleaned component set
 
 ---

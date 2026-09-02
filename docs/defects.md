@@ -48,7 +48,7 @@ This file tracks active defects and unresolved UX decisions that affect shipped 
 
 - Status: Open — needs workspace-wide sweep
 - Severity: Medium (deprecation warning in dev; may break in a future MUI major)
-- Scope: All files across `giselle-mui`, `alexrebula`, `first-branch` that pass `inputProps` to any MUI component
+- Scope: All files across `giselle-mui` and the private consuming apps that pass `inputProps` to any MUI component
 - Root cause: MUI v7 replaced `inputProps` with `slotProps.htmlInput` on all input-bearing components (`Checkbox`, `TextField`, `Input`, `Select`, etc.)
 - Fix: Replace every occurrence of `inputProps={{ ... }}` with `slotProps={{ htmlInput: { ... } }}`
 - First found: `giselle-mui/src/components/timeline/task-list/task-list.tsx` — `<Checkbox inputProps={{ 'aria-label': task.title }}>`
@@ -79,7 +79,7 @@ grep -rn "inputProps=" src/ --include="*.tsx" --include="*.ts"
 Three classes of banned content reached a pushed commit on a public-facing branch before being caught:
 
 1. **Personal name** (`Žiga`) — in `docs/components/dashboard-components-plan.md`, inside an "Immediate consumer" description.
-2. **Internal project codename** (`first-branch`) — same file, multiple occurrences in component consumer bullets.
+2. **Internal project codename** — a private consuming app's internal codename, same file, multiple occurrences in component consumer bullets. The term is not reproduced here.
 3. **Private internal path reference** (`case-001`) — in `docs/components/dashboard-components-plan.md`, `docs/standalone-gap-analysis.md`, `docs/components/timeline/two-column/timeline-plan.md`, and `src/components/timeline/two-column/types.ts` JSDoc.
 4. **Banned identifier names in docs** (`varFade`, `varContainer` etc.) — in `docs/roadmap.mdx` and `docs/components/home-components-extraction-plan.md`. ESLint bans these in `src/**`; it does not run on `docs/**`. _(`docs/roadmap.mdx` was deleted 2026-09-02 as a stale duplicate of `docs/roadmap.md` — giselle-mui#224.)_
 

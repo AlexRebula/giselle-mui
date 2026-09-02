@@ -53,13 +53,13 @@ Ripeness scale: 🟢 green = alpha · 🟡 yellow-green = beta · 🟠 golden = 
 
 **G lettermark:** The bowl of a capital G mirrors the elongated S-curve of a Carabao mango silhouette — readable as letter or fruit without labelling.
 
-**WC-6:** The planned wide hero illustration — watercolour mango tree with per-package label badges. See `alexrebula/docs/brand/logo-concept.md` Track A.
+**WC-6:** The planned wide hero illustration — watercolour mango tree with per-package label badges. See the private consuming app's own brand logo-concept doc, Track A.
 
 ## Component rules (non-negotiable)
 
 0. **Zero personal data.** Stories, tests, JSDoc examples, and README code snippets must
    never contain real names (people, clients, employers), real project names, or any content
-   derived from the `alexrebula` portfolio. Use generic placeholders:
+   derived from a private consuming app. Use generic placeholders:
    authors → `'Jane Smith'`, sources/projects → `'Platform Team'`, metrics → `'20+'` / `'of experience'`.
    Violating this rule exposes private career data in a public MIT-licensed repository.
 
@@ -233,24 +233,24 @@ src/components/section/timeline/two-column/
 When asked to add a component, always verify: does this encode a non-obvious decision
 that saves every consumer from rediscovering it? If not, it should not be in this library.
 
-### Layout components belong here (not in alexrebula)
+### Layout components belong here (not in a consuming app)
 
 Any section layout pattern that is **used by more than one section page** — or that is
 clearly general enough to be — belongs in `giselle-mui` as a named layout component, not
-inline in `alexrebula/src/sections/`. Examples of patterns that belong here:
+inline in a consuming app's own section files. Examples of patterns that belong here:
 
 - Sidebar + main content grid (`<SidebarContentLayout>`)
 - Gauge / radial-bar visualisation card (`<RadialGaugeCard>`)
 - Two-column page layout with sticky sidebar
 - KPI stats column alongside a timeline
 
-**Decision rule — ask before writing any new JSX in `alexrebula/src/sections/`:**
+**Decision rule — ask before writing any new JSX in a consuming app's section files:**
 
 > Would a second section page (or a different project) want this exact layout structure?
 > If yes → create a named component in `giselle-mui/src/components/layout/` first, then import it.
 
 This was violated when `StoreReadinessSectionInner` and `ReadinessGauge` were written directly
-in `alexrebula/src/sections/store-readiness/view.tsx`. Both belong in giselle-mui:
+in a consuming app's own store-readiness section view. Both belong in giselle-mui:
 
 - `ReadinessGauge` → `src/components/chart/radial-gauge/` (wraps ApexCharts radialBar)
 - The sidebar+timeline layout → `src/components/layout/sidebar-timeline/`
@@ -270,27 +270,27 @@ When a component uses ApexCharts:
 - The component receives the result and passes it to `<ReactApexChart options={...} />` — never defines it inline.
 
 - `TimelineTwoColumn` visual pages for roadmap docs — see the **Roadmap visual sync rule**
-  in the `alexrebula` copilot instructions. `TimelineTwoColumn` is the designated component
-  for rendering any `docs/**/roadmap.md` file visually. When a roadmap doc is updated, the
-  companion timeline page in `alexrebula` must be updated in the same commit to keep phases,
+  in a private consuming app's own copilot instructions. `TimelineTwoColumn` is the designated
+  component for rendering any `docs/**/roadmap.md` file visually. When a roadmap doc is updated,
+  the companion timeline page in that app must be updated in the same commit to keep phases,
   milestones, and all expandable sub-information in full parity with the markdown source.
 
-- **Roadmap hierarchy bubble-up rule** — also defined in the `alexrebula` copilot instructions.
+- **Roadmap hierarchy bubble-up rule** — also defined in that app's own copilot instructions.
   When a phase or milestone in `giselle-mui/docs/roadmap.md` is completed or its date
-  changes, the corresponding summary entry in `alexrebula/docs/roadmap.md` (Phase 1.5) and its
+  changes, the corresponding summary entry in its own roadmap doc (Phase 1.5) and its
   `data.tsx` mirror must be updated in the same commit. The child roadmap is the source of
   truth for its own content; the ancestor holds a summary + link only, never a duplicate task list.
 
 ## Tone rule for docs and comments
 
-**Hard rule — non-negotiable:** `giselle-mui/docs/` is a **public library documentation site**. It must describe components and utilities on their own terms. It must never document alexrebula's internal migration state, reference files in `alexrebula/src/`, or frame giselle-mui utilities as "replacements for" anything from a third-party kit.
+**Hard rule — non-negotiable:** `giselle-mui/docs/` is a **public library documentation site**. It must describe components and utilities on their own terms. It must never document a private consuming app's internal migration state, reference source files inside one, or frame giselle-mui utilities as "replacements for" anything from a third-party kit.
 
-Migration planning notes, copyright analysis, and "what we still need to fix in alexrebula" tracking belong exclusively in `alexrebula/docs/` — a **private repo**. If that content ends up in `giselle-mui/docs/`, it is in the wrong place and must be moved or removed, regardless of whether the banned-content scan passes.
+Migration planning notes, copyright analysis, and "what we still need to fix in the consuming app" tracking belong exclusively in that app's own docs — a **private repo**. If that content ends up in `giselle-mui/docs/`, it is in the wrong place and must be moved or removed, regardless of whether the banned-content scan passes.
 
 When updating or writing docs:
 
 - **Never** frame a utility as a "replacement for X" or "clean-room implementation of X from Y". Describe what it does: "`channelAlpha(channel, alpha)` creates an rgba tint from an MUI v7 CSS variable channel string."
-- **Never** reference `alexrebula/src/` paths, alexrebula migration status, or private codebase internals in any `giselle-mui/docs/` file.
+- **Never** reference a private consuming app's file paths, its migration status, or private codebase internals in any `giselle-mui/docs/` file.
 - **Never** write a "Copyright status" or "migration tracker" section in a component plan — that is private planning, not library documentation.
 - **Never** mention proprietary, copyrighted, or internal libraries by name in `giselle-mui/docs/` — this is a public library, not an internal migration. No "replaces X from Y" statements anywhere in `giselle-mui/docs/`, `src/`, or component READMEs.
 - **Describe components on their own terms.** Document the problem each component solves and the decisions it encodes — not what preceded it or what inspired it. This is standard practice for any library: React docs do not cite Angular; MUI docs do not cite Bootstrap. A `channelAlpha` entry should read "`channelAlpha(channel, alpha)` builds an rgba tint from an MUI v7 CSS variable channel string" — full stop. No "replaces X", no "unlike Y", no third-party theme names anywhere in `docs/`, `src/`, or component READMEs.
@@ -373,7 +373,7 @@ At the start of every new Copilot session in this package, read these files:
 ### Section-level companion types (canonical location)
 
 These types must be defined here and imported from `@littlebranches/giselle-mui` by all consumers.
-**Never re-define them in alexrebula data files or anywhere else.**
+**Never re-define them in a consuming app's data files or anywhere else.**
 
 | Type                   | Location                                              | Purpose                                                                            |
 | ---------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -462,7 +462,7 @@ sees two module instances for context-holding singletons (e.g. `@mui/material`
 _mui_material_useMediaQuery__WEBPACK_IMPORTED_MODULE_N__ is not a function
 ```
 
-The webpack `resolve.alias` fix in `alexrebula/next.config.ts` only works on imports
+The webpack `resolve.alias` fix in a consuming app's `next.config.ts` only works on imports
 that go through webpack's resolver — it cannot fix code that was pre-bundled by tsup.
 
 **Enforcement checklist — run whenever `package.json` peerDependencies changes:**
@@ -519,7 +519,7 @@ npm run build
 yalc push
 
 # 3. In the portfolio — clear the Turbopack module-graph cache, then restart
-#    (in alexrebula/) rm -rf .next && npm run dev
+#    (in the consumer app) rm -rf .next && npm run dev
 #    Turbopack caches the full module graph inside .next/dev/. Skipping this step
 #    means the old pre-fix bundle stays loaded — components that were null stay null.
 ```

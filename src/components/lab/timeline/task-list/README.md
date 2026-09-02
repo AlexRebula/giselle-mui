@@ -10,7 +10,7 @@ encodes them once.
 
 ## Why it belongs here
 
-Timeline cards and milestone drawers across `alexrebula` and `first-branch` both need this
+Timeline cards and milestone drawers across two separate consuming apps both need this
 component. It is structurally tied to the `Task` type defined in `TimelineTwoColumn/types.ts`,
 making it a natural sibling in this package.
 

@@ -283,7 +283,7 @@ All exported from `index.ts`. All re-exported from `src/index.ts`.
 
 ## What is NOT in giselle-mui
 
-| Belongs in alexrebula                                              | Reason                                                              |
+| Belongs in the consuming app                                       | Reason                                                              |
 | ------------------------------------------------------------------ | ------------------------------------------------------------------- |
 | `allGiselleComponents` nav data                                    | Lists giselle-mui's own components — self-referential, app-specific |
 | `useGiselleDemoScroll` hook                                        | `IntersectionObserver` + DOM query — client-only, page-specific     |
@@ -304,4 +304,4 @@ All exported from `index.ts`. All re-exported from `src/index.ts`.
 - [ ] Storybook story: `'Templates/MUI Demo Template'` with realistic demo content
 - [ ] `npm run check:verify` exits 0
 - [ ] `npm run build` exits 0
-- [ ] `yalc push` + alexrebula validated (one showcase page working end-to-end)
+- [ ] `yalc push` + consuming app validated (one showcase page working end-to-end)

@@ -162,7 +162,7 @@ function GiselleThemeProvider({ children, themeOverrides, theme, defaultMode = '
    fully custom theme. All three modes must have a story.
 
 Sample token data used in Storybook stories must be defined in `giselle-mui` itself —
-no imports from `alexrebula` or any client project.
+no imports from a consuming app or any client project.
 
 **This is the foundational prerequisite for:**
 
@@ -211,7 +211,7 @@ reimplementation of recurring patterns.
 
 **Prerequisite:** Phase A (`channelAlpha`) — some primitives use CSS-variable alpha tints.
 
-**Source material:** These patterns are already proven in alexrebula. They must be written
+**Source material:** These patterns are already proven in a private consuming app. They must be written
 from scratch in giselle-mui (copyright rule: no copy from the private repo).
 
 **Extraction candidates** (need only light cleanup — not a full rewrite):
@@ -225,7 +225,7 @@ from scratch in giselle-mui (copyright rule: no copy from the private repo).
 | Extract `SectionPendingLoader` — replace internal `Iconify` with `GiselleIcon`                    | Components | ⬜     |
 | Extract `FloatingControlBar` — replace `channelAlpha` (Phase A first) + `Iconify` → `GiselleIcon` | Components | ⬜     |
 
-**Write from scratch** (no copy from alexrebula — independent implementations):
+**Write from scratch** (no copy from the private repo — independent implementations):
 
 | Task                                                                                              | Label      | Status |
 | ------------------------------------------------------------------------------------------------- | ---------- | ------ |
@@ -406,11 +406,11 @@ inside a `DetailsDrawer`.
 
 ## Phase H — Portfolio Layout & Application Shell Extraction
 
-**Goal:** Extract every reusable layout and shell pattern from the `alexrebula` portfolio
+**Goal:** Extract every reusable layout and shell pattern from the private portfolio app
 into `giselle-mui` as independently usable, MIT-licensed components. This covers page-level
 section layout composites, navigation components, authentication section shells, and the
 application shell itself. All components are written from scratch — no code is copied from
-the private `alexrebula` repo.
+the private repo.
 
 **Scope:**
 
@@ -630,7 +630,7 @@ to support both MUI v7 and v9 consumers during the transition window.
 ## Phase M — GiselleMUIView Demo (little-branches/giselle)
 
 **Goal:** Build the live component showcase at `/little-branches/giselle/mui/` in the
-`alexrebula` portfolio. This is the primary proof-of-concept for Giselle Premium.
+private portfolio app. This is the primary proof-of-concept for Giselle Premium.
 MUI Store reviewers click through this page.
 
 **Architecture insight (confirmed via competitive analysis — 16 May 2026):**

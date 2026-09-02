@@ -12,7 +12,7 @@ not handling `Mui-focusVisible` vs hover separately (mouse users see focus rings
 ## Why it belongs here
 
 Any interface with a selection pattern — option pickers, feature toggles, plan choosers —
-needs this card. The pattern appears across at minimum the portfolio and `first-branch`. A
+needs this card. The pattern appears across at minimum two separate consuming apps. A
 central implementation prevents divergence.
 
 ## Design decisions
