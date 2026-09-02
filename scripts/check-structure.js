@@ -46,6 +46,11 @@ const __dirname = path.dirname(__filename);
 // Layer and category folders where component files must NOT sit flat.
 // Every .ts/.tsx file found directly in one of these folders is a violation.
 // The rule: every component lives in its own named subfolder at least one level deeper.
+//
+// Corrected 2026-09-02: this list previously said 'components/section/timeline',
+// which stopped existing when the timeline components were manually moved to
+// 'components/lab/timeline' months earlier — the gate had been silently checking
+// nothing for that entire tree since.
 const PARENT_DIRS_TO_CHECK = [
   'components/chart',
   'components/material',
@@ -61,13 +66,60 @@ const PARENT_DIRS_TO_CHECK = [
   'components/section',
   'components/section/faq',
   'components/section/hero',
-  'components/section/timeline',
+  'components/lab/timeline',
   'components/theming',
 ];
 
+// Component folders that are themselves nested two levels below one of the
+// layer/category folders above (e.g. 'components/lab/timeline/two-column' sits
+// inside 'components/lab/timeline'). findNestedSubComponentViolations only
+// recurses ONE level per domain, so a domain's own nested check already reaches
+// components/lab/timeline/two-column/*.tsx (one level in), but never reaches
+// INSIDE two-column's own sub-component folders (phase-card/, timeline-dot/,
+// etc — a second level down) for their own flat helper files.
+//
+// These entries get ONLY the nested sub-component check, never the flat-file
+// check: 'two-column' is itself a component folder (a primary composition file
+// plus companions), not a layer folder — running findFlatFileViolations against
+// it would wrongly flag its own composition file, styles, tests, and utils as
+// "flat component files sitting in a layer folder".
+const NESTED_ONLY_DIRS_TO_CHECK = ['components/lab/timeline/two-column'];
+
 // Ratchet baseline — see the module doc comment above. Tracked by giselle-mui#162
-// (and, separately, the FaqSection follow-up issue for src/components/section/faq/accordion/).
-export const KNOWN_VIOLATIONS = new Set([]);
+// (and, separately, the FaqSection follow-up issue for src/components/section/faq/accordion/,
+// and giselle-mui#222 for the 18 lab/timeline sub-components below).
+//
+// 'src/components/lab/timeline/two-column/icons.tsx' is a PERMANENT exclusion,
+// not a migration target: it exports ReactNode icon constants, not a component.
+// The countCompanions heuristic can't tell the difference (no companion family
+// either way), so it's kept in this baseline indefinitely rather than removed
+// once "migrated" like every other entry here.
+export const KNOWN_VIOLATIONS = new Set([
+  // compact/ — 4
+  'src/components/lab/timeline/compact/chevron-down-icon.tsx',
+  'src/components/lab/timeline/compact/milestone-modal.tsx',
+  'src/components/lab/timeline/compact/phase-accordion-row.tsx',
+  'src/components/lab/timeline/compact/task-details-renderer.tsx',
+  // two-column/ — 5 genuine + 1 permanent exclusion (icons.tsx, see comment above)
+  'src/components/lab/timeline/two-column/icons.tsx',
+  'src/components/lab/timeline/two-column/marker-label.tsx',
+  'src/components/lab/timeline/two-column/marker-row.tsx',
+  'src/components/lab/timeline/two-column/milestone-row.tsx',
+  'src/components/lab/timeline/two-column/phase-row.tsx',
+  'src/components/lab/timeline/two-column/timeline-column.tsx',
+  // two-column/phase-card/ — 7
+  'src/components/lab/timeline/two-column/phase-card/card-corner-alert-badge.tsx',
+  'src/components/lab/timeline/two-column/phase-card/card-decoration.tsx',
+  'src/components/lab/timeline/two-column/phase-card/card-detail-bullets.tsx',
+  'src/components/lab/timeline/two-column/phase-card/card-status-badge.tsx',
+  'src/components/lab/timeline/two-column/phase-card/labeled-icon-strip.tsx',
+  'src/components/lab/timeline/two-column/phase-card/platform-strip.tsx',
+  'src/components/lab/timeline/two-column/phase-card/scenario-badge.tsx',
+  // two-column/phase-warning-popover/ — 1
+  'src/components/lab/timeline/two-column/phase-warning-popover/mini-gantt-ruler.tsx',
+  // two-column/timeline-dot/ — 1
+  'src/components/lab/timeline/two-column/timeline-dot/dot-inner.tsx',
+]);
 
 // Files that are legitimate at any layer level (not component files).
 const ALLOWED_FLAT_FILES = new Set(['index.ts', 'index.tsx', 'types.ts']);
@@ -169,6 +221,9 @@ export function findViolations(srcDir) {
     violations.push(...findFlatFileViolations(srcDir, domain));
     violations.push(...findNestedSubComponentViolations(srcDir, domain));
   }
+  for (const domain of NESTED_ONLY_DIRS_TO_CHECK) {
+    violations.push(...findNestedSubComponentViolations(srcDir, domain));
+  }
   return violations;
 }
 
@@ -213,7 +268,7 @@ function main() {
     console.log(
       '✓ Structure check passed — no new flat component files' +
         (KNOWN_VIOLATIONS.size > 0
-          ? ` (${KNOWN_VIOLATIONS.size} pre-existing violations grandfathered — see giselle-mui#162)`
+          ? ` (${KNOWN_VIOLATIONS.size} pre-existing violations grandfathered — see the tracking issues noted in the KNOWN_VIOLATIONS comment in scripts/check-structure.js)`
           : '')
     );
     process.exit(0);

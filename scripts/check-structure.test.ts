@@ -149,6 +149,44 @@ describe('findViolations — nested sub-components (recursive check)', () => {
   });
 });
 
+describe('findViolations — NESTED_ONLY_DIRS_TO_CHECK (two-level-deep nested components)', () => {
+  // 'components/lab/timeline/two-column' is itself a component folder nested
+  // two levels below the 'components/lab/timeline' layer domain — its own
+  // sub-component folders (e.g. phase-card/) sit a level deeper than
+  // findNestedSubComponentViolations reaches from 'components/lab/timeline'
+  // alone. This exercises the real hardcoded path, not a parameterised one.
+  const base = 'components/lab/timeline/two-column';
+
+  it('reaches a flat sub-component sitting inside one of two-column\'s own nested folders', () => {
+    const srcDir = makeFixtureSrcDir();
+
+    writeFile(srcDir, `${base}/phase-card/phase-card.tsx`);
+    writeFile(srcDir, `${base}/phase-card/phase-card.styles.ts`);
+    writeFile(srcDir, `${base}/phase-card/phase-card.const.ts`);
+    writeFile(srcDir, `${base}/phase-card/extra-badge.tsx`);
+
+    const violations = findViolations(srcDir);
+
+    expect(violations).toContain(`src/${base}/phase-card/extra-badge.tsx`);
+    expect(violations).not.toContain(`src/${base}/phase-card/phase-card.tsx`);
+  });
+
+  it('does not flag two-column\'s own composition file or companions as a layer-level violation', () => {
+    const srcDir = makeFixtureSrcDir();
+
+    writeFile(srcDir, `${base}/two-column.tsx`);
+    writeFile(srcDir, `${base}/two-column.styles.ts`);
+    writeFile(srcDir, `${base}/two-column.utils.ts`);
+    writeFile(srcDir, `${base}/animations.ts`);
+    writeFile(srcDir, `${base}/index.ts`);
+    writeFile(srcDir, `${base}/types.ts`);
+
+    const violations = findViolations(srcDir);
+
+    expect(violations).toEqual([]);
+  });
+});
+
 describe('isKnownViolation — ratchet baseline', () => {
   // `KNOWN_VIOLATIONS` is read live rather than hardcoding one of its paths —
   // the baseline is meant to shrink to zero as giselle-mui#162 migrates each
