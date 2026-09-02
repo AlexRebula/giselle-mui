@@ -8,7 +8,7 @@ import {
   dialogEmptyStateSx,
   dialogSummarySx,
   dialogTitleSx,
-} from './milestone-modal.styles';
+} from './task-details-modal.styles';
 
 // ----------------------------------------------------------------------
 

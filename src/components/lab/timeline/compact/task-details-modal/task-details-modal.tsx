@@ -14,8 +14,8 @@ import {
   dialogContentSx,
   dialogDateSx,
   dialogTitleSx,
-} from './milestone-modal.styles';
-import { TaskDetailsRenderer } from './task-details-renderer';
+} from './task-details-modal.styles';
+import { TaskDetailsRenderer } from '../task-details-renderer';
 
 // ----------------------------------------------------------------------
 
