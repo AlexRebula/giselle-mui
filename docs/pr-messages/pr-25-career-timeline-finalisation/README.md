@@ -19,7 +19,7 @@ This folder contains the message documents for PR 25.
 ## Summary
 
 Replaces every reference to the deprecated `CssVarsProvider` + `extendTheme()` API across
-all documentation, README files, test comments, and the companion consumer-app data files.
+all documentation, README files, test comments, and the companion consuming-app data files.
 `CssVarsProvider` was the early experimental approach from MUI v6/v7 pre-release. In MUI v7
 stable, `ThemeProvider` was unified to handle CSS variables natively via `createTheme({ cssVariables: true })`.
 Storybook was already migrated (see PR `pr-16-feature-phase-warning-popover.md` — May 2026). The
@@ -125,7 +125,7 @@ Three occurrences:
 
 ---
 
-## Companion consumer-app changes (same commit)
+## Companion consuming-app changes (same commit)
 
 Two milestone description strings in the portfolio data layer were also updated:
 

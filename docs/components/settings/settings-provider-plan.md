@@ -137,11 +137,11 @@ consumer code simple and require no changes when adopting this provider.
 
 All live in `src/utils/`:
 
-| File                   | Purpose                                                           | Dependencies |
-| ---------------------- | ----------------------------------------------------------------- | ------------ |
-| `use-local-storage.ts` | SSR-safe React hook (already exists in the consuming app — port it)      | None         |
-| `is-deep-equal.ts`     | `isDeepEqual(a, b): boolean` — covers primitives, arrays, objects | None         |
-| `cookie.ts`            | `getCookieValue(name)`, `setCookieValue(name, value, options)`    | None         |
+| File                   | Purpose                                                             | Dependencies |
+| ---------------------- | ------------------------------------------------------------------- | ------------ |
+| `use-local-storage.ts` | SSR-safe React hook (already exists in the consuming app — port it) | None         |
+| `is-deep-equal.ts`     | `isDeepEqual(a, b): boolean` — covers primitives, arrays, objects   | None         |
+| `cookie.ts`            | `getCookieValue(name)`, `setCookieValue(name, value, options)`      | None         |
 
 All three files must be written independently — do not copy from any third-party or proprietary package.
 

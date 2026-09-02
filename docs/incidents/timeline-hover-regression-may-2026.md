@@ -228,8 +228,8 @@ The sequence that let this reach a Vercel preview deploy:
 2. Pre-push hook in `giselle-mui` ran `check:verify` — all 289 tests passed ✅
 3. Storybook built successfully ✅
 4. Code pushed to `origin/feature/timeline-improvements` ✅
-5. `npm run build && yalc push` — built and propagated to the consumer app ✅
-6. The consumer app committed updated `.yalc/` and pushed → Vercel deployed ✅
+5. `npm run build && yalc push` — built and propagated to the consuming app ✅
+6. The consuming app committed updated `.yalc/` and pushed → Vercel deployed ✅
 7. Branch preview opened in browser → hover broken ❌ — **first detection point**
 
 The gap: there was no interactive test that exercised the toggle interaction, and no

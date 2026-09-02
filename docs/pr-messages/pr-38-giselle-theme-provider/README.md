@@ -228,10 +228,10 @@ runtime, different TypeScript shapes. See [Design decisions](#design-decisions) 
 
 ## Cross-repo impact
 
-| Repo           | Change                                                                                                                               |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `[consumer-app-a]` | Roadmap updated (bubble-up rule). `GiselleThemeProvider` available in `node_modules` via `yalc push`.                                |
-| `giselle-docs` | `@littlebranches/giselle-mui` updated via `yalc push`.                                                                                   |
+| Repo               | Change                                                                                                                              |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `[consumer-app-a]` | Roadmap updated (bubble-up rule). `GiselleThemeProvider` available in `node_modules` via `yalc push`.                               |
+| `giselle-docs`     | `@littlebranches/giselle-mui` updated via `yalc push`.                                                                              |
 | `[consumer-app-b]` | `@littlebranches/giselle-mui` updated via `yalc push`. Phase C is the prerequisite for zero-config theming in the task-tracker app. |
 
 ---

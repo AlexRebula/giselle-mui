@@ -41,8 +41,8 @@ Estimates include coding, verification, and visual QA.
 | -------------------------------------------- | ------------ | ---------------------------------------------------------------- |
 | Planning + compatibility matrix              | 0.5-1 day    | Pin compatible `@mui/*` versions per repo                        |
 | `giselle-mui` migration + dual-major support | 2-4 days     | Peer ranges, code fixes, tests, Storybook, dist verification     |
-| `[consumer-app-a]` migration                       | 2-5 days     | Largest surface area (Next 16 + MUI X pages + icons + timelines) |
-| `[consumer-app-b]` migration                     | 0.5-1.5 days | Smaller app, but currently has a major-version mismatch          |
+| `[consumer-app-a]` migration                 | 2-5 days     | Largest surface area (Next 16 + MUI X pages + icons + timelines) |
+| `[consumer-app-b]` migration                 | 0.5-1.5 days | Smaller app, but currently has a major-version mismatch          |
 | `giselle-docs` migration                     | 0.5-1 day    | Docusaurus + MDX + component docs pages                          |
 | Stabilization and bug-fix window             | 2-4 days     | Cross-repo fixes after integrated testing                        |
 

@@ -236,6 +236,6 @@ corner badge positioning, or eye button WCAG tests.
 
 ## Related
 
-- The consuming app's branch `fix/pr33-stale-doc-references-and-env-comment` — consumer of
+- The consuming app's follow-up branch — consumer of
   `footer` slot (`ModemSoundButton`), `dotBg` (Bitcoin/Knockout icons), `marker` variant
   (birth milestone), and `sortOrder='desc'` milestone ordering

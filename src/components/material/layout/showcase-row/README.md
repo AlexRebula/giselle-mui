@@ -10,7 +10,7 @@ text max-width right has non-obvious details. `TwoColumnShowcaseRow` encodes the
 ## Why it belongs here
 
 Any section page that pairs explanatory copy with a demo component will use this pattern.
-It is already consumed by the `alexrebula` portfolio and is general enough for any project.
+It is already consumed by the alexrebula portfolio and is general enough for any project.
 
 ## Design decisions
 

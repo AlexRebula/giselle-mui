@@ -79,7 +79,7 @@ grep -rn "inputProps=" src/ --include="*.tsx" --include="*.ts"
 Three classes of banned content reached a pushed commit on a public-facing branch before being caught:
 
 1. **Personal name** (`Žiga`) — in `docs/components/dashboard-components-plan.md`, inside an "Immediate consumer" description.
-2. **Internal project codename** — a private consuming app's internal codename, same file, multiple occurrences in component consumer bullets. The term itself is deliberately not repeated here: it is on the banned-content denylist, so naming it in this log would re-introduce the very violation being recorded.
+2. **Internal project codename** — a private consuming app's internal codename, same file, multiple occurrences in component consumer bullets. The term is not reproduced here.
 3. **Private internal path reference** (`case-001`) — in `docs/components/dashboard-components-plan.md`, `docs/standalone-gap-analysis.md`, `docs/components/timeline/two-column/timeline-plan.md`, and `src/components/timeline/two-column/types.ts` JSDoc.
 4. **Banned identifier names in docs** (`varFade`, `varContainer` etc.) — in `docs/roadmap.mdx` and `docs/components/home-components-extraction-plan.md`. ESLint bans these in `src/**`; it does not run on `docs/**`.
 

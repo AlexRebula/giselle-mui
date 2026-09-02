@@ -127,7 +127,7 @@ Required GitHub secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` â€
 
 ## The ESM static analysis trap (notable fix)
 
-After `TimelineTwoColumn` was added to `src/index.ts`, the private consumer app compiled without errors but crashed at runtime:
+After `TimelineTwoColumn` was added to `src/index.ts`, the consuming app compiled without errors but crashed at runtime:
 
 ```
 Element type is invalid: expected a string (or class/function) but got: undefined
@@ -153,7 +153,7 @@ This opts giselle-mui's source files out of strict ESM mode. It is a targeted on
 - [x] All six quality gate checks pass (`npm run check:verify`)
 - [x] All tests pass (156 tests)
 - [x] Storybook builds cleanly
-- [x] `TimelineTwoColumn` renders correctly in the consumer app's dev server (runtime error resolved)
+- [x] `TimelineTwoColumn` renders correctly in the consuming app's dev server (runtime error resolved)
 - [x] ESM pitfall documented in `docs/local-development.md`
 - [x] Vercel deploy pipeline configured and secrets set
 

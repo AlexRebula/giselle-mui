@@ -16,8 +16,8 @@ Each task is a discrete action that can be picked up, worked, and closed indepen
 
 Fix this independently of all MUI 9 work. It is a bug that exists right now.
 
-| #   | Task                                                       | Repo           | Status | Notes                                          |
-| --- | ---------------------------------------------------------- | -------------- | ------ | ---------------------------------------------- |
+| #   | Task                                                       | Repo               | Status | Notes                                          |
+| --- | ---------------------------------------------------------- | ------------------ | ------ | ---------------------------------------------- |
 | P-1 | Downgrade `@mui/material-nextjs` from `^9.0.0` to `^7.0.0` | `[consumer-app-b]` | ⬜     | One-line `package.json` change + `npm install` |
 | P-2 | Run `npm run check:verify`                                 | `[consumer-app-b]` | ⬜     | Gate must be green before continuing           |
 | P-3 | Smoke-test the app: login, admin page, viewer page         | `[consumer-app-b]` | ⬜     | Verify SSR/hydration, no console errors        |
@@ -27,12 +27,12 @@ Fix this independently of all MUI 9 work. It is a bug that exists right now.
 
 ## Phase 0 — Planning
 
-| #    | Task                                                                                                            | Repo          | Status | Notes                                             |
-| ---- | --------------------------------------------------------------------------------------------------------------- | ------------- | ------ | ------------------------------------------------- |
-| PL-1 | Pin exact target versions for every `@mui/*` package per repo                                                   | all           | ⬜     | Record in decision log of the plan doc            |
-| PL-2 | Confirm MUI X v9 compatibility for `[consumer-app-a]` (`@mui/x-data-grid`, `@mui/x-date-pickers`, `@mui/x-tree-view`) | `[consumer-app-a]`  | ⬜     | MUI X must align with chosen core major           |
-| PL-3 | Confirm Storybook builder handles MUI 9 without extra config                                                    | `giselle-mui` | ✅     | Storybook build green on PR #62 — no extra config needed |
-| PL-4 | Confirm `@iconify/react` and `framer-motion` peer compat with MUI 9                                             | `giselle-mui` | ✅     | No issues found during PR #62 migration           |
+| #    | Task                                                                                                                  | Repo               | Status | Notes                                                    |
+| ---- | --------------------------------------------------------------------------------------------------------------------- | ------------------ | ------ | -------------------------------------------------------- |
+| PL-1 | Pin exact target versions for every `@mui/*` package per repo                                                         | all                | ⬜     | Record in decision log of the plan doc                   |
+| PL-2 | Confirm MUI X v9 compatibility for `[consumer-app-a]` (`@mui/x-data-grid`, `@mui/x-date-pickers`, `@mui/x-tree-view`) | `[consumer-app-a]` | ⬜     | MUI X must align with chosen core major                  |
+| PL-3 | Confirm Storybook builder handles MUI 9 without extra config                                                          | `giselle-mui`      | ✅     | Storybook build green on PR #62 — no extra config needed |
+| PL-4 | Confirm `@iconify/react` and `framer-motion` peer compat with MUI 9                                                   | `giselle-mui`      | ✅     | No issues found during PR #62 migration                  |
 
 ---
 
@@ -82,8 +82,8 @@ Fix this independently of all MUI 9 work. It is a bug that exists right now.
 
 ## Phase 2a — `[consumer-app-a]` (largest surface area)
 
-| #     | Task                                                                                         | Repo         | Status | Notes                                                     |
-| ----- | -------------------------------------------------------------------------------------------- | ------------ | ------ | --------------------------------------------------------- |
+| #     | Task                                                                                         | Repo               | Status | Notes                                                     |
+| ----- | -------------------------------------------------------------------------------------------- | ------------------ | ------ | --------------------------------------------------------- |
 | 2a-1  | Create branch `feature/mui-9-migration`                                                      | `[consumer-app-a]` | ⬜     |                                                           |
 | 2a-2  | Pick up latest `giselle-mui` via `yalc pull`                                                 | `[consumer-app-a]` | ⬜     | Requires Phase 1 complete                                 |
 | 2a-3  | Upgrade `@mui/material` and all `@mui/*` packages to v9 as a set                             | `[consumer-app-a]` | ⬜     | `@mui/material`, `@emotion/react`, `@emotion/styled`      |
@@ -104,8 +104,8 @@ Fix this independently of all MUI 9 work. It is a bug that exists right now.
 
 Requires Phase 1 complete. Prerequisite P-1 through P-4 must already be done.
 
-| #    | Task                                                       | Repo           | Status | Notes                                       |
-| ---- | ---------------------------------------------------------- | -------------- | ------ | ------------------------------------------- |
+| #    | Task                                                       | Repo               | Status | Notes                                       |
+| ---- | ---------------------------------------------------------- | ------------------ | ------ | ------------------------------------------- |
 | 2b-1 | Create branch `feature/mui-9-migration`                    | `[consumer-app-b]` | ⬜     |                                             |
 | 2b-2 | Pick up latest `giselle-mui` via `yalc pull`               | `[consumer-app-b]` | ⬜     |                                             |
 | 2b-3 | Upgrade `@mui/material` to v9                              | `[consumer-app-b]` | ⬜     |                                             |

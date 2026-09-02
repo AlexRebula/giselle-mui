@@ -3,7 +3,7 @@
 > _Last updated: May 2026_
 
 This guide is for developers who work on `@littlebranches/giselle-mui` alongside a
-Next.js consumer app (e.g. the `alexrebula` portfolio) and want to see changes in
+Next.js consumer app (e.g. the alexrebula portfolio) and want to see changes in
 both places without a manual publish step every time.
 
 ---

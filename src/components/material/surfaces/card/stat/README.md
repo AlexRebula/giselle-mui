@@ -11,7 +11,7 @@ implementation details (CSS-variable channel access, sparkline options baseline,
 ## Why it belongs here
 
 Any dashboard or summary strip across the Giselle ecosystem will need this card. It is
-already consumed by the `alexrebula` portfolio and planned for a second consuming app. Centralising
+already consumed by the alexrebula portfolio and planned for a second consuming app. Centralising
 the implementation ensures a consistent visual language and prevents silent drift.
 
 ## Design decisions

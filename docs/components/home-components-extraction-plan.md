@@ -3,7 +3,7 @@
 Seven animation-dependent components are prime candidates
 for extraction into giselle-mui. Once extracted, they will be:
 
-- **Framework-agnostic by contract** — no consumer-app data deps
+- **Framework-agnostic by contract** — no consuming-app data deps
 - **Tested and documented in Storybook** — each one independently exercisable
 - **Available to any consumer** via the correct subpath entry
 - **Premium showcase candidates** — `InteractiveHeroLogo` in particular
@@ -87,7 +87,7 @@ export function zoomVariants(options?: MotionVariantOptions): Variants { ... }
 
 ## Phase 2 — `SectionTitle` + `SectionCaption`
 
-**Source (private consuming app):** `src/sections/home/components/section-title.tsx`
+**Source component:** `section-title.tsx` (home section components, private consuming app)
 **giselle-mui target:** `src/components/layout/section-title/`
 **Subpath:** `/motion`
 
@@ -101,7 +101,7 @@ Already listed in the Storybook title group map as `Layout/Section Title`.
 | `fadeVariants` from the portfolio's animate utilities | Phase 1 `fadeVariants` utility                      |
 | `m.h2`, `m.span`, `m.div`                        | `motion.h2`, `motion.span`, `motion.div`       |
 
-### API (unchanged from the consumer-app version)
+### API (unchanged from the consuming app's version)
 
 ```tsx
 <SectionTitle
@@ -123,7 +123,7 @@ Already listed in the Storybook title group map as `Layout/Section Title`.
 
 ## Phase 3 — `FloatingSideNav`
 
-**Source (private consuming app):** `src/sections/home/components/floating-home-nav.tsx`
+**Source component:** `floating-home-nav.tsx` (home section components, private consuming app)
 **giselle-mui target:** `src/components/nav/floating-side-nav/`
 **Subpath:** `/motion`
 
@@ -172,7 +172,7 @@ placement. They share `NavPill`-style item rendering but that's all.
 
 ## Phase 4 — SVG animation primitives
 
-**Source (private consuming app):** `src/sections/home/components/svg-elements.tsx` + `hero-svg.tsx`
+**Source components:** `svg-elements.tsx` + `hero-svg.tsx` (home section components, private consuming app)
 **giselle-mui target:** `src/components/layout/hero-background/` (internal sub-components)
 **Subpath:** `/motion`
 
@@ -191,7 +191,7 @@ is present per MUI Store quality bar rule).
 
 ## Phase 5 — `HeroBackground`
 
-**Source (private consuming app):** `src/sections/home/components/hero-background.tsx`
+**Source component:** `hero-background.tsx` (home section components, private consuming app)
 **giselle-mui target:** `src/components/layout/hero-background/`
 **Subpath:** `/motion`
 
@@ -226,7 +226,7 @@ A full-width animated hero background: radial gradient backdrop + SVG grid layer
 
 ## Phase 6 — `FloatingIconCloud`
 
-**Source (private consuming app):** `src/sections/home/components/floating-platform-icons.tsx`
+**Source component:** `floating-platform-icons.tsx` (home section components, private consuming app)
 **giselle-mui target:** `src/components/layout/floating-icon-cloud/`
 **Subpath:** `/motion`
 
@@ -235,10 +235,10 @@ platform logos, technology icons, or tool badges around a central focal point.
 
 ### Blockers to fix
 
-| Blocker                                       | Fix                                |
-| --------------------------------------------- | ---------------------------------- |
-| `createPlatformIconItems` (consumer-app preset) | Remove — accept `items[]` directly |
-| `m.*`                                         | `motion.*`                         |
+| Blocker                                          | Fix                                |
+| ------------------------------------------------ | ---------------------------------- |
+| `createPlatformIconItems` (consuming-app preset) | Remove — accept `items[]` directly |
+| `m.*`                                            | `motion.*`                         |
 
 ### API
 
@@ -265,7 +265,7 @@ directly into a co-located `floating-icon-cloud.utils.ts`.
 
 ## Phase 7 — `InteractiveHeroLogo` (flagship)
 
-**Source (private consuming app):** `src/sections/home/components/interactive-hero-logo*` (8 files)
+**Source components:** `interactive-hero-logo*` — 8 files (home section components, private consuming app)
 **giselle-mui target:** `src/components/layout/interactive-hero-logo/`
 **Subpath:** `/motion`
 
@@ -282,7 +282,7 @@ level of value. Future `/premium` subpath export.
 
 ### What already exists (in the consuming app)
 
-The consumer-app version already follows the full giselle-mui conventions:
+The consuming app's version already follows the full giselle-mui conventions:
 
 | File                                   | Status                                   |
 | -------------------------------------- | ---------------------------------------- |
@@ -292,16 +292,16 @@ The consumer-app version already follows the full giselle-mui conventions:
 | `interactive-hero-logo.styles.ts`      | ✅ Extracted sx factories                |
 | `interactive-hero-logo.styles.test.ts` | ✅ Mock-theme assertions exist           |
 | `interactive-hero-logo.utils.ts`       | ✅ Pure logic, no JSX                    |
-| `use-hover-phase-transition.ts`        | ✅ Clean hook, no consumer-app deps        |
+| `use-hover-phase-transition.ts`        | ✅ Clean hook, no consuming-app deps     |
 | `artistic-logo-layer.tsx`              | ✅ Uses `motion.*` (already correct)     |
 | `portrait-layer.tsx`                   | ✅ Uses `motion.*` (already correct)     |
 | `original-logo-layer.tsx`              | ✅ Uses `motion.*` (already correct)     |
 
 ### What needs to change (minimal)
 
-| Blocker                                   | File                             | Fix                                                                                    |
-| ----------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------- |
-| `m.*` from framer-motion                  | `interactive-hero-logo.tsx` only | `motion.*`                                                                             |
+| Blocker                                            | File                             | Fix                                                                                    |
+| -------------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------- |
+| `m.*` from framer-motion                           | `interactive-hero-logo.tsx` only | `motion.*`                                                                             |
 | `useImagePreloader` from the consuming app's utils | `interactive-hero-logo.tsx`      | Copy utility to `src/utils/use-image-preloader.ts` in giselle-mui (pure hook, no deps) |
 
 **That's it.** Two changes. This is the best-prepared component for extraction.
