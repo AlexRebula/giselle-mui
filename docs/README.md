@@ -26,6 +26,7 @@ Every component in this library exists because it solves a recurring problem tha
 - **[PR review workflow](./pr-review-workflow.md)** — PR review process and checklist.
 - **[Component cleanup workflow](./components/cleanup-workflow.md)** — The definition of done checklist, API consistency contract, and Storybook prop-surface guidance.
 - **[Testing](./testing.md)** — jsdom vs real-browser (Playwright) Vitest projects, when each applies, and how to tag a story for real-browser paint-order testing.
+- **[ADR 0001: sections-api pattern for story content](./adr/0001-sections-api-pattern-for-story-content.md)** — why large fixture/demo content belongs in a dedicated data module, not inline in a component or story file.
 
 ### Development
 

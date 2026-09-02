@@ -143,6 +143,52 @@ It does not duplicate JSDoc or story content. It links to both.
 
 ---
 
+## Content placement rules
+
+The three tiers above answer *which document* a piece of information belongs in. The two
+rules below are orthogonal: they answer whether content is *safe* to include at all, and
+where *large* content belongs regardless of which tier it's otherwise part of. They apply
+across JSDoc, story JSDoc, Docusaurus, fixtures, and tests alike.
+
+### Zero personal data
+
+Stories, tests, JSDoc `@example` blocks, and docs must never contain real names of people,
+clients, or employers, real email addresses, phone numbers, or financial values tied to a
+real entity. Use generic placeholders (`Jane Doe`, `Acme Corp`, `user-001`, `hello@example.com`).
+
+**Exception — the repo owner's own already-public professional content.** A story or fixture
+may use the repo owner's own real name, photos, and real former-employer/client names *only*
+when that exact content is already published by the repo owner on their own public site. This
+re-presents information already disclosed publicly; it does not extend to any other real
+person's name or data. Cite the public source in the PR description when invoking this
+exception.
+
+**Already in use, under this exception:** `src/components/section/feature-flow/__fixtures__/images/`
+contains the repo owner's own real portfolio photos (e.g. `alex-look-down-1.webp`,
+`consulting-front-end-architecture-setup.webp`), used by `FeatureFlowSection`'s canonical
+Storybook story. Source: the repo owner's own public professional portfolio — already public
+elsewhere, not reproduced here. This is a deliberate, sanctioned instance of the exception
+above, not an oversight.
+
+### Demo and fixture content extraction
+
+Large literal demo/fixture content — multi-paragraph body copy, a multi-item array of rich
+content (cards, list items, testimonials) — must live in a dedicated data module, not be
+written inline in a component or `.stories.tsx` file.
+
+**Fine inline:** a single label, a short placeholder string, a one-line default
+(`label: 'Revenue'`, `title: 'Metric Card'`).
+
+**Must move to a data module:** anything that reads as real sample data rather than a trivial
+default. Follow the pattern already established for `FeatureFlowSection`'s canonical content:
+`src/sections-api/feature-flow/api.ts` exports factory functions
+(`createFeatureFlowCanonicalItems`, `createFeatureFlowCanonicalImage`,
+`createFeatureFlowCanonicalSectionConfig`) that the story imports from, rather than defining
+the content inline. A hardcoded content block is invisible to a reviewer scanning component
+logic and makes the same content impossible to reuse across a second story or consumer.
+
+---
+
 ## Quick reference: where does this go?
 
 | Content | Goes in |
@@ -154,3 +200,5 @@ It does not duplicate JSDoc or story content. It links to both.
 | How to install the package | Docusaurus |
 | How to wire the theme in Next.js | Docusaurus |
 | Why this component exists in this library | Component `README.md` |
+| Is this content safe to include at all | Content placement rules, above |
+| Where large demo/fixture content lives | Content placement rules, above |
