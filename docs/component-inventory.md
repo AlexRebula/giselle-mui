@@ -3,13 +3,21 @@ sidebar_position: 4
 sidebar_label: 'Component Inventory'
 ---
 
+> **Keep in sync (required):** Folder DoD checklist items and counts come from [`components/cleanup-workflow.md`](./components/cleanup-workflow.md) (Scenario A / Scenario B). When that playbook’s Definition of Done list changes, update this file’s DoD scale and scores the same day. Do not treat this table as a second playbook.
+>
+> **Private migration tracking:** Port/migration tick matrix lives in the **private wiki** only (not linked here). Public hygiene status SOT remains [`component-compliance.md`](./component-compliance.md).
+
 # @littlebranches/giselle-mui — Complete Component Inventory
 
-> Master inventory across all planning docs. Single source of truth for "what exists, what is planned, and what phase it belongs to."
+> **Demoted — not a parallel source of truth.** Prefer [`component-compliance.md`](./component-compliance.md) for public hygiene status (Built/README/JSDoc/Story/Roadmap). Prefer per-component folder roadmap / quality notes for live cleanup scores. Do **not** update this file’s grids in parallel with compliance.
 >
-> _Last updated: 2026-07-08 — fixed stale entries: StatusLabel, TechIconStrip, AnimatedGradientText now correctly shown as shipped_
+> The **DoD / best-practices score table** below is **historical / secondary** (kept for now; later phase may delete it). Phase / shipped lists remain useful as a reading aid only — not authoritative vs compliance or disk.
+>
+> _Last updated: 2026-09-02 — added matrix cross-ref gaps: BasicSection, FeatureFlowSection, ScrollParallaxHero, HeroButtonsRow, ArtisticLogoLayer, OriginalLogoLayer, PortraitLayer_
 >
 > **Source docs:** `roadmap.mdx`, `standalone-gap-analysis.md`, `components/dashboard-components-plan.md`, `components/home-components-extraction-plan.md`, `components/settings/settings-provider-plan.md`, `components/trip-planner-components-plan.md`
+>
+> Consolidation: wiki `component-tables-consolidation-plan.md`.
 
 ---
 
@@ -48,11 +56,20 @@ sidebar_label: 'Component Inventory'
 | [[animated-gradient/README\|AnimatedGradientText]]                                                                     | `material/data-display/animated-gradient/` | main       | E     | Shipped; fully compliant                                           |
 | [[status-label/README\|StatusLabel]]                                                                                   | `material/data-display/status-label/`   | main          | —     | Shipped; fully compliant                                           |
 | [[tech-strip/README\|TechIconStrip]]                                                                                   | `material/data-display/icon/tech-strip/` | main         | —     | Shipped; fully compliant                                           |
+| [[basic-section/README\|BasicSection]]                                                                                   | `material/layout/basic-section/`        | main          | E     | Shipped; needs inventory/DoD audit                                 |
+| [[feature-flow/README\|FeatureFlowSection]]                                                                              | `section/feature-flow/`                 | main          | —     | Shipped; needs inventory/DoD audit                                 |
+| [[scroll-parallax/README\|ScrollParallaxHero]] + `AnimatedHeroHeading`                                                   | `section/hero/scroll-parallax/`         | `/motion`     | —     | Shipped; needs inventory/DoD audit                                 |
+| [[buttons-row/README\|HeroButtonsRow]]                                                                                   | `section/hero/buttons-row/`             | `/motion`     | —     | Shipped; needs inventory/DoD audit                                 |
+| `ArtisticLogoLayer`                                                                                                      | `section/hero/interactive-logo/artistic-logo-layer/` | `/motion` | — | Sub-layer of `InteractiveHeroLogo`; no folder README yet; needs audit |
+| `OriginalLogoLayer`                                                                                                      | `section/hero/interactive-logo/original-logo-layer/` | `/motion` | — | Sub-layer of `InteractiveHeroLogo`; no folder README yet; needs audit |
+| `PortraitLayer`                                                                                                          | `section/hero/interactive-logo/portrait-layer/` | `/motion` | — | Sub-layer of `InteractiveHeroLogo`; no folder README yet; needs audit |
 
-**Shipped count: ~43 named exports across main bundle, `/charts`, `/motion`, and `/utils` subpaths**
+**Shipped count: ~50 named exports across main bundle, `/charts`, `/motion`, and `/utils` subpaths**
 ---
 
 ## Quality status — shipped components
+
+> ⚠️ **Scores may be stale vs 22-item Scenario B:** existing numeric DoD cells (e.g. \`21/21\`) were audited on the older checklist. Re-score against the current **22**-item DoD in \`components/cleanup-workflow.md\` before trusting an n/22 reading.
 
 > **Terminology note:** "Best practices" score maps to a set of 13 requirements tracked in private planning docs. The label used here is intentionally generic — this inventory is part of a public open-source package.
 >
@@ -80,8 +97,14 @@ sidebar_label: 'Component Inventory'
 | [[settings-provider/README\|GiselleSettingsProvider]] + `GiselleThemeAndSettingsProvider` | ⬜ | ⬜        | —            |
 | [[toggle-icon-button/README\|ToggleIconButton]]                     | ⬜    | ⬜             | —            |
 | [[stat-row/README\|StatCardRow]]                                    | ⬜    | ⬜             | —            |
+| [[basic-section/README\|BasicSection]]                               | ⬜    | ⬜             | —            |
+| [[feature-flow/README\|FeatureFlowSection]]                          | ⬜    | ⬜             | —            |
+| [[scroll-parallax/README\|ScrollParallaxHero]]                       | ⬜    | ⬜             | —            |
+| [[buttons-row/README\|HeroButtonsRow]]                               | ⬜    | ⬜             | —            |
+| `ArtisticLogoLayer` / `OriginalLogoLayer` / `PortraitLayer`         | ⬜    | ⬜             | —            |
 
-**DoD scale:** Scenario B = n/21 items · Scenario A (sub-component) = n/10 items  
+**DoD scale:** Scenario B = n/22 items · Scenario A (sub-component) = n/12 items  
+> **Stale-score warning:** Numeric DoD scores in the table above may still reflect older **21-item** (or earlier) audits. The current Scenario B checklist is **22** items (JSDoc added). Treat the scale as n/22, but **re-audit before trusting** any n/22 until the row is re-scored against cleanup-workflow Scenario B.
 **Best practices scale:** 13 items — see `docs/components/cleanup-workflow.md` Step 14 for the rubric
 
 ---
