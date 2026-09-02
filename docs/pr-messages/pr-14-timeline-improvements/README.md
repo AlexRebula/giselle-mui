@@ -43,7 +43,7 @@ Historical PR record preserved for completeness in the PR messages index.
 6 commits · 10 files changed
 
 This PR adds four independent improvements to `TimelineTwoColumn`, all motivated by
-real-world usage in the `alexrebula` career timeline:
+real-world usage in the consuming app's career timeline:
 
 1. **Smart dot tooltips** — description previews in read-only mode; status labels in checklist mode
 2. **`marker` variant** — spine-only row for single point-in-time events with no card
@@ -115,7 +115,7 @@ card so no description is needed. The dot tooltip for `marker` entries falls bac
 
 ### 3. `footer` slot on `PhaseCard`
 
-**Motivation:** The `alexrebula` career timeline needed a play button (`ModemSoundButton`)
+**Motivation:** The consuming app's career timeline needed a play button (`ModemSoundButton`)
 wired to the 2003 birth-of-broadband milestone. The button belongs contextually to the card
 but is not part of the expandable detail bullets.
 
@@ -236,6 +236,6 @@ corner badge positioning, or eye button WCAG tests.
 
 ## Related
 
-- `alexrebula` branch `fix/pr33-stale-doc-references-and-env-comment` — consumer of
+- The consuming app's branch `fix/pr33-stale-doc-references-and-env-comment` — consumer of
   `footer` slot (`ModemSoundButton`), `dotBg` (Bitcoin/Knockout icons), `marker` variant
   (birth milestone), and `sortOrder='desc'` milestone ordering

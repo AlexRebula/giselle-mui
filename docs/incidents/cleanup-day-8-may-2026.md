@@ -67,5 +67,5 @@ Rename to `icon-action-bar.defaults.tsx`. Restore clean JSX. This is a new file 
 | Tests passing          | 831 / 831                              |
 | check:verify exit code | 0                                      |
 | tsup build             | ✅ all 4 entry points                  |
-| yalc consumers updated | alexrebula, giselle-docs, first-branch |
+| yalc consumers updated | [consumer-app-a], giselle-docs, [consumer-app-b] |
 | SonarQube violations   | 0 across all three components          |

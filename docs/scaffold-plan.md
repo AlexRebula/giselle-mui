@@ -122,7 +122,7 @@ _What would a developer have to write by hand without it?_
 
 ## Why it belongs in giselle-mui
 
-_One paragraph confirming this is reusable across projects (not alexrebula-specific)._
+_One paragraph confirming this is reusable across projects (not specific to any one consuming app)._
 
 ## Planned API
 

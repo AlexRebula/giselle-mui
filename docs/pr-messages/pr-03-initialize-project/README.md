@@ -121,7 +121,7 @@ Added ecosystem footer linking back to `giselle-mui` and `giselle-ui`.
 
 ---
 
-## 4. Portfolio (`alexrebula`) — wired to library source
+## 4. Consumer app (private portfolio) — wired to library source
 
 ### `package.json`
 

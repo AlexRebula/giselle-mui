@@ -44,7 +44,7 @@ A lightweight, single-column timeline for roadmap pages, changelogs, and documen
 
 ## Variant architecture intent (Apr 2026)
 
-The reference implementation in the private portfolio (`alexrebula`) has been split into focused sub-components — `PhaseCard`, `MilestoneBadge`, `SpineConnector`, `animations.ts` — all sharing a single `TimelinePhase` type as the data contract. This was done deliberately so that multiple layout variants can reuse the same card/badge primitives without forking the type or duplicating rendering logic.
+The reference implementation in the private portfolio has been split into focused sub-components — `PhaseCard`, `MilestoneBadge`, `SpineConnector`, `animations.ts` — all sharing a single `TimelinePhase` type as the data contract. This was done deliberately so that multiple layout variants can reuse the same card/badge primitives without forking the type or duplicating rendering logic.
 
 Planned variants (portfolio → giselle-mui extraction candidates):
 
@@ -66,7 +66,7 @@ A visually rich, alternating-side timeline is non-trivial to build correctly wit
 and responsive side-switching are easy to get wrong and worth encoding once for all
 consumers. This is the same justification as every other component in this library.
 
-**Reference implementation:** a section view in the private `alexrebula` portfolio (private repo).
+**Reference implementation:** a section view in the private portfolio (private repo).
 That file is the working source of truth for the visual pattern. The public component
 will be rewritten from scratch — no code copied from the private repo.
 
@@ -220,7 +220,7 @@ the `TimelineDot` colouring logic, the `SpineConnector`, and likely the `PhaseCa
 expand/collapse animations. Shared primitives that live in messy, complex source files
 get forked instead of shared. The overhaul makes sharing possible.
 
-Additionally: this is the top priority in the entire `alexrebula` project at this point in
+Additionally: this is the top priority in the entire private portfolio project at this point in
 time. Every other timeline variant and every other component that reuses timeline primitives
 depends on `TimelineTwoColumn` being in a clean, well-structured state first.
 
@@ -233,7 +233,7 @@ depends on `TimelineTwoColumn` being in a clean, well-structured state first.
 | JSDoc pass on all exported functions and prop interfaces                   | `RoadmapTimeline` will export types; consistent JSDoc level across the component family is required before that                 |
 | ✅ Wire `onPhasesChange` controlled-mode prop to `TimelineTwoColumn` root  | Done — wired in `feature/phase-warning-popover`. `TimelineTwoColumn` passes `allPhases` down to `PhaseCard`.                    |
 | ✅ Wire `PhaseWarningPopover` into `PhaseCard`                             | Done — `PhaseCard` renders `PhaseWarningPopover` in controlled mode when `onPhasesChange` is provided.                          |
-| Complete the CareerTimeline UX polish list (alexrebula Phase 1.2)          | The final real-world usage pass that will surface any remaining rough edges before the primitive split                          |
+| Complete the CareerTimeline UX polish list (private portfolio Phase 1.2)          | The final real-world usage pass that will surface any remaining rough edges before the primitive split                          |
 
 ### Why the order matters
 

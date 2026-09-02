@@ -134,5 +134,5 @@ All checks pass:
 
 ## Related
 
-- Consumer usage: `alexrebula` career timeline key 0.6 (`~1994 First Internet Connection`) — two photos from the same session now both shown on the card.
+- Consumer usage: the consuming app's career timeline key 0.6 (`~1994 First Internet Connection`) — two photos from the same session now both shown on the card.
 - Branch: `feature/photos-array-slot`

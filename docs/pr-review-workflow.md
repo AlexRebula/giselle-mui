@@ -4,7 +4,7 @@
 > Session trigger: `respond pr review <N>` — type this in any AI chat session to execute Phases 2–5 of this workflow for PR number `<N>`.
 
 This document defines the end-to-end pull request workflow used across all repos in this
-workspace (`giselle-mui`, `alexrebula`, `first-branch`, `giselle-sections-sdk`, `giselle-ui`).
+workspace (`giselle-mui`, `giselle-sections-sdk`, `giselle-ui`, and the private consuming apps).
 It governs how Copilot prepares PRs, responds to Copilot reviewer threads, fixes valid issues,
 and hands control back to the branch owner.
 

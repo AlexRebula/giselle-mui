@@ -3,7 +3,7 @@
 Seven animation-dependent components are prime candidates
 for extraction into giselle-mui. Once extracted, they will be:
 
-- **Framework-agnostic by contract** — no alexrebula data deps
+- **Framework-agnostic by contract** — no consumer-app data deps
 - **Tested and documented in Storybook** — each one independently exercisable
 - **Available to any consumer** via the correct subpath entry
 - **Premium showcase candidates** — `InteractiveHeroLogo` in particular
@@ -20,7 +20,7 @@ of these components are exactly what a polished homepage requires — hero backg
 nav, animated section titles, icon cloud, interactive logo. Building them _in_ giselle-mui
 and documenting them in Storybook serves two goals simultaneously:
 
-1. **The portfolio gets better-tested, more maintainable components** — extracted from alexrebula,
+1. **The portfolio gets better-tested, more maintainable components** — extracted from the private consuming app,
    with proprietary identifier dependencies removed, independently regression-tested.
 2. **giselle-docs gets a real homepage** using the components it ships — eating its own dog food.
 
@@ -87,7 +87,7 @@ export function zoomVariants(options?: MotionVariantOptions): Variants { ... }
 
 ## Phase 2 — `SectionTitle` + `SectionCaption`
 
-**alexrebula source:** `src/sections/home/components/section-title.tsx`
+**Source (private consuming app):** `src/sections/home/components/section-title.tsx`
 **giselle-mui target:** `src/components/layout/section-title/`
 **Subpath:** `/motion`
 
@@ -101,7 +101,7 @@ Already listed in the Storybook title group map as `Layout/Section Title`.
 | `fadeVariants` from the portfolio's animate utilities | Phase 1 `fadeVariants` utility                      |
 | `m.h2`, `m.span`, `m.div`                        | `motion.h2`, `motion.span`, `motion.div`       |
 
-### API (unchanged from alexrebula version)
+### API (unchanged from the consumer-app version)
 
 ```tsx
 <SectionTitle
@@ -123,7 +123,7 @@ Already listed in the Storybook title group map as `Layout/Section Title`.
 
 ## Phase 3 — `FloatingSideNav`
 
-**alexrebula source:** `src/sections/home/components/floating-home-nav.tsx`
+**Source (private consuming app):** `src/sections/home/components/floating-home-nav.tsx`
 **giselle-mui target:** `src/components/nav/floating-side-nav/`
 **Subpath:** `/motion`
 
@@ -133,11 +133,11 @@ placement. They share `NavPill`-style item rendering but that's all.
 
 ### Key abstraction change
 
-`FloatingHomeNav` reads from `useHomeScroll` context (alexrebula-specific). For giselle-mui:
+`FloatingHomeNav` reads from `useHomeScroll` context (specific to the consuming app). For giselle-mui:
 
 - **Props-only API** — `isVisible`, `activeId`, `onSelect`
 - **No internal scroll tracking** — the consumer provides state (just like `FloatingSubNav`)
-- In alexrebula, `useHomeScroll` feeds these props
+- In the consuming app, `useHomeScroll` feeds these props
 
 ### Blockers to fix
 
@@ -172,7 +172,7 @@ placement. They share `NavPill`-style item rendering but that's all.
 
 ## Phase 4 — SVG animation primitives
 
-**alexrebula source:** `src/sections/home/components/svg-elements.tsx` + `hero-svg.tsx`
+**Source (private consuming app):** `src/sections/home/components/svg-elements.tsx` + `hero-svg.tsx`
 **giselle-mui target:** `src/components/layout/hero-background/` (internal sub-components)
 **Subpath:** `/motion`
 
@@ -191,7 +191,7 @@ is present per MUI Store quality bar rule).
 
 ## Phase 5 — `HeroBackground`
 
-**alexrebula source:** `src/sections/home/components/hero-background.tsx`
+**Source (private consuming app):** `src/sections/home/components/hero-background.tsx`
 **giselle-mui target:** `src/components/layout/hero-background/`
 **Subpath:** `/motion`
 
@@ -226,7 +226,7 @@ A full-width animated hero background: radial gradient backdrop + SVG grid layer
 
 ## Phase 6 — `FloatingIconCloud`
 
-**alexrebula source:** `src/sections/home/components/floating-platform-icons.tsx`
+**Source (private consuming app):** `src/sections/home/components/floating-platform-icons.tsx`
 **giselle-mui target:** `src/components/layout/floating-icon-cloud/`
 **Subpath:** `/motion`
 
@@ -237,7 +237,7 @@ platform logos, technology icons, or tool badges around a central focal point.
 
 | Blocker                                       | Fix                                |
 | --------------------------------------------- | ---------------------------------- |
-| `createPlatformIconItems` (alexrebula preset) | Remove — accept `items[]` directly |
+| `createPlatformIconItems` (consumer-app preset) | Remove — accept `items[]` directly |
 | `m.*`                                         | `motion.*`                         |
 
 ### API
@@ -265,7 +265,7 @@ directly into a co-located `floating-icon-cloud.utils.ts`.
 
 ## Phase 7 — `InteractiveHeroLogo` (flagship)
 
-**alexrebula source:** `src/sections/home/components/interactive-hero-logo*` (8 files)
+**Source (private consuming app):** `src/sections/home/components/interactive-hero-logo*` (8 files)
 **giselle-mui target:** `src/components/layout/interactive-hero-logo/`
 **Subpath:** `/motion`
 
@@ -280,9 +280,9 @@ Premium angle: the `frameSources` prop is what makes this truly special — a de
 drops in 30 numbered frames and gets a smooth animation. This is a "carousel smart component"
 level of value. Future `/premium` subpath export.
 
-### What already exists (in alexrebula)
+### What already exists (in the consuming app)
 
-The alexrebula version already follows the full giselle-mui conventions:
+The consumer-app version already follows the full giselle-mui conventions:
 
 | File                                   | Status                                   |
 | -------------------------------------- | ---------------------------------------- |
@@ -292,7 +292,7 @@ The alexrebula version already follows the full giselle-mui conventions:
 | `interactive-hero-logo.styles.ts`      | ✅ Extracted sx factories                |
 | `interactive-hero-logo.styles.test.ts` | ✅ Mock-theme assertions exist           |
 | `interactive-hero-logo.utils.ts`       | ✅ Pure logic, no JSX                    |
-| `use-hover-phase-transition.ts`        | ✅ Clean hook, no alexrebula deps        |
+| `use-hover-phase-transition.ts`        | ✅ Clean hook, no consumer-app deps        |
 | `artistic-logo-layer.tsx`              | ✅ Uses `motion.*` (already correct)     |
 | `portrait-layer.tsx`                   | ✅ Uses `motion.*` (already correct)     |
 | `original-logo-layer.tsx`              | ✅ Uses `motion.*` (already correct)     |
@@ -302,7 +302,7 @@ The alexrebula version already follows the full giselle-mui conventions:
 | Blocker                                   | File                             | Fix                                                                                    |
 | ----------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------- |
 | `m.*` from framer-motion                  | `interactive-hero-logo.tsx` only | `motion.*`                                                                             |
-| `useImagePreloader` from alexrebula utils | `interactive-hero-logo.tsx`      | Copy utility to `src/utils/use-image-preloader.ts` in giselle-mui (pure hook, no deps) |
+| `useImagePreloader` from the consuming app's utils | `interactive-hero-logo.tsx`      | Copy utility to `src/utils/use-image-preloader.ts` in giselle-mui (pure hook, no deps) |
 
 **That's it.** Two changes. This is the best-prepared component for extraction.
 

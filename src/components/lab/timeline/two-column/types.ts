@@ -478,7 +478,7 @@ export type MilestoneRowCtx = {
 };
 
 // ----------------------------------------------------------------------
-// Section-level companion types — used by alexrebula data factories and view components.
+// Section-level companion types — used by consumer-app data factories and view components.
 // Defining them here avoids type definitions in data files (see copilot-instructions.md).
 // ----------------------------------------------------------------------
 

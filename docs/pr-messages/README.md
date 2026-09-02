@@ -38,8 +38,8 @@ This index keeps that history explicit instead of flattening it.
 I ran this workflow solo, coordinating parallel changes across these active repositories:
 
 1. `giselle-mui`
-2. `alexrebula`
-3. `first-branch`
+2. `[consumer-app-a]`
+3. `[consumer-app-b]`
 4. `giselle-docs`
 5. `giselle-sections-sdk`
 6. `giselle-ui`

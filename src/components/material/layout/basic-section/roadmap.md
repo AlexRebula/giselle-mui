@@ -19,7 +19,7 @@ section.
 
 | Task                                                                                          | Priority | Status |
 | ----------------------------------------------------------------------------------------------- | -------- | ------ |
-| Migrate `alexrebula`'s `home-view.tsx` from its local `FloatPlusIcon`/`FloatLine` wrapper — now unnecessary since `FeatureFlowSection` renders `BasicSection` itself | Medium   | ✅     |
+| Migrate the consuming app's `home-view.tsx` from its local `FloatPlusIcon`/`FloatLine` wrapper — now unnecessary since `FeatureFlowSection` renders `BasicSection` itself | Medium   | ✅     |
 | Migrate other giselle-mui section components (`hero`, `faq`, `pricing`, `error`) to compose `BasicSection` | Low      | ⬜     |
 | Port the remaining bespoke decoration patterns (`ar-home-integrations.tsx`'s inline dots, `ar-home-faqs.tsx`'s inline triangle cluster) once those sections migrate to giselle-mui components | Low | ⬜ |
 

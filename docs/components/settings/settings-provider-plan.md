@@ -139,7 +139,7 @@ All live in `src/utils/`:
 
 | File                   | Purpose                                                           | Dependencies |
 | ---------------------- | ----------------------------------------------------------------- | ------------ |
-| `use-local-storage.ts` | SSR-safe React hook (already exists in alexrebula — port it)      | None         |
+| `use-local-storage.ts` | SSR-safe React hook (already exists in the consuming app — port it)      | None         |
 | `is-deep-equal.ts`     | `isDeepEqual(a, b): boolean` — covers primitives, arrays, objects | None         |
 | `cookie.ts`            | `getCookieValue(name)`, `setCookieValue(name, value, options)`    | None         |
 
