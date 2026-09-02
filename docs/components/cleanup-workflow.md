@@ -2,7 +2,7 @@
 
 > **Keep in sync (required):** The Scenario A/B Definition of Done checklists in this file are the source of truth for folder DoD. When you add/remove/rename a checklist item, update [`../component-inventory.md`](../component-inventory.md) the same day (DoD scale line and any n/N scores). Do not leave inventory on an old count.
 >
-> **Private migration tracking:** Minimals → giselle inventory ticks and migration DoD rollup live in the **private wiki** (not linked from this public repo). Search the wiki for `minimals-giselle-equiv-table` / migration matrix. See also **Inventory / migration DoD** below.
+> **Private migration tracking:** Inventory ticks and migration DoD rollup for the giselle port live in the **private wiki** (not linked from this public repo). Search the wiki for the inventory equivalence table / migration matrix. See also **Inventory / migration DoD** below.
 
 
 Use this as the step-by-step playbook whenever creating or cleaning up a component in `giselle-mui`.
@@ -393,20 +393,20 @@ src/components/<name>/
 
 ---
 
-## Inventory / migration DoD (Minimals ↔ giselle matrix)
+## Inventory / migration DoD (private inventory matrix)
 
-**Sources of truth:** public library hygiene = [`../component-compliance.md`](../component-compliance.md); private migration matrix = wiki `minimals-giselle-equiv-table.md` (see wiki `component-tables-consolidation-plan.md`).
+**Sources of truth:** public library hygiene = [`../component-compliance.md`](../component-compliance.md); private migration matrix = the private wiki's inventory equivalence table (see wiki `component-tables-consolidation-plan.md`).
 
 Folder **Scenario A / Scenario B** checklists in this document are the hygiene / folder half of done (Scenario B includes an explicit JSDoc props item — same idea as Scenario A). Scenario B DoD count is **22** (not 21).
 
-For a **Minimals → giselle-mui inventory port** (a row in the wiki action matrix), the port is **done** when matrix **G · C · P · N · DoD** are all ✅.
+For an **inventory port into giselle-mui** (a row in the wiki action matrix), the port is **done** when matrix **G · C · P · N · DoD** are all ✅.
 
 1. **G · C · P · N** — migration gates.
 2. **DoD** — matching Scenario folder checklist in this file (Scenario A or B). The matrix keeps **one DoD column** only.
 
 There is **no** separate rollup column — all checkboxes green means done.
 
-Matrix + legend: [`wiki/raw/notes/project/minimals-giselle-equiv-table.md`](/Users/alex/work/projects/ar/wiki/raw/notes/project/minimals-giselle-equiv-table.md).
+Matrix + legend: the private wiki's inventory equivalence table (not linked here — see the private wiki directly).
 
 Do **not** add G/C/P/N (or other matrix letters) into the Scenario A/B numbered checklists below — keep those as folder hygiene only.
 

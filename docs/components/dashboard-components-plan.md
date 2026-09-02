@@ -15,7 +15,7 @@ sidebar_label: 'Dashboard Components Plan'
 > _Last updated: 2 Sep 2026 · Status reticked from disk + barrel exports_
 >
 > **What this file is:** public **prose build plan** for **dashboard-layer** giselle-mui components only.
-> **Not a source of truth** for library hygiene or for Minimals→giselle migration. See wiki `component-tables-consolidation-plan.md`.
+> **Not a source of truth** for library hygiene or for the inventory migration. See wiki `component-tables-consolidation-plan.md`.
 
 ---
 
@@ -23,7 +23,7 @@ sidebar_label: 'Dashboard Components Plan'
 
 > **Local build-progress view** for this plan — last reticked **2 Sep 2026** from disk + barrel exports.
 > Authoritative **public hygiene** = [`../component-compliance.md`](../component-compliance.md).
-> Authoritative **migration DoD** = private wiki matrix `minimals-giselle-equiv-table.md` (not in this repo).
+> Authoritative **migration DoD** = the private wiki's inventory equivalence matrix (not in this repo).
 > Keep ✅/⚙️ counts below as plan-local progress; do not retick them as if they were either SOT.
 
 | Symbol | Meaning                                                                                    |
@@ -39,7 +39,7 @@ Three different “done” ideas — do not mix them:
 
 1. **This plan’s ✅ (plan-local)** — has a real `.tsx` + is exported from the right package barrel. Build/ship progress for this dashboard plan only — **not** a SOT.
 2. **Folder DoD** — Scenario A/B checklist in [`cleanup-workflow.md`](./cleanup-workflow.md) (types/styles/tests/README/roadmap, scored n/21 or n/12). A ✅ here can still be short of full folder DoD.
-3. **Migration DoD (matrix D)** — private wiki matrix `minimals-giselle-equiv-table.md`: **D ✅** only when **G C P M N U** are all ✅ **and** folder hygiene is met. See cleanup-workflow → **Inventory / migration DoD**. That matrix is **not** published in this public repo.
+3. **Migration DoD (matrix D)** — the private wiki's inventory equivalence matrix: **D ✅** only when **G C P M N U** are all ✅ **and** folder hygiene is met. See cleanup-workflow → **Inventory / migration DoD**. That matrix is **not** published in this public repo.
 
 [`../component-compliance.md`](../component-compliance.md) is the **public** Built/README/JSDoc/Story/Roadmap **source of truth** for library hygiene. It is **partially stale** (last full regen 14 Jun 2026; some FeatureFlow rows patched later). Prefer it over this plan for hygiene; prefer the private matrix for migration.
 

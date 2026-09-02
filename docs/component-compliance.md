@@ -2,7 +2,7 @@
 
 > **Public source of truth** for library component **hygiene** status (Built / README / JSDoc / Story JSDoc / Roadmap + shipped vs scaffold notes).
 > Partially stale — last **full** regen **2026-06-14** (some FeatureFlow / hero rows patched later; do not treat every cell as live).
-> Minimals → giselle **migration matrix** (G C P M N U D) lives in the **private wiki only** — not in this repo.
+> The inventory **migration matrix** (G C P M N U D) lives in the **private wiki only** — not in this repo.
 > Dashboard / extraction plan ✅/⚙️ symbols are **not** authoritative vs this file (and this file is not authoritative vs those plans until a full regen). See wiki `component-tables-consolidation-plan.md`.
 
 
