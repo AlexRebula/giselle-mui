@@ -1,5 +1,10 @@
 # Component cleanup workflow
 
+> **Keep in sync (required):** The Scenario A/B Definition of Done checklists in this file are the source of truth for folder DoD. When you add/remove/rename a checklist item, update [`../component-inventory.md`](../component-inventory.md) the same day (DoD scale line and any n/N scores). Do not leave inventory on an old count.
+>
+> **Private migration tracking:** Inventory ticks and migration DoD rollup for the giselle port live in the **private wiki** (not linked from this public repo). Search the wiki for the inventory equivalence table / migration matrix. See also **Inventory / migration DoD** below.
+
+
 Use this as the step-by-step playbook whenever creating or cleaning up a component in `giselle-mui`.
 
 ---
@@ -315,12 +320,12 @@ After all other DoD items are checked, record the final score in two places.
 /**
  * Existing description...
  *
- * **Quality status (DD Mon YYYY):** DoD n/21 · Best practices n/13
+ * **Quality status (DD Mon YYYY):** DoD n/22 · Best practices n/13
  */
 export function MyComponent(...) {}
 ```
 
-- `n/21` = number of Scenario B DoD checklist items met (use `n/12` for Scenario A sub-components)
+- `n/22` = number of Scenario B DoD checklist items met (use `n/12` for Scenario A sub-components)
 - `n/13` = number of best-practices items met
 - The date is the date the cleanup was completed — update it when the component is significantly changed
 
@@ -387,6 +392,23 @@ src/components/<name>/
 ```
 
 ---
+
+## Inventory / migration DoD (private inventory matrix)
+
+**Sources of truth:** public library hygiene = [`../component-compliance.md`](../component-compliance.md); private migration matrix = the private wiki's inventory equivalence table (see wiki `component-tables-consolidation-plan.md`).
+
+Folder **Scenario A / Scenario B** checklists in this document are the hygiene / folder half of done (Scenario B includes an explicit JSDoc props item — same idea as Scenario A). Scenario B DoD count is **22** (not 21).
+
+For an **inventory port into giselle-mui** (a row in the wiki action matrix), the port is **done** when matrix **G · C · P · N · DoD** are all ✅.
+
+1. **G · C · P · N** — migration gates.
+2. **DoD** — matching Scenario folder checklist in this file (Scenario A or B). The matrix keeps **one DoD column** only.
+
+There is **no** separate rollup column — all checkboxes green means done.
+
+Matrix + legend: the private wiki's inventory equivalence table (not linked here — see the private wiki directly).
+
+Do **not** add G/C/P/N (or other matrix letters) into the Scenario A/B numbered checklists below — keep those as folder hygiene only.
 
 ## Scenario A — Sub-component (own named subfolder inside a parent folder)
 
@@ -525,6 +547,7 @@ Complete this before starting any implementation steps. The goal is a clean move
 - [ ] All internal sub-components exported from `index.ts`
 - [ ] `src/index.ts` exports the component
 - [ ] `README.md` complete
+- [ ] JSDoc covers all props including behaviour flags
 - [ ] SonarQube: zero violations
 - [ ] All six palette keys shown in stories where colour variants exist
 - [ ] `Responsive` story present

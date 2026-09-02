@@ -1,5 +1,11 @@
 # Component Compliance Report
 
+> **Public source of truth** for library component **hygiene** status (Built / README / JSDoc / Story JSDoc / Roadmap + shipped vs scaffold notes).
+> Partially stale — last **full** regen **2026-06-14** (some FeatureFlow / hero rows patched later; do not treat every cell as live).
+> The inventory **migration matrix** (G C P M N U D) lives in the **private wiki only** — not in this repo.
+> Dashboard / extraction plan ✅/⚙️ symbols are **not** authoritative vs this file (and this file is not authoritative vs those plans until a full regen). See wiki `component-tables-consolidation-plan.md`.
+
+
 _Generated: 2026-06-14 — `feature-flow` rows added 2026-08-31; `hero`-layer duplicate rows removed 2026-09-01 (giselle-mui#202); `FeatureFlowHighlightCarousel`/`FeatureFlowImageColumn`/`FeatureFlowDescriptionColumn` brought to full compliance 2026-09-01 (giselle-mui#203)._
 _Not regenerated repo-wide since 2026-06-14 — likely stale elsewhere too._
 

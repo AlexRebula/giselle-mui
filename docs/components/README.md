@@ -10,7 +10,7 @@ Per-component guides and planning notes for the `@littlebranches/giselle-mui` li
 ## Standards
 
 - **[api-design-rules.md](./api-design-rules.md)** — API design rules governing every component prop interface.
-- **[cleanup-workflow.md](./cleanup-workflow.md)** — The Definition of Done playbook; mandatory reading before building any component.
+- **[cleanup-workflow.md](./cleanup-workflow.md)** — The Definition of Done playbook (folder Scenario A/B checklists); for inventory ports into giselle also see its **Inventory / migration DoD** (matrix G C P M N U + hygiene; matrix **D** is the rollup). Mandatory reading before building any component.
 
 ## Planning
 

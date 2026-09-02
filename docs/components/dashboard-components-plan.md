@@ -12,17 +12,36 @@ sidebar_label: 'Dashboard Components Plan'
 > Every component must be general-purpose — nothing app-specific belongs in giselle-mui.
 > Every component is built independently from scratch — no proprietary utilities.
 >
-> _Last updated: 26 May 2026 · Phase 1 scaffolding complete for all components · Phase 2 (implementation) in progress_
+> _Last updated: 2 Sep 2026 · Status reticked from disk + barrel exports_
+>
+> **What this file is:** public **prose build plan** for **dashboard-layer** giselle-mui components only.
+> **Not a source of truth** for library hygiene or for the inventory migration. See wiki `component-tables-consolidation-plan.md`.
 
 ---
 
-## Status legend
+## Status legend (plan-local only)
+
+> **Local build-progress view** for this plan — last reticked **2 Sep 2026** from disk + barrel exports.
+> Authoritative **public hygiene** = [`../component-compliance.md`](../component-compliance.md).
+> Authoritative **migration DoD** = the private wiki's inventory equivalence matrix (not in this repo).
+> Keep ✅/⚙️ counts below as plan-local progress; do not retick them as if they were either SOT.
 
 | Symbol | Meaning                                                                                    |
 | ------ | ------------------------------------------------------------------------------------------ |
 | ✅     | Implemented, tested, exported from barrel — ready to consume                               |
 | ⚙️     | Phase 1 scaffolded: `types.ts` + test stubs + `README.md` + `index.ts` — **no `.tsx` yet** |
 | 🔴     | Not started — no folder, no scaffold                                                       |
+| ⚙️*    | Has implementation but not exported from the package barrel yet (counted as ⚙️ below)      |
+
+### How this relates to DoD (read this)
+
+Three different “done” ideas — do not mix them:
+
+1. **This plan’s ✅ (plan-local)** — has a real `.tsx` + is exported from the right package barrel. Build/ship progress for this dashboard plan only — **not** a SOT.
+2. **Folder DoD** — Scenario A/B checklist in [`cleanup-workflow.md`](./cleanup-workflow.md) (types/styles/tests/README/roadmap, scored n/21 or n/12). A ✅ here can still be short of full folder DoD.
+3. **Migration DoD (matrix D)** — the private wiki's inventory equivalence matrix: **D ✅** only when **G C P M N U** are all ✅ **and** folder hygiene is met. See cleanup-workflow → **Inventory / migration DoD**. That matrix is **not** published in this public repo.
+
+[`../component-compliance.md`](../component-compliance.md) is the **public** Built/README/JSDoc/Story/Roadmap **source of truth** for library hygiene. It is **partially stale** (last full regen 14 Jun 2026; some FeatureFlow rows patched later). Prefer it over this plan for hygiene; prefer the private matrix for migration.
 
 ---
 
@@ -49,11 +68,11 @@ all shipped ✅ and exported from the main bundle.
 All card components live in `src/components/material/surfaces/card/` and export from
 the main `@littlebranches/giselle-mui` bundle.
 
-### `StatCard` ✅ Shipped — 5 May 2026
+### `StatCard` ✅ Shipped
 
 Compact data card: number, label, trend arrow, six palette colour variants, `chart?: ReactNode` slot.
 
-### `StatCardRow` ✅ Shipped — 13 May 2026
+### `StatCardRow` ✅ Shipped
 
 Responsive `Grid2` row of `StatCard` items. Accepts `StatCardItem[]`, breakpoints `xs=12 sm=6 md=3`.
 
@@ -71,7 +90,7 @@ Keyboard-accessible clickable card wrapping `ButtonBase`. Avoids the `Paper onCl
 
 ---
 
-### `ProfileSummaryCard` ⚙️ Phase 1 scaffolded
+### `ProfileSummaryCard` ✅ Shipped
 
 **Phase 2 dispatch brief:**
 
@@ -299,7 +318,7 @@ All components in this group import `react-apexcharts`. They ship from
 Static options → module-level const in `*.styles.ts`. Theme-dependent options →
 factory function `buildXxxOptions(theme)` in `*.styles.ts`.
 
-### `RadialProgressCard` ✅ Shipped — 5 May 2026
+### `RadialProgressCard` ✅ Shipped
 
 Reference implementation for all chart components. Correct lazy-load pattern, options in
 `*.styles.ts`. Folder: `src/components/chart/radial-progress/`.
@@ -441,7 +460,7 @@ Radar/spider chart. Multiple polygon series, labelled axes.
 
 ---
 
-### `SparklineBar` ⚙️ Phase 1 scaffolded
+### `SparklineBar` ⚙️ Implemented (not in barrel yet)
 
 **Phase 2 dispatch brief:**
 
@@ -571,7 +590,7 @@ Compact contact list: avatar, name, email. Optional action icons per row.
 
 ---
 
-### `AvatarRow` ⚙️ Phase 1 scaffolded
+### `AvatarRow` ⚙️ Implemented (not in barrel yet)
 
 **Phase 2 dispatch brief:**
 
@@ -590,7 +609,7 @@ type AvatarRowProps = {
 
 ---
 
-### `StatusLabel` ⚙️ Phase 1 scaffolded
+### `StatusLabel` ✅ Shipped
 
 **Phase 2 dispatch brief:**
 
@@ -799,16 +818,16 @@ Components in `src/components/motion/`. Require `framer-motion` peer dep.
 
 ### Shipped (currently in `/motion`)
 
-- `MotionContainer` ✅
-- `MotionViewport` ✅
-- `useScrollParallax` ✅
-- `HeroButtonsRow` ✅
-- `InteractiveHeroLogo` ✅
-- Animation `variants` ✅
+- `MotionContainer` ✅ Shipped
+- `MotionViewport` ✅ Shipped
+- `useScrollParallax` ✅ Shipped
+- `HeroButtonsRow` ✅ Shipped
+- `InteractiveHeroLogo` ✅ Shipped
+- Animation `variants` ✅ Shipped
 
 ---
 
-### `AnimatedTabPanel` 🔴 Not yet scaffolded
+### `AnimatedTabPanel` ⚙️ Phase 1 scaffolded
 
 **Brief:** Wraps `children` in a `motion.div` with enter/exit animations. Used for animated
 dashboard tab switches.
@@ -828,7 +847,7 @@ type AnimatedTabPanelProps = {
 
 ## Group 7 — Investment analytics (main bundle)
 
-### `ScenarioComparisonWidget` 🔴 Not yet scaffolded
+### `ScenarioComparisonWidget` ⚙️ Phase 1 scaffolded
 
 **Brief:** Interactive "what if" widget. Consumer defines scenario variables (toggle, slider,
 dropdown). Each change re-computes outcome metrics via a pure `compute` function. Shows
@@ -857,17 +876,17 @@ Components required for a minimal task-tracker dashboard:
 | Widget                                         | Component                      | Status           | Priority   |
 | ---------------------------------------------- | ------------------------------ | ---------------- | ---------- |
 | Viewer stats row (tasks done, earned, pending) | `StatCard` × 3 + `StatCardRow` | `StatCardRow` ✅ | Done       |
-| Profile card (display name + 3 stats)          | `ProfileSummaryCard`           | ⚙️ scaffolded    | **HIGH**   |
-| Task table (admin view)                        | `DataTable`                    | ⚙️ scaffolded    | **HIGH**   |
-| Task status breakdown                          | `StatusLabel`                  | ⚙️ scaffolded    | **HIGH**   |
-| Barefoot bucket split                          | `ProgressStatsList`            | ⚙️ scaffolded    | **HIGH**   |
-| Recent activity feed                           | `ActivityFeedList`             | ⚙️ scaffolded    | **HIGH**   |
-| Task status donut chart                        | `DonutChartCard`               | ⚙️ scaffolded    | **MEDIUM** |
-| Page header (admin/viewer)                     | `PageHeader`                   | ⚙️ scaffolded    | **HIGH**   |
-| Admin layout shell                             | `AppShell` + `AppTopBar`       | ⚙️ scaffolded    | **HIGH**   |
+| Profile card (display name + 3 stats)          | `ProfileSummaryCard`           | ✅ Shipped | **HIGH**   |
+| Task table (admin view)                        | `DataTable`                    | ⚙️ Phase 1 scaffolded | **HIGH**   |
+| Task status breakdown                          | `StatusLabel`                  | ✅ Shipped | **HIGH**   |
+| Barefoot bucket split                          | `ProgressStatsList`            | ⚙️ Phase 1 scaffolded | **HIGH**   |
+| Recent activity feed                           | `ActivityFeedList`             | ⚙️ Phase 1 scaffolded | **HIGH**   |
+| Task status donut chart                        | `DonutChartCard`               | ⚙️ Phase 1 scaffolded | **MEDIUM** |
+| Page header (admin/viewer)                     | `PageHeader`                   | ⚙️ Phase 1 scaffolded | **HIGH**   |
+| Admin layout shell                             | `AppShell` + `AppTopBar`       | ⚙️ Phase 1 scaffolded | **HIGH**   |
 
 **Minimum viable task tracker (MUI-only, no `/charts` dep):**
-`ProfileSummaryCard` + `DataTable` + `StatusLabel` + `ProgressStatsList` + `ActivityFeedList` + `PageHeader` + `AppShell` + `AppTopBar`
+`ProfileSummaryCard` ✅ + `DataTable` + `StatusLabel` ✅ + `ProgressStatsList` + `ActivityFeedList` + `PageHeader` + `AppShell` + `AppTopBar`
 
 ---
 
@@ -885,11 +904,11 @@ Components required for a minimal task-tracker dashboard:
 
 MUI-only, no dep blockers. Unblocks a minimal task-tracker dashboard:
 
-1. `StatusLabel` — simplest, unblocks task lists everywhere
+1. ~~`StatusLabel`~~ ✅ Shipped — was simplest; unblocks task lists everywhere
 2. `PageHeader` — layout primitive needed before shell
 3. `AppTopBar` — needed for admin/viewer layouts
 4. `AppShell` — composes the above
-5. `ProfileSummaryCard` — viewer dashboard hero
+5. ~~`ProfileSummaryCard`~~ ✅ Shipped — viewer dashboard hero
 6. `DataTable` — admin task table
 7. `ProgressStatsList` — Barefoot bucket split
 8. `ActivityFeedList` — recent completions feed
@@ -918,30 +937,33 @@ Remaining MUI-only cards and widgets:
 
 ### Tier 5 — Investment analytics + Motion
 
-- `ScenarioComparisonWidget` — scaffold first, then implement
-- `AnimatedTabPanel` — scaffold first, then implement
+- `ScenarioComparisonWidget` ⚙️ Phase 1 scaffolded
+- `AnimatedTabPanel` ⚙️ Phase 1 scaffolded
 
 ---
 
 ## Component count summary
 
-| Group                             | Shipped ✅ | Scaffolded ⚙️ | Not started 🔴 |
-| --------------------------------- | ---------- | ------------- | -------------- |
-| Group 1 — Cards                   | 5          | 11            | 0              |
-| Group 2 — Chart cards (`/charts`) | 1          | 9             | 0              |
-| Group 3 — Data display            | 4          | 11            | 0              |
-| Group 4 — Navigation              | 1          | 4             | 0              |
-| Group 5 — Layout                  | 3          | 3             | 0              |
-| Group 6 — Motion                  | 6          | 0             | 1              |
-| Group 7 — Investment analytics    | 0          | 0             | 1              |
-| **Total**                         | **20**     | **38**        | **2**          |
+Reticked 2 Sep 2026 from disk + barrel exports.
+`IconActionBar` counted shipped; `SparklineBar` / `AvatarRow` have `.tsx` but are not in a package barrel yet (⚙️*).
 
-38 Phase 2 implementations needed. All but 2 are scaffolded and ready for `/create-giselle-component` dispatch.
+| Group                             | Shipped ✅ | Scaffolded / in-progress ⚙️ | Not started 🔴 |
+| --------------------------------- | ---------- | --------------------------- | -------------- |
+| Group 1 — Cards                   | 6          | 10                          | 0              |
+| Group 2 — Chart cards (`/charts`) | 1          | 9                           | 0              |
+| Group 3 — Data display            | 5          | 10                          | 0              |
+| Group 4 — Navigation              | 1          | 4                           | 0              |
+| Group 5 — Layout                  | 3          | 3                           | 0              |
+| Group 6 — Motion                  | 6          | 1                           | 0              |
+| Group 7 — Investment analytics    | 0          | 1                           | 0              |
+| **Total**                         | **22**     | **38**                      | **0**          |
 
----
+38 Phase 2 implementations still needed (38 scaffolded/in-progress, 0 not started).
+
+**Shipped ✅ here ≠ migration DoD.** It means implementation + barrel export. Full folder DoD is still [`cleanup-workflow.md`](./cleanup-workflow.md). Inventory migration rollup (**matrix D**) lives in the private wiki matrix, not in this file.
 
 ## Related
 
-- [`roadmap.mdx`](../roadmap.mdx) — Phase H: Dashboard Components
-- [`cleanup-workflow.md`](./cleanup-workflow.md) — Definition of Done for every component
-- [`roadmap.mdx`](../roadmap.mdx) — Phase H: Dashboard Components (duplicate link removed)
+- [`roadmap.md`](../roadmap.md) — Phase H: Dashboard Components
+- [`cleanup-workflow.md`](./cleanup-workflow.md) — folder DoD + **Inventory / migration DoD** section
+- [`../component-compliance.md`](../component-compliance.md) — public Built/README/JSDoc/Story/Roadmap table (partially stale)
