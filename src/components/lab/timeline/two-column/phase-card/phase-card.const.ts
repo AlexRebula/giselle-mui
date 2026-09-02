@@ -13,21 +13,6 @@
 /** Font size for all status badge labels (Overdue, Now, Date overlap, Scenario). */
 export const STATUS_BADGE_FONT_SIZE = '0.75rem';
 
-// ── Viewed eye button ─────────────────────────────────────────────────────────
-
-/**
- * Icon size (px) for the viewed eye button.
- * Must meet WCAG 1.4.11 — interactive icons must be >= 20px.
- * Never set below 20.
- */
-export const PHASE_EYE_ICON_SIZE = 20;
-
-/**
- * Minimum touch-target size (px) for the eye viewed button.
- * Meets WCAG 2.2 AA 2.5.8 — minimum 24 × 24 CSS pixels for pointer targets.
- */
-export const EYE_BUTTON_MIN_SIZE = 28;
-
 // ── Active pulsing dot ────────────────────────────────────────────────────────
 
 /** Width and height (px) of the "Now" active pulsing dot. Never set below 12. */

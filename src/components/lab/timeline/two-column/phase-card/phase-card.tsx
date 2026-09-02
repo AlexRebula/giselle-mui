@@ -9,7 +9,6 @@ import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { GiselleIcon } from '../../../../material/data-display/icon/giselle/giselle-icon';
 import { DEFAULT_EXPANDABLE_ICON } from '../icons';
 import {
   resolvePhotoSources,
@@ -27,7 +26,6 @@ import {
   clientLogoSx,
   platformStripSx,
   projectLogoSx,
-  eyeButtonSx,
   buildPaperSx,
   buildDateTypographySx,
   pillIconBoxSx,
@@ -39,12 +37,13 @@ import {
   phaseDescriptionSx,
   phaseFooterSlotSx,
 } from './phase-card.styles';
-import { PHASE_EYE_ICON_SIZE, EYE_BUTTON_MIN_SIZE, PHASE_PILL_ICON_SIZE } from './phase-card.const';
+import { PHASE_PILL_ICON_SIZE } from './phase-card.const';
 import { LabeledIconStrip } from './labeled-icon-strip';
 import { CardDetailBullets } from './card-detail-bullets';
 import { CardCornerAlertBadge } from './card-corner-alert-badge';
 import { CardStatusBadge } from './card-status-badge';
 import { CardDecoration } from './card-decoration';
+import { EyeButton } from './eye-button';
 
 // Re-exports — keeps `import { PhaseCardProps } from './phase-card'` working.
 export type { PhaseCardProps } from './types';
@@ -298,29 +297,7 @@ export function PhaseCard({
       {/* Viewed eye badge — floats outside the card at the bottom on the outer edge. */}
       {/* Uses columnSide so it mirrors the corner alert badge: outer edge away from spine. */}
       {onMarkViewed && (
-        <Tooltip
-          title={isViewed ? 'Mark as not viewed' : 'Mark as viewed'}
-          placement={columnSide === 'left' ? 'right' : 'left'}
-          arrow
-        >
-          <Box
-            component="button"
-            type="button"
-            onClick={(e: MouseEvent) => {
-              e.stopPropagation();
-              onMarkViewed();
-            }}
-            aria-label={isViewed ? 'Mark as not viewed' : 'Mark as viewed'}
-            aria-pressed={isViewed}
-            sx={eyeButtonSx({ columnSide, isViewed, minSize: EYE_BUTTON_MIN_SIZE })}
-          >
-            <GiselleIcon
-              icon={isViewed ? 'solar:eye-bold' : 'solar:eye-outline'}
-              width={PHASE_EYE_ICON_SIZE}
-              aria-hidden
-            />
-          </Box>
-        </Tooltip>
+        <EyeButton isViewed={isViewed} onMarkViewed={onMarkViewed} columnSide={columnSide} />
       )}
     </Box>
   );
