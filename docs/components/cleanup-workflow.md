@@ -302,7 +302,7 @@ Verify `dist/` contains the correct external references (not inlined source) for
 yalc push
 ```
 
-Then in `alexrebula` (or `first-branch`):
+Then in `<consumer-app>` (the private consuming app you're validating against):
 
 ```sh
 rm -rf .next
