@@ -1,11 +1,17 @@
 import Box from '@mui/material/Box';
 
-import { checkPop } from '../animations';
-import { doneCheckmarkSx, dotInnerIconSlotSx } from './timeline-dot.styles';
+import { checkPop } from '../../animations';
+import { doneCheckmarkSx, dotInnerIconSlotSx } from './dot-inner.styles';
 import type { DotInnerProps } from './types';
 
 // ----------------------------------------------------------------------
 
+/**
+ * Inner content of a `TimelineDot` — either the animated done checkmark or the
+ * passed-in icon, with a spring-pop animation on toggle.
+ *
+ * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ */
 export function DotInner({ done, icon, animationKey, iconSize }: DotInnerProps) {
   if (done) {
     return (

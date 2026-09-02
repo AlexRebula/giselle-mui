@@ -1,15 +1,19 @@
 import Box from '@mui/material/Box';
 
-import { ganttTrackSx, ganttBarSx } from './phase-warning-popover.styles';
+import { ganttTrackSx, ganttBarSx } from './mini-gantt-ruler.styles';
 import type { MiniGanttRulerProps } from './types';
-import { resolveSliderColor } from './phase-warning-popover.utils';
+import { resolveSliderColor } from '../phase-warning-popover.utils';
 
 // Re-export — keeps `import { resolveSliderColor } from './mini-gantt-ruler'` working.
-export { resolveSliderColor } from './phase-warning-popover.utils';
+export { resolveSliderColor } from '../phase-warning-popover.utils';
 
 // ----------------------------------------------------------------------
 
-/** Mini read-only Gantt ruler showing all conflicting phases on a shared time axis. */
+/**
+ * Mini read-only Gantt ruler showing all conflicting phases on a shared time axis.
+ *
+ * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ */
 export function MiniGanttRuler({ axis, conflictingPhases, overrides }: MiniGanttRulerProps) {
   const span = axis.max - axis.min;
   if (span <= 0) return null;

@@ -5,12 +5,6 @@ import type { TimelinePhase } from '../types';
 /** Internal representation of a single phase's date range as month indices. */
 export type PhaseRange = { startIdx: number; endIdx: number };
 
-export type MiniGanttRulerProps = {
-  axis: { min: number; max: number };
-  conflictingPhases: TimelinePhase[];
-  overrides: Map<number, PhaseRange>;
-};
-
 export type PhaseWarningPopoverProps = {
   /** Whether the popover is currently open. */
   open: boolean;

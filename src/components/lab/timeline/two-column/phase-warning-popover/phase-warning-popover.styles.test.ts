@@ -2,7 +2,6 @@
 import { describe, it, expect } from 'vitest';
 import type { Theme } from '@mui/material/styles';
 import {
-  ganttTrackSx,
   popoverPaperSx,
   sliderRowHeaderSx,
   actionsRowSx,
@@ -22,15 +21,6 @@ const mockTheme = {
 } as unknown as Theme;
 
 // ----------------------------------------------------------------------
-
-describe('ganttTrackSx', () => {
-  it('is relatively positioned with a subtle background', () => {
-    expect(ganttTrackSx).toMatchObject({
-      position: 'relative',
-      bgcolor: 'action.hover',
-    });
-  });
-});
 
 describe('popoverPaperSx', () => {
   it('uses fixed 340px width column layout', () => {

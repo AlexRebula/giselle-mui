@@ -1,65 +1,11 @@
-import type { Ref, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import type { BoxProps } from '@mui/material/Box';
-import type { Task, TimelinePhase, HighlightedPaletteKey } from '../types';
+import type { TimelinePhase } from '../types';
 
 // ----------------------------------------------------------------------
 
 /** Alert entry for the corner warning badge — each alert is one row in the tooltip/popover. */
 export type CardCornerAlert = { message: string; severity: 'error' | 'warning' };
-
-/** Props for the `CardCornerAlertBadge` internal sub-component. */
-export type CardCornerAlertBadgeProps = {
-  alerts: CardCornerAlert[];
-  columnSide?: 'left' | 'right';
-  /** When provided, badge is a clickable button that opens the PhaseWarningPopover. */
-  onClick?: () => void;
-  /** Ref forwarded to the badge circle element — used as Popper anchor. */
-  innerRef?: Ref<HTMLElement>;
-};
-
-/** Props for the `LabeledIconStrip` internal sub-component. */
-export type LabeledIconStripProps = {
-  /** Optional overline label rendered above the strip. Omitted when undefined. */
-  label?: string;
-  children: ReactNode;
-};
-
-/** Props for the `CardDetailBullets` internal sub-component. */
-export type CardDetailBulletsProps = {
-  /** Matches `aria-controls` on the parent Paper so screen readers wire the relationship. */
-  id: string;
-  details: Task[];
-  in: boolean;
-  /**
-   * Done state keyed by task id (`String(task.key)`).
-   * Implementations may also provide `idx-${n}` fallback keys for legacy list-index wiring.
-   */
-  taskDoneStates?: Record<string, boolean>;
-  onToggleTask?: (taskIndex: number, done: boolean) => void;
-};
-
-/** Props for the `ScenarioBadge` internal sub-component. */
-export type ScenarioBadgeProps = { color: string; scenarioLabel: string };
-
-/** Props for the `CardStatusBadge` internal sub-component. */
-export type CardStatusBadgeProps = {
-  color: string;
-  isScenario: boolean;
-  scenarioLabel?: string;
-};
-
-/** Props for the `CardDecoration` internal sub-component. */
-export type CardDecorationProps = {
-  /** Effective palette key for the decoration colour (already resolved from phase.color). */
-  color: HighlightedPaletteKey;
-  /**
-   * `true` when the phase is both overdue AND not yet done.
-   * Switches the decoration and corner icon to the error (red) palette.
-   */
-  isOverduePending: boolean;
-  /** Phase icon rendered in the corner. Accepts any ReactNode icon slot. */
-  icon: ReactNode;
-};
 
 /** Parameters for the `buildPaperSx` sx factory in `phase-card.styles.ts`. */
 export type PaperSxParams = {

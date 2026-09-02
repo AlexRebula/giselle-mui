@@ -16,33 +16,7 @@ import { PHASE_PILL_TEXT_FONT_SIZE } from './phase-card.const';
  * top level with `useMemo` if profiling shows a real need.
  */
 
-// ── LabeledIconStrip ──────────────────────────────────────────────────────────
-
-/** Section overline label inside a `LabeledIconStrip` (clients, tech stack, etc.). */
-export const labeledIconStripLabelSx: SxProps<Theme> = {
-  display: 'block',
-  mb: 1,
-  fontSize: '0.75rem',
-  color: 'text.disabled',
-};
-
-/** Root Box wrapper for `LabeledIconStrip` — top margin separates it from the previous section. */
-export const labeledIconStripWrapperSx: SxProps<Theme> = {
-  mt: 2.5,
-};
-
-// ── CardDetailBullets ─────────────────────────────────────────────────────────
-
-/** Collapse container that holds the expandable detail bullet list. */
-export const detailBulletsContainerSx: SxProps<Theme> = {
-  mt: 1.5,
-  pt: 1.5,
-  borderTop: '1px solid',
-  borderColor: 'divider',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 0.75,
-};
+// ── CardDetailBullets (unused sibling) ────────────────────────────────────────
 
 /** Individual bullet row — bullet glyph + detail text side by side. */
 export const detailBulletsRowSx: SxProps<Theme> = {
@@ -51,74 +25,6 @@ export const detailBulletsRowSx: SxProps<Theme> = {
   alignItems: 'flex-start',
   textAlign: 'left',
 };
-
-// ── CardCornerAlertBadge ──────────────────────────────────────────────────────
-
-/** Tooltip content column — stacks alert rows with spacing. */
-export const tooltipAlertListSx: SxProps<Theme> = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 1.25,
-  py: 0.5,
-  px: 0.25,
-};
-
-/** One alert row inside the tooltip content column — icon + message side by side. */
-export const tooltipAlertRowSx: SxProps<Theme> = {
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: 1,
-};
-
-/** Alert message Typography inside a tooltip alert row. */
-export const tooltipAlertMessageSx: SxProps<Theme> = {
-  lineHeight: 1.55,
-  fontSize: '0.8rem',
-  fontWeight: 500,
-};
-
-/**
- * Corner alert badge circle.
- *
- * Dynamic — position, error state, and click behaviour all affect rendering.
- *
- * @param positionOverride - `{ left: 0 }` for left-column cards, `{ right: 0 }` for right-column.
- * @param transform - CSS transform string from `resolveCornerBadgeAlign`.
- * @param hasError - true → error.main background; false → warning.dark.
- * @param hasClickHandler - true → pointer cursor; false → help cursor.
- * @param badgeSize - Pixel size of the circle. Defaults to 26 (`CORNER_ALERT_BADGE_SIZE`).
- */
-export const cornerBadgeCircleSx =
-  (opts: {
-    positionOverride: { left?: number; right?: number };
-    transform: string;
-    hasError: boolean;
-    hasClickHandler: boolean;
-    badgeSize?: number;
-  }): SxProps<Theme> =>
-  (theme) => ({
-    position: 'absolute',
-    top: 0,
-    ...opts.positionOverride,
-    zIndex: 10,
-    transform: opts.transform,
-    width: opts.badgeSize ?? 26,
-    height: opts.badgeSize ?? 26,
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    bgcolor: opts.hasError ? 'error.main' : 'warning.dark',
-    color: 'common.white',
-    boxShadow: `0 2px 6px rgba(${(theme.vars!.palette.grey as unknown as Record<string, string>)['900Channel']} / 0.3)`,
-    cursor: opts.hasClickHandler ? 'pointer' : 'help',
-    pointerEvents: 'auto',
-    '&:focus-visible': {
-      outline: '2px solid',
-      outlineColor: opts.hasError ? 'error.main' : 'warning.dark',
-      outlineOffset: 2,
-    },
-  });
 
 // ── NewBadge / ActiveBadge ────────────────────────────────────────────────────
 
@@ -170,22 +76,6 @@ export const activeStatusLabelSx = (color: string): SxProps<Theme> => ({
   letterSpacing: 0.8,
   lineHeight: 1.6,
   color: `${color}.main`,
-});
-
-// ── ScenarioBadge ─────────────────────────────────────────────────────────────
-
-/** Pill label for scenario cards — soft tint of the phase color. */
-export const scenarioBadgeSx = (color: string): SxProps<Theme> => ({
-  display: 'inline-block',
-  mb: 1,
-  px: 1,
-  py: 0.25,
-  borderRadius: 0.75,
-  fontSize: '0.75rem',
-  fontWeight: 700,
-  letterSpacing: 0.8,
-  color: `${color}.dark`,
-  bgcolor: `rgba(var(--mui-palette-${color}-mainChannel) / 0.12)`,
 });
 
 // ── Main PhaseCard render ─────────────────────────────────────────────────────
@@ -282,19 +172,6 @@ export const platformStripSx: SxProps<Theme> = {
   gap: 1,
 };
 
-/** One tooltip-wrapped item slot inside the platform strip — centres its icon or fallback label. */
-export const platformStripItemSlotSx: SxProps<Theme> = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-/** Fallback text label rendered when a platform item has no icon. */
-export const platformStripItemLabelSx: SxProps<Theme> = {
-  fontSize: 11,
-  px: 0.5,
-};
-
 /** Project logo `<img>` — smaller than client logos, subtle hover opacity. */
 export const projectLogoSx: SxProps<Theme> = {
   height: 28,
@@ -370,86 +247,6 @@ export const photoImgSx = (isFirst: boolean): SxProps<Theme> => ({
   border: '2px solid',
   borderColor: 'divider',
   display: 'block',
-});
-
-// ── Corner decorative icon ────────────────────────────────────────────────────
-
-/**
- * Absolutely-positioned decorative icon Box in the top-right corner of a phase card.
- *
- * @param color - MUI palette key for the icon tint.
- * @param isOverduePending - When true, tints to error and reduces opacity.
- */
-export const phaseCardIconBoxSx =
-  (color: string, isOverduePending: boolean): SxProps<Theme> =>
-  (theme) => ({
-    top: 16,
-    right: 16,
-    width: 36,
-    height: 36,
-    position: 'absolute',
-    zIndex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // Force the icon SVG to 32 × 32 via CSS instead of cloneElement,
-    // so the icon element can remain an RSC-created React element.
-    '& svg': { width: 32, height: 32 },
-    color: isOverduePending
-      ? theme.vars!.palette.error.main
-      : ((theme.vars!.palette as unknown as Record<string, { main: string }>)[color]?.main ??
-        theme.vars!.palette.primary.main),
-    opacity: isOverduePending ? 0.55 : 0.35,
-  });
-
-/** Task toggle row — flex container for icon + title in the expanded detail list. */
-export const taskRowSx: SxProps<Theme> = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 0.75,
-  py: 0.25,
-};
-
-/** Task toggle icon button sx (interactive mode). */
-export const taskToggleButtonSx: SxProps<Theme> = {
-  all: 'unset',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  flexShrink: 0,
-  transition: 'color 0.2s',
-  '&:focus-visible': {
-    outline: '2px solid',
-    outlineColor: 'primary.main',
-    borderRadius: '50%',
-  },
-};
-
-/** Task toggle icon static (read-only mode). */
-export const taskIconStaticSx: SxProps<Theme> = {
-  display: 'flex',
-  alignItems: 'center',
-  flexShrink: 0,
-  transition: 'color 0.2s',
-};
-
-/** Task title sx — done state passed dynamically. */
-export const taskTitleSx = (isDone: boolean): SxProps<Theme> => ({
-  color: isDone ? 'text.disabled' : 'text.secondary',
-  lineHeight: 1.6,
-  textDecoration: isDone ? 'line-through' : 'none',
-  transition: 'color 0.2s, text-decoration 0.2s',
-});
-
-/** Task toggle icon colour sx — done state passed dynamically (interactive mode). */
-export const taskToggleColorSx = (isDone: boolean): SxProps<Theme> => ({
-  color: isDone ? 'success.main' : 'text.disabled',
-  '&:hover': { color: isDone ? 'success.dark' : 'text.secondary' },
-});
-
-/** Task icon colour sx — done state passed dynamically (read-only mode). */
-export const taskIconColorSx = (isDone: boolean): SxProps<Theme> => ({
-  color: isDone ? 'success.main' : 'text.disabled',
 });
 
 // ── Paper root ────────────────────────────────────────────────────────────────
@@ -542,43 +339,6 @@ export function buildDateTypographySx({
     color: isScenario ? `${color ?? 'primary'}.main` : 'text.disabled',
   };
 }
-
-// ── CardDecoration gradient ───────────────────────────────────────────────────
-
-/**
- * Rotating gradient rectangle that sits in the top-right corner of a PhaseCard.
- *
- * @param color - MUI palette key for the gradient colour (already resolved from phase.color).
- * @param isOverduePending - When true, switches to the error palette and raises opacity.
- */
-export const buildCardDecorationGradientSx =
-  (color: string, isOverduePending: boolean): SxProps<Theme> =>
-  (theme) => ({
-    top: -40,
-    right: -56,
-    width: 140,
-    height: 140,
-    borderRadius: 4,
-    position: 'absolute',
-    transform: 'rotate(40deg)',
-    pointerEvents: 'none',
-    background: `linear-gradient(to right, ${
-      theme.vars!.palette[isOverduePending ? 'error' : (color as HighlightedPaletteKey)]?.main ??
-      theme.vars!.palette.primary.main
-    }, transparent)`,
-    opacity: isOverduePending ? 0.18 : 0.08,
-  });
-
-// ── Corner alert tooltip ──────────────────────────────────────────────────────
-
-/** Sx for the Tooltip popup in `CardCornerAlertBadge`. */
-export const cornerAlertTooltipSx: SxProps<Theme> = {
-  maxWidth: 320,
-  px: 1.75,
-  py: 1.25,
-  bgcolor: 'grey.900',
-  '& .MuiTooltip-arrow': { color: 'grey.900' },
-};
 
 // ── Pill icon box ─────────────────────────────────────────────────────────────
 
