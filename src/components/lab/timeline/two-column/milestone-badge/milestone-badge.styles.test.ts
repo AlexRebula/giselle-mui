@@ -15,6 +15,15 @@ import {
   milestoneDetailRowSx,
   milestonePillTextSx,
   milestonePaperSx,
+  pillIconBoxSx,
+  milestoneDetailPillSx,
+  milestoneDetailListSx,
+  taskRowSx,
+  taskToggleButtonSx,
+  taskIconStaticSx,
+  taskTitleSx,
+  taskToggleColorSx,
+  taskIconColorSx,
 } from './milestone-badge.styles';
 
 // ---------------------------------------------------------------------------
@@ -253,5 +262,104 @@ describe('[regression] done milestone hover styles from milestonePaperSx', () =>
     }) as (theme: Theme) => Record<string, unknown>;
     const sx = sxFactory(mockTheme);
     expect(sx['pointerEvents']).toBeUndefined();
+  });
+});
+
+describe('pillIconBoxSx — inline icon slot inside pill badges', () => {
+  it('forces the inner svg to the exact requested icon size', () => {
+    const styles = pillIconBoxSx(16) as Record<string, unknown>;
+    expect(styles['& svg']).toEqual({ width: 16, height: 16 });
+  });
+
+  it('never shrinks inside its flex container', () => {
+    const styles = pillIconBoxSx(16) as Record<string, unknown>;
+    expect(styles['flexShrink']).toBe(0);
+  });
+});
+
+describe('milestoneDetailPillSx — collapsed detail-count pill', () => {
+  it('lays out icon and label inline with a rounded, muted background', () => {
+    expect(milestoneDetailPillSx).toMatchObject({
+      display: 'inline-flex',
+      alignItems: 'center',
+      borderRadius: 0.75,
+      bgcolor: 'action.hover',
+      color: 'text.secondary',
+    });
+  });
+});
+
+describe('milestoneDetailListSx — expanded detail bullet list', () => {
+  it('separates from the content above with a top border and stacks bullets vertically', () => {
+    expect(milestoneDetailListSx).toMatchObject({
+      borderTop: '1px solid',
+      borderColor: 'divider',
+      display: 'flex',
+      flexDirection: 'column',
+    });
+  });
+});
+
+describe('taskRowSx — individual task bullet row', () => {
+  it('lays out the toggle/icon and title side by side', () => {
+    expect(taskRowSx).toMatchObject({
+      display: 'flex',
+      alignItems: 'center',
+    });
+  });
+});
+
+describe('taskToggleButtonSx — interactive task toggle button', () => {
+  it('resets native button styling and shows a pointer cursor', () => {
+    expect(taskToggleButtonSx).toMatchObject({
+      all: 'unset',
+      cursor: 'pointer',
+    });
+  });
+
+  it('never shrinks inside its flex row', () => {
+    expect(taskToggleButtonSx).toMatchObject({ flexShrink: 0 });
+  });
+});
+
+describe('taskIconStaticSx — read-only task icon', () => {
+  it('never shrinks inside its flex row', () => {
+    expect(taskIconStaticSx).toMatchObject({ flexShrink: 0 });
+  });
+});
+
+describe('taskTitleSx — task title typography', () => {
+  it('strikes through and dims the title when done', () => {
+    expect(taskTitleSx(true)).toMatchObject({
+      color: 'text.disabled',
+      textDecoration: 'line-through',
+    });
+  });
+
+  it('uses secondary color with no strikethrough when not done', () => {
+    expect(taskTitleSx(false)).toMatchObject({
+      color: 'text.secondary',
+      textDecoration: 'none',
+    });
+  });
+});
+
+describe('taskToggleColorSx — interactive task toggle color', () => {
+  it('uses success color when done', () => {
+    expect(taskToggleColorSx(true)).toMatchObject({ color: 'success.main' });
+  });
+
+  it('uses disabled color when not done', () => {
+    expect(taskToggleColorSx(false)).toMatchObject({ color: 'text.disabled' });
+  });
+});
+
+describe('taskIconColorSx — read-only task icon color', () => {
+  it('uses success color when done', () => {
+    expect(taskIconColorSx(true)).toMatchObject({ color: 'success.main' });
+  });
+
+  it('uses disabled color when not done', () => {
+    expect(taskIconColorSx(false)).toMatchObject({ color: 'text.disabled' });
   });
 });

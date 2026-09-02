@@ -16,8 +16,9 @@ import {
   clientLogoSx,
   platformStripSx,
   projectLogoSx,
-  eyeButtonSx,
   buildPaperSx,
+  buildDateTypographySx,
+  pillIconBoxSx,
   phaseCardRootSx,
   phaseContentRowSx,
   phaseContentColumnSx,
@@ -235,52 +236,6 @@ describe('projectLogoSx — project logo image', () => {
 });
 
 // ---------------------------------------------------------------------------
-// eyeButtonSx — viewed eye button (dynamic)
-// ---------------------------------------------------------------------------
-
-describe('eyeButtonSx — viewed eye button', () => {
-  it('positions right when columnSide=right', () => {
-    const styles = eyeButtonSx({ columnSide: 'right', isViewed: false }) as Record<string, unknown>;
-    expect(styles['right']).toBe(0);
-    expect(styles['left']).toBeUndefined();
-  });
-
-  it('positions left when columnSide=left', () => {
-    const styles = eyeButtonSx({ columnSide: 'left', isViewed: false }) as Record<string, unknown>;
-    expect(styles['left']).toBe(0);
-    expect(styles['right']).toBeUndefined();
-  });
-
-  it('defaults minWidth/minHeight to 28 (EYE_BUTTON_MIN_SIZE)', () => {
-    const styles = eyeButtonSx({ columnSide: 'right', isViewed: false }) as Record<string, unknown>;
-    expect(styles['minWidth']).toBe(28);
-    expect(styles['minHeight']).toBe(28);
-  });
-
-  it('[regression] minimum button size is 28px (WCAG tap target)', () => {
-    const styles = eyeButtonSx({ columnSide: 'right', isViewed: false }) as Record<string, unknown>;
-    expect(Number(styles['minWidth'])).toBeGreaterThanOrEqual(28);
-    expect(Number(styles['minHeight'])).toBeGreaterThanOrEqual(28);
-  });
-
-  it('uses success color when isViewed=true', () => {
-    const styles = eyeButtonSx({ columnSide: 'right', isViewed: true }) as Record<string, unknown>;
-    expect(styles['color']).toBe('success.main');
-  });
-
-  it('uses text.secondary when isViewed=false', () => {
-    const styles = eyeButtonSx({ columnSide: 'right', isViewed: false }) as Record<string, unknown>;
-    expect(styles['color']).toBe('text.secondary');
-  });
-
-  it('is absolutely positioned', () => {
-    const styles = eyeButtonSx({ columnSide: 'right', isViewed: false }) as Record<string, unknown>;
-    expect(styles['position']).toBe('absolute');
-    expect(styles['bottom']).toBe(0);
-  });
-});
-
-// ---------------------------------------------------------------------------
 // Done card hover behavior — regression (production sx assertion)
 // ---------------------------------------------------------------------------
 
@@ -434,5 +389,46 @@ describe('phaseFooterSlotSx — optional footer slot', () => {
     expect(phaseFooterSlotSx).toMatchObject({
       mt: 1,
     });
+  });
+});
+
+describe('buildDateTypographySx — phase date label', () => {
+  const base = { isScenario: false, isHighlighted: false, hideDecoration: false, color: undefined };
+
+  it('uses a bold, larger, color-tinted style for scenario phases', () => {
+    const styles = buildDateTypographySx({ ...base, isScenario: true, color: 'warning' });
+    expect(styles.fontSize).toBe('0.875rem');
+    expect(styles.fontWeight).toBe(800);
+    expect(styles.color).toBe('warning.main');
+  });
+
+  it('defaults the scenario color to primary when none is given', () => {
+    const styles = buildDateTypographySx({ ...base, isScenario: true, color: undefined });
+    expect(styles.color).toBe('primary.main');
+  });
+
+  it('uses a muted, smaller style for non-scenario phases', () => {
+    const styles = buildDateTypographySx({ ...base, isScenario: false });
+    expect(styles.fontSize).toBe('0.8rem');
+    expect(styles.fontWeight).toBeUndefined();
+    expect(styles.color).toBe('text.disabled');
+  });
+
+  it('reserves right padding for the corner decoration unless highlighted or hidden', () => {
+    expect(buildDateTypographySx({ ...base }).pr).toBe(6);
+    expect(buildDateTypographySx({ ...base, isHighlighted: true }).pr).toBe(0);
+    expect(buildDateTypographySx({ ...base, hideDecoration: true }).pr).toBe(0);
+  });
+});
+
+describe('pillIconBoxSx — inline icon slot inside pill badges', () => {
+  it('forces the inner svg to the exact requested icon size', () => {
+    const styles = pillIconBoxSx(16) as Record<string, unknown>;
+    expect(styles['& svg']).toEqual({ width: 16, height: 16 });
+  });
+
+  it('never shrinks inside its flex container', () => {
+    const styles = pillIconBoxSx(16) as Record<string, unknown>;
+    expect(styles['flexShrink']).toBe(0);
   });
 });

@@ -16,6 +16,7 @@
  *
  * `CardStatusBadge`-specific tests live in `card-status-badge/card-status-badge.test.ts`.
  * `buildPlatformStripItems`-specific tests live in `platform-strip/platform-strip.test.ts`.
+ * `EyeButton`-specific tests live in `eye-button/eye-button.test.ts`.
  */
 
 import React from 'react';
@@ -28,8 +29,6 @@ import {
   ACTIVE_DOT_SIZE,
   PHASE_PILL_ICON_SIZE,
   PHASE_PILL_TEXT_FONT_SIZE,
-  PHASE_EYE_ICON_SIZE,
-  EYE_BUTTON_MIN_SIZE,
 } from './phase-card.const';
 import { derivePlatformEntry, resolveCornerBadgeAlign, resolvePhotoSources } from './phase-card';
 import {
@@ -318,80 +317,6 @@ describe('resolveCornerBadgeAlign — column-side positioning (regression)', () 
     const leftResult = resolveCornerBadgeAlign('left');
     expect(leftResult.left).toBeDefined();
     expect(leftResult.right).toBeUndefined();
-  });
-});
-
-// ---------------------------------------------------------------------------
-// Eye button accessibility (WCAG 2.2 AA 2.5.8 regression)
-// ---------------------------------------------------------------------------
-
-describe('eye button — WCAG accessibility regression', () => {
-  it('[regression] PHASE_EYE_ICON_SIZE >= 20px (WCAG 1.4.11 — interactive icon minimum)', () => {
-    expect(PHASE_EYE_ICON_SIZE).toBeGreaterThanOrEqual(20);
-  });
-
-  it('[regression] EYE_BUTTON_MIN_SIZE >= 24px (WCAG 2.2 AA 2.5.8 — minimum touch target)', () => {
-    expect(EYE_BUTTON_MIN_SIZE).toBeGreaterThanOrEqual(24);
-  });
-
-  it('[regression] EYE_BUTTON_MIN_SIZE >= PHASE_EYE_ICON_SIZE (button must be larger than its icon)', () => {
-    expect(EYE_BUTTON_MIN_SIZE).toBeGreaterThanOrEqual(PHASE_EYE_ICON_SIZE);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// Viewed-eye toggle logic regression
-//
-// The eye button onClick in phase-card.tsx is:
-//   (e) => { e.stopPropagation(); onMarkViewed(); }
-//
-// These tests mirror that exact pattern so any change to the handler
-// (e.g. re-adding cursor:default guard or removing stopPropagation) is caught
-// before it reaches production.
-// ---------------------------------------------------------------------------
-
-/** Mirrors the exact onClick closure used in the phase-card eye button. */
-function buildPhaseEyeClickHandler(
-  onMarkViewed: () => void
-): (e: { stopPropagation: () => void }) => void {
-  return (e) => {
-    e.stopPropagation();
-    onMarkViewed();
-  };
-}
-
-describe('[regression] viewed-eye toggle logic — phase card', () => {
-  it('[regression] handler calls onMarkViewed', () => {
-    const onMarkViewed = vi.fn();
-    const handler = buildPhaseEyeClickHandler(onMarkViewed);
-    handler({ stopPropagation: vi.fn() });
-    expect(onMarkViewed).toHaveBeenCalledTimes(1);
-  });
-
-  it('[regression] handler calls e.stopPropagation (card expansion must not fire)', () => {
-    const onMarkViewed = vi.fn();
-    const stopPropagation = vi.fn();
-    const handler = buildPhaseEyeClickHandler(onMarkViewed);
-    handler({ stopPropagation });
-    expect(stopPropagation).toHaveBeenCalledTimes(1);
-  });
-
-  it('[regression] handler can be invoked twice — toggle on then off', () => {
-    const onMarkViewed = vi.fn();
-    const handler = buildPhaseEyeClickHandler(onMarkViewed);
-    handler({ stopPropagation: vi.fn() });
-    handler({ stopPropagation: vi.fn() });
-    expect(onMarkViewed).toHaveBeenCalledTimes(2);
-  });
-
-  it('[regression] handler is not gated on isViewed — no conditional guard around onMarkViewed()', () => {
-    // Regression: a previous implementation had cursor:default + no-op when isViewed=true.
-    // The handler itself must be unconditional — the consumer decides what toggle means.
-    const onMarkViewed = vi.fn();
-    // Call with isViewed=true scenario: handler must still fire
-    const handler = buildPhaseEyeClickHandler(onMarkViewed);
-    handler({ stopPropagation: vi.fn() });
-    expect(onMarkViewed).toHaveBeenCalledTimes(1);
   });
 });
 
