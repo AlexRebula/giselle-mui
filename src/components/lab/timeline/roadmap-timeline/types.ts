@@ -35,6 +35,13 @@ export type TimelineStep = {
   /** Optional list of bullet-point detail strings shown below the description. */
   details?: string[];
   /**
+   * Per-step override of which side the content renders on. Passed through to
+   * this step's own `TimelineItem`, overriding the `RoadmapTimeline`-level
+   * `position` prop for this one item — the same per-item override `@mui/lab`'s
+   * own `TimelineItem` natively supports.
+   */
+  side?: 'left' | 'right';
+  /**
    * If true, renders the step with a distinct "scenario" visual treatment
    * (dashed border, lighter opacity, label badge).
    */
@@ -46,10 +53,14 @@ export type TimelineStep = {
 /**
  * Props for `RoadmapTimeline`.
  *
- * Extends `@mui/lab`'s own `TimelineProps` (minus `children`, which this
- * component derives from `steps`) — `position`, `sx`, `className`, and
- * `classes` all pass through natively to the underlying `Timeline` root,
- * per the "uses `@mui/lab` layout props natively" design decision.
+ * Deliberately straddles `docs/components/api-design-rules.md`'s Tier 2
+ * (selective extension) and Tier 3 (composition props, data array):
+ * `steps: TimelineStep[]` is the Tier 3 data-driven shape, but this component
+ * still extends `@mui/lab`'s own `TimelineProps` (minus `children`, derived
+ * from `steps`) — Tier 3's usual "do not extend a specific MUI base" is
+ * intentionally not followed here, since `position`/`sx`/`className`/`classes`
+ * passing through natively is the whole point of the "uses `@mui/lab` layout
+ * props natively" design decision (see README.md).
  */
 export interface RoadmapTimelineProps extends Omit<TimelineProps, 'children'> {
   /** The flat list of steps to render, in order. */

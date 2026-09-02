@@ -125,6 +125,15 @@ describe('RoadmapTimeline', () => {
     expect(connectorCount).toBe(1);
   });
 
+  it('overrides a single step to a different side via its own TimelineItem position', () => {
+    const steps = [buildStep({ key: 1, side: 'left' }), buildStep({ key: 2, side: undefined })];
+    const html = renderToStaticMarkup(
+      React.createElement(RoadmapTimeline, { steps, position: 'right' })
+    );
+    expect(html).toContain('MuiTimelineItem-positionLeft');
+    expect(html).toContain('MuiTimelineItem-positionRight');
+  });
+
   it('forwards the position prop to the underlying Timeline root', () => {
     const html = renderToStaticMarkup(
       React.createElement(RoadmapTimeline, { steps: [buildStep({ key: 1 })], position: 'left' })

@@ -13,6 +13,8 @@ import { GiselleIcon } from '../../../material/data-display/icon/giselle';
 import type { TimelineStep } from './types';
 import {
   createRoadmapTimelineDemoSteps,
+  createRoadmapTimelineMultiScenarioDemo,
+  createRoadmapTimelinePerStepSideDemo,
   createRoadmapTimelineSingleStepDemo,
 } from './__fixtures__/roadmap-timeline.fixtures';
 import { RoadmapTimeline } from './roadmap-timeline';
@@ -58,7 +60,7 @@ export const AllDone: Story = {
 
 export const WithScenarios: Story = {
   args: {
-    steps: createRoadmapTimelineDemoSteps({ icon: ICON_ROCKET, scenarioIcon: ICON_STAR }),
+    steps: createRoadmapTimelineMultiScenarioDemo({ icon: ICON_ROCKET, scenarioIcon: ICON_STAR }),
   },
 };
 
@@ -87,6 +89,12 @@ export const AlternatePosition: Story = {
   args: {
     steps: createRoadmapTimelineDemoSteps({ icon: ICON_ROCKET, scenarioIcon: ICON_STAR }),
     position: 'alternate',
+  },
+};
+
+export const PerStepSideOverride: Story = {
+  args: {
+    steps: createRoadmapTimelinePerStepSideDemo(ICON_ROCKET),
   },
 };
 

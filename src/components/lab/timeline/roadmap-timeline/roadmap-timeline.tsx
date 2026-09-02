@@ -28,14 +28,7 @@ import type { RoadmapTimelineProps } from './types';
 // ----------------------------------------------------------------------
 
 /**
- * A lightweight, single-column timeline for roadmap pages, changelogs, and
- * documentation sites — the `@mui/lab`-native counterpart to `TimelineTwoColumn`.
- *
- * Uses the full `@mui/lab` Timeline primitive stack (`Timeline` + `TimelineItem`
- * + `TimelineSeparator` + `TimelineConnector` + `TimelineContent` + `TimelineDot`)
- * directly — MUI handles the accessible markup; this component only adds colour
- * and typed content. Deliberately thin: no expansion, no eye buttons, no photos,
- * no overlap detection. Those belong to `TimelineTwoColumn`.
+ * A lightweight, single-column timeline built directly on `@mui/lab`'s Timeline primitives — the documentation-page counterpart to `TimelineTwoColumn`.
  *
  * **Quality status (03 Sep 2026):** DoD 20/22 · Best practices not re-audited — SonarQube not verified (no tool access in this environment) · consuming-app validation not performed
  */
@@ -46,7 +39,7 @@ export const RoadmapTimeline = forwardRef<HTMLUListElement, RoadmapTimelineProps
         {steps.map((step, index) => {
           const isLast = index === steps.length - 1;
           return (
-            <TimelineItem key={step.key}>
+            <TimelineItem key={step.key} position={step.side}>
               <TimelineSeparator>
                 <TimelineDot color={resolveStepColor(step)} sx={stepOpacitySx(Boolean(step.done))}>
                   {step.icon}

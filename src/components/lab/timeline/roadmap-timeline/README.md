@@ -32,7 +32,7 @@ product roadmap — use `RoadmapTimeline`.
 | `sx`       | `SxProps<Theme>`  | —         | MUI sx forwarded to root.                                    |
 
 `TimelineStep` fields: `key`, `title`, `description`, `date`, `icon?`, `color?`, `done?`,
-`details?`, `isScenario?`, `scenarioLabel?` — see `types.ts` for full JSDoc.
+`details?`, `side?`, `isScenario?`, `scenarioLabel?` — see `types.ts` for full JSDoc.
 
 ## Design decisions
 
@@ -47,6 +47,11 @@ product roadmap — use `RoadmapTimeline`.
 - **Extends `@mui/lab`'s own `TimelineProps`** (minus `children`, derived from `steps`)
   rather than defining a parallel `position`-like prop — `position`, `sx`, `className`,
   and `classes` all pass through natively.
+- **`TimelineStep.side` overrides per-item, not a parallel mechanism.** Passed straight
+  to that step's own `TimelineItem`'s native `position` prop. Verified against `@mui/lab`'s
+  own source (`TimelineItem.js`): `position: positionProp || positionContext || 'right'` —
+  a per-item `position` cleanly overrides the root `Timeline`'s context-provided default
+  with no conflict, exactly the mechanism `@mui/lab` ships this feature for.
 - **`channelAlpha` for the scenario tint** — already shipped from
   `src/utils/theme/theme-utils/theme-utils.ts` (Phase A, 4 May 2026); no new utility
   dependency introduced.
