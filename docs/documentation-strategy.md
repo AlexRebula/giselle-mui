@@ -166,9 +166,9 @@ exception.
 **Already in use, under this exception:** `src/components/section/feature-flow/__fixtures__/images/`
 contains the repo owner's own real portfolio photos (e.g. `alex-look-down-1.webp`,
 `consulting-front-end-architecture-setup.webp`), used by `FeatureFlowSection`'s canonical
-Storybook story. Source: the homepage expertise section of the repo owner's own public
-portfolio site, `https://alexrebula.vercel.app/` — this is a deliberate, sanctioned instance of
-the exception above, not an oversight.
+Storybook story. Source: the repo owner's own public professional portfolio — already public
+elsewhere, not reproduced here. This is a deliberate, sanctioned instance of the exception
+above, not an oversight.
 
 ### Demo and fixture content extraction
 
