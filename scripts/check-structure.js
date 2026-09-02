@@ -83,7 +83,10 @@ const PARENT_DIRS_TO_CHECK = [
 // plus companions), not a layer folder — running findFlatFileViolations against
 // it would wrongly flag its own composition file, styles, tests, and utils as
 // "flat component files sitting in a layer folder".
-const NESTED_ONLY_DIRS_TO_CHECK = ['components/lab/timeline/two-column'];
+const NESTED_ONLY_DIRS_TO_CHECK = [
+  'components/lab/timeline/two-column',
+  'components/lab/timeline/compact',
+];
 
 // Ratchet baseline — see the module doc comment above. Tracked by giselle-mui#162
 // (and, separately, the FaqSection follow-up issue for src/components/section/faq/accordion/,
@@ -95,11 +98,7 @@ const NESTED_ONLY_DIRS_TO_CHECK = ['components/lab/timeline/two-column'];
 // either way), so it's kept in this baseline indefinitely rather than removed
 // once "migrated" like every other entry here.
 export const KNOWN_VIOLATIONS = new Set([
-  // compact/ — 4
-  'src/components/lab/timeline/compact/chevron-down-icon.tsx',
-  'src/components/lab/timeline/compact/milestone-modal.tsx',
-  'src/components/lab/timeline/compact/phase-accordion-row.tsx',
-  'src/components/lab/timeline/compact/task-details-renderer.tsx',
+  // compact/ — migrated (giselle-mui#222, group 1 of 3)
   // two-column/ — 5 genuine + 1 permanent exclusion (icons.tsx, see comment above)
   'src/components/lab/timeline/two-column/icons.tsx',
   'src/components/lab/timeline/two-column/marker-label.tsx',

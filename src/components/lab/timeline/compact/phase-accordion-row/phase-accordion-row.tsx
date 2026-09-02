@@ -6,14 +6,14 @@ import Box from '@mui/material/Box';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import { Accordion } from '../../../material/surfaces/card/accordion';
-import { ToggleIconButton } from '../../../material/input/toggle-icon-button';
-import { useNestedChecklist } from '../../../../utils/hooks/use-nested-checklist/use-nested-checklist';
-import { ChevronDownIcon } from './chevron-down-icon';
-import { TaskDetailsModal } from './milestone-modal';
+import { Accordion } from '../../../../material/surfaces/card/accordion';
+import { ToggleIconButton } from '../../../../material/input/toggle-icon-button';
+import { useNestedChecklist } from '../../../../../utils/hooks/use-nested-checklist/use-nested-checklist';
+import { ChevronDownIcon } from '../chevron-down-icon';
+import { TaskDetailsModal } from '../task-details-modal';
+import { accordionRootSx } from '../compact.styles';
 import {
   accordionDetailsSx,
-  accordionRootSx,
   accordionSummaryOverrideSx,
   checkHoverIconSx,
   dateSx,
@@ -29,16 +29,16 @@ import {
   milestoneTitleSx,
   phaseDotSx,
   phaseTitleSx,
-} from './compact.styles';
+} from './phase-accordion-row.styles';
 import {
   COMPACT_PHASE_DOT_SIZE,
   COMPACT_PHASE_ICON_SIZE,
   COMPACT_MILESTONE_DOT_SIZE,
   COMPACT_MILESTONE_ICON_SIZE,
-} from './compact.const';
+} from '../compact.const';
 import type { PhaseAccordionRowProps } from './types';
-import { resolveCompactColor, resolveTaskChildren } from './compact.utils';
-import type { Task } from '../two-column/types';
+import { resolveCompactColor, resolveTaskChildren } from '../compact.utils';
+import type { Task } from '../../two-column/types';
 
 // ----------------------------------------------------------------------
 

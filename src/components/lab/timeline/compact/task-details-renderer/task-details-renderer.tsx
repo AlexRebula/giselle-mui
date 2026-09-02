@@ -5,14 +5,14 @@ import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { TaskList } from '../task-list';
+import { TaskList } from '../../task-list';
 import type { TaskDetailsRendererProps } from './types';
 import {
   taskDetailsContentSx,
   taskDetailsEmptyStateSx,
   taskDetailsSummarySx,
 } from './task-details-renderer.styles';
-import { resolveTaskChildren } from './compact.utils';
+import { resolveTaskChildren } from '../compact.utils';
 
 function renderDetailsNode(node: ReactNode | undefined) {
   if (!node) return null;
