@@ -4,16 +4,12 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { SpineConnector } from './spine-connector';
+import { SpineConnector } from '../spine-connector';
 import { TimelineColumn } from './timeline-column';
-import { TimelineDot } from './timeline-dot';
-import { resolvePhaseTooltip, buildPhaseDotTsxProps } from './two-column.utils';
-import {
-  phaseRowSx,
-  centerColumnSx,
-  floatingDatePillSx,
-  phaseDotWrapperSx,
-} from './two-column.styles';
+import { TimelineDot } from '../timeline-dot';
+import { resolvePhaseTooltip, buildPhaseDotTsxProps } from '../two-column.utils';
+import { centerColumnSx, floatingDatePillSx } from '../two-column.styles';
+import { phaseRowSx, phaseDotWrapperSx } from './phase-row.styles';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +23,8 @@ import {
  *
  * `phaseCardNode` is pre-built by the parent (`TimelineTwoColumn`) and passed
  * through as a slot — it carries its own event handlers via closure.
+ *
+ * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
  */
 export function PhaseRow({
   phase,

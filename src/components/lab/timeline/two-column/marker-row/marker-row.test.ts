@@ -3,19 +3,19 @@
 import { describe, it, expect, vi } from 'vitest';
 import * as React from 'react';
 
-import type { TimelinePhase } from './types';
+import type { TimelinePhase } from '../types';
 import type { MarkerRowProps } from './types';
 
 // Child component mocks for unit isolation — these components have their own tests.
-vi.mock('./timeline-dot', () => ({
+vi.mock('../timeline-dot', () => ({
   TimelineDot: () => React.createElement('span', { 'data-testid': 'timeline-dot' }),
 }));
 
-vi.mock('./spine-connector', () => ({
+vi.mock('../spine-connector', () => ({
   SpineConnector: () => React.createElement('span', { 'data-testid': 'spine-connector' }),
 }));
 
-import { renderWithTheme } from '../../../../test-utils';
+import { renderWithTheme } from '../../../../../test-utils';
 import { MarkerRow } from './marker-row';
 
 // ---------------------------------------------------------------------------
