@@ -39,4 +39,10 @@ export type { TimelineCompactProps } from './components/lab/timeline/compact';
 export { TaskList } from './components/lab/timeline/task-list';
 export type { TaskListProps } from './components/lab/timeline/task-list';
 
+export { RoadmapTimeline, resolveStepColor } from './components/lab/timeline/roadmap-timeline';
+export type {
+  RoadmapTimelineProps,
+  TimelineStep,
+} from './components/lab/timeline/roadmap-timeline';
+
 export { assignMilestoneSidesByDone } from './utils/timeline/timeline-utils';

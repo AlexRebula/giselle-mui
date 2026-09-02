@@ -57,7 +57,28 @@ Phase: `roadmap` (per `docs/components/timeline/two-column/timeline-plan.md`'s p
 
 ## File structure
 
-_Filled in when implementation begins._
+```
+src/components/lab/timeline/roadmap-timeline/
+  roadmap-timeline.tsx             — component
+  roadmap-timeline.styles.ts       — sx constants and factories
+  roadmap-timeline.styles.test.ts  — style tests
+  roadmap-timeline.utils.ts        — resolveStepColor pure helper
+  roadmap-timeline.utils.test.ts   — util tests
+  roadmap-timeline.test.ts         — component tests
+  roadmap-timeline.stories.tsx     — Storybook stories
+  types.ts                         — TimelineStep, RoadmapTimelineProps
+  index.ts                         — barrel
+  README.md                        — this file
+  roadmap.md                       — open improvements and completed tasks
+  __fixtures__/roadmap-timeline.fixtures.ts — Storybook demo data
+```
+
+## Quality status — 03 Sep 2026
+
+| Dimension        | Score | Open items                                                      |
+| ----------------- | ----- | ----------------------------------------------------------------- |
+| DoD (Scenario B)  | 20/22 | SonarQube not run (no tool in this environment) · consuming-app validation not performed |
+| Best practices    | not re-audited | — |
 
 ## Related
 
