@@ -135,7 +135,7 @@ src/components/<name>/
   <name>.stories.tsx  — Storybook stories — MUST include the component name (Storybook glob: `*.stories.@(ts|tsx)`)
   <name>.test.ts      — Vitest unit tests — MUST end in `.test.ts` (vitest glob: `src/**/*.test.ts`)
   types.ts            — all TypeScript types
-  utils.ts            — pure logic functions (no JSX)
+  <name>.utils.ts     — pure logic functions (no JSX)
   index.ts            — barrel: re-exports component and types
   README.md           — why it exists, why it belongs here, design decisions, library safety
   <sub-component>/     — internal sub-components, each in its own named subfolder (superseded 2026-09, giselle-mui#161/#162 — previously flat, "NOT in subfolders"; see Sub-component extraction rule below)
@@ -145,7 +145,7 @@ src/components/<name>/
 
 - **TypeScript `type` aliases AND `interface` declarations → `types.ts`** (never inside `.tsx`). This applies to every exported and internal type without exception — `Props`, `Item`, `Config`, helper union types, internal-only types. If it is a type, it does not live in a `.tsx` file.
 - **Named constants → `<name>.const.ts`** (never inside `.tsx`). Every exported `const` that represents a size, font size, badge size, minimum touch target, or spacing value belongs in the const file. **Primitive values only — no JSX.** If a constant contains JSX (e.g. a default actions array with `<GiselleIcon />` elements), it belongs in `<name>.defaults.tsx` instead. See `*.const.ts companion files` section below.
-- Pure logic / helper functions (no JSX) → separate `utils.ts` file (not inside `.tsx`)
+- Pure logic / helper functions (no JSX) → separate `<name>.utils.ts` file (not inside `.tsx`)
 - Any `sx={}`, any property count → `<name>.styles.ts` (zero-tolerance, enforced by ESLint)
 - **Internal sub-components → own subfolder**, not flat in the parent folder (superseded 2026-09, giselle-mui#161/#162). See `Sub-component extraction rule` section below.
 - The `.tsx` file is the **composition layer only**: it imports from all of the above and renders JSX.
@@ -192,7 +192,7 @@ It demonstrates the full types/utils/styles/const/sub-component split:
 src/components/section/timeline/two-column/
   two-column.tsx                       — pure JSX composition only (no types, no logic functions)
   types.ts                             — all exported + internal TypeScript interfaces
-  utils.ts                             — all pure logic functions (no JSX return); fully unit-testable
+  two-column.utils.ts                  — all pure logic functions (no JSX return); fully unit-testable
   styles.ts                            — all sx constants (static) and sx factories (dynamic)
   index.ts                             — barrel
   timeline-two-column.stories.tsx      — Storybook stories (must match *.stories.tsx glob)
@@ -208,7 +208,7 @@ src/components/section/timeline/two-column/
 **Rule:** `two-column.tsx` must remain pure JSX composition.
 
 - TypeScript types → `types.ts`
-- Pure logic/helper functions (nothing that returns JSX) → `utils.ts`
+- Pure logic/helper functions (nothing that returns JSX) → `<name>.utils.ts`
 - Any `sx={}`, any property count → `styles.ts` (zero-tolerance)
 
 ## Test conventions
@@ -955,7 +955,7 @@ flat in the parent's.
   not left in the parent's `types.ts` alongside every sibling's.
 - If the sub-component has constants, they go in its own `*.const.ts` (parent's `*.const.ts` only
   for what's genuinely shared across siblings).
-- If the sub-component has non-trivial logic, it calls helpers from its own `utils.ts` (same
+- If the sub-component has non-trivial logic, it calls helpers from its own `*.utils.ts` (same
   shared-vs-own split as constants).
 
 **Why:**
@@ -1160,7 +1160,7 @@ giselle-mui#161/#162: no longer flat):**
 - [ ] No inline sx, any property count — all in this sub-component's own `*.styles.ts` (or the parent's, only if genuinely shared across siblings)
 - [ ] No `style={{}}` on `motion.*` elements — same file/ownership split as sx (factory pattern for MotionValues)
 - [ ] No duplicated JSX blocks — extracted to helper or util
-- [ ] All inline conditional logic that produces a derived value is in `utils.ts`
+- [ ] All inline conditional logic that produces a derived value is in `*.utils.ts`
 - [ ] `displayName` set; `React.forwardRef` used if it wraps a DOM element or MUI component
 - [ ] JSDoc covers all props including behaviour flags
 - [ ] At least one test file exists, co-located in this sub-component's own subfolder
@@ -1178,7 +1178,7 @@ giselle-mui#161/#162: no longer flat):**
 - [ ] `<name>.styles.test.ts` covers every exported factory
 - [ ] No named constants for sizes inline — all in `<name>.const.ts`
 - [ ] Regression tests for every size constant with a safety minimum
-- [ ] No pure logic functions in `.tsx` — all in `utils.ts`
+- [ ] No pure logic functions in `.tsx` — all in `<name>.utils.ts`
 - [ ] No capital-letter helper components inside `.tsx` — each in its own named subfolder (Scenario A rules apply)
 - [ ] No `React.FC`, no `any`, no bare `<Box>` without props
 - [ ] `sx` array spread on root element

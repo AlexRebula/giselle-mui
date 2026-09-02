@@ -12,7 +12,7 @@ import {
   taskDetailsEmptyStateSx,
   taskDetailsSummarySx,
 } from './task-details-renderer.styles';
-import { resolveTaskChildren } from './utils';
+import { resolveTaskChildren } from './compact.utils';
 
 function renderDetailsNode(node: ReactNode | undefined) {
   if (!node) return null;

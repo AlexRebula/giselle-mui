@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
 import { doneCheckmarkSx, dotInnerIconSlotSx, pulseRingAfterSx } from './timeline-dot.styles';
-import { getDotSize } from './utils';
+import { getDotSize } from './timeline-dot.utils';
 
 // ----------------------------------------------------------------------
 

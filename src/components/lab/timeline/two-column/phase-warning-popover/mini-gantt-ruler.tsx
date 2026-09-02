@@ -2,10 +2,10 @@ import Box from '@mui/material/Box';
 
 import { ganttTrackSx, ganttBarSx } from './phase-warning-popover.styles';
 import type { MiniGanttRulerProps } from './types';
-import { resolveSliderColor } from './utils';
+import { resolveSliderColor } from './phase-warning-popover.utils';
 
 // Re-export — keeps `import { resolveSliderColor } from './mini-gantt-ruler'` working.
-export { resolveSliderColor } from './utils';
+export { resolveSliderColor } from './phase-warning-popover.utils';
 
 // ----------------------------------------------------------------------
 

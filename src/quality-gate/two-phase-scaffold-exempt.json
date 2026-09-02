@@ -39,7 +39,7 @@
     "src/components/lab/timeline/two-column/timeline-dot/timeline-dot.styles.test.ts",
     "src/components/lab/timeline/two-column/tooltip.test.ts",
     "src/components/lab/timeline/two-column/two-column.styles.test.ts",
-    "src/components/lab/timeline/two-column/utils.test.ts",
+    "src/components/lab/timeline/two-column/two-column.utils.test.ts",
     "src/components/material/data-display/activity-feed-list/activity-feed-list.test.ts",
     "src/components/material/data-display/amortization-table/amortization-table.test.ts",
     "src/components/material/data-display/animated-gradient/animated-gradient-text.styles.test.ts",

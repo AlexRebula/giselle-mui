@@ -12,7 +12,7 @@ import {
   resolveMilestoneDotHandlers,
   resolveMilestoneTooltip,
   resolveTaskChildren,
-} from './utils';
+} from './two-column.utils';
 import {
   msRowSx,
   msColumnBoxSx,

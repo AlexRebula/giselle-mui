@@ -31,7 +31,7 @@
 import React, { act } from 'react';
 import ReactDOM from 'react-dom/client';
 import { it, vi, expect, describe, afterEach } from 'vitest';
-import type * as UtilsModule from './utils';
+import type * as UtilsModule from './two-column.utils';
 import { GiselleThemeProvider } from '../../../../components/theming/theme-provider/giselle/giselle';
 
 (globalThis as unknown as Record<string, unknown>)['IS_REACT_ACT_ENVIRONMENT'] = true;
@@ -77,7 +77,7 @@ vi.mock('./milestone-badge', async () => {
   };
 });
 
-vi.mock('./utils', async (importOriginal) => {
+vi.mock('./two-column.utils', async (importOriginal) => {
   const actual = await importOriginal<typeof UtilsModule>();
   return {
     ...actual,

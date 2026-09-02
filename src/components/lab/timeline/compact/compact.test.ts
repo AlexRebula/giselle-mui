@@ -13,7 +13,7 @@ import {
   COMPACT_PHASE_DOT_SIZE,
 } from './compact.const';
 import { TimelineCompact } from './compact';
-import { resolveCompactColor } from './utils';
+import { resolveCompactColor } from './compact.utils';
 
 // ----------------------------------------------------------------------
 

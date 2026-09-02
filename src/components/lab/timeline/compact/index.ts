@@ -1,7 +1,7 @@
 export { TimelineCompact } from './compact';
 export { TaskDetailsRenderer } from './task-details-renderer';
 export type { TimelineCompactProps } from './types';
-export { resolveCompactColor } from './utils';
+export { resolveCompactColor } from './compact.utils';
 export {
   COMPACT_PHASE_DOT_SIZE,
   COMPACT_MILESTONE_DOT_SIZE,

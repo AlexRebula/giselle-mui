@@ -37,7 +37,7 @@ import {
   COMPACT_MILESTONE_ICON_SIZE,
 } from './compact.const';
 import type { PhaseAccordionRowProps } from './types';
-import { resolveCompactColor, resolveTaskChildren } from './utils';
+import { resolveCompactColor, resolveTaskChildren } from './compact.utils';
 import type { Task } from '../two-column/types';
 
 // ----------------------------------------------------------------------

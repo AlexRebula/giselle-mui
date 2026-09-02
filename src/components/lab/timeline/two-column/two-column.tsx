@@ -29,7 +29,7 @@ import {
   buildPhaseCardTsxProps,
   computeSlotHeights,
   resolveTaskChildren,
-} from './utils';
+} from './two-column.utils';
 import { phaseLiSx, timelineRootSx, timelineViewSlotSx } from './two-column.styles';
 
 // SSR-safe layout effect — runs as useLayoutEffect on the client (synchronous, before
