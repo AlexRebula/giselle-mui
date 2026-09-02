@@ -75,12 +75,12 @@ this is any documentation content presented as a carousel slide, not just a high
   (`useScrollDirection` in `feature-flow-section.utils.ts`) rather than framer-motion's
   `useScroll`, keeping the scroll/idle state machine simple to unit test.
 
-## Quality status — 28 Aug 2026
+## Quality status — 02 Sep 2026
 
-| Dimension        | Score | Open items                                                                                                                                                                      |
-| ---------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DoD (Scenario B) | 19/20 | `feature-flow-section.const.ts`'s timing constants are intentionally not re-exported (fixed, not configurable)                                                                  |
-| Best practices   | 10/13 | No `Responsive` story · crossfade transitions don't respect `prefers-reduced-motion` · default story doesn't demonstrate the scroll-direction image swap (`scrollImages` unset) |
+| Dimension              | Score | Open items |
+| ---------------------- | ----- | ---------- |
+| DoD (Scenario B)       | 18/22 | SonarQube not verified (no SonarQube tooling in this repo) · size-constant regression tests missing · not all six palette keys in stories · no Responsive story · previously noted: `feature-flow-section.const.ts`'s timing constants are intentionally not re-exported (fixed, not configurable) |
+| Best practices         | 10/13 | No `Responsive` story · crossfade transitions don't respect `prefers-reduced-motion` · default story doesn't demonstrate the scroll-direction image swap (`scrollImages` unset) |
 
 ## Phase
 

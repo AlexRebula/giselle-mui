@@ -58,6 +58,8 @@ const RESTING_REVEAL_STYLE: FeatureFlowImageRevealStyle = {
  * established use (`FeatureFlowImage['sx']`). All other passthrough props
  * (`className`, event handlers, `data-*`/`aria-*`, etc.) go to the root
  * `Stack` as usual.
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export const FeatureFlowImageColumn = React.forwardRef<HTMLDivElement, FeatureFlowImageColumnProps>(
   function FeatureFlowImageColumn(

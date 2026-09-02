@@ -102,12 +102,12 @@ src/components/timeline-two-column/
   README.md                                  — this file
 ```
 
-## Quality status — 13 May 2026
+## Quality status — 02 Sep 2026
 
-| Dimension        | Score | Open items |
-| ---------------- | ----- | ---------- |
-| DoD (Scenario B) | 20/20 | —          |
-| Best practices   | 13/13 | —          |
+| Dimension              | Score | Open items |
+| ---------------------- | ----- | ---------- |
+| DoD (Scenario B)       | 19/22 | SonarQube not verified (no SonarQube tooling in this repo) · styles test misses a factory · named size constant still inline |
+| Best practices         | 13/13 | — |
 
 ## Related
 

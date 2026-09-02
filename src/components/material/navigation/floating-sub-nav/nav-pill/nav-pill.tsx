@@ -20,7 +20,7 @@ import { SubNavButton } from '../sub-nav-button';
  * This is an internal sub-component — always rendered by `FloatingSubNav`,
  * never instantiated directly by consumers.
  *
- * **Quality status (13 May 2026):** DoD 9/9 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export const NavPill = React.forwardRef<HTMLDivElement, NavPillProps>(function NavPill(
   { items, activeId, onPress },

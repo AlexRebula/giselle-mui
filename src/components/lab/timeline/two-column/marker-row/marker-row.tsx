@@ -31,7 +31,7 @@ import {
  * phases so the label is always visible on mobile, mirroring the column-collapse
  * behaviour of full phase cards.
  *
- * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export function MarkerRow({
   phase,

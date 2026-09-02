@@ -21,6 +21,8 @@ import { artisticLogoSx } from './artistic-logo-layer.styles';
  * entirely absent from the DOM until a source is supplied.
  *
  * @internal — used by `InteractiveHeroLogo` only.
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export const ArtisticLogoLayer = React.forwardRef<HTMLImageElement, ArtisticLogoLayerProps>(
   function ArtisticLogoLayer(

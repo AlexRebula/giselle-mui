@@ -21,6 +21,8 @@ import type { AvatarRowProps } from './types';
  *   onSelect={(id) => setActive(id)}
  * />
  * ```
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export function AvatarRow({ items, activeId, onSelect, sx }: AvatarRowProps) {
   return (

@@ -1150,49 +1150,14 @@ All `isViewed` / `onMarkViewed` eye buttons in this component family must meet W
 
 ### Component cleanup — definition of done
 
-Use `cleanup component <Name>` to trigger the full workflow (`docs/components/cleanup-workflow.md`). The checklists below are the acceptance criteria — every PR that touches a component file is reviewed against these.
+Use `cleanup component <Name>` to trigger the full workflow (`docs/components/cleanup-workflow.md`). Every PR that touches a component file is reviewed against the definition of done for its scenario:
 
-**Scenario A — Sub-component (own named subfolder inside a parent folder — superseded 2026-09,
-giselle-mui#161/#162: no longer flat):**
+- **Scenario A — sub-component** (own named subfolder inside a parent folder): a **12-item** DoD.
+- **Scenario B — standalone component** (own subfolder, exported from an entry point): a **22-item** DoD.
 
-- [ ] Own named subfolder created inside the parent folder
-- [ ] No `type`/`interface` in `.tsx` — all in this sub-component's own `types.ts` (shared types imported from parent's `../types.ts`)
-- [ ] No inline sx, any property count — all in this sub-component's own `*.styles.ts` (or the parent's, only if genuinely shared across siblings)
-- [ ] No `style={{}}` on `motion.*` elements — same file/ownership split as sx (factory pattern for MotionValues)
-- [ ] No duplicated JSX blocks — extracted to helper or util
-- [ ] All inline conditional logic that produces a derived value is in `*.utils.ts`
-- [ ] `displayName` set; `React.forwardRef` used if it wraps a DOM element or MUI component
-- [ ] JSDoc covers all props including behaviour flags
-- [ ] At least one test file exists, co-located in this sub-component's own subfolder
-- [ ] Own `index.ts` barrel; re-exported from the parent's own `index.ts`
-- [ ] SonarQube: zero violations
-- [ ] `npm run check:verify` exits 0
-- [ ] Quality status added to JSDoc (one line) — Step 14
+**See [`docs/components/cleanup-workflow.md`](../docs/components/cleanup-workflow.md) for the full, authoritative checklists — do not duplicate the lists here.** They were duplicated in this file until 2026-09-02 and had silently drifted out of sync with the playbook (this copy carried 13 Scenario A items and 21 Scenario B items against the playbook's 12 and 22), so scores recorded against it were wrong. One copy, one place.
 
-**Scenario B — Standalone component (own subfolder):**
-
-- [ ] Own subfolder created with all companion files present
-- [ ] No `type`/`interface` in `.tsx` — all in `types.ts`
-- [ ] No inline sx, any property count — all in `<name>.styles.ts` (zero-tolerance)
-- [ ] No `style={{}}` on `motion.*` elements — all in `<name>.styles.ts` (factory pattern for MotionValues)
-- [ ] `<name>.styles.test.ts` covers every exported factory
-- [ ] No named constants for sizes inline — all in `<name>.const.ts`
-- [ ] Regression tests for every size constant with a safety minimum
-- [ ] No pure logic functions in `.tsx` — all in `<name>.utils.ts`
-- [ ] No capital-letter helper components inside `.tsx` — each in its own named subfolder (Scenario A rules apply)
-- [ ] No `React.FC`, no `any`, no bare `<Box>` without props
-- [ ] `sx` array spread on root element
-- [ ] `...other` spread on root element
-- [ ] All internal sub-components exported from `index.ts`
-- [ ] `src/index.ts` exports the component
-- [ ] `README.md` complete
-- [ ] SonarQube: zero violations
-- [ ] All six palette keys shown in stories where colour variants exist
-- [ ] `Responsive` story present
-- [ ] `npm run check:verify` exits 0
-- [ ] `npm run build` exits 0
-- [ ] `yalc push` + consuming app validated
-- [ ] Quality status added to component JSDoc and `README.md` — Step 14
+Determining which scenario applies is Phase 0 of the playbook, and the scores go into the component's JSDoc `Quality status` line per Step 14.
 
 ---
 

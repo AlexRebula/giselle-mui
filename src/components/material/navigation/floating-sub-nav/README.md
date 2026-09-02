@@ -80,9 +80,9 @@ import { FloatingSubNav } from '@littlebranches/giselle-mui/motion';
 - `SectionContainer` — the outer shell used to constrain section content. `FloatingSubNav` can
   be rendered inside a `SectionContainer` with `sticky={true}` to pin the nav to that section.
 
-## Quality status — 13 May 2026
+## Quality status — 02 Sep 2026
 
-| Dimension        | Score | Open items |
-| ---------------- | ----- | ---------- |
-| DoD (Scenario A) | 9/9   | —          |
-| Best practices   | 13/13 | —          |
+| Dimension              | Score | Open items |
+| ---------------------- | ----- | ---------- |
+| DoD (Scenario B)       | 20/22 | SonarQube not verified (no SonarQube tooling in this repo) · no ...other spread on root |
+| Best practices         | not re-audited | private 13-item rubric not available in this repo |

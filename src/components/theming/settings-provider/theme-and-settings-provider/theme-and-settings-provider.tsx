@@ -52,6 +52,8 @@ import type { GiselleThemeAndSettingsProviderProps } from './types';
  *   <App />
  * </GiselleThemeAndSettingsProvider>
  * ```
+ *
+ * **Quality status (02 Sep 2026):** DoD 20/22 · Best practices not re-audited — SonarQube not verified · no Responsive story
  */
 export function GiselleThemeAndSettingsProvider<TState extends BaseSettingsState>({
   children,

@@ -15,6 +15,8 @@ import type { MetricCardDecorationProps } from './types';
  * @example
  * import { MetricCard, MetricCardDecoration } from '@littlebranches/giselle-mui';
  * <MetricCard decoration={<MetricCardDecoration color="primary" />} ... />
+ *
+ * **Quality status (02 Sep 2026):** DoD 19/22 · Best practices not re-audited — SonarQube not verified · size-constant regression tests missing · no Responsive story
  */
 export const MetricCardDecoration = React.forwardRef<HTMLDivElement, MetricCardDecorationProps>(
   function MetricCardDecoration({ color = 'primary', sx, ...other }, ref) {

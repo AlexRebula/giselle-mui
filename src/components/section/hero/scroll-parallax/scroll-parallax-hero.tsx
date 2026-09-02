@@ -55,7 +55,7 @@ import type { ParallaxMultipliers, ScrollParallaxHeroProps } from './types';
  * />
  * ```
  *
- * **Quality status (May 2026):** implementation complete, tests passing.
+ * **Quality status (02 Sep 2026):** DoD 21/22 · Best practices not re-audited — SonarQube not verified
  */
 export function ScrollParallaxHero({
   logo,

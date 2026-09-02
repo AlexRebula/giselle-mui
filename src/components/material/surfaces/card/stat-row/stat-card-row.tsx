@@ -44,7 +44,7 @@ export type { StatCardRowProps } from './types';
  * />
  * ```
  *
- * **Quality status (July 2026):** DoD — complete
+ * **Quality status (02 Sep 2026):** DoD 21/22 · Best practices not re-audited — SonarQube not verified
  */
 export function StatCardRow({ items, renderChart, sx, ...other }: StatCardRowProps) {
   return (

@@ -15,6 +15,9 @@ import {
 
 // ----------------------------------------------------------------------
 
+/**
+ * **Quality status (02 Sep 2026):** DoD 19/22 · Best practices not re-audited — SonarQube not verified · JSDoc prop coverage incomplete · no Responsive story
+ */
 export function ProfileSummaryCard({
   name,
   role,

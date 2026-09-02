@@ -17,8 +17,9 @@ Before reading a single line of implementation, answer this one question:
 
 | Signal                                                            | Role                                          |
 | ----------------------------------------------------------------- | --------------------------------------------- |
-| Exported from `src/index.ts`                                      | Standalone — needs its own subfolder          |
-| Listed in `docs/component-inventory.md`                           | Standalone                                    |
+| Exported from `src/index.ts` (or `charts-`/`motion-`/`lab-index.ts`) | Standalone — needs its own subfolder       |
+| Marked `Shipped · <entry point>` in `docs/component-inventory.md` | Standalone                                    |
+| Marked `Shipped · internal` in `docs/component-inventory.md`      | Sub-component                                 |
 | File lives inside a parent component's own subfolder              | Sub-component — needs its own named subfolder |
 | Only imported by one sibling `.tsx` in the same folder            | Sub-component                                 |
 | Has its own `Props` type but is never consumed outside its folder | Sub-component                                 |
@@ -34,9 +35,9 @@ This is a separate question from the folder structure. A standalone component in
 
 Answer these in order. Stop at the first yes.
 
-1. **Could a second project use this exactly as-is?** If `first-branch`, a future app, or any other giselle-mui consumer would want to import this component directly, it belongs in the barrel.
-2. **Is it used in more than one place in the consuming app?** Multiple independent usages in `alexrebula` (or any consumer) signal it encodes something reusable, not something app-specific.
-3. **Is it listed in `docs/component-inventory.md`?** If yes, the decision was already made — add it to the barrel.
+1. **Could a second project use this exactly as-is?** If another private consuming app, a future app, or any other giselle-mui consumer would want to import this component directly, it belongs in the barrel.
+2. **Is it used in more than one place in the consuming app?** Multiple independent usages in a consuming app signal it encodes something reusable, not something app-specific.
+3. **Is it already marked `Shipped · <entry point>` in `docs/component-inventory.md`?** If yes, the decision was already made — add it to the barrel. (A `Shipped · internal` row means the opposite: it was deliberately kept private.)
 4. **Does it encode an accessibility or design rule that is non-trivial to get right?** Correct `aria-*` wiring, `sx` array spread, minimum icon sizes, column-alignment invariants — things a developer would silently get wrong without this component.
 
 **If any answer is yes** → the component is exported from `src/index.ts`. Add it to the barrel in Phase 2 Step 9.
@@ -104,7 +105,7 @@ When two style constants are structurally identical except for one varying argum
 
 Check every `*.styles.ts` file for sibling pairs. If they share the same shape and differ only by one dimension, merge them. See `timelineColumnSx`, `msColumnBoxSx`, and `markerLabelSlotSx` in `two-column.styles.ts` as canonical examples.
 
-**Policy: zero-tolerance inline `sx`, component files included (2026-08-31).** Component `.tsx` files previously used a "~3 properties" threshold — anything smaller could stay inline — while only `.stories.tsx` files (Step 8) were zero-tolerance. That split is retired: every `sx={}` object in a component `.tsx` file must now be extracted to `<component-name>.styles.ts`, regardless of property count, including single-property objects (`sx={{ color: 'primary.main' }}`) and layout one-liners (`sx={{ flex: 1, minWidth: 0 }}`). Reasoning mirrors the story-file rule: consistent discoverability (all styles grep-findable in one file per component), no per-render object allocations for static styles, and uniform enforcement avoids "is 2 properties ok?" debates. There are no exceptions for sub-components, internal/unexported components, or components with only one or two callers of `sx`. A shared style used by more than one sub-component still belongs in the _parent's_ `*.styles.ts` (see "Style constant vs wrapper component" in `docs/component-api-contract.md`); a style used only by one component belongs in that component's own `*.styles.ts`.
+**Policy: zero-tolerance inline `sx`, component files included (2026-08-31).** Component `.tsx` files previously used a "~3 properties" threshold — anything smaller could stay inline — while only `.stories.tsx` files (Step 8) were zero-tolerance. That split is retired: every `sx={}` object in a component `.tsx` file must now be extracted to `<component-name>.styles.ts`, regardless of property count, including single-property objects (`sx={{ color: 'primary.main' }}`) and layout one-liners (`sx={{ flex: 1, minWidth: 0 }}`). Reasoning mirrors the story-file rule: consistent discoverability (all styles grep-findable in one file per component), no per-render object allocations for static styles, and uniform enforcement avoids "is 2 properties ok?" debates. There are no exceptions for sub-components, internal/unexported components, or components with only one or two callers of `sx`. A shared style used by more than one sub-component still belongs in the _parent's_ `*.styles.ts` (see "Where a shared style constant lives" in `docs/component-api-contract.md`); a style used only by one component belongs in that component's own `*.styles.ts`.
 
 ### Step 3b — Animations (motion subpath components only)
 
@@ -338,7 +339,7 @@ Keep the label **generic** — "best practices" is the correct public-facing ter
 
 | Dimension        | Score | Open items                           |
 | ---------------- | ----- | ------------------------------------ |
-| DoD (Scenario B) | n/20  | SonarQube not yet run · …            |
+| DoD (Scenario B) | n/22  | SonarQube not yet run · …            |
 | Best practices   | n/13  | JSDoc prop coverage not verified · … |
 ```
 

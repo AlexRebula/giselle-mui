@@ -14,7 +14,7 @@ import { buildCardDecorationGradientSx, phaseCardIconBoxSx } from './card-decora
  * Receives pre-computed `isOverduePending` to avoid repeating the `&&` logic
  * in the parent and to keep `PhaseCard`'s own Cognitive Complexity below 15.
  *
- * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export function CardDecoration({ color, isOverduePending, icon }: CardDecorationProps) {
   return (

@@ -14,7 +14,7 @@ import { markerCaptionSx, markerDateSpanSx } from './marker-label.styles';
  * Used in both the left and right label slots of `MarkerRow` — extracted to eliminate
  * duplicated JSX and ensure the label format is always consistent across both slots.
  *
- * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export function MarkerLabel({ title, date }: MarkerLabelProps) {
   return (

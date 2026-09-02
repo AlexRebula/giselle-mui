@@ -39,7 +39,7 @@ export { MetricCardDecoration } from './metric-card-decoration';
  *   sx={(theme) => ({ boxShadow: theme.shadows[2] })}
  * />
  *
- * **Quality status (8 May 2026):** DoD 20/20 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 20/22 · Best practices 13/13 — SonarQube not verified · JSDoc prop coverage incomplete
  */
 export function MetricCard({
   value,

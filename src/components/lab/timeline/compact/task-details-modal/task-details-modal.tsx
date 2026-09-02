@@ -29,7 +29,7 @@ import { TaskDetailsRenderer } from '../task-details-renderer';
  * `fullScreen` is derived from a plain `useMediaQuery` string rather than
  * a theme callback so the component stays testable without a full theme context.
  *
- * **Quality status (13 May 2026):** DoD 9/9 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 10/12 · Best practices 13/13 — SonarQube not verified · JSDoc prop coverage incomplete
  * @internal — used by `TimelineCompact` via `PhaseAccordionRow`.
  */
 export function TaskDetailsModal({

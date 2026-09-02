@@ -12,7 +12,7 @@ export { resolveSliderColor } from '../phase-warning-popover.utils';
 /**
  * Mini read-only Gantt ruler showing all conflicting phases on a shared time axis.
  *
- * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 10/12 · Best practices 13/13 — SonarQube not verified · JSDoc prop coverage incomplete
  */
 export function MiniGanttRuler({ axis, conflictingPhases, overrides }: MiniGanttRulerProps) {
   const span = axis.max - axis.min;

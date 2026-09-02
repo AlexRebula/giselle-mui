@@ -16,6 +16,8 @@ import type { SettingsThemeBridgeProps } from './types';
  * Must be rendered inside both `GiselleThemeProvider` (for `useColorScheme`)
  * and `GiselleSettingsProvider` (for `useGiselleSettings`).
  * Renders nothing — returns `null`.
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export function SettingsThemeBridge<TState extends BaseSettingsState>({
   getMode,

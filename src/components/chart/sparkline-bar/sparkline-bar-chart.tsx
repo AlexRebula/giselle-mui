@@ -31,6 +31,8 @@ const ReactApexChart = lazy(() => import('react-apexcharts'));
  * ```tsx
  * <SparklineBarChart data={[5, 18, 12, 51, 68, 11, 9]} color="success" />
  * ```
+ *
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices not re-audited — SonarQube not verified
  */
 export function SparklineBarChart({
   data,

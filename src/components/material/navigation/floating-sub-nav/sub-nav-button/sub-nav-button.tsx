@@ -27,7 +27,7 @@ import type { SubNavButtonProps } from './types';
  * This is an internal sub-component — always rendered by `NavPill`,
  * never instantiated directly by consumers.
  *
- * **Quality status (13 May 2026):** DoD 9/9 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export const SubNavButton = React.forwardRef<HTMLButtonElement, SubNavButtonProps>(
   function SubNavButton({ item, isActive, onPress }, ref) {

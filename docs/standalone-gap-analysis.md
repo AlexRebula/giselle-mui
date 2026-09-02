@@ -1,158 +1,111 @@
 ---
-sidebar_position: 6
-sidebar_label: 'Standalone Project Gap Analysis'
+sidebar_position: 7
+sidebar_label: 'Migration Source Gap Analysis'
 ---
 
-# Standalone Project Gap Analysis
+# Migration source gap analysis
 
-> _Last updated: May 2026_
+> _Last updated: 02 Sep 2026_
 
-This document answers a specific question: **what does `giselle-mui` need to export so
-that a brand-new Next.js project can use it as a complete design system foundation —
-with zero proprietary theme dependency?**
+This document tracks one axis and one axis only: **which components still live in the private consuming apps and have not yet been ported into `giselle-mui`.**
 
-The analysis is driven by a real audit of `alexrebula`. Every component and utility that
-alexrebula's own sections depend on has been categorised here by its current status.
+That is deliberately narrower than it sounds, and deliberately different from the other two trackers:
 
----
+| Tracker                                                | Axis                                                                  |
+| ------------------------------------------------------ | --------------------------------------------------------------------- |
+| **this file**                                          | Exists in a private consuming app · not yet ported here               |
+| [`component-inventory.md`](./component-inventory.md)   | Internal build phase and DoD score of everything already in this repo |
+| [`component-compliance.md`](./component-compliance.md) | Per-folder README / JSDoc / story / roadmap presence                  |
 
-## Already shipped — usable today
+A component leaves this document the moment it ships here — it does not get a ✅ row and stay. If you want to know what is in the library, read the inventory.
 
-These components are exported from `giselle-mui` and work in any MUI v7 project with zero
-additional setup.
-
-| Export                                | What it does                                       | Used in alexrebula                 |
-| ------------------------------------- | -------------------------------------------------- | ---------------------------------- |
-| `GiselleIcon`                         | Offline-safe Iconify icon wrapper                  | 5+ files                           |
-| `TimelineTwoColumn`                   | Alternating two-column expandable timeline         | career-timeline, roadmap, scheduling |
-| `MetricCard` + `MetricCardDecoration` | Metric card with stat, label, and decoration slot  | expertise-areas                    |
-| `QuoteCard`                           | Pull-quote card with author, source, and icon slot | testimonials                       |
-| `SelectableCard`                      | Keyboard-accessible selectable/toggle card         | billing/plan pages                 |
-| `IconActionBar`                       | Row of icon buttons with tooltips                  | (ready, not yet wired)             |
-| `createIconRegistrar`                 | Utility: registers Iconify icon sets offline       | icon-sets files                    |
+> **Naming:** the consuming apps are private, so they are referred to generically throughout ("the primary consuming app", "the second consuming app") per the public-repository rule in [`AGENTS.md`](../AGENTS.md). Do not substitute their real repository names back in.
 
 ---
 
-## The structural blocker: `GiselleThemeProvider`
+## Why porting is a rewrite, not a copy
 
-Without this, a blank Next.js project still has to wire up a MUI `ThemeProvider`
-manually to get CSS variables mode working. `GiselleThemeProvider` is the one export
-that makes this achievable — it replaces any manually wired MUI `ThemeProvider` chain.
+The source apps use a proprietary theme. Any component there that touches a proprietary utility, palette token, or provider **cannot be copied** — it has to be re-implemented independently against MUI v7 CSS variables mode and this library's own conventions. That is why "port" estimates here are not proportional to the size of the original file, and why a component can sit in this list for a long time while looking trivially small in the source app.
 
-See [`roadmap.md`](../roadmap.md) Phases A → B → C for the full spec.
-
-**Dependency chain (must go in order):**
-
-```
-Phase A: channelAlpha, hexToChannel, pxToRem  ←  ✅ Done (4 May 2026)
-    ↓
-Phase B: giselleTheme (Giselle brand palette)
-    ↓
-Phase C: GiselleThemeProvider  ←  the structural enabler
-    ↓
-Phase D: UI primitives (see below)
-```
+The corollary: a source component that only ever used plain MUI is genuinely cheap to move, and those are called out below.
 
 ---
 
-## Phase D — UI primitives for standalone projects
+## The original structural blocker is gone
 
-These components do not exist in giselle-mui yet. They are the recurring layout patterns
-in alexrebula's own sections — patterns that any new project would also need, and that
-are currently only available with a proprietary theme (or reimplementing them from scratch).
+This document was written in May 2026 around a single question — what does a blank Next.js project need before it can drop the proprietary theme entirely? — and the answer at the time was a chain of unshipped theming exports.
 
-### Ready to extract (minimal changes needed)
+That chain has fully landed:
 
-| Component              | Source in alexrebula                      | What's needed before extraction           |
-| ---------------------- | ----------------------------------------- | ----------------------------------------- |
-| `TwoColumnShowcaseRow` | `src/components/two-column-showcase-row/` | Nothing — no changes needed, ready now    |
-| `OptionWithBlurb`      | `src/components/option-with-blurb/`       | Nothing — tiny, no changes needed         |
-| `SectionPendingLoader` | `src/components/section-pending-loader/`  | Switch internal `Iconify` → `GiselleIcon` |
+| Export                                               | Then        | Now                             |
+| ---------------------------------------------------- | ----------- | ------------------------------- |
+| `channelAlpha`, `hexToChannel`, `pxToRem`, `remToPx` | ✅ Phase A  | Shipped — main and `/utils`     |
+| `giselleTheme` + palette constants                   | ⬜ Phase B  | **Shipped** — main and `/utils` |
+| `GiselleThemeProvider`                               | ⬜ Phase C  | **Shipped** — main              |
+| `GiselleSettingsProvider`                            | ⬜ Phase D  | **Shipped** — main              |
+| `GiselleThemeAndSettingsProvider`                    | not planned | **Shipped** — main              |
 
-### Need cleanup before extraction
-
-| Component                               | Source                             | What needs to change                                           |
-| --------------------------------------- | ---------------------------------- | -------------------------------------------------------------- |
-| `FloatingSubNav` / `FloatingControlBar` | `src/components/floating-sub-nav/` | Replace `Iconify` → `GiselleIcon` |
-
-### Need to be written from scratch
-
-These patterns appear repeatedly in alexrebula's own sections but are not currently
-extracted into reusable components. They cannot be copied from alexrebula because that repo uses a proprietary theme — any
-code that uses proprietary utilities must be rewritten independently.
-
-| Component                 | Pattern it encodes                                                                                            | Priority                                                                                                                                     |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SectionContainer`        | `Container` + consistent vertical padding + optional title/subtitle header. Used on every section.            | High — needed by almost every page                                                                                                           |
-| `HeroSection`             | Full-width hero with headline, subtitle, and CTA buttons. Appears in home, about, services, contact.          | High — every portfolio page has one                                                                                                          |
-| `FAQAccordion`            | MUI `Accordion` with consistent styling and optional icon. Used in home and services.                         | Medium                                                                                                                                       |
-| `GiselleSettingsProvider` | Framework-agnostic settings context — localStorage + cookie adapters, generic state, drawer. | High — blocks any project wanting a full drop-in settings system. Full plan: [`settings-provider-plan.md`](./settings-provider-plan.md) |
-
----
-
-## What a blank Next.js project actually needs
-
-The minimum `layout.tsx` for a project built entirely on giselle-mui:
+A blank Next.js project can now be stood up on `giselle-mui` alone. The minimum root layout:
 
 ```tsx
 // app/layout.tsx
-import { GiselleThemeProvider } from '@littlebranches/giselle-mui'; // Phase C
-import { IconRegistrar } from '@littlebranches/giselle-mui';
-import { createIconRegistrar } from '@littlebranches/giselle-mui';
+'use client';
+
+import { GiselleThemeAndSettingsProvider } from '@littlebranches/giselle-mui';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <GiselleThemeProvider>
-          <IconRegistrar>{children}</IconRegistrar>
-        </GiselleThemeProvider>
+        <GiselleThemeAndSettingsProvider>{children}</GiselleThemeAndSettingsProvider>
       </body>
     </html>
   );
 }
 ```
 
-Compare to alexrebula's current `layout.tsx` which wraps 8 providers — four of which
-(`I18nProvider`, `AuthProvider`, `SettingsProvider`, `ThemeProvider`) are
-proprietary-theme-dependent and would be replaced by `GiselleThemeProvider` + `GiselleSettingsProvider`.
+Icon registration is a separate module-level call, not a provider — see [`components/icon/giselle/iconify-registration.md`](./components/icon/giselle/iconify-registration.md). (The May version of this document showed an `IconRegistrar` component in this example; no such export exists or ever did. Use `createIconRegistrar` at module level.)
+
+Also shipped since May, each of which was listed here as unported: `TwoColumnShowcaseRow`, `SectionContainer`, `SectionTitle` + `SectionCaption`, `HeroSection`, `FaqSection` (the component this file called `FAQAccordion`), `BasicSection`, `StatusLabel`, `SelectableLabel`, `AnimatedGradientText`, `TechIconStrip`, `ProfileSummaryCard`, `StatCardRow`, `FeatureFlowSection`, `ScrollParallaxHero`, `HeroButtonsRow`, and `InteractiveHeroLogo`.
 
 ---
 
-## Complete export checklist for standalone projects
+## Still not ported
 
-```
-# Already shipped
-✅ GiselleIcon
-✅ createIconRegistrar
-✅ TimelineTwoColumn
-✅ MetricCard + MetricCardDecoration
-✅ QuoteCard
-✅ SelectableCard
-✅ IconActionBar
+Three components remain in the primary consuming app with a scaffold waiting for them here — folder, `types.ts`, `roadmap.md`, README and a placeholder test all exist; only the implementation is missing.
 
-# Theming — Phase A → B → C
-✅ channelAlpha                     (Phase A — 4 May 2026)
-✅ hexToChannel                     (Phase A — 4 May 2026)
-✅ pxToRem / remToPx             (Phase A — 4 May 2026)
-⬜ giselleTheme                  (Phase B)
-⬜ GiselleThemeProvider          (Phase C)  ← structural blocker
+| Component              | Source       | Scaffold in this repo                       | What the port needs                                                   |
+| ---------------------- | ------------ | ------------------------------------------- | --------------------------------------------------------------------- |
+| `OptionWithBlurb`      | primary app  | `material/input/option-with-blurb/`         | Nothing structural — small, plain MUI, genuinely a copy-and-clean job |
+| `SectionPendingLoader` | primary app  | `material/feedback/section-pending-loader/` | Replace the internal `Iconify` usage with `GiselleIcon`               |
+| `FloatingControlBar`   | primary app  | `material/navigation/floating-control-bar/` | Replace the internal `Iconify` usage with `GiselleIcon`               |
 
-# UI primitives — Phase D
-⬜ TwoColumnShowcaseRow          (ready to extract)
-⬜ OptionWithBlurb               (ready to extract)
-⬜ SectionPendingLoader          (needs Iconify → GiselleIcon)
-⬜ FloatingControlBar            (needs Iconify → GiselleIcon)
-⬜ SectionContainer              (write from scratch)
-⬜ HeroSection                   (write from scratch)
-⬜ FAQAccordion                  (write from scratch)
-⬜ GiselleSettingsProvider       (write from scratch — Phase D prerequisite)
-```
+All three are Phase E — they are the only thing keeping Phase E from closing.
+
+### Wanted by the second consuming app, not present in either place
+
+| Component   | Scaffold in this repo               | Note                                                                                     |
+| ----------- | ----------------------------------- | ---------------------------------------------------------------------------------------- |
+| `DataTable` | `material/data-display/data-table/` | Not a port — no source implementation exists. Must be written from scratch (Phase H G3). |
+
+Everything else that app needs — `StatusLabel`, `StatCard`, `StatCardRow`, `TimelineTwoColumn` — has shipped.
+
+---
+
+## What is explicitly _not_ a porting target
+
+To stop these reappearing as apparent gaps:
+
+- **Proprietary-theme providers** in the source apps' layout chain (`I18nProvider`, `AuthProvider`, and the proprietary `SettingsProvider` / `ThemeProvider`) are replaced by `GiselleThemeAndSettingsProvider`, not ported. `I18nProvider` and `AuthProvider` are application concerns and belong in the application.
+- **App-specific content sections** in the consuming apps are not library-worthy: they encode one site's copy and layout, not a reusable decision. Where a genuinely reusable shape was hiding inside one, it has already been extracted (`FeatureFlowSection`, `HeroSection`, `TwoColumnShowcaseRow`).
+- **Everything in the `Scaffold` rows of [`component-inventory.md`](./component-inventory.md)** that is not listed above. Those are planned new components with no source implementation to port — Phases F through J. They belong to the inventory's roadmap, not to this document.
 
 ---
 
 ## Related
 
-- [`roadmap.md`](../roadmap.md) — Phase A, B, C spec
-- [`settings-provider-plan.md`](./settings-provider-plan.md) — GiselleSettingsProvider spec
-- [`timeline-plan.md`](./timeline-plan.md) — TimelineTwoColumn full plan
+- [`roadmap.md`](./roadmap.md) — library-level phase timeline
+- [`component-inventory.md`](./component-inventory.md) — everything in this repo, with DoD scores
+- [`components/settings/settings-provider-plan.md`](./components/settings/settings-provider-plan.md) — `GiselleSettingsProvider` architecture spec
+- [`components/timeline/two-column/timeline-plan.md`](./components/timeline/two-column/timeline-plan.md) — `TimelineTwoColumn` full plan
+- [`components/dashboard-components-plan.md`](./components/dashboard-components-plan.md) — Phase H spec, including `DataTable`

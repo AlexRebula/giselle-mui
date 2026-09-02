@@ -29,7 +29,7 @@ import { resolveCornerBadgeAlign } from '../phase-card.utils';
  * as an interactive button that opens `PhaseWarningPopover`. In read-only mode it
  * renders only a Tooltip.
  *
- * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 10/12 · Best practices 13/13 — SonarQube not verified · inline sx/style object remains
  */
 export function CardCornerAlertBadge({
   alerts,

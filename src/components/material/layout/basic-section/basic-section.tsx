@@ -117,6 +117,8 @@ function resolveDecoration(decoration: boolean | DecorationElement[]): Decoratio
  *   <Typography variant="h2">Section heading</Typography>
  * </BasicSection>
  * ```
+ *
+ * **Quality status (02 Sep 2026):** DoD 19/22 · Best practices not re-audited — SonarQube not verified · helper component defined inline · no Responsive story
  */
 export const BasicSection = React.forwardRef<HTMLElement, BasicSectionProps>(function BasicSection(
   {

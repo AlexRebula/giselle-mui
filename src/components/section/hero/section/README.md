@@ -75,6 +75,9 @@ src/components/layout/section/hero/
 - [`SectionTitle`](../title/section-title/README.md) — section heading + optional gradient accent
 - [`channelAlpha`](../../../../utils/theme-utils.ts) — CSS-variable alpha tint utility
 
-## Quality status
+## Quality status — 02 Sep 2026
 
-**14 May 2026 — DoD 21/21 · Best practices 13/13**
+| Dimension              | Score | Open items |
+| ---------------------- | ----- | ---------- |
+| DoD (Scenario B)       | 21/22 | SonarQube not verified (no SonarQube tooling in this repo) |
+| Best practices         | 13/13 | — |

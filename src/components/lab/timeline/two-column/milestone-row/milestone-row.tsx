@@ -29,7 +29,7 @@ import { msRowSx, msColumnBoxSx, msDotWrapperSx, msCardWrapperSx } from './miles
  * Cards are absolutely positioned at `top: X%` within the parent phase `<li>`
  * so expanding one card never shifts the spine dots below it.
  *
- * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
+ * **Quality status (02 Sep 2026):** DoD 11/12 · Best practices 13/13 — SonarQube not verified
  */
 export function MilestoneRow({ ms, mi, totalMilestones, ctx }: MilestoneRowProps) {
   const { msDone, msColor } = resolveMilestoneState(

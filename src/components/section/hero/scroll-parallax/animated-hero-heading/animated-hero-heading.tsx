@@ -49,7 +49,7 @@ import { headingH1Sx, headingHighlightSx } from './animated-hero-heading.styles'
  * that is the semantically meaningful DOM node (and the one every other `Box`-wrapping
  * component in this library exposes a ref to).
  *
- * **Quality status (May 2026):** implementation complete, styles tested.
+ * **Quality status (02 Sep 2026):** DoD 21/22 · Best practices not re-audited — SonarQube not verified
  */
 export const AnimatedHeroHeading = React.forwardRef<HTMLHeadingElement, AnimatedHeroHeadingProps>(
   function AnimatedHeroHeading({ subheading, highlight, motionProps, sx, ...other }, ref) {
