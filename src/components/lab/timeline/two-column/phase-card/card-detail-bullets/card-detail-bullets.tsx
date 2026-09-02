@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import Typography from '@mui/material/Typography';
 
-import { GiselleIcon } from '../../../../material/data-display/icon/giselle/giselle-icon';
+import { GiselleIcon } from '../../../../../material/data-display/icon/giselle/giselle-icon';
 import {
   detailBulletsContainerSx,
   taskRowSx,
@@ -15,8 +15,8 @@ import {
   taskToggleColorSx,
   taskIconColorSx,
   taskTitleSx,
-} from './phase-card.styles';
-import { PHASE_TASK_ICON_SIZE } from './phase-card.const';
+} from './card-detail-bullets.styles';
+import { PHASE_TASK_ICON_SIZE } from './card-detail-bullets.const';
 
 /**
  * Expandable bullet list for phase detail items.
@@ -24,6 +24,8 @@ import { PHASE_TASK_ICON_SIZE } from './phase-card.const';
  *
  * Supports both interactive (task-toggle) and read-only (decorative) modes.
  * Pass `onToggleTask` to enable interactive icons; omit for read-only display.
+ *
+ * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
  */
 export function CardDetailBullets({
   id,

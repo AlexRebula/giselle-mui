@@ -13,17 +13,6 @@
 /** Font size for all status badge labels (Overdue, Now, Date overlap, Scenario). */
 export const STATUS_BADGE_FONT_SIZE = '0.75rem';
 
-// ── Corner alert badge ────────────────────────────────────────────────────────
-
-/** Size (px) of the corner alert badge circle container. */
-export const CORNER_ALERT_BADGE_SIZE = 26;
-
-/** Icon size (px) inside the corner alert badge circle. */
-export const CORNER_ALERT_ICON_SIZE = 16;
-
-/** Icon size (px) inside the corner alert Tooltip list. */
-export const CORNER_ALERT_LIST_ICON_SIZE = 16;
-
 // ── Viewed eye button ─────────────────────────────────────────────────────────
 
 /**
@@ -51,11 +40,3 @@ export const PHASE_PILL_ICON_SIZE = 16;
 
 /** Font size for the count label inside the expandable details count pill. */
 export const PHASE_PILL_TEXT_FONT_SIZE = '0.75rem';
-
-// ── Expanded task list ────────────────────────────────────────────────────────
-
-/**
- * Icon size (px) for task done-toggle icons in the expanded detail list.
- * Meets minimum inline icon rule (16px). Never set below 16.
- */
-export const PHASE_TASK_ICON_SIZE = 16;

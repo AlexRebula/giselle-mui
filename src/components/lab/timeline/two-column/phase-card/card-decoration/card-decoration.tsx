@@ -2,7 +2,7 @@ import type { CardDecorationProps } from './types';
 
 import Box from '@mui/material/Box';
 
-import { buildCardDecorationGradientSx, phaseCardIconBoxSx } from './phase-card.styles';
+import { buildCardDecorationGradientSx, phaseCardIconBoxSx } from './card-decoration.styles';
 
 /**
  * Decorative gradient shape + corner icon for a PhaseCard.
@@ -13,6 +13,8 @@ import { buildCardDecorationGradientSx, phaseCardIconBoxSx } from './phase-card.
  *
  * Receives pre-computed `isOverduePending` to avoid repeating the `&&` logic
  * in the parent and to keep `PhaseCard`'s own Cognitive Complexity below 15.
+ *
+ * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
  */
 export function CardDecoration({ color, isOverduePending, icon }: CardDecorationProps) {
   return (

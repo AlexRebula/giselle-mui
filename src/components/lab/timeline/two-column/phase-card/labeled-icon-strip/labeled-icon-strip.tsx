@@ -3,11 +3,13 @@ import type { LabeledIconStripProps } from './types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { labeledIconStripLabelSx, labeledIconStripWrapperSx } from './phase-card.styles';
+import { labeledIconStripLabelSx, labeledIconStripWrapperSx } from './labeled-icon-strip.styles';
 
 /**
  * A labelled group: an optional overline label above any icon/logo strip.
  * Handles the repeated pattern across platforms, clients, and projects.
+ *
+ * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
  */
 export function LabeledIconStrip({ label, children }: LabeledIconStripProps) {
   return (

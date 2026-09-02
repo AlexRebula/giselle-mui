@@ -5,26 +5,16 @@ import type { Theme } from '@mui/material/styles';
 
 import {
   photoImgSx,
-  labeledIconStripLabelSx,
-  labeledIconStripWrapperSx,
-  detailBulletsContainerSx,
   detailBulletsRowSx,
-  tooltipAlertListSx,
-  tooltipAlertRowSx,
-  tooltipAlertMessageSx,
-  cornerBadgeCircleSx,
   statusBadgeWrapperSx,
   newStatusDotSx,
   newStatusLabelSx,
   activeDotSx,
   activeStatusLabelSx,
-  scenarioBadgeSx,
   detailCountPillSx,
   logoStripSx,
   clientLogoSx,
   platformStripSx,
-  platformStripItemSlotSx,
-  platformStripItemLabelSx,
   projectLogoSx,
   eyeButtonSx,
   buildPaperSx,
@@ -84,49 +74,9 @@ describe('photoImgSx — photo image sx factory', () => {
 });
 
 // ---------------------------------------------------------------------------
-// labeledIconStripLabelSx — section overline label
+// detailBulletsRowSx — unused sibling of detailBulletsContainerSx (now owned
+// by card-detail-bullets/); kept here since it has no importer of its own.
 // ---------------------------------------------------------------------------
-
-describe('labeledIconStripLabelSx — section overline label', () => {
-  it('uses display:block with bottom margin', () => {
-    const sx = labeledIconStripLabelSx as Record<string, unknown>;
-    expect(sx['display']).toBe('block');
-    expect(sx['mb']).toBe(1);
-  });
-
-  it('[regression] font size meets badge-label minimum of 0.75rem', () => {
-    const sx = labeledIconStripLabelSx as Record<string, unknown>;
-    expect(sx['fontSize']).toBe('0.75rem');
-  });
-});
-
-describe('labeledIconStripWrapperSx — root wrapper', () => {
-  it('separates the strip from the previous section with top margin', () => {
-    expect(labeledIconStripWrapperSx).toMatchObject({
-      mt: 2.5,
-    });
-  });
-});
-
-// ---------------------------------------------------------------------------
-// detailBulletsContainerSx / detailBulletsRowSx
-// ---------------------------------------------------------------------------
-
-describe('detailBulletsContainerSx — expandable bullet list container', () => {
-  it('has top border separator and vertical gap', () => {
-    const sx = detailBulletsContainerSx as Record<string, unknown>;
-    expect(sx['borderTop']).toBe('1px solid');
-    expect(sx['gap']).toBe(0.75);
-  });
-
-  it('is a column flex with spacing above the separator', () => {
-    const sx = detailBulletsContainerSx as Record<string, unknown>;
-    expect(sx['display']).toBe('flex');
-    expect(sx['flexDirection']).toBe('column');
-    expect(sx['mt']).toBe(1.5);
-    expect(sx['pt']).toBe(1.5);
-  });
-});
 
 describe('detailBulletsRowSx — individual bullet row', () => {
   it('is flex row with left-aligned text', () => {
@@ -134,101 +84,6 @@ describe('detailBulletsRowSx — individual bullet row', () => {
     expect(sx['display']).toBe('flex');
     expect(sx['alignItems']).toBe('flex-start');
     expect(sx['textAlign']).toBe('left');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// tooltipAlertListSx — tooltip content column
-// ---------------------------------------------------------------------------
-
-describe('tooltipAlertListSx — tooltip alert list', () => {
-  it('is a column flex with gap and padding', () => {
-    const sx = tooltipAlertListSx as Record<string, unknown>;
-    expect(sx['display']).toBe('flex');
-    expect(sx['flexDirection']).toBe('column');
-    expect(sx['gap']).toBe(1.25);
-  });
-});
-
-describe('tooltipAlertRowSx — one alert row', () => {
-  it('is a flex row with top-aligned icon and message', () => {
-    expect(tooltipAlertRowSx).toMatchObject({
-      display: 'flex',
-      alignItems: 'flex-start',
-      gap: 1,
-    });
-  });
-});
-
-describe('tooltipAlertMessageSx — alert message text', () => {
-  it('uses a compact readable line height and weight', () => {
-    expect(tooltipAlertMessageSx).toMatchObject({
-      lineHeight: 1.55,
-      fontSize: '0.8rem',
-      fontWeight: 500,
-    });
-  });
-});
-
-// ---------------------------------------------------------------------------
-// cornerBadgeCircleSx — corner alert badge circle (dynamic, theme callback)
-// ---------------------------------------------------------------------------
-
-describe('cornerBadgeCircleSx — corner alert badge', () => {
-  it('positions absolutely with given transform', () => {
-    const sxFn = cornerBadgeCircleSx({
-      positionOverride: { right: 0 },
-      transform: 'translate(50%, -50%)',
-      hasError: false,
-      hasClickHandler: false,
-    }) as (theme: Theme) => Record<string, unknown>;
-    const styles = sxFn(mockTheme);
-    expect(styles['position']).toBe('absolute');
-    expect(styles['right']).toBe(0);
-    expect(styles['transform']).toBe('translate(50%, -50%)');
-  });
-
-  it('applies error bg when hasError=true', () => {
-    const sxFn = cornerBadgeCircleSx({
-      positionOverride: { left: 0 },
-      transform: 'translate(-50%, -50%)',
-      hasError: true,
-      hasClickHandler: false,
-    }) as (theme: Theme) => Record<string, unknown>;
-    expect(sxFn(mockTheme)['bgcolor']).toBe('error.main');
-  });
-
-  it('applies warning bg when hasError=false', () => {
-    const sxFn = cornerBadgeCircleSx({
-      positionOverride: { right: 0 },
-      transform: 'translate(50%, -50%)',
-      hasError: false,
-      hasClickHandler: false,
-    }) as (theme: Theme) => Record<string, unknown>;
-    expect(sxFn(mockTheme)['bgcolor']).toBe('warning.dark');
-  });
-
-  it('[regression] box-shadow uses theme grey-900 channel', () => {
-    const sxFn = cornerBadgeCircleSx({
-      positionOverride: { right: 0 },
-      transform: '',
-      hasError: false,
-      hasClickHandler: false,
-    }) as (theme: Theme) => Record<string, unknown>;
-    const styles = sxFn(mockTheme);
-    expect(styles['boxShadow']).toContain('33 43 54');
-  });
-
-  it('defaults badge size to 26 (CORNER_ALERT_BADGE_SIZE)', () => {
-    const sxFn = cornerBadgeCircleSx({
-      positionOverride: { right: 0 },
-      transform: '',
-      hasError: false,
-      hasClickHandler: false,
-    }) as (theme: Theme) => Record<string, unknown>;
-    const styles = sxFn(mockTheme);
-    expect(styles['width']).toBe(26);
-    expect(styles['height']).toBe(26);
   });
 });
 
@@ -316,27 +171,6 @@ describe('activeStatusLabelSx — ActiveBadge label', () => {
 });
 
 // ---------------------------------------------------------------------------
-// scenarioBadgeSx — scenario pill badge
-// ---------------------------------------------------------------------------
-
-describe('scenarioBadgeSx — scenario pill badge', () => {
-  it('[regression] font size is at least 0.75rem (badge minimum)', () => {
-    const styles = scenarioBadgeSx('info') as Record<string, unknown>;
-    expect(styles['fontSize']).toBe('0.75rem');
-  });
-
-  it('uses dark variant of the color for text', () => {
-    const styles = scenarioBadgeSx('warning') as Record<string, unknown>;
-    expect(styles['color']).toBe('warning.dark');
-  });
-
-  it('uses CSS var channel for soft background tint', () => {
-    const styles = scenarioBadgeSx('success') as Record<string, unknown>;
-    expect(String(styles['bgcolor'])).toContain('--mui-palette-success-mainChannel');
-  });
-});
-
-// ---------------------------------------------------------------------------
 // detailCountPillSx — detail count pill
 // ---------------------------------------------------------------------------
 
@@ -368,25 +202,6 @@ describe('platformStripSx — tech platform strip', () => {
     expect(sx['display']).toBe('flex');
     expect(sx['flexWrap']).toBe('wrap');
     expect(sx['gap']).toBe(1);
-  });
-});
-
-describe('platformStripItemSlotSx — one platform item slot', () => {
-  it('centers its icon or fallback label', () => {
-    expect(platformStripItemSlotSx).toMatchObject({
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    });
-  });
-});
-
-describe('platformStripItemLabelSx — fallback text label', () => {
-  it('uses a small, tightly-padded label style', () => {
-    expect(platformStripItemLabelSx).toMatchObject({
-      fontSize: 11,
-      px: 0.5,
-    });
   });
 });
 

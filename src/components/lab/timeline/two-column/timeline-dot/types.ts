@@ -40,12 +40,5 @@ export type TimelineDotComponentProps = Omit<BoxProps, 'color' | 'onClick'> & {
   onClick?: () => void;
 };
 
-export type DotInnerProps = {
-  done: boolean;
-  icon: ReactNode;
-  animationKey: number;
-  iconSize: number;
-};
-
 // Internal utility type — for normaliseSx usage inside the component.
 export type NormalisedSx = SxProps<Theme>[];

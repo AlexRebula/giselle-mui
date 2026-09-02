@@ -103,20 +103,20 @@ export const KNOWN_VIOLATIONS = new Set([
   // marker-label.tsx -> marker-row/marker-label/, marker-row.tsx -> marker-row/,
   // milestone-row.tsx -> milestone-row/, phase-row.tsx -> phase-row/,
   // timeline-column.tsx -> phase-row/timeline-column/
+  // two-column/phase-card/, /phase-warning-popover/, /timeline-dot/ sub-components —
+  // migrated (giselle-mui#222, group 3 of 3 — the full 18-file migration is now complete):
+  // card-corner-alert-badge.tsx -> phase-card/card-corner-alert-badge/,
+  // card-decoration.tsx -> phase-card/card-decoration/,
+  // card-detail-bullets.tsx -> phase-card/card-detail-bullets/,
+  // card-status-badge.tsx -> phase-card/card-status-badge/,
+  // scenario-badge.tsx -> phase-card/card-status-badge/scenario-badge/ (nested — used
+  // only by CardStatusBadge),
+  // labeled-icon-strip.tsx -> phase-card/labeled-icon-strip/,
+  // platform-strip.tsx -> phase-card/platform-strip/,
+  // mini-gantt-ruler.tsx -> phase-warning-popover/mini-gantt-ruler/,
+  // dot-inner.tsx -> timeline-dot/dot-inner/
   // 1 permanent exclusion remains (icons.tsx, see comment above)
   'src/components/lab/timeline/two-column/icons.tsx',
-  // two-column/phase-card/ — 7
-  'src/components/lab/timeline/two-column/phase-card/card-corner-alert-badge.tsx',
-  'src/components/lab/timeline/two-column/phase-card/card-decoration.tsx',
-  'src/components/lab/timeline/two-column/phase-card/card-detail-bullets.tsx',
-  'src/components/lab/timeline/two-column/phase-card/card-status-badge.tsx',
-  'src/components/lab/timeline/two-column/phase-card/labeled-icon-strip.tsx',
-  'src/components/lab/timeline/two-column/phase-card/platform-strip.tsx',
-  'src/components/lab/timeline/two-column/phase-card/scenario-badge.tsx',
-  // two-column/phase-warning-popover/ — 1
-  'src/components/lab/timeline/two-column/phase-warning-popover/mini-gantt-ruler.tsx',
-  // two-column/timeline-dot/ — 1
-  'src/components/lab/timeline/two-column/timeline-dot/dot-inner.tsx',
 ]);
 
 // Files that are legitimate at any layer level (not component files).

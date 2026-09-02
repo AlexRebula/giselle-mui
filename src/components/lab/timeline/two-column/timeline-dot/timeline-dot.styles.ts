@@ -1,38 +1,8 @@
 import type { SxProps, Theme } from '@mui/material/styles';
 
-import { checkPop, pulseRing } from '../animations';
+import { pulseRing } from '../animations';
 
 // ----------------------------------------------------------------------
-
-/**
- * Animated SVG checkmark shown inside a done dot.
- *
- * Dynamic — `iconSize` scales with the dot variant (phase = 23px, milestone = 17px).
- *
- * ⚠️ Performance note: returns a new object on every call.
- * The `DotInner` helper is unmounted/remounted on each `animationKey` change,
- * so the cost is negligible.
- */
-export const doneCheckmarkSx = (iconSize: number): SxProps<Theme> => ({
-  width: iconSize,
-  height: iconSize,
-  flexShrink: 0,
-  animation: `${checkPop} 0.36s cubic-bezier(0.34, 1.56, 0.64, 1)`,
-});
-
-/**
- * The not-done icon slot — centers whatever icon is passed in.
- *
- * Deliberately untyped as `SxProps<Theme>`: this constant sits alongside a
- * `boolean`-conditional sx object in a fixed-length `sx={[...]}` array in
- * `dot-inner.tsx`, not spread from a `sx` prop — `SxProps<Theme>`'s own
- * array alternative makes TypeScript treat that array as potentially
- * nested, which MUI's `Box` sx typing rejects. The plain inferred object
- * literal type has no such alternative.
- */
-export const dotInnerIconSlotSx = {
-  display: 'flex',
-} as const;
 
 /**
  * Inner clip Box that rounds the dot content to a circle and applies the fill colour.

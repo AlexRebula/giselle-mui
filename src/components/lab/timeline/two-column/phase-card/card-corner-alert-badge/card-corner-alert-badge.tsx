@@ -4,20 +4,20 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { GiselleIcon } from '../../../../material/data-display/icon/giselle/giselle-icon';
+import { GiselleIcon } from '../../../../../material/data-display/icon/giselle/giselle-icon';
 import {
   tooltipAlertListSx,
   cornerBadgeCircleSx,
   cornerAlertTooltipSx,
   tooltipAlertRowSx,
   tooltipAlertMessageSx,
-} from './phase-card.styles';
+} from './card-corner-alert-badge.styles';
 import {
   CORNER_ALERT_BADGE_SIZE,
   CORNER_ALERT_ICON_SIZE,
   CORNER_ALERT_LIST_ICON_SIZE,
-} from './phase-card.const';
-import { resolveCornerBadgeAlign } from './phase-card.utils';
+} from './card-corner-alert-badge.const';
+import { resolveCornerBadgeAlign } from '../phase-card.utils';
 
 /**
  * Floating corner badge that groups all warning/error alerts behind a single icon.
@@ -28,6 +28,8 @@ import { resolveCornerBadgeAlign } from './phase-card.utils';
  * In controlled (popover) mode — when `onClick` is provided — the badge renders
  * as an interactive button that opens `PhaseWarningPopover`. In read-only mode it
  * renders only a Tooltip.
+ *
+ * **Quality status (02 Sep 2026):** DoD 12/12 · Best practices 13/13
  */
 export function CardCornerAlertBadge({
   alerts,
