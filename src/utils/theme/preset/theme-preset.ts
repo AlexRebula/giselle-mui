@@ -96,6 +96,33 @@ type GreyPaletteWithChannel = NonNullable<ColorSystemOptions['palette']>['grey']
   '500Channel': string;
 };
 
+/**
+ * `common.black`/`common.white` as space-separated RGB channel strings, for
+ * `channelAlpha()` tinting. Same root cause as `GREY_500_CHANNEL` above:
+ * `common` isn't on `extendTheme()`'s hardcoded auto-generation list either
+ * (only `background.default/paper`, `common.background/onBackground`,
+ * `divider`, `text.primary/secondary`, and `action.active/selected` are),
+ * so `--mui-palette-common-blackChannel`/`whiteChannel` are never emitted by
+ * default. `feature-flow-section.styles.ts` references both — for
+ * `FeatureFlowItemRow`'s hover/selected box-shadows and for
+ * `FeatureFlowHighlightCarousel`'s scrim and description text — without
+ * these tokens those declarations resolve to an unset custom property,
+ * which browsers treat as invalid and silently drop (same failure mode as
+ * #185, missed by that fix since it only added the `grey` token).
+ */
+const COMMON_BLACK_CHANNEL = hexToChannel('#000000');
+const COMMON_WHITE_CHANNEL = hexToChannel('#ffffff');
+
+/**
+ * MUI's type for `palette.common` (`{ black?: string; white?: string }`) has
+ * no room for custom `*Channel` tokens either — same cast reasoning as
+ * `GreyPaletteWithChannel` above.
+ */
+type CommonPaletteWithChannels = NonNullable<ColorSystemOptions['palette']>['common'] & {
+  blackChannel: string;
+  whiteChannel: string;
+};
+
 // ----------------------------------------------------------------------
 // Theme preset
 // ----------------------------------------------------------------------
@@ -133,6 +160,12 @@ export const giselleThemeOptions: CssVarsThemeOptions = {
         // *read* of `theme.vars.palette.grey['500Channel']` elsewhere in this
         // codebase (e.g. `floating-sub-nav.styles.ts`).
         grey: { '500Channel': GREY_500_CHANNEL } as unknown as GreyPaletteWithChannel,
+        // `common.black`/`white` are mode-independent (same value in both
+        // schemes) — see `COMMON_BLACK_CHANNEL`/`COMMON_WHITE_CHANNEL` above.
+        common: {
+          blackChannel: COMMON_BLACK_CHANNEL,
+          whiteChannel: COMMON_WHITE_CHANNEL,
+        } as unknown as CommonPaletteWithChannels,
       },
     },
     dark: {
@@ -144,6 +177,10 @@ export const giselleThemeOptions: CssVarsThemeOptions = {
         warning: { main: '#FFA726' },
         error: { main: '#F44336' },
         grey: { '500Channel': GREY_500_CHANNEL } as unknown as GreyPaletteWithChannel,
+        common: {
+          blackChannel: COMMON_BLACK_CHANNEL,
+          whiteChannel: COMMON_WHITE_CHANNEL,
+        } as unknown as CommonPaletteWithChannels,
       },
     },
   },

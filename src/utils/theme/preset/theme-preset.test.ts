@@ -190,3 +190,64 @@ describe('giselleTheme — grey Channel token (issue #185)', () => {
     expect(serialized).toContain(`"--mui-palette-grey-500Channel":"${hexToChannel(grey[500])}"`);
   });
 });
+
+// ----------------------------------------------------------------------
+// Regression test: `common` has the exact same gap #185 fixed for `grey`,
+// missed by that fix since it only added the `grey` token.
+// `--mui-palette-common-blackChannel`/`whiteChannel` never existed in the
+// generated CSS-vars stylesheet either — `common` isn't on `extendTheme()`'s
+// auto-generation list any more than `grey` is. `feature-flow-section.
+// styles.ts` reads both via `channelAlpha(COMMON_BLACK_CHANNEL/WHITE_CHANNEL,
+// …)` for FeatureFlowItemRow's hover/selected box-shadows and
+// FeatureFlowHighlightCarousel's scrim/description text — all of which
+// silently render as if the declaration were never there. Confirmed live: a
+// consumer wrapped only in GiselleThemeProvider (no other MUI theme) had
+// `getComputedStyle` report `--mui-palette-common-blackChannel` as an empty
+// string on the scrim element, and its `background` computed to fully
+// transparent instead of the authored gradient.
+describe('giselleTheme — common black/white Channel tokens (issue #185 gap)', () => {
+  const light = giselleTheme.colorSchemes.light!;
+  const dark = giselleTheme.colorSchemes.dark!;
+  const RGB_CHANNEL_REGEX = /^\d{1,3} \d{1,3} \d{1,3}$/;
+
+  it('exposes common.blackChannel and common.whiteChannel as space-separated RGB channel strings in the light scheme', () => {
+    const common = light.palette.common as unknown as Record<string, string>;
+    expect(common.blackChannel).toMatch(RGB_CHANNEL_REGEX);
+    expect(common.whiteChannel).toMatch(RGB_CHANNEL_REGEX);
+  });
+
+  it('exposes common.blackChannel and common.whiteChannel as space-separated RGB channel strings in the dark scheme', () => {
+    const common = dark.palette.common as unknown as Record<string, string>;
+    expect(common.blackChannel).toMatch(RGB_CHANNEL_REGEX);
+    expect(common.whiteChannel).toMatch(RGB_CHANNEL_REGEX);
+  });
+
+  it('common.blackChannel/whiteChannel are the RGB decomposition of #000000/#ffffff', () => {
+    const common = light.palette.common as unknown as Record<string, string>;
+    expect(common.blackChannel).toBe(hexToChannel('#000000'));
+    expect(common.whiteChannel).toBe(hexToChannel('#ffffff'));
+  });
+
+  it('the resolved theme.vars proxy also carries both channels (what components actually read via var(--mui-palette-common-blackChannel/whiteChannel))', () => {
+    const varsCommon = giselleTheme.vars?.palette.common as unknown as Record<string, string>;
+    expect(varsCommon.blackChannel).toContain('--mui-palette-common-blackChannel');
+    expect(varsCommon.whiteChannel).toContain('--mui-palette-common-whiteChannel');
+  });
+
+  // Same rationale as the grey-500Channel test above: only a real
+  // generateStyleSheets() check catches a regression in the CSS-var
+  // emission path itself, not just the in-memory theme object's shape.
+  it('generateStyleSheets() actually emits both as real CSS custom properties', () => {
+    const themeWithStyleSheets = giselleTheme as unknown as {
+      generateStyleSheets?: () => Record<string, unknown>[];
+    };
+    const sheets = themeWithStyleSheets.generateStyleSheets?.();
+    const serialized = JSON.stringify(sheets);
+    expect(serialized).toContain(
+      `"--mui-palette-common-blackChannel":"${hexToChannel('#000000')}"`
+    );
+    expect(serialized).toContain(
+      `"--mui-palette-common-whiteChannel":"${hexToChannel('#ffffff')}"`
+    );
+  });
+});
