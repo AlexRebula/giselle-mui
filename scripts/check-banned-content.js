@@ -92,28 +92,25 @@ const BANNED_IDENTIFIERS = [
 
 /**
  * Private path/reference patterns that must not appear in any public file
- * (docs/ or src/). Commercial theme kit names are safe to commit here —
- * every utility in giselle-mui is an independent implementation, and
- * naming these kits publicly is a defensive "not copied from" statement,
- * not a disclosure of anything private. Rationale is tracked in a private
- * consuming app's own docs. Real private repo names/internal-only project
- * identifiers are loaded separately below — see loadLocalPatterns.
+ * (docs/ or src/). Every utility in giselle-mui is an independent
+ * implementation with no code copied from any commercial theme kit — this
+ * list exists purely as an automated safeguard against accidental
+ * copy-paste contamination during development, a governance control, not
+ * a disclosure of any relationship with the vendors it happens to name.
+ *
+ * Commercial theme kit names themselves are intentionally NOT committed
+ * here: naming a vendor's product verbatim in a public, indexed repo makes
+ * this file the one place their own trademark/IP monitoring would reliably
+ * find it, inviting exactly the scrutiny this check exists to avoid, even
+ * though there is nothing to find. Those names load from the gitignored
+ * `.banned-patterns.local` instead (see loadLocalPatterns) — same file real
+ * private repo names/internal-only project identifiers already use. This
+ * does mean CI does not enforce the vendor-name check (gitignored files
+ * never reach a CI checkout); the identifier-level check above (the part
+ * that actually matters — copied code patterns, not a vendor's name) stays
+ * committed and CI-enforced regardless.
  */
-const BANNED_PRIVATE_REFS = [
-  'Minimals',
-  'minimals',
-  'Devias',
-  'devias',
-  'Berry',
-  'Mantis',
-  'mantis',
-  'TheFront',
-  'thefront',
-  'CodedThemes',
-  'codedthemes',
-  ...loadLocalPatterns(),
-  ...loadLocalPersonalRefs(),
-];
+const BANNED_PRIVATE_REFS = [...loadLocalPatterns(), ...loadLocalPersonalRefs()];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
